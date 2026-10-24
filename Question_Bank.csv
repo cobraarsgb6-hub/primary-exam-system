@@ -1,0 +1,116 @@
+﻿معرف السؤال,الصف الدراسي,المادة,الوحدة / الدرس,نص السؤال,نوع السؤال,الخيارات (مفصولة بـ |),الإجابة الصحيحة,الدرجة,الشرح والتوضيح,كود الامتحان
+Q_Y5_ENG_001,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,What is an adverbial?,MCQ,"A single word naming a person or thing | A group of words without a verb that adds detail about time, place, or manner | A group of words with a subject and a verb | A word that joins two clauses together","A group of words without a verb that adds detail about time, place, or manner",1,"An adverbial is a word or phrase that gives extra details about WHEN, WHERE, or HOW an action happens. It does NOT contain a finite verb.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_002,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,"In the sentence: ""The rocket launched at dawn."", what type of adverbial is ""at dawn""?",MCQ,Adverbial of Time | Adverbial of Place | Adverbial of Manner | Adverbial of Reason,Adverbial of Time,1,"""at dawn"" tells us WHEN the rocket launched (Adverbial of Time).",EX_Y5_ENG_ADV01
+Q_Y5_ENG_003,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,Which of the following sentences contains an adverbial of PLACE?,MCQ,"The crew slept inside the space station. | In 2000, the first crew moved in. | She carefully checked the controls. | Soon, the rocket was ready.",The crew slept inside the space station.,1,"""inside the space station"" answers the question WHERE did the crew sleep (Adverbial of Place).",EX_Y5_ENG_ADV01
+Q_Y5_ENG_004,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,An adverbial of MANNER answers which question?,MCQ,How or in what way? | Where? | When? | Who?,How or in what way?,1,"Adverbials of manner explain HOW an action happens (e.g., bravely, with great care, silently).",EX_Y5_ENG_ADV01
+Q_Y5_ENG_005,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,Which sentence is punctuated correctly with a comma after the fronted adverbial?,MCQ,"After a long journey, the crew landed. | After a long journey the crew landed. | After a long journey, the crew, landed. | After, a long journey the crew landed.","After a long journey, the crew landed.",1,"When an adverbial is at the start (Fronted Adverbial), it must be followed by a comma.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_006,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,"True or False: In the sentence ""The USSR launched Sputnik I in 1957."", we must put a comma before ""in 1957"".",TRUE_FALSE,True | False,False,1,"When the adverbial is at the END of a sentence, NO comma is needed.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_007,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,Choose the sentence that has an adverbial of TIME at the beginning:,MCQ,"Before sunrise, the pilot took off. | Bravely, the pilot flew the plane. | Over the sea, the pilot flew. | With great skill, the pilot landed.","Before sunrise, the pilot took off.",1,"""Before sunrise"" tells us WHEN the pilot took off.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_008,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,"Complete the sentence with the best adverbial of manner: ""The engineer repaired the delicate wiring ........""",MCQ,with great care | on the moon | at midnight | in 1969,with great care,1,"""with great care"" describes HOW the engineer repaired the wires.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_009,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,"Rewrite ""Astronauts walked on the moon in 1969."" by moving the adverbial of time to the start:",MCQ,"In 1969, astronauts walked on the moon. | In 1969 astronauts walked on the moon. | On the moon, astronauts walked in 1969. | Astronauts in 1969 walked on the moon.","In 1969, astronauts walked on the moon.",1,"Move ""In 1969"" to the front and place a comma directly after it.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_010,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,Which sentence has BOTH an adverbial of time AND an adverbial of place?,MCQ,"In 1969, astronauts walked on the moon. | The rocket launched at dawn. | The crew worked inside the space station. | Bravely, the pilot flew the plane.","In 1969, astronauts walked on the moon.",1,"""In 1969"" is Time, and ""on the moon"" is Place.",EX_Y5_ENG_ADV01
+Q_Y6_ENG_001,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),"Which of the following phrases from the text is a SIMILE comparing walls to a shell using ""like""?",MCQ,Its white walls glowed like the inside of a seashell | The fountain whispered to itself | Shadows stretched along the walls | The city was a hush,Its white walls glowed like the inside of a seashell,1,"💡 Rule: A SIMILE compares two different things using the words ""like"" or ""as"".
+
+🌟 Examples from the Text:
+• ""glowed like the inside of a seashell"" (compares walls to a shell using ""like"")
+• ""long and thin as fingers"" (compares shadows to fingers using ""as"")
+• ""thin as paper"" (compares the voice to paper using ""as"")",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_002,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),"What figure of speech is used in: ""The fountain whispered to itself""?",MCQ,Personification | Simile | Alliteration | Onomatopoeia,Personification,1,"💡 Rule: PERSONIFICATION gives human actions or qualities to non-human objects.
+
+🌟 Examples:
+• ""The fountain whispered to itself"" ➔ Humans whisper, fountains do not!
+• ""The wall of dust howled"" ➔ Giving the wind/dust the human/animal action of howling.
+• ""The gates closed with a sigh"" ➔ Gates don't sigh like humans!",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_003,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),"""The city was a hush."" What does this metaphorical phrase suggest about the atmosphere of the city?",MCQ,"The city was completely silent, deserted, and quiet | The city was noisy and crowded with people | The city was ruined by war | The city was full of singing birds","The city was completely silent, deserted, and quiet",1,"💡 Meaning & Inference:
+""A hush"" means a sudden, profound silence. Describing the entire city as ""a hush"" emphasizes that it is eerily still, quiet, and appears empty of people.",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_004,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),How does the author create a mysterious and eerie atmosphere in the text? Choose the best evidence:,MCQ,"Flickering lamps, shadows like fingers, and a strange voice from the tower | People laughing and children playing in the streets | Bright sunny weather with clear blue skies | The sound of loud car horns and busy traffic","Flickering lamps, shadows like fingers, and a strange voice from the tower",1,"💡 Atmosphere Building in Fantasy Fiction:
+Writers create suspense and mystery through sensory details:
+• Sight: ""every lamp flickered at once"", ""shadows long and thin as fingers""
+• Sound: ""silver bell rang"", ""a voice, thin as paper, drifted down""
+• Physical reaction: ""Kesh's hand tightened on his stick. Tamsin forgot to breathe.""",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_005,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),"In the sentence ""Pale light crept over the cobbles."", what does the word ""cobbles"" mean?",MCQ,Rounded stones used to pave old streets | Wooden floorboards | Sandy desert dunes | Soft grass fields,Rounded stones used to pave old streets,1,"💡 Vocabulary in Context:
+""Cobbles"" (or cobblestones) are traditional rounded stones fitted together to make roads in historical or fantasy cities.",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_006,Grade 6 (G6),English Literacy,Unit 2: Report Writing & Grammar,Which sentence uses a RELATIVE CLAUSE with correct comma punctuation?,MCQ,"Sea turtles, which are marine reptiles, live in the ocean. | Sea turtles which are marine reptiles live in the ocean. | Sea turtles, which are marine reptiles live, in the ocean. | Sea turtles which, are marine reptiles, live in the ocean.","Sea turtles, which are marine reptiles, live in the ocean.",1,"💡 Rule: Non-defining relative clauses (starting with ""which"" or ""who"") add extra information and MUST be enclosed between TWO commas!
+
+🌟 Correct Pattern:
+✓ Main clause: ""Sea turtles ... live in the ocean.""
+✓ Extra relative clause: "", which are marine reptiles,""
+✓ Full sentence: ""Sea turtles, which are marine reptiles, live in the ocean.""",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_007,Grade 6 (G6),English Literacy,Unit 2: Report Writing & Grammar,Select the sentence with correct SUBJECT-VERB AGREEMENT:,MCQ,Sea turtles lay their eggs on sandy beaches. | Sea turtles lays their eggs on sandy beaches. | A sea turtle lay their eggs on sandy beaches. | Sea turtles is laying their eggs on sandy beaches.,Sea turtles lay their eggs on sandy beaches.,1,"💡 Subject-Verb Agreement Rule:
+• Plural subject (""Sea turtles"") takes base verb (""lay"").
+• Singular subject (""A sea turtle"") takes ""-s"" verb (""lays"").
+
+🌟 Compare:
+✓ ""Sea turtles lay eggs."" (Plural)
+✓ ""A sea turtle lays eggs."" (Singular)",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_008,Grade 6 (G6),English Literacy,Unit 2: Report Writing & Grammar,"Correct the spelling mistake in: ""Some sea turtles have a herd shell on their backs.""",MCQ,hard shell | heard shell | hurt shell | heared shell,hard shell,1,"💡 Homophones & Spelling:
+• ""herd"" = a group of animals (e.g. a herd of cattle).
+• ""hard"" = solid and firm (e.g. a hard shell).
+Sea turtles have a tough, solid shell, so the correct spelling is ""hard shell"".",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_009,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),"True or False: In ""Shadows stretched along the walls, long and thin as fingers."", the author uses a simile to describe the shadows.",TRUE_FALSE,True | False,True,1,"💡 Rule: ""long and thin as fingers"" is a simile because it uses the word ""as"" to compare the shape of the shadows to elongated fingers.",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_010,Grade 6 (G6),English Literacy,Unit 2: Report Writing & Grammar,"Complete the conclusion sentence using formal connective: ""Protecting sea turtles matters ........ they play a vital role in marine ecosystems.""",MCQ,because | but | although | while,because,1,"💡 Explanation of Cause & Effect:
+""because"" gives the reason WHY protecting sea turtles is important.",EX_Y6_ENG_FANTASY01
+Q_Y6_ARB_001,الصف السادس (G6),اللغة العربية,المحور الأول: ترتيب الأولويات وإدارة الوقت,"معنى كلمة (إنجاز) في سياق: ""يتطلب إنجاز المهام وقتًا محددًا"" هو:",MCQ,إتمام وتحقيق بنجاح | تأجيل وتعطيل | نسيان وإهمال | بدء وتخطيط,إتمام وتحقيق بنجاح,1,"💡 معنى المفردات:
+• إنجاز الشيء = إتمامه وقضاؤه بنجاح.
+• مثل: ""إنجاز الواجبات المدرسية"" أي الانتهاء منها بشكل متقن.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_002,الصف السادس (G6),اللغة العربية,المحور الأول: ترتيب الأولويات وإدارة الوقت,مضاد كلمة (تأجيل) هو:,MCQ,تعجيل وتبكير | تسويف | إبطاء | ترك,تعجيل وتبكير,1,"💡 التضاد اللغوي:
+• التأجيل: إرجاء العمل لوقت لاحق.
+• التعجيل: المسارعة في أداء العمل دون تأخير.
+• لذلك مضاد تأجيل هو (تعجيل).",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_003,الصف السادس (G6),اللغة العربية,المحور الأول: ترتيب الأولويات وإدارة الوقت,لكي ننجح في إدارة يومنا وتحقيق أهدافنا، يجب أن نصنف ونرتب المهام حسب:,MCQ,أهميتها (البدء بالأكثر أهمية أولاً) | سهولتها فقط | عشوائياً بدون ترتيب | تأجيل كل المهام الصعبة,أهميتها (البدء بالأكثر أهمية أولاً),1,"💡 استيعاب المقروء:
+نصت الفقرة على: ""يجب علينا أن نتعلم كيف نحدد الأولويات ونرتب المهام حسب أهميتها؛ أي نبدأ بالمهام الأكثر أهمية ثم ننتقل إلى الأقل أهمية"".",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_004,الصف السادس (G6),اللغة العربية,القواعد النحوية: النكرة والمعرفة,"في جملة ""الوقتُ من ذهبٍ""، كلمة (ذهبٍ) هي اسم:",MCQ,نكرة | معرفة بأل | اسم علم | ضمير,نكرة,1,"💡 قاعدة النكرة والمعرفة:
+• النكرة: اسم يدل على شيء غير معين أو محدد، ومجرد من (أل) والإضافة (مثل: ذهبٍ، كتابٌ، قلمٌ).
+• المعرفة: اسم يدل على شيء معين (مثل: الوقتُ - معرف بأل).",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_005,الصف السادس (G6),اللغة العربية,القواعد النحوية: النكرة والمعرفة,"في جملة ""التشتتُ يفقدنا التركيزَ والإنجازَ""، الكلمات (التركيز) و(الإنجاز) هي أسماء:",MCQ,معرفة لأنها معرفة بأل | نكرة لأنها ليست علماً | أفعال وليست أسماء | حروف عطف,معرفة لأنها معرفة بأل,1,"💡 أنواع المعارف:
+من أهم أنواع المعارف هو ""المعرّف بأل"". أي كلمة تقبل أو تبدأ بـ (ال) مثل: (التركيز، الإنجاز، الوقت، المدرسة) هي اسم معرفة.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_006,الصف السادس (G6),اللغة العربية,القواعد النحوية: النكرة والمعرفة,"أكمل الجملة باسم نكرة مناسب: ""الوقتُ ........ عظيمٌ من الله تعالى.""",MCQ,نعمةٌ | النعمةُ | تلك النعمة | هو النعمة,نعمةٌ,1,"💡 شروط الاسم النكرة:
+المطلوب اسم نكرة (بدون أل ويكون منوناً): كلمة (نعمةٌ) نكرة، بينما (النعمة) معرفة بأل.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_007,الصف السادس (G6),اللغة العربية,القواعد النحوية: النكرة والمعرفة,"أكمل الجملة باسم معرفة: ""........ هم الذين يفوزون بسباق تنظيم الوقت.""",MCQ,المجتهدون | طلابٌ | أذكياءٌ | مجتهدون,المجتهدون,1,"💡 تحديد المعرفة:
+(المجتهدون) اسم معرفة لأنه يبدأ بأل التعريف، بينما (طلابٌ) و(أذكياءٌ) و(مجتهدون) نكرات.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_008,الصف السادس (G6),اللغة العربية,القواعد الإملائية: الهمزة المتوسطة على ألف,"اختر الرسم الإملائي الصحيح: ""حينما ........ السماء أشعر بالراحة.""",MCQ,أتأَمَّلُ | اتأملُ (بدون همزة) | أتاءمل | أتيمل,أتأَمَّلُ,1,"💡 قاعدة الهمزة المتوسطة على ألف:
+تُكتب الهمزة المتوسطة على ألف إذا كانت مفتوحة وما قبلها مفتوح: (أ-تَ-أَ-مَّ-ل).
+
+🌟 أمثلة مشابهة:
+• سَأَلَ (الهمزة مفتوحة وقبلها فتح)
+• تَأَخَّرَ (مفتوحة وقبلها فتح)
+• رَأَى (مفتوحة وقبلها فتح)",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_009,الصف السادس (G6),اللغة العربية,القواعد الإملائية: الهمزة المتوسطة على ألف,"اختر الكلمة الصحيحة إملائياً: ""يستخدم الفلاحُ ........ في حرث وتقليب الأرض.""",MCQ,الفَأْسَ | الفئس | الفأسُ (بالياء) | الفاس (بدون همزة),الفَأْسَ,1,"💡 قاعدة الهمزة الساكنة بعد فتح:
+تُكتب الهمزة المتوسطة على ألف إذا كانت ساكنة بعد فتح: الفَـأْس (الفاء مفتوحة والهمزة ساكنة ➔ ترسم على ألف).
+
+🌟 أمثلة مشابهة:
+• رَأْس (فتحة ثم سكون ➔ ألف)
+• كَأْس (فتحة ثم سكون ➔ ألف)",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_010,الصف السادس (G6),اللغة العربية,القواعد النحوية: النكرة والمعرفة,"حدد نوع الكلمة التي تحتها خط في جملة: ""مصرُ وطنٌ عظيمٌ"":",MCQ,مصر (معرفة لأنها علم) ، وطن (نكرة) | كلاهما نكرة | كلاهما معرفة | مصر (نكرة) ، وطن (معرفة),مصر (معرفة لأنها علم) ، وطن (نكرة),1,"💡 أنواع المعارف (العلم):
+• أسماء البلاد والأشخاص (مثل: مصر، مصطفى، أحمد) هي أسماء معارف لأنها ""عَلَم"".
+• أما كلمة (وطنٌ) فهي نكرة لأنها غير محددة ومجردة من أل والإضافة.",EX_Y6_ARB_PRIO01
+Q_Y5_ENG_011,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,Which word is an adverb of MANNER in: 'The engineer carefully examined the rocket engine.'?,MCQ,carefully | engineer | examined | rocket,carefully,1,"💡 Adverb of Manner:
+'Carefully' tells us HOW the engineer examined the engine (in a careful manner). Most adverbs ending in -ly describe manner.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_012,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,"Identify the fronted adverbial of PLACE: 'Behind the launch tower, the sun began to rise.'",MCQ,Behind the launch tower | the sun began | to rise | began to rise,Behind the launch tower,1,"💡 Fronted Adverbial of Place:
+'Behind the launch tower' is at the front of the sentence and answers WHERE the action happens.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_013,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,Choose the correct punctuation for this fronted adverbial of time:,MCQ,"Every morning, the astronauts train for four hours. | Every morning the astronauts, train for four hours. | Every morning the astronauts train, for four hours. | Every, morning the astronauts train for four hours.","Every morning, the astronauts train for four hours.",1,"💡 Comma Rule:
+A comma must always follow a fronted adverbial when it begins a sentence: 'Every morning, ...'",EX_Y5_ENG_ADV01
+Q_Y5_ENG_014,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,"In the sentence: 'The satellite orbits Earth at high speed.', what does 'at high speed' describe?",MCQ,HOW the satellite orbits (Manner) | WHEN the satellite orbits (Time) | WHERE the satellite orbits (Place) | WHY the satellite orbits (Reason),HOW the satellite orbits (Manner),1,"💡 Identifying Manner Phrases:
+Prepositional phrases like 'at high speed' explain the manner (how fast or in what way) an action happens.",EX_Y5_ENG_ADV01
+Q_Y5_ENG_015,Year 5 (G5),English Grammar,Unit 2 - Lesson 3: Adverbials,True or False: 'Yesterday' can function as a fronted adverbial of time.,TRUE_FALSE,True | False,True,1,"💡 Time Words at the Front:
+Yes! Example: 'Yesterday, Ali completed his homework.'",EX_Y5_ENG_ADV01
+Q_Y6_ENG_011,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),"In 'The wind moaned through the empty archways', what literary technique is used?",MCQ,Personification | Simile | Rhyme | Pun,Personification,1,"💡 Personification:
+Giving the human action of 'moaning' to the non-human wind.",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_012,Grade 6 (G6),English Literacy,Unit 2: Non-Chronological Report (Sea Turtles),Which sentence fixes the run-on error in: 'people can stop throwing plastic people can ask boats not to dump rubbish'?,MCQ,"People can stop throwing plastic into the sea, and they can ask boats not to dump rubbish. | People can stop throwing plastic people can ask boats. | People can, stop throwing plastic and boats. | People can stop throwing, plastic not to dump rubbish.","People can stop throwing plastic into the sea, and they can ask boats not to dump rubbish.",1,"💡 Run-on Sentence Fix:
+Join two independent clauses using a comma and coordinating conjunction (', and') or separate them with a full stop.",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_013,Grade 6 (G6),English Literacy,Unit 2: Non-Chronological Report (Sea Turtles),"Identify the correct spelling of the missing word: 'If sea turtles ________, marine ecosystems will suffer.'",MCQ,disappear | disapper | dissappear | dissapper,disappear,1,"💡 Spelling Alert (Prefix dis- + appear):
+dis + appear = disappear (one 's', two 'p's).",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_014,Grade 6 (G6),English Literacy,Unit 2: Fantasy Reading (The City That Waited),Which adjective best describes the overall mood of the deserted city in Part 6?,MCQ,Eerie and desolate | Joyful and vibrant | Crowded and lively | Chaotic and angry,Eerie and desolate,1,"💡 Atmosphere Analysis:
+The quiet fountain, pale light, and silent cobblestones create an eerie and desolate mood.",EX_Y6_ENG_FANTASY01
+Q_Y6_ENG_015,Grade 6 (G6),English Literacy,Unit 2: Non-Chronological Report (Sea Turtles),"Which relative pronoun correctly completes: 'Plastic waste, ________ is dumped into the ocean, harms marine life.'?",MCQ,which | who | where | whose,which,1,"💡 Relative Pronoun for Things:
+Use 'which' for non-human objects and materials like 'plastic waste'.",EX_Y6_ENG_FANTASY01
+Q_Y6_ARB_011,الصف السادس (G6),اللغة العربية,القواعد النحوية: النكرة والمعرفة,عيّن الاسم المعرفة في جملة: 'قرأ التلميذُ كتاباً مفيداً':,MCQ,التلميذُ (معرف بأل) | كتاباً | مفيداً | قرأ,التلميذُ (معرف بأل),1,"💡 المعرّف بأل:
+(التلميذُ) اسم معرفة لأنه مقترن بأل التعريف، أما (كتاباً ومفيداً) فهما اسمان نكرتان.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_012,الصف السادس (G6),اللغة العربية,القواعد الإملائية: الهمزة المتوسطة على ألف,ما سبب كتابة الهمزة على ألف في كلمة (يَسْـأَلُ)؟,MCQ,لأن الهمزة مفتوحة وما قبلها ساكن | لأن الهمزة مكسورة | لأن الهمزة مضمومة | لأن ما قبلها ألف مد,لأن الهمزة مفتوحة وما قبلها ساكن,1,"💡 قاعدة الهمزة المتوسطة:
+في كلمة (يَسْـأَل): السين ساكنة والهمزة مفتوحة، والفتحة أقوى من السكون ➔ فتُرسم على ألف.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_013,الصف السادس (G6),اللغة العربية,القراءة المتحررة: استيعاب المقروء وإدارة الوقت,الفكرة الرئيسة لنص إدارة الوقت هي أن النجاح يتحقق من خلال:,MCQ,التخطيط المسبق وترتيب الأولويات | تأجيل الواجبات الصعبة | العمل طوال اليوم دون راحة | الاعتماد على الحظ,التخطيط المسبق وترتيب الأولويات,1,"💡 الفكرة الرئيسة:
+إدارة الوقت تبدأ بتحديد الأهداف وترتيب الأولويات والبدء بالمهام العاجلة والمهمة.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_014,الصف السادس (G6),اللغة العربية,القواعد النحوية: النكرة والمعرفة,الضمائر (أنا، نحن، هو، هي) وأسماء الإشارة والأسماء الموصولة كلها تعتبر:,MCQ,معارف دائماً | نكرات دائماً | حروفاً وليست أسماء | أفعالاً ماضية,معارف دائماً,1,"💡 أنواع المعارف الستة:
+الضمائر وأسماء الإشارة والأسماء الموصولة وأسماء الأعلام والمعرف بأل والمضاف إلى معرفة كلها معارف.",EX_Y6_ARB_PRIO01
+Q_Y6_ARB_015,الصف السادس (G6),اللغة العربية,القواعد الإملائية: الهمزة المتوسطة على ألف,اختر الرسم الإملائي الصحيح للكلمة المكملة: 'لا ........ عن مساعدة المحتاجين.',MCQ,تَتَأَخَّرْ | تتأخر (بدون همزة) | تتءخر | تتآخر,تَتَأَخَّرْ,1,"💡 رسم الهمزة المتوسطة:
+تَـتَـأَخَّـر (الهمزة مفتوحة وقبلها تاء مفتوحة ➔ ترسم على ألف).",EX_Y6_ARB_PRIO01

@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <title>Manaret El-Eman Assessment Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #0ea5e9;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --purple: #7c3aed;
+      --purple-bg: #f5f3ff;
+      --bg-body: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+      --radius: 14px;
+      --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    /* Top Navigation Header */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 14px 20px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #2563eb, #0ea5e9);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .brand-meta h1 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .brand-meta p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .portal-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 9px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .portal-btn:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+
+    /* Card Containers */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Gateway Selection Cards (Zero Merging) */
+    .gateway-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    @media (max-width: 540px) {
+      .gateway-grid { grid-template-columns: 1fr; }
+    }
+
+    .gateway-card {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .gateway-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .gateway-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gateway-grade {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .gateway-desc {
+      font-size: 0.8rem;
+      color: #475569;
+      margin: 14px 0;
+      line-height: 1.5;
+    }
+
+    .gateway-badge {
+      display: inline-block;
+      font-size: 0.76rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: var(--primary-light);
+      color: var(--primary);
+      width: fit-content;
+    }
+
+    /* Dedicated Student Assessment Card */
+    .student-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1.5px solid var(--border);
+    }
+
+    .student-info h2 {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .student-info p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .exam-item-card {
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .exam-item-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .exam-item-card.active {
+      border-color: var(--primary);
+      background: #f0f7ff;
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+
+    .exam-item-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .exam-item-card.active .exam-item-title {
+      color: var(--primary);
+    }
+
+    .exam-item-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .exam-item-tag {
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #e0f2fe;
+      color: #0369a1;
+      white-space: nowrap;
+    }
+
+    /* Hero Banner */
+    .assessment-hero {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 18px 0;
+    }
+
+    .assessment-hero h3 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .hero-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.84rem;
+      color: #bfdbfe;
+      margin-top: 8px;
+    }
+
+    /* Policy & Retake Alerts */
+    .alert-box {
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.86rem;
+      margin-bottom: 18px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .alert-warning {
+      background: var(--warning-bg);
+      border: 1px solid #fde68a;
+      border-left: 4px solid var(--warning);
+      color: #92400e;
+    }
+
+    .alert-success {
+      background: var(--success-bg);
+      border: 1px solid #a7f3d0;
+      border-left: 4px solid var(--success);
+      color: #065f46;
+    }
+
+    .alert-pending {
+      background: var(--purple-bg);
+      border: 1px solid #ddd6fe;
+      border-left: 4px solid var(--purple);
+      color: #5b21b6;
+    }
+
+    .alert-danger {
+      background: var(--danger-bg);
+      border: 1px solid #fecaca;
+      border-left: 4px solid var(--danger);
+      color: #991b1b;
+    }
+
+    /* Primary & Action Buttons */
+    .btn-primary {
+      width: 100%;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: background 0.15s ease;
+    }
+
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-purple { background: var(--purple); }
+    .btn-purple:hover { background: #6d28d9; }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .btn-success-sm {
+      background: var(--success);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-success-sm:hover { background: #059669; }
+
+    .btn-danger-sm {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-danger-sm:hover { background: #dc2626; }
+
+    /* Modal Gatekeeper */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 9999;
+    }
+
+    .modal-overlay.active { display: flex; animation: fadeIn 0.15s ease; }
+
+    .modal-card {
+      background: #fff;
+      border-radius: 16px;
+      max-width: 460px;
+      width: 100%;
+      padding: 26px;
+      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.2);
+      text-align: center;
+    }
+
+    .modal-icon {
+      width: 52px;
+      height: 52px;
+      background: #fef3c7;
+      color: #d97706;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin: 0 auto 14px;
+    }
+
+    .modal-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); margin-bottom: 6px; }
+    .modal-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px; }
+
+    .modal-info-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 20px;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    .modal-info-box div { margin-bottom: 3px; }
+
+    .modal-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    
+    /* Reading Passage Box */
+    .passage-box {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-left: 5px solid var(--primary);
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .passage-box.rtl-content {
+      border-left: 1.5px solid #cbd5e1;
+      border-right: 5px solid var(--primary);
+      direction: rtl;
+      text-align: right;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .passage-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .passage-text {
+      font-size: 0.98rem;
+      line-height: 1.75;
+      color: #1e293b;
+      white-space: pre-wrap;
+    }
+
+    /* Active Quiz Screen */
+    .quiz-sticky-header {
+      position: sticky;
+      top: 10px;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 18px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quiz-progress-text { font-size: 0.88rem; font-weight: 700; color: var(--text-main); }
+    .quiz-timer {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .question-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+
+    .q-meta-tag {
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .q-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .q-text.rtl-content {
+      direction: rtl;
+      text-align: right;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-item {
+      background: #f8fafc;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.15s ease;
+      font-size: 0.96rem;
+      font-weight: 600;
+    }
+
+    .option-item.rtl-content {
+      direction: rtl;
+      font-family: 'Cairo', sans-serif;
+    }
+
+    .option-item:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .option-item.selected {
+      background: #eff6ff;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .opt-circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .option-item.selected .opt-circle {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .opt-circle::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #fff;
+      display: none;
+    }
+
+    .option-item.selected .opt-circle::after { display: block; }
+
+    .nav-btn-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    /* Result Report */
+    .result-score-banner {
+      text-align: center;
+      padding: 30px 20px;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #fff;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+    }
+
+    .score-circle { font-size: 3rem; font-weight: 900; margin: 10px 0; }
+    .score-rating { font-size: 1.15rem; font-weight: 700; color: #93c5fd; }
+
+    .review-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .review-item.correct { border-left: 5px solid var(--success); }
+    .review-item.incorrect { border-left: 5px solid var(--danger); }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .review-q-title { font-size: 0.96rem; font-weight: 700; color: var(--text-main); }
+    .badge-correct { background: var(--success-bg); color: var(--success); padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 800; }
+    .badge-incorrect { background: var(--danger-bg); color: var(--danger); padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 800; }
+
+    .explanation-box {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: #334155;
+    }
+
+    /* Parent Portal Layout */
+    .parent-student-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .switch-student-btn {
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .switch-student-btn.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .parent-tab-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .parent-tab-btn {
+      background: none;
+      border: none;
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .parent-tab-btn.active {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+
+    .inspect-filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .inspect-chip {
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .inspect-chip.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .spinner {
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border-left-color: var(--primary);
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Top Navigation -->
+    <header class="top-header">
+      <div class="brand-group">
+        <div class="brand-icon">M</div>
+        <div class="brand-meta">
+          <h1>Manaret El-Eman Assessment Portal</h1>
+          <p>Official Primary Interactive Assessment Platform</p>
+        </div>
+      </div>
+      <div>
+        <button id="btn-parent-portal-link" class="portal-btn" onclick="openParentPortal()">
+          🔐 Parent Portal
+        </button>
+      </div>
+    </header>
+
+    <!-- SCREEN 0: PORTAL GATEWAY (Zero Merging Doorway) -->
+    <div id="screen-gateway" class="screen">
+      <div class="card" style="text-align: center;">
+        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Select Student Assessment Portal</h2>
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 16px;">
+          Choose the student below to access their dedicated, grade-isolated assessment environment.
+        </p>
+
+        <div class="gateway-grid">
+          <!-- Ali Ahmed Gateway -->
+          <div class="gateway-card" onclick="openStudentPortal('ali')">
+            <div>
+              <div class="gateway-name">👦 Ali Ahmed</div>
+              <div class="gateway-grade">Year 5 (G5) &bull; International School</div>
+              <div class="gateway-desc">
+                <strong>Curriculum:</strong> English Grammar (Unit 2: Adverbials of Time, Place, Manner & Fronted Adverbials).
+              </div>
+            </div>
+            <span class="gateway-badge">1 Assessment Available</span>
+          </div>
+
+          <!-- Mostafa Ahmed Gateway -->
+          <div class="gateway-card" onclick="openStudentPortal('mostafa')">
+            <div>
+              <div class="gateway-name">👦 Mostafa Ahmed</div>
+              <div class="gateway-grade">Grade 6 (G6) &bull; International School</div>
+              <div class="gateway-desc">
+                <strong>Curricula:</strong> English Literacy (Fantasy Reading & Report Writing) + Arabic Language (Diagnostic Assessment).
+              </div>
+            </div>
+            <span class="gateway-badge">2 Assessments Available</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 1: DEDICATED STUDENT PORTAL (100% Isolated) -->
+    <div id="screen-student" class="screen">
+      <div class="card">
+        
+        <div class="student-header-bar">
+          <div class="student-info">
+            <h2 id="sp-student-title">Student Assessment Portal</h2>
+            <p id="sp-student-grade">Grade Level &bull; International School</p>
+          </div>
+          <button class="portal-btn" onclick="openParentPortal()" style="margin-right: 6px;">🔐 Parent Portal</button>
+            <button class="portal-btn" onclick="returnToGateway()">
+            « Switch Portal
+          </button>
+        </div>
+
+        <div style="font-size: 0.84rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px;">
+          Select Assessment
+        </div>
+
+        <!-- Available Exams for Current Student Only -->
+        <div id="sp-exams-list">
+          <!-- Injected dynamically -->
+        </div>
+
+        <!-- Assessment Hero Preview -->
+        <div class="assessment-hero">
+          <h3 id="sp-hero-title">Assessment Title</h3>
+          <div class="hero-meta-row">
+            <div>📚 Subject: <span id="sp-hero-subject">English</span></div>
+            <div>⏱️ Duration: <span id="sp-hero-duration">20</span> Mins</div>
+            <div>❓ Questions: <span id="sp-hero-count">10</span></div>
+            <div>🎯 Single Attempt Protected</div>
+          </div>
+        </div>
+
+        <!-- Real-time Status Alert (New, Completed, Pending Approval, Approved) -->
+        <div id="sp-status-container">
+          <!-- Dynamic Status -->
+        </div>
+
+        <!-- Action Button -->
+        <div id="sp-action-container">
+          <!-- Dynamic Action Button -->
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SCREEN 2: ACTIVE ASSESSMENT QUIZ -->
+    <div id="screen-quiz" class="screen">
+      <div class="quiz-sticky-header">
+        <div>
+          <div class="quiz-progress-text" id="quiz-progress-indicator">Question 1 of 10</div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+          </div>
+        </div>
+        <div class="quiz-timer" id="quiz-timer-display">⏱️ 20:00</div>
+      </div>
+
+      <div class="question-card" id="quiz-question-box">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- SCREEN 3: RESULT REPORT -->
+    <div id="screen-result" class="screen">
+      <div class="result-score-banner">
+        <div style="font-size: 0.95rem; opacity: 0.9;" id="res-student-header">Assessment Report</div>
+        <div class="score-circle" id="res-score-display">10 / 10</div>
+        <div class="score-rating" id="res-rating-display">Excellent! 🌟</div>
+        <div style="font-size: 0.84rem; opacity: 0.85; margin-top: 6px;" id="res-time-spent">Time Spent: 8 mins</div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px;">Detailed Pedagogical Review & Corrections</h3>
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 18px;">
+          Review the complete analysis below, including rules, worked examples, and common mistake breakdowns.
+        </p>
+        <div id="review-items-container">
+          <!-- Dynamic reviews -->
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+          <button class="btn-secondary" style="flex: 1;" onclick="openParentPortal()">
+            Parent Dashboard
+          </button>
+          <button class="btn-primary" style="flex: 1;" onclick="returnToStudentPortal()">
+            Back to Assessments
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: PARENT & TEACHER PORTAL (Pure English, Zero Merging) -->
+    <div id="screen-admin" class="screen">
+      <div class="card" style="padding: 22px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800;">👨‍🏫 Parent & Teacher Portal</h2>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">Real-time submissions, retake approvals, and question bank inspection</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <a id="admin-sheet-link" href="#" target="_blank" class="portal-btn" style="color: var(--primary);">
+              📂 Open Google Sheet
+            </a>
+            <button class="portal-btn" onclick="openParentPortal()" style="margin-right: 6px;">🔐 Parent Portal</button>
+            <button class="portal-btn" onclick="returnToGateway()">
+              « Exit Portal
+            </button>
+          </div>
+        </div>
+
+        <!-- Student Selector Tabs (Strict Isolation) -->
+        <div class="parent-student-switcher">
+          <div id="sw-ali" class="switch-student-btn active" onclick="switchAdminStudent('Ali')">
+            👦 Ali Ahmed (Year 5)
+          </div>
+          <div id="sw-mostafa" class="switch-student-btn" onclick="switchAdminStudent('Mostafa')">
+            👦 Mostafa Ahmed (Grade 6)
+          </div>
+        </div>
+
+        <!-- Pending Retake Requests Banner for Selected Student -->
+        <div id="admin-retake-banner" style="display: none; background: var(--purple-bg); border: 1.5px solid #c4b5fd; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px;">
+          <div style="font-weight: 800; font-size: 0.95rem; color: var(--purple); margin-bottom: 10px;">
+            🔔 Pending Retake Requests:
+          </div>
+          <div id="admin-retake-list"></div>
+        </div>
+
+        <!-- KPI Metric Cards for Active Student -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center;">
+            <span style="font-size: 1.6rem; font-weight: 800; color: var(--primary);" id="kpi-student-attempts">0</span>
+            <span style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-top: 2px;">Completed Assessments</span>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center;">
+            <span style="font-size: 1.6rem; font-weight: 800; color: var(--success);" id="kpi-student-latest">--</span>
+            <span style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-top: 2px;">Latest Score Record</span>
+          </div>
+        </div>
+
+        <!-- Parent Sub Navigation Tabs -->
+        <div class="parent-tab-row">
+          <button id="ptab-history" class="parent-tab-btn active" onclick="switchParentView('history')">
+            📊 Submission History
+          </button>
+          <button id="ptab-inspector" class="parent-tab-btn" onclick="switchParentView('inspector')">
+            📖 Exam Bank Inspector
+          </button>
+        </div>
+
+        <!-- VIEW A: SUBMISSION HISTORY -->
+        <div id="pview-history">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+            <button class="portal-btn" onclick="clearDeviceLocks()">
+              🔓 Reset Device Locks
+            </button>
+          </div>
+          <div id="admin-submissions-container">
+            <div style="text-align: center; padding: 30px; color: var(--text-muted);">
+              Loading student submissions...
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW B: EXAM BANK INSPECTOR -->
+        <div id="pview-inspector" style="display: none;">
+          <div class="inspect-filter-row" id="inspect-exam-chips">
+            <!-- Populated based on active student -->
+          </div>
+          <div id="inspect-questions-container">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- GATEKEEPER CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="start-modal">
+    <div class="modal-card">
+      <div class="modal-icon">⚠️</div>
+      <div class="modal-title">Important Confirmation</div>
+      <p class="modal-desc">
+        This assessment is configured for a <strong>SINGLE ATTEMPT</strong>.<br>
+        Once started, the timer begins immediately and cannot be paused or restarted without parent authorization.
+      </p>
+
+      <div class="modal-info-box">
+        <div>👤 <strong>Student:</strong> <span id="m-student-name">Ali Ahmed</span></div>
+        <div>📘 <strong>Assessment:</strong> <span id="m-exam-title">English Grammar</span></div>
+        <div>⏱️ <strong>Duration:</strong> <span id="m-exam-duration">20 Minutes</span></div>
+      </div>
+
+      <div class="modal-btn-row">
+        <button class="btn-secondary" onclick="closeStartModal()">Cancel</button>
+        <button class="btn-primary" style="padding: 12px;" onclick="confirmStartAssessment()">
+          Yes, Start Now 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Strict Isolated Database Architecture (Zero Merging)
+    const STUDENT_DATA = {
+      'ali': {
+        name: 'Ali Ahmed',
+        grade: 'Year 5 (G5)',
+        exams: [
+          {
+            code: 'EX_Y5_ENG_ADV01',
+            title: 'English Grammar: Adverbials of Time, Place & Manner (Unit 2)',
+            subject: 'English Grammar',
+            count: 10,
+            duration: 20
+          }
+        ]
+      },
+      'mostafa': {
+        name: 'Mostafa Ahmed',
+        grade: 'Grade 6 (G6)',
+        exams: [
+          {
+            code: 'EX_Y6_ENG_FANTASY01',
+            title: 'English Literacy: Fantasy Reading "The City That Waited" & Report Writing',
+            subject: 'English Literacy',
+            count: 10,
+            duration: 20
+          },
+          {
+            code: 'EX_Y6_ARB_PRIO01',
+            title: 'Arabic Language: Reading Comprehension, Grammar & Spelling',
+            subject: 'Arabic Language (Diagnostic)',
+            count: 10,
+            duration: 20
+          }
+        ]
+      }
+    };
+
+    let currentStudentKey = 'ali';
+    let activeExamCode = 'EX_Y5_ENG_ADV01';
+    let examData = null;
+    let questions = [];
+    let currentIdx = 0;
+    let studentAnswers = {};
+    let timerInterval = null;
+    let secondsRemaining = 0;
+    let startTime = null;
+    let cachedAdminData = null;
+    let currentSessionKey = "";
+    let activeAdminStudent = 'Ali';
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const studentParam = params.get('student');
+      const adminParam = params.get('admin');
+
+      if (adminParam === '1') {
+        openParentPortal();
+        return;
+      }
+
+      if (studentParam === 'ali') {
+        openStudentPortal('ali');
+      } else if (studentParam === 'mostafa') {
+        openStudentPortal('mostafa');
+      } else {
+        showScreen('screen-gateway');
+      }
+    });
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      const target = document.getElementById(screenId);
+      if (target) target.classList.add('active');
+    }
+
+    function returnToGateway() {
+      showScreen('screen-gateway');
+    }
+
+    /* STUDENT PORTAL LOGIC (100% ISOLATED) */
+    function openStudentPortal(studentKey) {
+      currentStudentKey = studentKey;
+      const student = STUDENT_DATA[studentKey];
+
+      document.getElementById('sp-student-title').innerText = `${student.name}'s Assessment Portal`;
+      document.getElementById('sp-student-grade').innerText = `${student.grade} • International School`;
+
+      // Render exams list for this student ONLY
+      const listEl = document.getElementById('sp-exams-list');
+      listEl.innerHTML = '';
+
+      student.exams.forEach((ex, idx) => {
+        const card = document.createElement('div');
+        card.className = 'exam-item-card' + (idx === 0 ? ' active' : '');
+        card.id = 'exam-item-' + ex.code;
+        card.innerHTML = `
+          <div>
+            <div class="exam-item-title">${ex.title}</div>
+            <div class="exam-item-meta">${ex.subject} &bull; ${ex.count} Questions &bull; ${ex.duration} Mins</div>
+          </div>
+          <span class="exam-item-tag">${student.grade}</span>
+        `;
+        card.onclick = () => {
+          document.querySelectorAll('.exam-item-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          selectStudentExam(ex.code);
+        };
+        listEl.appendChild(card);
+      });
+
+      selectStudentExam(student.exams[0].code);
+      showScreen('screen-student');
+    }
+
+    function selectStudentExam(code) {
+      activeExamCode = code;
+      const student = STUDENT_DATA[currentStudentKey];
+      const exam = student.exams.find(e => e.code === code) || student.exams[0];
+
+      document.getElementById('sp-hero-title').innerText = exam.title;
+      document.getElementById('sp-hero-subject').innerText = exam.subject;
+      document.getElementById('sp-hero-duration').innerText = exam.duration;
+      document.getElementById('sp-hero-count').innerText = exam.count;
+
+      checkExamStatus(student.name, exam.code);
+    }
+
+    function checkExamStatus(studentName, examCode) {
+      const statusBox = document.getElementById('sp-status-container');
+      const actionBox = document.getElementById('sp-action-container');
+
+      // INSTANT CLEANUP: Clear stale data immediately upon click so old scores never flash!
+      statusBox.innerHTML = `
+        <div style="background: #f8fafc; border: 1px dashed var(--border); border-radius: 10px; padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+          <div class="spinner" style="display: inline-block; width: 16px; height: 16px; margin-right: 6px; vertical-align: middle;"></div>
+          Fetching live assessment records...
+        </div>
+      `;
+      actionBox.innerHTML = '';
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(res => {
+            if (res.success) {
+              renderStudentStatus(res, studentName, examCode);
+            }
+          })
+          .getStudentExamStatus(studentName, examCode);
+      } else {
+        if (localLock) {
+          const lData = JSON.parse(localLock);
+          renderStudentStatus({ hasSubmitted: true, lastScore: lData.score, canAttempt: false, retakeStatus: 'NONE' }, studentName, examCode);
+        } else {
+          renderStudentStatus({ hasSubmitted: false, canAttempt: true, retakeStatus: 'NONE' }, studentName, examCode);
+        }
+      }
+    }
+
+    function renderStudentStatus(data, studentName, examCode) {
+      const statusBox = document.getElementById('sp-status-container');
+      const actionBox = document.getElementById('sp-action-container');
+
+      const attempts = data.attempts || [];
+
+      if (!data.hasSubmitted || attempts.length === 0) {
+        // CASE 1: Fresh attempt (0 attempts)
+        statusBox.innerHTML = `
+          <div class="alert-box alert-warning">
+            <span style="font-size: 1.2rem;">⚠️</span>
+            <div>
+              <strong>Assessment Policy:</strong>
+              <div style="font-size: 0.8rem; margin-top: 2px;">
+                You have 2 official attempts for this assessment. Once started, the timer begins immediately.
+              </div>
+            </div>
+          </div>
+        `;
+        actionBox.innerHTML = `
+          <button class="btn-primary" onclick="promptStartConfirmation()">
+            <span>Start Assessment Now</span> &rarr;
+          </button>
+        `;
+        return;
+      }
+
+      // MULTI-ATTEMPT DISPLAY: Render all attempts under each other!
+      let attemptsHtml = `
+        <div style="margin-top: 6px; margin-bottom: 14px;">
+          <div style="font-size: 0.86rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between;">
+            <span>📋 Recorded Attempts History (${attempts.length} Completed):</span>
+            <span style="color: var(--accent); font-weight: 700;">Best Score: ${Math.max(...attempts.map(a => a.score))} / ${attempts[0].total}</span>
+          </div>
+      `;
+
+      attempts.forEach((att, idx) => {
+        const isBest = att.score === Math.max(...attempts.map(a => a.score));
+        let detailsHtml = '';
+        (att.review || []).forEach((r, qIdx) => {
+          const isCorrect = r.isCorrect === true || r.isCorrect === 'true';
+          detailsHtml += `
+            <div style="font-size: 0.8rem; padding: 6px 8px; margin-top: 4px; border-radius: 6px; background: ${isCorrect ? '#f8fafc' : '#fef2f2'}; border-left: 3px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
+              <div><strong>Q${qIdx + 1}:</strong> ${r.questionText}</div>
+              <div style="margin-top: 2px; font-size: 0.78rem;">
+                <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'}; font-weight: 700;">
+                  ${isCorrect ? '✓ ' + (r.studentAnswer || 'Correct') : '✗ Student: ' + (r.studentAnswer || '(None)')}
+                </span>
+                ${!isCorrect ? ` &bull; <span style="color: #047857; font-weight: 700;">Correct: ${r.correctAnswer}</span>` : ''}
+              </div>
+            </div>
+          `;
+        });
+
+        attemptsHtml += `
+          <div style="background: #fff; border: 1.5px solid ${isBest ? '#10b981' : 'var(--border)'}; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow-sm);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+              <div>
+                <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary);">
+                  🎯 Attempt ${att.attemptNumber || (idx + 1)} ${isBest ? '🌟 (Highest Score)' : ''}
+                </div>
+                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
+                  📅 ${att.timestamp} &bull; ⏱️ ${att.duration}
+                </div>
+              </div>
+              <div style="font-size: 0.95rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: ${att.score >= 9 ? '#ecfdf5' : '#fef3c7'}; color: ${att.score >= 9 ? '#047857' : '#b45309'};">
+                ${att.score} / ${att.total} (${att.percentage}) &bull; ${att.rating}
+              </div>
+            </div>
+            ${detailsHtml ? `
+              <details style="margin-top: 8px; font-size: 0.8rem;">
+                <summary style="font-weight: 700; color: var(--accent); cursor: pointer;">🔍 View Questions & Answers Breakdown ↓</summary>
+                <div style="margin-top: 6px;">${detailsHtml}</div>
+              </details>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      attemptsHtml += `</div>`;
+      statusBox.innerHTML = attemptsHtml;
+
+      // ACTION BUTTON BASED ON ATTEMPTS COUNT
+      if (attempts.length >= 2) {
+        actionBox.innerHTML = `
+          <div class="alert-box alert-success" style="justify-content: center; text-align: center; font-weight: 700;">
+            ✅ Maximum Attempts Completed (2 of 2 Attempts Saved Successfully)
+          </div>
+        `;
+      } else {
+        actionBox.innerHTML = `
+          <button class="btn-primary btn-purple" onclick="promptStartConfirmation()">
+            <span>🚀 Start 2nd Attempt Now</span> &rarr;
+          </button>
+        `;
+      }
+    }
+
+    function requestRetakePrompt(studentName, examCode, prevScore) {
+      const reason = prompt('Please enter a brief note for your parent:', 'Requesting a second attempt to review and correct mistakes');
+      if (reason === null) return;
+
+      const payload = {
+        studentName: studentName,
+        examCode: examCode,
+        examTitle: document.getElementById('sp-hero-title').innerText,
+        previousScore: prevScore,
+        reason: reason
+      };
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(res => {
+            alert(res.message);
+            checkExamStatus(studentName, examCode);
+          })
+          .requestExamRetake(payload);
+      } else {
+        alert('Simulation: Retake request logged.');
+        renderStudentStatus({ hasSubmitted: true, lastScore: prevScore, canAttempt: false, retakeStatus: 'PENDING' }, studentName, examCode);
+      }
+    }
+
+    /* GATEKEEPER MODAL */
+    function promptStartConfirmation() {
+      const student = STUDENT_DATA[currentStudentKey];
+      document.getElementById('m-student-name').innerText = `${student.name} (${student.grade})`;
+      document.getElementById('m-exam-title').innerText = document.getElementById('sp-hero-title').innerText;
+      document.getElementById('m-exam-duration').innerText = document.getElementById('sp-hero-duration').innerText + ' Minutes';
+      document.getElementById('start-modal').classList.add('active');
+    }
+
+    function closeStartModal() {
+      document.getElementById('start-modal').classList.remove('active');
+    }
+
+    function confirmStartAssessment() {
+      closeStartModal();
+      showScreen('screen-quiz');
+      loadAndStartQuiz(activeExamCode);
+    }
+
+    /* QUIZ RUNTIME */
+    function loadAndStartQuiz(code) {
+      const box = document.getElementById('quiz-question-box');
+      box.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div>Loading questions...</div>';
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(onQuizLoaded)
+          .withFailureHandler(err => alert('Connection error: ' + err))
+          .getExamData(code);
+      } else {
+        setTimeout(() => {
+          onQuizLoaded({
+            success: true,
+            exam: { title: 'Practice Test', duration: 20 },
+            questions: [
+              { id: 'DEMO', text: 'Sample Assessment Question', type: 'MCQ', options: ['Option A', 'Option B'], points: 1 }
+            ]
+          });
+        }, 300);
+      }
+    }
+
+    function onQuizLoaded(res) {
+      if (!res.success || !res.questions || res.questions.length === 0) {
+        alert('No questions available.');
+        returnToStudentPortal();
+        return;
+      }
+      examData = res.exam;
+      questions = res.questions;
+      currentSessionKey = res.sessionKey || "";
+      currentIdx = 0;
+      studentAnswers = {};
+      startTime = new Date();
+      secondsRemaining = (examData.duration || 20) * 60;
+      startTimer();
+      renderQuizQuestion();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        secondsRemaining--;
+        if (secondsRemaining <= 0) {
+          clearInterval(timerInterval);
+          alert('Time expired. Auto-submitting answers.');
+          submitQuiz();
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(secondsRemaining / 60);
+      const secs = secondsRemaining % 60;
+      document.getElementById('quiz-timer-display').innerText = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    function renderQuizQuestion() {
+      const q = questions[currentIdx];
+      const total = questions.length;
+
+      document.getElementById('quiz-progress-indicator').innerText = `Question ${currentIdx + 1} of ${total}`;
+      document.getElementById('progress-bar-fill').style.width = (((currentIdx + 1) / total) * 100) + '%';
+
+      const box = document.getElementById('quiz-question-box');
+      const isArabic = /[؀-ۿ]/.test(q.text);
+
+      let optsHtml = '';
+      (q.options || []).forEach(opt => {
+        const isSelected = studentAnswers[q.id] === opt;
+        optsHtml += `
+          <div class="option-item ${isSelected ? 'selected' : ''} ${isArabic ? 'rtl-content' : ''}" onclick="selectAnswer('${q.id}', '${opt.replace(/'/g, "\\'")}')">
+            <div class="opt-circle"></div>
+            <span>${opt}</span>
+          </div>
+        `;
+      });
+
+      
+      let passageHtml = '';
+      if (q.passage) {
+        passageHtml = `
+          <div class="passage-box ${isArabic ? 'rtl-content' : ''}">
+            <div class="passage-header">
+              <span>📖</span>
+              <span>${isArabic ? 'نص القراءة (اقرأ الفقرة بعناية للإجابة عن الأسئلة):' : 'Reading Passage (Read carefully before answering):'}</span>
+            </div>
+            <div class="passage-text">${q.passage}</div>
+          </div>
+        `;
+      }
+
+      box.innerHTML = `
+        ${passageHtml}
+        <div class="q-meta-tag">${q.unit || q.lesson || 'Core Curriculum'}</div>
+        <div class="q-text ${isArabic ? 'rtl-content' : ''}">${q.text}</div>
+        <div class="options-grid">${optsHtml}</div>
+        <div class="nav-btn-row">
+          <button class="btn-secondary" onclick="prevQuestion()" ${currentIdx === 0 ? 'disabled' : ''}>
+            &larr; Previous
+          </button>
+          <button class="btn-primary" style="width: auto; padding: 12px 24px;" onclick="${currentIdx === total - 1 ? 'submitQuiz()' : 'nextQuestion()'}">
+            ${currentIdx === total - 1 ? 'Submit Assessment 🎯' : 'Next &rarr;'}
+          </button>
+        </div>
+      `;
+    }
+
+    function selectAnswer(qId, val) {
+      studentAnswers[qId] = val;
+      renderQuizQuestion();
+    }
+
+    function nextQuestion() {
+      if (currentIdx < questions.length - 1) { currentIdx++; renderQuizQuestion(); }
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) { currentIdx--; renderQuizQuestion(); }
+    }
+
+    function submitQuiz() {
+      clearInterval(timerInterval);
+      const total = questions.length;
+      const answered = Object.keys(studentAnswers).length;
+
+      if (answered < total) {
+        if (!confirm(`You answered ${answered} of ${total} questions. Are you sure you want to submit?`)) {
+          startTimer();
+          return;
+        }
+      }
+
+      showScreen('screen-result');
+      const container = document.getElementById('review-items-container');
+      container.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div>Generating report & recording score...</div>';
+
+      const student = STUDENT_DATA[currentStudentKey];
+      const endTime = new Date();
+      const diffSecs = Math.round((endTime - startTime) / 1000);
+      const durationStr = `${Math.floor(diffSecs / 60)} min ${diffSecs % 60} sec`;
+
+      const payload = {
+        studentName: student.name,
+        schoolGroup: student.grade,
+        examCode: activeExamCode,
+        answers: studentAnswers,
+        durationSpent: durationStr,
+        sessionKey: currentSessionKey
+      };
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(onSubmissionSuccess)
+          .withFailureHandler(err => alert('Submission error: ' + err))
+          .submitExamAnswers(payload);
+      } else {
+        setTimeout(() => {
+          onSubmissionSuccess({
+            success: true,
+            earnedScore: 10,
+            totalScore: 10,
+            percentage: 100,
+            rating: 'Excellent! 🌟',
+            review: []
+          });
+        }, 500);
+      }
+    }
+
+    function onSubmissionSuccess(res) {
+      if (!res.success) {
+        alert(res.message);
+        return;
+      }
+      const student = STUDENT_DATA[currentStudentKey];
+      const lockKey = 'lock_' + activeExamCode + '_' + student.name.replace(/\s+/g, '_');
+      localStorage.setItem(lockKey, JSON.stringify({
+        date: new Date().toLocaleDateString(),
+        score: `${res.earnedScore}/${res.totalScore} (${res.percentage}%)`
+      }));
+
+      document.getElementById('res-student-header').innerText = `${student.name} • ${activeExamCode}`;
+      document.getElementById('res-score-display').innerText = `${res.earnedScore} / ${res.totalScore}`;
+      document.getElementById('res-rating-display').innerText = `${res.rating} (${res.percentage}%)`;
+
+      const container = document.getElementById('review-items-container');
+      container.innerHTML = '';
+
+      (res.review || []).forEach((item, idx) => {
+        const isCorrect = item.isCorrect;
+        const card = document.createElement('div');
+        card.className = `review-item ${isCorrect ? 'correct' : 'incorrect'}`;
+        card.innerHTML = `
+          <div class="review-header">
+            <div class="review-q-title">Q${idx + 1}: ${item.questionText}</div>
+            <span class="${isCorrect ? 'badge-correct' : 'badge-incorrect'}">
+              ${isCorrect ? '✓ Correct (+1)' : '✗ Incorrect (0)'}
+            </span>
+          </div>
+          <div style="font-size: 0.88rem; margin-top: 6px;">
+            <div><strong>Student's Answer:</strong> <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'};">${item.studentAnswer || '(No answer)'}</span></div>
+            ${!isCorrect ? `<div><strong>Correct Answer:</strong> <span style="color: var(--success); font-weight: 700;">${item.correctAnswer}</span></div>` : ''}
+          </div>
+          <div class="explanation-box">${item.explanation}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function returnToStudentPortal() {
+      openStudentPortal(currentStudentKey);
+    }
+
+    /* PARENT PORTAL LOGIC (100% ENGLISH, STRICT ISOLATION) */
+    function openParentPortal() {
+      showScreen('screen-admin');
+      loadParentData();
+    }
+
+    function loadParentData() {
+      const container = document.getElementById('admin-submissions-container');
+      container.innerHTML = '<div style="text-align: center; padding: 30px;"><div class="spinner"></div>Loading records from database...</div>';
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(onParentDataLoaded)
+          .withFailureHandler(err => alert('Failed to load parent records: ' + err))
+          .getAdminDashboardData();
+      } else {
+        setTimeout(() => {
+          onParentDataLoaded({
+            success: true,
+            sheetUrl: 'https://docs.google.com/spreadsheets/d/sample',
+            submissions: [],
+            exams: [],
+            allQuestions: [],
+            retakeRequests: []
+          });
+        }, 300);
+      }
+    }
+
+    function onParentDataLoaded(res) {
+      if (!res.success) {
+        alert(res.message);
+        return;
+      }
+      cachedAdminData = res;
+
+      const sheetLink = document.getElementById('admin-sheet-link');
+      if (sheetLink && res.sheetUrl) sheetLink.href = res.sheetUrl;
+
+      switchAdminStudent(activeAdminStudent);
+    }
+
+    function switchAdminStudent(student) {
+      activeAdminStudent = student;
+      document.getElementById('sw-ali').classList.toggle('active', student === 'Ali');
+      document.getElementById('sw-mostafa').classList.toggle('active', student === 'Mostafa');
+
+      if (!cachedAdminData) return;
+
+      const subs = (cachedAdminData.submissions || []).filter(s => s.studentName.toLowerCase().includes(student.toLowerCase()));
+      const retakes = (cachedAdminData.retakeRequests || []).filter(r => r.studentName.toLowerCase().includes(student.toLowerCase()) && r.status === 'PENDING');
+
+      // KPIs
+      document.getElementById('kpi-student-attempts').innerText = subs.length;
+      document.getElementById('kpi-student-latest').innerText = subs.length > 0 ? `${subs[0].earnedScore}/${subs[0].totalScore} (${subs[0].percentage})` : 'No attempts';
+
+      // Retake Banner
+      const retakeBox = document.getElementById('admin-retake-banner');
+      const retakeList = document.getElementById('admin-retake-list');
+      if (retakes.length > 0) {
+        retakeBox.style.display = 'block';
+        retakeList.innerHTML = '';
+        retakes.forEach(r => {
+          const row = document.createElement('div');
+          row.style = 'background: #fff; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;';
+          row.innerHTML = `
+            <div>
+              <div style="font-weight: 700; font-size: 0.9rem;">${r.examTitle}</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Previous: <strong>${r.previousScore}</strong> &bull; Note: "${r.reason}"</div>
+            </div>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn-success-sm" onclick="approveRetake('${r.id}')">Approve</button>
+              <button class="btn-danger-sm" onclick="rejectRetake('${r.id}')">Decline</button>
+            </div>
+          `;
+          retakeList.appendChild(row);
+        });
+      } else {
+        retakeBox.style.display = 'none';
+      }
+
+      // Render Submissions
+      renderStudentSubmissions(subs);
+
+      // Setup Inspector Chips for This Student Only
+      setupInspectorChips(student);
+    }
+
+    function renderStudentSubmissions(subs) {
+      const container = document.getElementById('admin-submissions-container');
+      if (subs.length === 0) {
+        container.innerHTML = '<div style="text-align: center; padding: 30px; color: var(--text-muted);">No submissions recorded for this student yet.</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      subs.forEach((s, sIdx) => {
+        const card = document.createElement('div');
+        card.style = 'background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow-sm);';
+        
+        let detailsHtml = '';
+        if (s.review && s.review.length > 0) {
+          s.review.forEach((r, idx) => {
+            const isCorrect = r.isCorrect === true || r.isCorrect === 'true';
+            detailsHtml += `
+              <div style="font-size: 0.84rem; padding: 10px 12px; margin-top: 8px; border-radius: 8px; background: ${isCorrect ? '#f8fafc' : '#fef2f2'}; border-left: 4px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
+                <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
+                  Q${idx + 1}: ${r.questionText}
+                </div>
+                <div style="font-size: 0.82rem; margin-top: 3px; display: flex; gap: 14px; flex-wrap: wrap;">
+                  <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'}; font-weight: 700;">
+                    ${isCorrect ? '✓ Correct Choice: ' + (r.studentAnswer || '(Completed)') : '✗ Student Chose: ' + (r.studentAnswer || '(None)')}
+                  </span>
+                  ${!isCorrect ? `<span style="color: #047857; font-weight: 700;">✓ Correct Answer: ${r.correctAnswer}</span>` : ''}
+                </div>
+                ${r.explanation ? `<div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 5px; line-height: 1.4;">💡 <strong>Rule Explanation:</strong> ${r.explanation}</div>` : ''}
+              </div>
+            `;
+          });
+        } else {
+          detailsHtml = `<div style="font-size: 0.82rem; color: var(--text-muted); padding: 10px;">Detailed answers logged in linked Google Sheet. Click 'Open Google Sheet' in the top right to inspect.</div>`;
+        }
+
+        const isLatest = sIdx === 0;
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: var(--primary);">${s.examCode}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">⏱️ Duration: <strong>${s.durationSpent}</strong> &bull; 📅 Date: ${s.timestamp}</div>
+            </div>
+            <div style="font-size: 0.95rem; font-weight: 800; padding: 6px 14px; border-radius: 8px; background: #ecfdf5; color: #047857;">
+              ${s.earnedScore} / ${s.totalScore} (${s.percentage}) &bull; ${s.rating}
+            </div>
+          </div>
+          <details ${isLatest ? 'open' : ''} style="margin-top: 8px; border-top: 1px solid #f1f5f9; padding-top: 8px;">
+            <summary style="font-weight: 700; color: var(--accent); cursor: pointer; padding: 6px 0; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>🔍 View Full Question & Answer Breakdown (${(s.review || []).length} Questions)</span>
+              <span style="font-size: 0.75rem; text-decoration: underline; font-weight: 600;">(Click to collapse/expand)</span>
+            </summary>
+            <div style="margin-top: 10px;">${detailsHtml}</div>
+          </details>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function setupInspectorChips(student) {
+      const chipsBox = document.getElementById('inspect-exam-chips');
+      chipsBox.innerHTML = '';
+
+      const studentKey = student.toLowerCase();
+      const exams = STUDENT_DATA[studentKey].exams;
+
+      exams.forEach((ex, idx) => {
+        const chip = document.createElement('button');
+        chip.className = 'inspect-chip' + (idx === 0 ? ' active' : '');
+        chip.innerText = ex.title;
+        chip.onclick = () => {
+          document.querySelectorAll('.inspect-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          renderInspectQuestions(ex.code);
+        };
+        chipsBox.appendChild(chip);
+      });
+
+      renderInspectQuestions(exams[0].code);
+    }
+
+    function renderInspectQuestions(examCode) {
+      const container = document.getElementById('inspect-questions-container');
+      if (!cachedAdminData || !cachedAdminData.allQuestions) {
+        container.innerHTML = '<div style="text-align: center; padding: 20px;">Questions are synced in the linked Google Sheet.</div>';
+        return;
+      }
+
+      const qList = cachedAdminData.allQuestions.filter(q => q.examCode === examCode);
+      container.innerHTML = '';
+
+      qList.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.style = 'background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;';
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--accent); font-weight: 700;">
+            <span>Question ${idx + 1} &bull; ${q.id}</span>
+            <span>${q.lesson || q.unit}</span>
+          </div>
+          ${q.passage ? `<div class="passage-box ${q.passage.match(/[\u0600-\u06FF]/) ? 'rtl-content' : ''}" style="margin: 10px 0; padding: 10px 14px; font-size: 0.86rem;"><div style="font-weight:700; color:var(--primary); margin-bottom:4px;">📖 Reading Passage:</div>${q.passage}</div>` : ''}
+          <div style="font-size: 0.98rem; font-weight: 700; margin: 8px 0; color: var(--text-main);">${q.text}</div>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px;">
+            <strong>Options:</strong> ${q.options.join(' &bull; ')}
+          </div>
+          <div style="display: inline-block; background: #ecfdf5; color: #047857; font-weight: 700; font-size: 0.8rem; padding: 3px 8px; border-radius: 6px;">
+            ✓ Correct: ${q.correctAnswer}
+          </div>
+          <div class="explanation-box" style="margin-top: 8px;">${q.explanation}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function switchParentView(view) {
+      document.getElementById('ptab-history').classList.toggle('active', view === 'history');
+      document.getElementById('ptab-inspector').classList.toggle('active', view === 'inspector');
+      document.getElementById('pview-history').style.display = view === 'history' ? 'block' : 'none';
+      document.getElementById('pview-inspector').style.display = view === 'inspector' ? 'block' : 'none';
+    }
+
+    function approveRetake(id) {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(res => { alert(res.message); loadParentData(); })
+          .approveRetakeRequest(id);
+      } else {
+        alert('Simulation: Approved.');
+        loadParentData();
+      }
+    }
+
+    function rejectRetake(id) {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(res => { alert(res.message); loadParentData(); })
+          .rejectRetakeRequest(id);
+      } else {
+        alert('Simulation: Declined.');
+        loadParentData();
+      }
+    }
+
+    function clearDeviceLocks() {
+      if (confirm('Reset device locks for all completed exams on this browser?')) {
+        Object.keys(localStorage).forEach(k => {
+          if (k.startsWith('lock_')) localStorage.removeItem(k);
+        });
+        alert('Device locks reset successfully.');
+      }
+    }
+  </script>
+</body>
+</html>
