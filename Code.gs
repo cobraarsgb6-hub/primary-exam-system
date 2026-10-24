@@ -8,21 +8,36 @@
 
 function getSpreadsheet() {
   let ss = SpreadsheetApp.getActiveSpreadsheet();
-  if (ss) return ss;
+  const scriptProps = PropertiesService.getScriptProperties();
+  if (ss) {
+    // Always remember the container-bound sheet so the web app writes to the same file.
+    try {
+      if (scriptProps.getProperty('LINKED_SHEET_ID') !== ss.getId()) {
+        scriptProps.setProperty('LINKED_SHEET_ID', ss.getId());
+      }
+    } catch (propError) {
+      Logger.log('Could not persist LINKED_SHEET_ID: ' + propError);
+    }
+    return ss;
+  }
 
-  const props = PropertiesService.getUserProperties();
-  const savedId = props.getProperty('LINKED_SHEET_ID');
+  // Migrate the old per-user property if it exists, then use script properties.
+  const userProps = PropertiesService.getUserProperties();
+  let savedId = scriptProps.getProperty('LINKED_SHEET_ID') || userProps.getProperty('LINKED_SHEET_ID');
   if (savedId) {
     try {
       ss = SpreadsheetApp.openById(savedId);
-      if (ss) return ss;
+      if (ss) {
+        scriptProps.setProperty('LINKED_SHEET_ID', ss.getId());
+        return ss;
+      }
     } catch(e) {
       Logger.log('Could not open sheet with saved ID: ' + e);
     }
   }
 
   ss = SpreadsheetApp.create('Manaret El-Eman - Assessment Platform Database');
-  props.setProperty('LINKED_SHEET_ID', ss.getId());
+  scriptProps.setProperty('LINKED_SHEET_ID', ss.getId());
   setupDatabase(ss);
   return ss;
 }
@@ -57,14 +72,9 @@ function setupDatabase(targetSs) {
 
   if (subSheet.getLastRow() === 0) {
     subSheet.getRange(1, 1, 1, subHeaders[0].length).setValues(subHeaders);
-  } else {
-    // Just ensure header values match
-    subSheet.getRange(1, 1, 1, subHeaders[0].length).setValues(subHeaders);
+    formatHeaderRow(subSheet, '#1e3a8a');
   }
-  formatHeaderRow(subSheet, '#1e3a8a');
-
-  // Auto-seed Ali Ahmed only if missing, preserving Mostafa and all other submissions
-  restoreAllHistoricalSubmissions();
+  // Do NOT seed historical/demo rows automatically. Existing rows are preserved as-is.
   styleSubmissionsSheet(subSheet);
 
   // 2. TAB: Question_Bank (Reference Catalog)
@@ -72,12 +82,13 @@ function setupDatabase(targetSs) {
   if (!qbSheet) {
     qbSheet = ss.insertSheet('Question_Bank');
   }
-  qbSheet.clear();
   const qbHeaders = [
     ['Question ID', 'Grade Level', 'Subject', 'Unit / Topic', 'Question Text', 'Type', 'Options (delimited by |)', 'Correct Answer', 'Points', 'Pedagogical Explanation & Mistake Breakdown', 'Exam Code']
   ];
-  qbSheet.getRange(1, 1, 1, qbHeaders[0].length).setValues(qbHeaders);
-  formatHeaderRow(qbSheet, '#047857');
+  if (qbSheet.getLastRow() === 0) {
+    qbSheet.getRange(1, 1, 1, qbHeaders[0].length).setValues(qbHeaders);
+    formatHeaderRow(qbSheet, '#047857');
+  }
 
   const sampleQuestions = [
     ["Q_Y5_ENG_001", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "What is an adverbial?", "MCQ", "A single word naming a person or thing | A group of words without a verb that adds detail about time, place, or manner | A group of words with a subject and a verb | A word that joins two clauses together", "A group of words without a verb that adds detail about time, place, or manner", 1, "An adverbial is a word or phrase that gives extra details about WHEN, WHERE, or HOW an action happens. It does NOT contain a finite verb.", "EX_Y5_ENG_ADV01"],
@@ -126,7 +137,10 @@ function setupDatabase(targetSs) {
     ["Q_Y6_ARB_014", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "الضمائر (أنا، نحن، هو، هي) وأسماء الإشارة والأسماء الموصولة كلها تعتبر:", "MCQ", "معارف دائماً | نكرات دائماً | حروفاً وليست أسماء | أفعالاً ماضية", "معارف دائماً", 1, "💡 أنواع المعارف الستة:\nالضمائر وأسماء الإشارة والأسماء الموصولة وأسماء الأعلام والمعرف بأل والمضاف إلى معرفة كلها معارف.", "EX_Y6_ARB_PRIO01"],
     ["Q_Y6_ARB_015", "الصف السادس (G6)", "اللغة العربية", "القواعد الإملائية: الهمزة المتوسطة على ألف", "اختر الرسم الإملائي الصحيح للكلمة المكملة: 'لا ........ عن مساعدة المحتاجين.'", "MCQ", "تَتَأَخَّرْ | تتأخر (بدون همزة) | تتءخر | تتآخر", "تَتَأَخَّرْ", 1, "💡 رسم الهمزة المتوسطة:\nتَـتَـأَخَّـر (الهمزة مفتوحة وقبلها تاء مفتوحة ➔ ترسم على ألف).", "EX_Y6_ARB_PRIO01"]
   ];
-  qbSheet.getRange(2, 1, sampleQuestions.length, sampleQuestions[0].length).setValues(sampleQuestions);
+  // Seed sample questions only when the bank is empty (header-only counts as empty).
+  if (qbSheet.getLastRow() <= 1) {
+    qbSheet.getRange(2, 1, sampleQuestions.length, sampleQuestions[0].length).setValues(sampleQuestions);
+  }
   styleQuestionBankSheet(qbSheet);
 
   // 3. TAB: Exams (Active Assessment Registry)
@@ -134,19 +148,22 @@ function setupDatabase(targetSs) {
   if (!exSheet) {
     exSheet = ss.insertSheet('Exams');
   }
-  exSheet.clear();
   const exHeaders = [
     ['Exam Code', 'Exam Title', 'Grade Level', 'Subject', 'Questions', 'Duration (Mins)', 'Status', 'Direct URL', 'Created Date']
   ];
-  exSheet.getRange(1, 1, 1, exHeaders[0].length).setValues(exHeaders);
-  formatHeaderRow(exSheet, '#4338ca');
+  if (exSheet.getLastRow() === 0) {
+    exSheet.getRange(1, 1, 1, exHeaders[0].length).setValues(exHeaders);
+    formatHeaderRow(exSheet, '#4338ca');
+  }
 
   const sampleExams = [
     ['EX_Y5_ENG_ADV01', 'Year 5 Grammar: Adverbials of Time, Place & Manner (Unit 2 Lesson 3)', 'Year 5 (G5)', 'English Grammar', 10, 20, 'ACTIVE', '', new Date()],
     ['EX_Y6_ENG_FANTASY01', 'Grade 6 English: Fantasy Reading "The City That Waited" & Report Writing', 'Grade 6 (G6)', 'English Literacy', 10, 20, 'ACTIVE', '', new Date()],
     ['EX_Y6_ARB_PRIO01', 'Grade 6 Arabic: Reading Comprehension, Grammar & Spelling (Diagnostic)', 'Grade 6 (G6)', 'Arabic Language', 10, 20, 'ACTIVE', '', new Date()]
   ];
-  exSheet.getRange(2, 1, sampleExams.length, sampleExams[0].length).setValues(sampleExams);
+  if (exSheet.getLastRow() <= 1) {
+    exSheet.getRange(2, 1, sampleExams.length, sampleExams[0].length).setValues(sampleExams);
+  }
   styleExamsSheet(exSheet);
 
   // 4. TAB: Retake_Requests (Parent Approval Queue)
@@ -154,13 +171,17 @@ function setupDatabase(targetSs) {
   if (!retakeSheet) {
     retakeSheet = ss.insertSheet('Retake_Requests');
   }
-  retakeSheet.clear();
   const retakeHeaders = [
     ['Request ID', 'Timestamp', 'Student Name', 'Exam Code', 'Exam Title', 'Previous Score', 'Status', 'Reason', 'Decision Timestamp']
   ];
-  retakeSheet.getRange(1, 1, 1, retakeHeaders[0].length).setValues(retakeHeaders);
-  formatHeaderRow(retakeSheet, '#7c3aed');
+  if (retakeSheet.getLastRow() === 0) {
+    retakeSheet.getRange(1, 1, 1, retakeHeaders[0].length).setValues(retakeHeaders);
+    formatHeaderRow(retakeSheet, '#7c3aed');
+  }
   styleRetakeSheet(retakeSheet);
+
+  // 5. TAB: Sessions (server-side attempt sessions; never cleared here)
+  ensureSessionSheet_(ss);
 
   try {
     SpreadsheetApp.getUi().alert('✅ Google Sheet formatted professionally with executive styling!');
@@ -242,6 +263,387 @@ function styleRetakeSheet(sheet) {
   sheet.setColumnWidth(9, 140);
 }
 
+// ============================================================
+// CORE HELPERS: sessions, normalized identity, bank loading
+// ============================================================
+
+const MAX_ATTEMPTS = 2;
+const ATTEMPT_GRACE_SECONDS = 120;
+
+const SESSION_HEADERS = [
+  'Session ID', 'Created At', 'Student Name', 'Exam Code', 'School Grade',
+  'Started At', 'Expires At', 'Status', 'Questions JSON', 'Result JSON'
+];
+
+const SESSION_COLS = {
+  id: 0, created: 1, name: 2, exam: 3, grade: 4,
+  started: 5, expires: 6, status: 7, questions: 8, result: 9
+};
+
+function normalizeName_(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+function normalizeExam_(value) {
+  return String(value || '').trim().toUpperCase();
+}
+
+function normalizeAnswer_(value) {
+  return String(value || '')
+    .replace(/\u0640/g, '')
+    .replace(/[\u064B-\u0652]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function nowIso_() {
+  return new Date().toISOString();
+}
+
+function valueToMillis_(value) {
+  if (value instanceof Date) return value.getTime();
+  if (typeof value === 'number') return value;
+  const parsed = Date.parse(String(value || ''));
+  return isNaN(parsed) ? 0 : parsed;
+}
+
+function ensureSessionSheet_(ss) {
+  const spreadsheet = ss || getSpreadsheet();
+  let sheet = spreadsheet.getSheetByName('Sessions');
+  if (!sheet) sheet = spreadsheet.insertSheet('Sessions');
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, SESSION_HEADERS.length).setValues([SESSION_HEADERS]);
+    formatHeaderRow(sheet, '#0f766e');
+    sheet.setColumnWidth(1, 220);
+    sheet.setColumnWidth(3, 150);
+    sheet.setColumnWidth(4, 150);
+    sheet.setColumnWidth(8, 90);
+    sheet.setColumnWidth(9, 460);
+    sheet.setColumnWidth(10, 260);
+  }
+  return sheet;
+}
+
+function getSessionSheet_() {
+  return ensureSessionSheet_(getSpreadsheet());
+}
+
+function getSheetHeaderMap_(sheet) {
+  const lastColumn = Math.max(sheet.getLastColumn(), 1);
+  const headers = sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
+  const map = {};
+  headers.forEach((header, index) => {
+    map[String(header || '').trim().toLowerCase()] = index;
+  });
+  return map;
+}
+
+function headerIndex_(map, name, fallback) {
+  const index = map[String(name).trim().toLowerCase()];
+  return (typeof index === 'number') ? index : fallback;
+}
+
+/**
+ * Exact, normalized attempt state. No substring matching: "Khalid" must never
+ * match "Ali".
+ */
+function getAttemptState_(studentName, examCode) {
+  const ss = getSpreadsheet();
+  const subSheet = ss.getSheetByName('Submissions');
+  const retakeSheet = ss.getSheetByName('Retake_Requests');
+  const targetName = normalizeName_(studentName);
+  const targetExam = normalizeExam_(examCode);
+  const attempts = [];
+
+  if (subSheet && subSheet.getLastRow() > 1) {
+    const data = subSheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      const rowName = normalizeName_(data[i][1]);
+      const rowExam = normalizeExam_(data[i][3]);
+      if (rowName !== targetName || rowExam !== targetExam) continue;
+
+      let review = [];
+      try { review = JSON.parse(data[i][10] || '[]'); } catch (e) { review = []; }
+
+      const rawDate = data[i][0];
+      const dateStr = rawDate instanceof Date
+        ? Utilities.formatDate(rawDate, Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm')
+        : String(rawDate || '');
+
+      attempts.push({
+        attemptNumber: attempts.length + 1,
+        timestamp: dateStr,
+        score: Number(data[i][4]) || 0,
+        total: Number(data[i][5]) || 0,
+        percentage: formatPercentValue(data[i][6]),
+        rating: String(data[i][7] || ''),
+        duration: String(data[i][8] || ''),
+        summary: String(data[i][9] || ''),
+        review: review
+      });
+    }
+  }
+
+  let retakeStatus = 'NONE';
+  let requestId = '';
+  if (retakeSheet && retakeSheet.getLastRow() > 1) {
+    const rData = retakeSheet.getDataRange().getValues();
+    for (let i = rData.length - 1; i >= 1; i--) {
+      if (normalizeName_(rData[i][2]) !== targetName) continue;
+      if (normalizeExam_(rData[i][3]) !== targetExam) continue;
+      retakeStatus = String(rData[i][6] || 'NONE').trim().toUpperCase();
+      requestId = String(rData[i][0] || '').trim();
+      break;
+    }
+  }
+
+  const latestAttempt = attempts.length ? attempts[attempts.length - 1] : null;
+  const lastScore = latestAttempt
+    ? `${latestAttempt.score} / ${latestAttempt.total} (${latestAttempt.percentage})`
+    : '';
+  const canAttempt = attempts.length < MAX_ATTEMPTS || retakeStatus === 'APPROVED';
+
+  return {
+    hasSubmitted: attempts.length > 0,
+    attemptsCount: attempts.length,
+    attempts: attempts,
+    lastScore: lastScore,
+    lastDate: latestAttempt ? latestAttempt.timestamp : '',
+    canAttempt: canAttempt,
+    retakeStatus: retakeStatus,
+    requestId: requestId,
+    maxAttempts: MAX_ATTEMPTS
+  };
+}
+
+function findActiveSession_(studentName, examCode) {
+  const sheet = getSessionSheet_();
+  if (sheet.getLastRow() <= 1) return null;
+
+  const data = sheet.getDataRange().getValues();
+  const targetName = normalizeName_(studentName);
+  const targetExam = normalizeExam_(examCode);
+  const now = Date.now();
+
+  for (let i = data.length - 1; i >= 1; i--) {
+    const row = data[i];
+    if (normalizeName_(row[SESSION_COLS.name]) !== targetName) continue;
+    if (normalizeExam_(row[SESSION_COLS.exam]) !== targetExam) continue;
+    if (String(row[SESSION_COLS.status] || '').trim().toUpperCase() !== 'ACTIVE') continue;
+
+    const expires = valueToMillis_(row[SESSION_COLS.expires]);
+    if (!expires || expires <= now) {
+      sheet.getRange(i + 1, SESSION_COLS.status + 1).setValue('EXPIRED');
+      continue;
+    }
+
+    let questions = [];
+    try { questions = JSON.parse(row[SESSION_COLS.questions] || '[]'); } catch (e) { questions = []; }
+    if (!Array.isArray(questions) || questions.length === 0) {
+      sheet.getRange(i + 1, SESSION_COLS.status + 1).setValue('INVALID');
+      continue;
+    }
+
+    return {
+      id: String(row[SESSION_COLS.id] || ''),
+      rowIndex: i + 1,
+      studentName: String(row[SESSION_COLS.name] || ''),
+      examCode: String(row[SESSION_COLS.exam] || ''),
+      grade: String(row[SESSION_COLS.grade] || ''),
+      startedAt: row[SESSION_COLS.started],
+      expiresAt: row[SESSION_COLS.expires],
+      questions: questions
+    };
+  }
+  return null;
+}
+
+function findSessionById_(sessionId) {
+  const sheet = getSessionSheet_();
+  if (sheet.getLastRow() <= 1) return null;
+
+  const data = sheet.getDataRange().getValues();
+  const target = String(sessionId || '').trim();
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][SESSION_COLS.id] || '').trim() !== target) continue;
+
+    let questions = [];
+    let result = null;
+    try { questions = JSON.parse(data[i][SESSION_COLS.questions] || '[]'); } catch (e) { questions = []; }
+    try { result = JSON.parse(data[i][SESSION_COLS.result] || 'null'); } catch (e) { result = null; }
+
+    return {
+      rowIndex: i + 1,
+      id: String(data[i][SESSION_COLS.id] || ''),
+      studentName: String(data[i][SESSION_COLS.name] || ''),
+      examCode: String(data[i][SESSION_COLS.exam] || ''),
+      grade: String(data[i][SESSION_COLS.grade] || ''),
+      startedAt: data[i][SESSION_COLS.started],
+      expiresAt: data[i][SESSION_COLS.expires],
+      status: String(data[i][SESSION_COLS.status] || '').trim().toUpperCase(),
+      questions: questions,
+      result: result
+    };
+  }
+  return null;
+}
+
+function createSession_(studentName, exam, questions) {
+  const sheet = getSessionSheet_();
+  const id = 'SESS_' + Utilities.getUuid().replace(/-/g, '').slice(0, 20).toUpperCase();
+  const started = new Date();
+  const durationMinutes = Math.max(1, Number(exam.duration) || 20);
+  const expires = new Date(started.getTime() + durationMinutes * 60 * 1000);
+
+  sheet.appendRow([
+    id,
+    started.toISOString(),
+    studentName,
+    exam.code,
+    exam.grade || '',
+    started.toISOString(),
+    expires.toISOString(),
+    'ACTIVE',
+    JSON.stringify(questions),
+    ''
+  ]);
+
+  return {
+    id: id,
+    rowIndex: sheet.getLastRow(),
+    studentName: studentName,
+    examCode: exam.code,
+    grade: exam.grade || '',
+    startedAt: started,
+    expiresAt: expires,
+    questions: questions
+  };
+}
+
+function publicQuestions_(questions) {
+  return questions.map(q => ({
+    id: q.id,
+    grade: q.grade,
+    subject: q.subject,
+    unit: q.unit,
+    text: q.text,
+    type: q.type,
+    options: q.options,
+    points: q.points,
+    passage: q.passage || ''
+  }));
+}
+
+function getPassageForQuestion_(examCode, unit, text) {
+  const haystack = (String(unit || '') + ' ' + String(text || '')).toLowerCase();
+
+  if (examCode === 'EX_Y6_ENG_FANTASY01') {
+    if (haystack.indexOf('report') !== -1 ||
+        haystack.indexOf('non-chronological') !== -1 ||
+        haystack.indexOf('sea turtle') !== -1) {
+      return REPORT_PASSAGES_POOL[0].text;
+    }
+    return FANTASY_PASSAGES_POOL[0].text;
+  }
+
+  if (examCode === 'EX_Y6_ARB_PRIO01') {
+    if (/قراءة|النص|الفقرة|السياق|مفردات|مضاد|فكرة/.test(haystack)) {
+      return ARABIC_PASSAGES_POOL[0].text;
+    }
+  }
+
+  return '';
+}
+
+function loadBankQuestions_(examCode) {
+  const ss = getSpreadsheet();
+  const sheet = ss.getSheetByName('Question_Bank');
+  if (!sheet || sheet.getLastRow() < 2) return [];
+
+  const map = getSheetHeaderMap_(sheet);
+  const data = sheet.getDataRange().getValues();
+  const targetExam = normalizeExam_(examCode);
+  const questions = [];
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const rowExam = normalizeExam_(row[headerIndex_(map, 'Exam Code', 10)]);
+    if (rowExam !== targetExam) continue;
+
+    const text = String(row[headerIndex_(map, 'Question Text', 4)] || '').trim();
+    const answer = String(row[headerIndex_(map, 'Correct Answer', 7)] || '').trim();
+    if (!text || !answer) continue;
+
+    const type = String(row[headerIndex_(map, 'Type', 5)] || 'MCQ').trim().toUpperCase();
+    let options = String(row[headerIndex_(map, 'Options (delimited by |)', 6)] || '')
+      .split('|')
+      .map(option => String(option || '').trim())
+      .filter(option => option.length > 0);
+
+    if (type === 'TRUE_FALSE' && options.length < 2) options = ['True', 'False'];
+    if (options.length < 2) continue;
+
+    // Skip malformed bank rows instead of silently scoring them as wrong.
+    const answerMatchesOption = options.some(option => normalizeAnswer_(option) === normalizeAnswer_(answer));
+    if (!answerMatchesOption) {
+      Logger.log('Skipping malformed bank question ' + String(row[0] || ('row ' + (i + 1))) + ': answer not in options');
+      continue;
+    }
+
+    const unit = String(row[headerIndex_(map, 'Unit / Topic', 3)] || '');
+    const passageIndex = map['passage'];
+    const passage = (typeof passageIndex === 'number')
+      ? String(row[passageIndex] || '')
+      : getPassageForQuestion_(targetExam, unit, text);
+
+    questions.push({
+      id: String(row[headerIndex_(map, 'Question ID', 0)] || ('BANK_' + i)),
+      grade: String(row[headerIndex_(map, 'Grade Level', 1)] || ''),
+      subject: String(row[headerIndex_(map, 'Subject', 2)] || ''),
+      unit: unit,
+      text: text,
+      type: type,
+      options: options,
+      correctAnswer: answer,
+      points: Number(row[headerIndex_(map, 'Points', 8)]) || 1,
+      explanation: String(row[headerIndex_(map, 'Pedagogical Explanation & Mistake Breakdown', 9)] || ''),
+      passage: passage
+    });
+  }
+
+  return questions;
+}
+
+function buildExamQuestions_(examCode) {
+  const exam = getExamInfo(examCode);
+  if (!exam) throw new Error('EXAM_NOT_FOUND');
+
+  let questions = loadBankQuestions_(exam.code);
+  if (!questions.length) {
+    if (exam.code === 'EX_Y5_ENG_ADV01') {
+      questions = generateAliAdverbialExam();
+    } else if (exam.code === 'EX_Y6_ENG_FANTASY01') {
+      questions = generateMostafaEnglishExam();
+    } else if (exam.code === 'EX_Y6_ARB_PRIO01') {
+      questions = generateMostafaArabicExam();
+    }
+  }
+
+  if (!questions.length) throw new Error('NO_QUESTIONS');
+
+  const requestedCount = Math.max(1, Number(exam.questionsCount) || 10);
+  questions = shuffleArray(questions).slice(0, Math.min(requestedCount, questions.length));
+  questions = questions.map(question => {
+    const copy = Object.assign({}, question);
+    if (copy.options && copy.options.length > 1) copy.options = shuffleArray(copy.options);
+    return copy;
+  });
+
+  exam.questionsCount = questions.length;
+  return { exam: exam, questions: questions };
+}
+
 function doGet(e) {
   const examCode = (e && e.parameter && e.parameter.exam) ? e.parameter.exam : '';
   const student = (e && e.parameter && e.parameter.student) ? e.parameter.student.toLowerCase() : '';
@@ -254,7 +656,7 @@ function doGet(e) {
   
   return template.evaluate()
     .setTitle('Manaret El-Eman Assessment Portal')
-    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no')
+    .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
@@ -990,146 +1392,248 @@ function generateMostafaArabicExam() {
 
 
 function getExamInfo(examCode) {
+  const code = normalizeExam_(examCode);
+  if (!code) return null;
+
   const catalog = {
     'EX_Y5_ENG_ADV01': { code: 'EX_Y5_ENG_ADV01', title: 'English Grammar: Adverbials of Time, Place & Manner (Unit 2)', grade: 'Year 5 (G5)', subject: 'English Grammar', questionsCount: 10, duration: 20 },
     'EX_Y6_ENG_FANTASY01': { code: 'EX_Y6_ENG_FANTASY01', title: 'English Literacy: Fantasy Reading "The City That Waited" & Report Writing', grade: 'Grade 6 (G6)', subject: 'English Literacy', questionsCount: 10, duration: 20 },
     'EX_Y6_ARB_PRIO01': { code: 'EX_Y6_ARB_PRIO01', title: 'Arabic Language: Reading Comprehension, Grammar & Spelling (Diagnostic)', grade: 'Grade 6 (G6)', subject: 'Arabic Language (Diagnostic)', questionsCount: 10, duration: 20 }
   };
-  return catalog[examCode] || catalog['EX_Y5_ENG_ADV01'];
+  const fallback = catalog[code] || null;
+
+  const ss = getSpreadsheet();
+  const sheet = ss.getSheetByName('Exams');
+  if (sheet && sheet.getLastRow() > 1) {
+    const map = getSheetHeaderMap_(sheet);
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      const rowCode = normalizeExam_(rowValue_(data[i], map, 'Exam Code', 0));
+      if (rowCode !== code) continue;
+
+      const status = String(rowValue_(data[i], map, 'Status', 6) || 'ACTIVE').trim().toUpperCase();
+      const activeStatuses = ['ACTIVE', 'ENABLED', 'نشط', 'مفعل'];
+      if (activeStatuses.indexOf(status) === -1) return null;
+
+      return {
+        code: code,
+        title: String(rowValue_(data[i], map, 'Exam Title', 1) || (fallback ? fallback.title : '') || code),
+        grade: String(rowValue_(data[i], map, 'Grade Level', 2) || (fallback ? fallback.grade : '')),
+        subject: String(rowValue_(data[i], map, 'Subject', 3) || (fallback ? fallback.subject : '')),
+        questionsCount: Number(rowValue_(data[i], map, 'Questions', 4)) || 10,
+        duration: Number(rowValue_(data[i], map, 'Duration (Mins)', 5)) || 20,
+        status: status
+      };
+    }
+  }
+
+  return fallback;
+}
+
+function rowValue_(row, map, header, fallbackIndex) {
+  const index = headerIndex_(map, header, fallbackIndex);
+  return row[index];
 }
 
 /**
- * Procedurally generates 10 brand-new questions on EVERY ATTEMPT,
- * with reading passages dynamically attached!
+ * Loads questions from Question_Bank (bank-first), starts/reuses a server-side
+ * session, and returns only the public question fields to the browser.
  */
-function getExamData(examCode) {
-  const exam = getExamInfo(examCode);
-  let questions = [];
-
-  if (examCode === 'EX_Y5_ENG_ADV01') {
-    questions = generateAliAdverbialExam();
-  } else if (examCode === 'EX_Y6_ENG_FANTASY01') {
-    questions = generateMostafaEnglishExam();
-  } else if (examCode === 'EX_Y6_ARB_PRIO01') {
-    questions = generateMostafaArabicExam();
-  } else {
-    questions = generateAliAdverbialExam();
-  }
-
-  // 1. Shuffle question order
-  questions = shuffleArray(questions);
-
-  // 2. Shuffle options inside each question
-  for (let i = 0; i < questions.length; i++) {
-    if (questions[i].options && questions[i].options.length > 1) {
-      questions[i].options = shuffleArray(questions[i].options);
-    }
-  }
-
-  // 3. Store answer key in CacheService for 3 hours
-  const sessionKey = 'sess_' + examCode + '_' + Utilities.getUuid().slice(0, 10);
-  const answerKey = {};
-  questions.forEach(q => {
-    answerKey[q.id] = {
-      correctAnswer: q.correctAnswer,
-      points: q.points || 1,
-      explanation: q.explanation,
-      text: q.text
-    };
-  });
-
+function getExamData(examCode, studentName) {
   try {
-    CacheService.getScriptCache().put(sessionKey, JSON.stringify(answerKey), 10800);
-  } catch(e) {
-    Logger.log('CacheService put error: ' + e);
-  }
+    const exam = getExamInfo(examCode);
+    if (!exam) {
+      return { success: false, code: 'EXAM_NOT_FOUND', message: 'هذا الامتحان غير موجود أو غير مفعّل.' };
+    }
 
-  return {
-    success: true,
-    sessionKey: sessionKey,
-    exam: exam,
-    questions: questions.map(q => ({
-      id: q.id,
-      grade: q.grade,
-      subject: q.subject,
-      unit: q.unit,
-      text: q.text,
-      type: q.type,
-      options: q.options,
-      points: q.points,
-      passage: q.passage || ''
-    }))
-  };
+    const name = String(studentName || '').trim();
+    if (!name) {
+      return { success: false, code: 'STUDENT_REQUIRED', message: 'اسم الطالب مطلوب لبدء الامتحان.' };
+    }
+
+    // If an attempt is already running, resume it instead of generating new questions.
+    let active = findActiveSession_(name, exam.code);
+    if (active) {
+      return {
+        success: true,
+        sessionKey: active.id,
+        sessionId: active.id,
+        exam: Object.assign({}, exam, { questionsCount: active.questions.length }),
+        questions: publicQuestions_(active.questions),
+        remainingSeconds: Math.max(0, Math.floor((valueToMillis_(active.expiresAt) - Date.now()) / 1000)),
+        attemptNumber: getAttemptState_(name, exam.code).attemptsCount + 1,
+        maxAttempts: MAX_ATTEMPTS,
+        resumed: true
+      };
+    }
+
+    const state = getAttemptState_(name, exam.code);
+    if (!state.canAttempt) {
+      return {
+        success: false,
+        code: 'MAX_ATTEMPTS',
+        message: 'تم استنفاد المحاولات المتاحة. اطلب من ولي الأمر الموافقة على محاولة إضافية.',
+        maxAttempts: state.maxAttempts,
+        retakeStatus: state.retakeStatus
+      };
+    }
+
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(30000)) {
+      return { success: false, code: 'BUSY', message: 'الخادم مشغول، حاول مرة أخرى بعد لحظات.' };
+    }
+
+    try {
+      // Re-check inside the lock to avoid creating two sessions from a double click.
+      active = findActiveSession_(name, exam.code);
+      if (active) {
+        return {
+          success: true,
+          sessionKey: active.id,
+          sessionId: active.id,
+          exam: Object.assign({}, exam, { questionsCount: active.questions.length }),
+          questions: publicQuestions_(active.questions),
+          remainingSeconds: Math.max(0, Math.floor((valueToMillis_(active.expiresAt) - Date.now()) / 1000)),
+          attemptNumber: state.attemptsCount + 1,
+          maxAttempts: MAX_ATTEMPTS,
+          resumed: true
+        };
+      }
+
+      const built = buildExamQuestions_(exam.code);
+      const session = createSession_(name, built.exam, built.questions);
+
+      return {
+        success: true,
+        sessionKey: session.id,
+        sessionId: session.id,
+        exam: built.exam,
+        questions: publicQuestions_(session.questions),
+        remainingSeconds: Math.max(0, Math.floor((valueToMillis_(session.expiresAt) - Date.now()) / 1000)),
+        attemptNumber: state.attemptsCount + 1,
+        maxAttempts: MAX_ATTEMPTS,
+        resumed: false
+      };
+    } finally {
+      lock.releaseLock();
+    }
+  } catch (err) {
+    Logger.log('getExamData error: ' + err);
+    return {
+      success: false,
+      code: 'SERVER_ERROR',
+      message: 'تعذر تحميل الامتحان: ' + err.message
+    };
+  }
 }
 
 function submitExamAnswers(payload) {
+  const lock = LockService.getScriptLock();
   try {
-    const ss = getSpreadsheet();
-    let subSheet = ss.getSheetByName('Submissions');
-    if (!subSheet) {
-      setupDatabase(ss);
-      subSheet = ss.getSheetByName('Submissions');
+    if (!lock.tryLock(30000)) {
+      return { success: false, code: 'BUSY', message: 'الخادم مشغول، أعد المحاولة بعد لحظات.' };
     }
-    const retakeSheet = ss.getSheetByName('Retake_Requests');
 
     const data = (typeof payload === 'string') ? JSON.parse(payload) : payload;
-    const { studentName, schoolGroup, examCode, answers, durationSpent, sessionKey } = data;
-
-    let answerKey = {};
-    if (sessionKey) {
-      const cached = CacheService.getScriptCache().get(sessionKey);
-      if (cached) {
-        answerKey = JSON.parse(cached);
-      }
+    const sessionId = String(data.sessionKey || data.sessionId || '').trim();
+    if (!sessionId) {
+      return { success: false, code: 'SESSION_REQUIRED', message: 'جلسة الامتحان غير موجودة. أعد تحميل الامتحان.' };
     }
 
+    const session = findSessionById_(sessionId);
+    if (!session) {
+      return { success: false, code: 'SESSION_NOT_FOUND', message: 'جلسة الامتحان غير موجودة أو انتهت. أعد تحميل الامتحان.' };
+    }
+
+    // Idempotency: a repeated click returns the saved result instead of a second row.
+    if (session.status === 'COMPLETED') {
+      if (session.result) return Object.assign({ success: true, alreadySubmitted: true }, session.result);
+      return { success: false, code: 'ALREADY_SUBMITTED', message: 'تم تسليم هذا الامتحان بالفعل.' };
+    }
+
+    if (session.status !== 'ACTIVE') {
+      return { success: false, code: 'SESSION_CLOSED', message: 'هذه الجلسة لم تعد صالحة. ابدأ محاولة جديدة.' };
+    }
+
+    if (normalizeName_(data.studentName) !== normalizeName_(session.studentName)) {
+      return { success: false, code: 'STUDENT_MISMATCH', message: 'اسم الطالب لا يطابق جلسة الامتحان.' };
+    }
+    if (normalizeExam_(data.examCode) !== normalizeExam_(session.examCode)) {
+      return { success: false, code: 'EXAM_MISMATCH', message: 'كود الامتحان لا يطابق جلسة الامتحان.' };
+    }
+
+    const now = Date.now();
+    const startedMillis = valueToMillis_(session.startedAt);
+    const expiresMillis = valueToMillis_(session.expiresAt);
+    if (expiresMillis && now > expiresMillis + (ATTEMPT_GRACE_SECONDS * 1000)) {
+      const sheet = getSessionSheet_();
+      sheet.getRange(session.rowIndex, SESSION_COLS.status + 1).setValue('EXPIRED');
+      return { success: false, code: 'TIME_EXPIRED', message: 'انتهى وقت الامتحان. اطلب من ولي الأمر محاولة جديدة.' };
+    }
+
+    const questions = Array.isArray(session.questions) ? session.questions : [];
+    if (!questions.length) {
+      return { success: false, code: 'EMPTY_SESSION', message: 'جلسة الامتحان لا تحتوي على أسئلة.' };
+    }
+
+    const answers = (data.answers && typeof data.answers === 'object') ? data.answers : {};
     let earnedScore = 0;
     let totalScore = 0;
     const reviewDetails = [];
 
-    for (const qId in answers) {
-      const studentAns = String(answers[qId] || '').trim();
-      const meta = answerKey[qId] || { correctAnswer: '', points: 1, explanation: '', text: '' };
-      
-      const isCorrect = (studentAns.toLowerCase() === meta.correctAnswer.toLowerCase());
-      if (isCorrect) {
-        earnedScore += meta.points;
-      }
-      totalScore += meta.points;
+    questions.forEach(question => {
+      const points = Number(question.points) || 1;
+      totalScore += points;
+
+      const hasAnswer = Object.prototype.hasOwnProperty.call(answers, question.id);
+      const studentAnswer = hasAnswer ? String(answers[question.id] == null ? '' : answers[question.id]).trim() : '';
+      const isCorrect = studentAnswer !== '' &&
+        normalizeAnswer_(studentAnswer) === normalizeAnswer_(question.correctAnswer);
+
+      if (isCorrect) earnedScore += points;
 
       reviewDetails.push({
-        questionId: qId,
-        questionText: meta.text,
-        studentAnswer: studentAns,
-        correctAnswer: meta.correctAnswer,
+        questionId: question.id,
+        questionText: question.text,
+        studentAnswer: studentAnswer,
+        correctAnswer: question.correctAnswer,
         isCorrect: isCorrect,
-        pointsAwarded: isCorrect ? meta.points : 0,
-        maxPoints: meta.points,
-        explanation: meta.explanation
+        pointsAwarded: isCorrect ? points : 0,
+        maxPoints: points,
+        explanation: question.explanation || ''
       });
-    }
+    });
 
     const percentage = totalScore > 0 ? Math.round((earnedScore / totalScore) * 100) : 0;
-    
+
     let rating = 'Needs Practice 🌱';
     if (percentage >= 85) rating = 'Excellent 🌟';
     else if (percentage >= 75) rating = 'Very Good 👏';
     else if (percentage >= 65) rating = 'Good 👍';
     else if (percentage >= 50) rating = 'Satisfactory 📚';
 
+    const durationSeconds = Math.max(0, Math.round((now - (startedMillis || now)) / 1000));
+    const durationStr = `${Math.floor(durationSeconds / 60)} min ${durationSeconds % 60} sec`;
     const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
     const summaryStr = `${earnedScore}/${totalScore} Correct (${percentage}%)`;
 
+    const ss = getSpreadsheet();
+    let subSheet = ss.getSheetByName('Submissions');
+    if (!subSheet) {
+      setupDatabase(ss);
+      subSheet = ss.getSheetByName('Submissions');
+    }
+
     subSheet.appendRow([
       timestamp,
-      studentName,
-      schoolGroup || 'General',
-      examCode,
+      session.studentName,
+      session.grade || data.schoolGroup || 'General',
+      session.examCode,
       earnedScore,
       totalScore,
       percentage + '%',
       rating,
-      durationSpent || 'Not specified',
+      durationStr,
       summaryStr,
       JSON.stringify(reviewDetails)
     ]);
@@ -1138,29 +1642,46 @@ function submitExamAnswers(payload) {
     subSheet.getRange(lastRow, 1, 1, 10).setVerticalAlignment('middle').setFontSize(10);
     subSheet.getRange(lastRow, 5, 1, 3).setHorizontalAlignment('center');
 
+    const result = {
+      earnedScore: earnedScore,
+      totalScore: totalScore,
+      percentage: percentage,
+      rating: rating,
+      durationSpent: durationStr,
+      review: reviewDetails,
+      submittedAt: timestamp,
+      sessionId: session.id
+    };
+
+    // Persist the final result on the session before releasing the lock.
+    const sessionSheet = getSessionSheet_();
+    sessionSheet.getRange(session.rowIndex, SESSION_COLS.status + 1).setValue('COMPLETED');
+    sessionSheet.getRange(session.rowIndex, SESSION_COLS.result + 1).setValue(JSON.stringify(result));
+
+    // Consume only an approved retake for this exact student/exam.
+    const retakeSheet = ss.getSheetByName('Retake_Requests');
     if (retakeSheet && retakeSheet.getLastRow() > 1) {
       const rData = retakeSheet.getDataRange().getValues();
       for (let i = 1; i < rData.length; i++) {
-        if (rData[i][2] === studentName && rData[i][3] === examCode && rData[i][6] === 'APPROVED') {
+        if (normalizeName_(rData[i][2]) === normalizeName_(session.studentName) &&
+            normalizeExam_(rData[i][3]) === normalizeExam_(session.examCode) &&
+            String(rData[i][6] || '').trim().toUpperCase() === 'APPROVED') {
           retakeSheet.getRange(i + 1, 7).setValue('CONSUMED');
         }
       }
     }
 
-    return {
-      success: true,
-      earnedScore: earnedScore,
-      totalScore: totalScore,
-      percentage: percentage,
-      rating: rating,
-      review: reviewDetails
-    };
+    return Object.assign({ success: true, alreadySubmitted: false }, result);
 
   } catch (err) {
+    Logger.log('submitExamAnswers error: ' + err);
     return {
       success: false,
-      message: 'Failed to record student answers: ' + err.toString()
+      code: 'SERVER_ERROR',
+      message: 'تعذر تسجيل الإجابات: ' + err.message
     };
+  } finally {
+    try { lock.releaseLock(); } catch (e) { /* not held */ }
   }
 }
 
@@ -1329,116 +1850,58 @@ function seedAliSubmissionRow(subSheet) {
 
 function getStudentExamStatus(studentName, examCode) {
   try {
-    const ss = getSpreadsheet();
-    let subSheet = ss.getSheetByName('Submissions');
-    const retakeSheet = ss.getSheetByName('Retake_Requests');
-
-    if (!subSheet) {
-      setupDatabase(ss);
-      subSheet = ss.getSheetByName('Submissions');
+    const name = String(studentName || '').trim();
+    const code = normalizeExam_(examCode);
+    if (!name || !code) {
+      return { success: false, message: 'اسم الطالب وكود الامتحان مطلوبان.' };
     }
 
-    // Auto-seed historical submissions
-    restoreAllHistoricalSubmissions();
-
-    let hasSubmitted = false;
-    const attempts = [];
-
-    const targetName = String(studentName || '').trim().toLowerCase();
-    const targetExam = String(examCode || '').trim().toUpperCase();
-
-    if (subSheet && subSheet.getLastRow() > 1) {
-      const sData = subSheet.getDataRange().getValues();
-      for (let i = 1; i < sData.length; i++) {
-        const rowName = String(sData[i][1] || '').trim().toLowerCase();
-        const rowExam = String(sData[i][3] || '').trim().toUpperCase();
-
-        const isStudentMatch = (rowName === targetName) || 
-          (targetName.includes('ali') && (rowName.includes('ali') || rowName.includes('علي'))) ||
-          (targetName.includes('mostafa') && (rowName.includes('mostafa') || rowName.includes('مصطفى')));
-          
-        const isExamMatch = (rowExam === targetExam) ||
-          (targetExam.includes('ADV01') && (rowExam.includes('ADV') || rowExam.includes('ENG_G5'))) ||
-          (targetExam.includes('FANTASY01') && (rowExam.includes('FANTASY') || rowExam.includes('ENG_G6'))) ||
-          (targetExam.includes('ARB_PRIO01') && (rowExam.includes('ARB') || rowExam.includes('PRIO')));
-
-        if (isStudentMatch && isExamMatch) {
-          hasSubmitted = true;
-          const score = Number(sData[i][4]) || 0;
-          const total = Number(sData[i][5]) || 0;
-          const pct = formatPercentValue(sData[i][6]);
-          const rating = String(sData[i][7] || '');
-          const duration = String(sData[i][8] || '');
-          const summary = String(sData[i][9] || '');
-          const dateStr = sData[i][0] instanceof Date ? Utilities.formatDate(sData[i][0], Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm') : String(sData[i][0]);
-
-          let review = [];
-          try { review = JSON.parse(sData[i][10] || '[]'); } catch(e) {}
-
-          attempts.push({
-            attemptNumber: attempts.length + 1,
-            timestamp: dateStr,
-            score: score,
-            total: total,
-            percentage: pct,
-            rating: rating,
-            duration: duration,
-            summary: summary,
-            review: review
-          });
-        }
-      }
-    }
-
-    let retakeStatus = 'NONE';
-    let requestId = '';
-
-    if (retakeSheet && retakeSheet.getLastRow() > 1) {
-      const rData = retakeSheet.getDataRange().getValues();
-      for (let i = rData.length - 1; i >= 1; i--) {
-        const rowName = String(rData[i][2] || '').trim().toLowerCase();
-        const rowExam = String(rData[i][3] || '').trim().toUpperCase();
-
-        const isStudentMatch = (rowName === targetName) || 
-          (targetName.includes('ali') && (rowName.includes('ali') || rowName.includes('علي'))) ||
-          (targetName.includes('mostafa') && (rowName.includes('mostafa') || rowName.includes('مصطفى')));
-          
-        const isExamMatch = (rowExam === targetExam) ||
-          (targetExam.includes('ADV01') && (rowExam.includes('ADV') || rowExam.includes('ENG_G5'))) ||
-          (targetExam.includes('FANTASY01') && (rowExam.includes('FANTASY') || rowExam.includes('ENG_G6'))) ||
-          (targetExam.includes('ARB_PRIO01') && (rowExam.includes('ARB') || rowExam.includes('PRIO')));
-
-        if (isStudentMatch && isExamMatch) {
-          retakeStatus = String(rData[i][6]).trim();
-          requestId = String(rData[i][0]).trim();
-          break;
-        }
-      }
-    }
-
-    const latestAttempt = attempts.length > 0 ? attempts[attempts.length - 1] : null;
-    const lastScore = latestAttempt ? `${latestAttempt.score} / ${latestAttempt.total} (${latestAttempt.percentage})` : '';
-    const lastDate = latestAttempt ? latestAttempt.timestamp : '';
-    const canAttempt = (attempts.length < 2) || (retakeStatus === 'APPROVED');
-
+    const state = getAttemptState_(name, code);
     return {
       success: true,
-      hasSubmitted: hasSubmitted,
-      attemptsCount: attempts.length,
-      attempts: attempts,
-      lastScore: lastScore,
-      lastDate: lastDate,
-      canAttempt: canAttempt,
-      retakeStatus: retakeStatus,
-      requestId: requestId
+      hasSubmitted: state.hasSubmitted,
+      attemptsCount: state.attemptsCount,
+      attempts: state.attempts,
+      lastScore: state.lastScore,
+      lastDate: state.lastDate,
+      canAttempt: state.canAttempt,
+      retakeStatus: state.retakeStatus,
+      requestId: state.requestId,
+      maxAttempts: state.maxAttempts,
+      exam: getExamInfo(code)
     };
-  } catch(e) {
-    return { success: false, message: e.toString() };
+  } catch (e) {
+    Logger.log('getStudentExamStatus error: ' + e);
+    return { success: false, message: e.message };
   }
 }
 
 function requestExamRetake(payload) {
+  const lock = LockService.getScriptLock();
   try {
+    if (!lock.tryLock(30000)) return { success: false, message: 'الخادم مشغول، أعد المحاولة بعد لحظات.' };
+
+    const data = (typeof payload === 'string') ? JSON.parse(payload) : payload;
+    const studentName = String(data.studentName || '').trim();
+    const examCode = normalizeExam_(data.examCode);
+    if (!studentName || !examCode) {
+      return { success: false, message: 'اسم الطالب وكود الامتحان مطلوبان.' };
+    }
+
+    const exam = getExamInfo(examCode);
+    if (!exam) return { success: false, message: 'الامتحان غير موجود.' };
+
+    const state = getAttemptState_(studentName, examCode);
+    if (!state.hasSubmitted || state.attemptsCount < MAX_ATTEMPTS) {
+      return { success: false, message: 'يمكنك طلب إعادة المحاولة بعد استنفاد المحاولتين الأساسيتين.' };
+    }
+    if (state.retakeStatus === 'PENDING') {
+      return { success: true, requestId: state.requestId, message: 'طلبك قيد مراجعة ولي الأمر بالفعل.' };
+    }
+    if (state.retakeStatus === 'APPROVED') {
+      return { success: false, message: 'تمت الموافقة على طلبك بالفعل، ابدأ المحاولة الإضافية من بوابة الطالب.' };
+    }
+
     const ss = getSpreadsheet();
     let retakeSheet = ss.getSheetByName('Retake_Requests');
     if (!retakeSheet) {
@@ -1446,71 +1909,80 @@ function requestExamRetake(payload) {
       retakeSheet = ss.getSheetByName('Retake_Requests');
     }
 
-    const data = (typeof payload === 'string') ? JSON.parse(payload) : payload;
-    const { studentName, examCode, examTitle, previousScore, reason } = data;
-
-    const reqId = 'REQ_' + Utilities.formatDate(new Date(), 'GMT', 'yyyyMMdd_HHmmss');
+    const reqId = 'REQ_' + Utilities.getUuid().replace(/-/g, '').slice(0, 16).toUpperCase();
     const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
+    const reason = String(data.reason || 'طلب محاولة إضافية لمراجعة الأخطاء').slice(0, 500);
 
     retakeSheet.appendRow([
       reqId,
       timestamp,
       studentName,
       examCode,
-      examTitle || examCode,
-      previousScore || 'N/A',
+      exam.title,
+      state.lastScore || 'N/A',
       'PENDING',
-      reason || 'Second attempt requested to review mistakes',
+      reason,
       ''
     ]);
 
     return {
       success: true,
       requestId: reqId,
-      message: 'Retake request sent to parent dashboard successfully.'
+      message: 'تم إرسال طلب إعادة المحاولة إلى ولي الأمر.'
     };
-  } catch(e) {
-    return { success: false, message: 'Failed to send retake request: ' + e.toString() };
+  } catch (e) {
+    Logger.log('requestExamRetake error: ' + e);
+    return { success: false, message: 'تعذر إرسال الطلب: ' + e.message };
+  } finally {
+    try { lock.releaseLock(); } catch (e) { /* not held */ }
   }
 }
 
 function approveRetakeRequest(requestId) {
-  try {
-    const ss = getSpreadsheet();
-    const retakeSheet = ss.getSheetByName('Retake_Requests');
-    if (!retakeSheet || retakeSheet.getLastRow() <= 1) return { success: false, message: 'No retake requests found' };
-
-    const data = retakeSheet.getDataRange().getValues();
-    for (let i = 1; i < data.length; i++) {
-      if (String(data[i][0]).trim() === requestId) {
-        retakeSheet.getRange(i + 1, 7).setValue('APPROVED');
-        retakeSheet.getRange(i + 1, 9).setValue(new Date());
-        return { success: true, message: 'Retake approved. The student can now start their assessment.' };
-      }
-    }
-    return { success: false, message: 'Request ID not found' };
-  } catch(e) {
-    return { success: false, message: e.toString() };
-  }
+  return decideRetakeRequest_(requestId, 'APPROVED');
 }
 
 function rejectRetakeRequest(requestId) {
+  return decideRetakeRequest_(requestId, 'REJECTED');
+}
+
+function decideRetakeRequest_(requestId, decision) {
+  const lock = LockService.getScriptLock();
   try {
+    if (!lock.tryLock(30000)) return { success: false, message: 'الخادم مشغول، أعد المحاولة بعد لحظات.' };
+
     const ss = getSpreadsheet();
     const retakeSheet = ss.getSheetByName('Retake_Requests');
-    if (!retakeSheet || retakeSheet.getLastRow() <= 1) return { success: false, message: 'No retake requests found' };
+    if (!retakeSheet || retakeSheet.getLastRow() <= 1) {
+      return { success: false, message: 'لا توجد طلبات إعادة محاولة.' };
+    }
 
+    const target = String(requestId || '').trim();
     const data = retakeSheet.getDataRange().getValues();
     for (let i = 1; i < data.length; i++) {
-      if (String(data[i][0]).trim() === requestId) {
-        retakeSheet.getRange(i + 1, 7).setValue('REJECTED');
-        retakeSheet.getRange(i + 1, 9).setValue(new Date());
-        return { success: true, message: 'Retake request declined.' };
+      if (String(data[i][0] || '').trim() !== target) continue;
+
+      const currentStatus = String(data[i][6] || '').trim().toUpperCase();
+      if (currentStatus !== 'PENDING') {
+        return { success: false, message: 'هذا الطلب تمت معالجته بالفعل.' };
       }
+
+      retakeSheet.getRange(i + 1, 7).setValue(decision);
+      retakeSheet.getRange(i + 1, 9).setValue(new Date());
+      return {
+        success: true,
+        message: decision === 'APPROVED'
+          ? 'تمت الموافقة. يمكن للطالب بدء محاولة إضافية.'
+          : 'تم رفض طلب إعادة المحاولة.'
+      };
     }
-    return { success: false, message: 'Request ID not found' };
-  } catch(e) {
-    return { success: false, message: e.toString() };
+
+    return { success: false, message: 'لم يتم العثور على رقم الطلب.' };
+  } catch (e) {
+    Logger.log('decideRetakeRequest_ error: ' + e);
+    return { success: false, message: e.message };
+  } finally {
+    try { lock.releaseLock(); } catch (e) { /* not held */ }
   }
 }
 
@@ -1578,15 +2050,22 @@ function getAdminDashboardData() {
       }
     }
 
-    // Preview sample generated questions with passages for the parent inspector
-    const sampleAli = generateAliAdverbialExam();
-    const sampleMostafaEng = generateMostafaEnglishExam();
-    const sampleMostafaArb = generateMostafaArabicExam();
-    const allQuestions = [
-      ...sampleAli.map(q => ({ ...q, examCode: 'EX_Y5_ENG_ADV01' })),
-      ...sampleMostafaEng.map(q => ({ ...q, examCode: 'EX_Y6_ENG_FANTASY01' })),
-      ...sampleMostafaArb.map(q => ({ ...q, examCode: 'EX_Y6_ARB_PRIO01' }))
-    ];
+    // Show the actual question bank. Only fall back to generated samples when a
+    // bank has no questions for that exam.
+    const allQuestions = [];
+    const examCodes = exams.length
+      ? exams.map(e => e.code)
+      : ['EX_Y5_ENG_ADV01', 'EX_Y6_ENG_FANTASY01', 'EX_Y6_ARB_PRIO01'];
+
+    examCodes.forEach(code => {
+      let questions = loadBankQuestions_(code);
+      if (!questions.length) {
+        if (code === 'EX_Y5_ENG_ADV01') questions = generateAliAdverbialExam();
+        else if (code === 'EX_Y6_ENG_FANTASY01') questions = generateMostafaEnglishExam();
+        else if (code === 'EX_Y6_ARB_PRIO01') questions = generateMostafaArabicExam();
+      }
+      questions.forEach(q => allQuestions.push(Object.assign({}, q, { examCode: code })));
+    });
 
     const retakeRequests = [];
     if (retakeSheet && retakeSheet.getLastRow() > 1) {
@@ -1645,30 +2124,58 @@ function generateGoogleFormPrompt() {
 }
 
 function createGoogleFormFromExam(examCode) {
-  const examDataRes = getExamData(examCode);
-  if (!examDataRes.success || examDataRes.questions.length === 0) {
-    try { SpreadsheetApp.getUi().alert('No questions found for code: ' + examCode); } catch(e){}
+  let built;
+  try {
+    built = buildExamQuestions_(examCode);
+  } catch (e) {
+    try { SpreadsheetApp.getUi().alert('تعذر إنشاء النموذج: ' + e.message); } catch (uiError) {}
     return;
   }
 
-  const exam = examDataRes.exam;
-  const questions = examDataRes.questions;
+  const exam = built.exam;
+  const questions = built.questions;
 
   const form = FormApp.create(exam.title + ' - (' + exam.grade + ')');
   form.setDescription('Interactive Assessment for ' + exam.subject + '\nDuration: ' + exam.duration + ' Minutes\nPlease complete all questions carefully.')
       .setIsQuiz(true)
       .setAllowResponseEdits(false)
-      .setCollectEmail(false);
+      .setCollectEmail(false)
+      .setConfirmationMessage('تم تسليم إجاباتك. شكراً لك!');
 
   form.addTextItem().setTitle('Student Full Name:').setRequired(true);
   form.addTextItem().setTitle('School / Class:').setRequired(false);
 
+  // Keep Form responses in the same spreadsheet alongside the web app data.
+  try {
+    form.setDestination(FormApp.DestinationType.SPREADSHEET, getSpreadsheet().getId());
+  } catch (destinationError) {
+    Logger.log('Could not set Form destination: ' + destinationError);
+  }
+
   questions.forEach((q, idx) => {
-    const qTitle = '(' + (idx + 1) + ') ' + q.text.replace(/<[^>]*>?/gm, '');
+    const qTitle = '(' + (idx + 1) + ') ' + String(q.text || '').replace(/<[^>]*>?/gm, '');
     if (q.type === 'MCQ' || q.type === 'TRUE_FALSE') {
       const item = form.addMultipleChoiceItem().setTitle(qTitle).setRequired(true);
-      const choices = q.options.map(opt => item.createChoice(opt));
+      const choices = q.options.map(opt => item.createChoice(
+        opt,
+        normalizeAnswer_(opt) === normalizeAnswer_(q.correctAnswer)
+      ));
       item.setChoices(choices);
+      item.setPoints(Number(q.points) || 1);
+      if (q.passage) item.setHelpText(String(q.passage));
+
+      try {
+        const correctFeedback = FormApp.createFeedback()
+          .setText(q.explanation || ('الإجابة الصحيحة: ' + q.correctAnswer))
+          .build();
+        const incorrectFeedback = FormApp.createFeedback()
+          .setText('الإجابة الصحيحة: ' + q.correctAnswer + '\n' + (q.explanation || ''))
+          .build();
+        item.setFeedbackForCorrect(correctFeedback);
+        item.setFeedbackForIncorrect(incorrectFeedback);
+      } catch (feedbackError) {
+        Logger.log('Form feedback error: ' + feedbackError);
+      }
     } else {
       form.addTextItem().setTitle(qTitle).setRequired(true);
     }
@@ -2129,6 +2636,22 @@ function getHistoricalSubmissionsData() {
 }
 
 function restoreAllHistoricalSubmissions() {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    const answer = ui.alert(
+      'Restore demo submissions?',
+      'This adds the old hard-coded Ali/Mostafa demo rows when they are missing. It does not delete real data. Continue?',
+      ui.ButtonSet.YES_NO
+    );
+    if (answer !== ui.Button.YES) {
+      return { success: false, message: 'Cancelled.' };
+    }
+  } catch (e) {
+    // No UI (web app or trigger): never mutate data without an explicit menu action.
+    Logger.log('restoreAllHistoricalSubmissions skipped: ' + e);
+    return { success: false, message: 'This action is only available from the spreadsheet menu.' };
+  }
+
   const ss = getSpreadsheet();
   let subSheet = ss.getSheetByName('Submissions');
   if (!subSheet) {

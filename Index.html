@@ -4,7 +4,7 @@
   <base target="_top">
   <meta charset="UTF-8">
   <title>Manaret El-Eman Assessment Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cairo:wght@600;700&display=swap" rel="stylesheet">
@@ -14,12 +14,12 @@
       --primary: #2563eb;
       --primary-hover: #1d4ed8;
       --primary-light: #eff6ff;
-      --accent: #0ea5e9;
-      --success: #10b981;
+      --accent: #0369a1;
+      --success: #047857;
       --success-bg: #ecfdf5;
-      --warning: #f59e0b;
+      --warning: #b45309;
       --warning-bg: #fffbeb;
-      --danger: #ef4444;
+      --danger: #b91c1c;
       --danger-bg: #fef2f2;
       --purple: #7c3aed;
       --purple-bg: #f5f3ff;
@@ -36,6 +36,23 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    button, a { font-family: inherit; }
+    button:focus-visible,
+    a:focus-visible,
+    .option-item:focus-visible,
+    .gateway-card:focus-visible,
+    .portal-btn:focus-visible {
+      outline: 3px solid #1d4ed8;
+      outline-offset: 3px;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
     body {
       background-color: var(--bg-body);
       color: var(--text-main);
@@ -154,6 +171,11 @@
 
     @media (max-width: 540px) {
       .gateway-grid { grid-template-columns: 1fr; }
+      .top-header { flex-wrap: wrap; gap: 10px; padding: 12px 14px; }
+      .brand-meta h1 { font-size: 0.98rem; }
+      .portal-btn { padding: 8px 12px; }
+      .card { padding: 18px; }
+      .question-card { padding: 18px; }
     }
 
     .gateway-card {
@@ -167,6 +189,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      width: 100%;
+      font-family: inherit;
+      color: var(--text-main);
     }
 
     .gateway-card:hover {
@@ -242,6 +267,10 @@
       justify-content: space-between;
       align-items: center;
       transition: all 0.15s ease;
+      width: 100%;
+      font-family: inherit;
+      color: var(--text-main);
+      text-align: left;
     }
 
     .exam-item-card:hover {
@@ -301,7 +330,7 @@
       flex-wrap: wrap;
       gap: 14px;
       font-size: 0.84rem;
-      color: #bfdbfe;
+      color: #e0f2fe;
       margin-top: 8px;
     }
 
@@ -593,12 +622,17 @@
       align-items: center;
       gap: 12px;
       transition: all 0.15s ease;
-      font-size: 0.96rem;
+      font-size: 1rem;
       font-weight: 600;
+      width: 100%;
+      font-family: inherit;
+      color: var(--text-main);
+      text-align: left;
     }
 
     .option-item.rtl-content {
       direction: rtl;
+      text-align: right;
       font-family: 'Cairo', sans-serif;
     }
 
@@ -670,6 +704,8 @@
 
     .review-item.correct { border-left: 5px solid var(--success); }
     .review-item.incorrect { border-left: 5px solid var(--danger); }
+    .review-item.rtl-content { direction: rtl; text-align: right; }
+    .review-item.rtl-content .explanation-box { text-align: right; font-family: 'Cairo', sans-serif; }
 
     .review-header {
       display: flex;
@@ -677,11 +713,12 @@
       align-items: flex-start;
       margin-bottom: 10px;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .review-q-title { font-size: 0.96rem; font-weight: 700; color: var(--text-main); }
-    .badge-correct { background: var(--success-bg); color: var(--success); padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 800; }
-    .badge-incorrect { background: var(--danger-bg); color: var(--danger); padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 800; }
+    .review-q-title { font-size: 0.96rem; font-weight: 700; color: var(--text-main); flex: 1; }
+    .badge-correct { background: var(--success-bg); color: var(--success); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 800; white-space: nowrap; }
+    .badge-incorrect { background: var(--danger-bg); color: var(--danger); padding: 3px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 800; white-space: nowrap; }
 
     .explanation-box {
       margin-top: 12px;
@@ -714,6 +751,8 @@
       cursor: pointer;
       text-align: center;
       transition: all 0.15s ease;
+      font-family: inherit;
+      width: 100%;
     }
 
     .switch-student-btn.active {
@@ -740,6 +779,7 @@
       cursor: pointer;
       border-radius: 8px;
       transition: all 0.15s ease;
+      font-family: inherit;
     }
 
     .parent-tab-btn.active {
@@ -759,9 +799,11 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 6px 12px;
-      font-size: 0.8rem;
+      font-size: 0.84rem;
       font-weight: 700;
       cursor: pointer;
+      font-family: inherit;
+      color: var(--text-main);
     }
 
     .inspect-chip.active {
@@ -815,7 +857,7 @@
 
         <div class="gateway-grid">
           <!-- Ali Ahmed Gateway -->
-          <div class="gateway-card" onclick="openStudentPortal('ali')">
+          <button type="button" class="gateway-card" onclick="openStudentPortal('ali')">
             <div>
               <div class="gateway-name">👦 Ali Ahmed</div>
               <div class="gateway-grade">Year 5 (G5) &bull; International School</div>
@@ -824,10 +866,10 @@
               </div>
             </div>
             <span class="gateway-badge">1 Assessment Available</span>
-          </div>
+          </button>
 
           <!-- Mostafa Ahmed Gateway -->
-          <div class="gateway-card" onclick="openStudentPortal('mostafa')">
+          <button type="button" class="gateway-card" onclick="openStudentPortal('mostafa')">
             <div>
               <div class="gateway-name">👦 Mostafa Ahmed</div>
               <div class="gateway-grade">Grade 6 (G6) &bull; International School</div>
@@ -836,7 +878,7 @@
               </div>
             </div>
             <span class="gateway-badge">2 Assessments Available</span>
-          </div>
+          </button>
         </div>
       </div>
     </div>
@@ -872,12 +914,12 @@
             <div>📚 Subject: <span id="sp-hero-subject">English</span></div>
             <div>⏱️ Duration: <span id="sp-hero-duration">20</span> Mins</div>
             <div>❓ Questions: <span id="sp-hero-count">10</span></div>
-            <div>🎯 Single Attempt Protected</div>
+            <div>🎯 2 Attempts</div>
           </div>
         </div>
 
         <!-- Real-time Status Alert (New, Completed, Pending Approval, Approved) -->
-        <div id="sp-status-container">
+        <div id="sp-status-container" role="status" aria-live="polite">
           <!-- Dynamic Status -->
         </div>
 
@@ -893,12 +935,12 @@
     <div id="screen-quiz" class="screen">
       <div class="quiz-sticky-header">
         <div>
-          <div class="quiz-progress-text" id="quiz-progress-indicator">Question 1 of 10</div>
-          <div class="progress-bar-container">
+          <div class="quiz-progress-text" id="quiz-progress-indicator" aria-live="polite">Question 1 of 10</div>
+          <div class="progress-bar-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="quiz-progress-bar">
             <div class="progress-bar-fill" id="progress-bar-fill"></div>
           </div>
         </div>
-        <div class="quiz-timer" id="quiz-timer-display">⏱️ 20:00</div>
+        <div class="quiz-timer" id="quiz-timer-display" aria-live="off">⏱️ 20:00</div>
       </div>
 
       <div class="question-card" id="quiz-question-box">
@@ -912,7 +954,7 @@
         <div style="font-size: 0.95rem; opacity: 0.9;" id="res-student-header">Assessment Report</div>
         <div class="score-circle" id="res-score-display">10 / 10</div>
         <div class="score-rating" id="res-rating-display">Excellent! 🌟</div>
-        <div style="font-size: 0.84rem; opacity: 0.85; margin-top: 6px;" id="res-time-spent">Time Spent: 8 mins</div>
+        <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 6px;" id="res-time-spent">Time Spent: --</div>
       </div>
 
       <div class="card">
@@ -957,12 +999,12 @@
 
         <!-- Student Selector Tabs (Strict Isolation) -->
         <div class="parent-student-switcher">
-          <div id="sw-ali" class="switch-student-btn active" onclick="switchAdminStudent('Ali')">
+          <button type="button" id="sw-ali" class="switch-student-btn active" onclick="switchAdminStudent('Ali')">
             👦 Ali Ahmed (Year 5)
-          </div>
-          <div id="sw-mostafa" class="switch-student-btn" onclick="switchAdminStudent('Mostafa')">
+          </button>
+          <button type="button" id="sw-mostafa" class="switch-student-btn" onclick="switchAdminStudent('Mostafa')">
             👦 Mostafa Ahmed (Grade 6)
-          </div>
+          </button>
         </div>
 
         <!-- Pending Retake Requests Banner for Selected Student -->
@@ -1025,13 +1067,13 @@
   </div>
 
   <!-- GATEKEEPER CONFIRMATION MODAL -->
-  <div class="modal-overlay" id="start-modal">
+  <div class="modal-overlay" id="start-modal" role="dialog" aria-modal="true" aria-labelledby="start-modal-title">
     <div class="modal-card">
-      <div class="modal-icon">⚠️</div>
-      <div class="modal-title">Important Confirmation</div>
+      <div class="modal-icon" aria-hidden="true">⚠️</div>
+      <div class="modal-title" id="start-modal-title">Important Confirmation</div>
       <p class="modal-desc">
-        This assessment is configured for a <strong>SINGLE ATTEMPT</strong>.<br>
-        Once started, the timer begins immediately and cannot be paused or restarted without parent authorization.
+        This assessment allows <strong>2 attempts</strong>.<br>
+        Once started, the timer begins immediately and cannot be paused. The timer is enforced by the server.
       </p>
 
       <div class="modal-info-box">
@@ -1041,8 +1083,8 @@
       </div>
 
       <div class="modal-btn-row">
-        <button class="btn-secondary" onclick="closeStartModal()">Cancel</button>
-        <button class="btn-primary" style="padding: 12px;" onclick="confirmStartAssessment()">
+        <button type="button" class="btn-secondary" onclick="closeStartModal()">Cancel</button>
+        <button type="button" class="btn-primary" style="padding: 12px;" onclick="confirmStartAssessment()">
           Yes, Start Now 🚀
         </button>
       </div>
@@ -1095,10 +1137,85 @@
     let studentAnswers = {};
     let timerInterval = null;
     let secondsRemaining = 0;
-    let startTime = null;
     let cachedAdminData = null;
     let currentSessionKey = "";
     let activeAdminStudent = 'Ali';
+    let isSubmitting = false;
+    let examFinished = false;
+
+    function escapeHtml(value) {
+      return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+      });
+    }
+
+    // Keep only the small formatting subset used by the question bank.
+    function sanitizeRichText(value) {
+      return String(value == null ? '' : value)
+        .replace(/<(?!\/?(?:b|strong|u|i|em|br)\s*>)[^>]*>/gi, '');
+    }
+
+    function plainText(value) {
+      return escapeHtml(String(value == null ? '' : value).replace(/<[^>]*>/g, ''));
+    }
+
+    function progressKey() {
+      const student = STUDENT_DATA[currentStudentKey];
+      const name = student ? student.name.replace(/\s+/g, '_') : 'student';
+      return 'progress_' + activeExamCode + '_' + name;
+    }
+
+    function saveProgress() {
+      try {
+        localStorage.setItem(progressKey(), JSON.stringify({
+          sessionKey: currentSessionKey,
+          answers: studentAnswers,
+          currentIdx: currentIdx,
+          savedAt: Date.now()
+        }));
+      } catch (e) { /* storage may be unavailable */ }
+    }
+
+    function loadProgress(sessionKey) {
+      try {
+        const raw = localStorage.getItem(progressKey());
+        if (!raw) return null;
+        const saved = JSON.parse(raw);
+        if (saved.sessionKey !== sessionKey) return null;
+        if (!saved.savedAt || Date.now() - saved.savedAt > 3 * 60 * 60 * 1000) return null;
+        return saved;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function clearProgress() {
+      try { localStorage.removeItem(progressKey()); } catch (e) { /* ignore */ }
+    }
+
+    function showStatusError(message) {
+      const statusBox = document.getElementById('sp-status-container');
+      const actionBox = document.getElementById('sp-action-container');
+      statusBox.innerHTML = `
+        <div class="alert-box alert-danger">
+          <span style="font-size: 1.2rem;">⚠️</span>
+          <div>
+            <strong>Could not load the assessment.</strong>
+            <div style="font-size: 0.9rem; margin-top: 3px;">${escapeHtml(message || 'Connection error')}</div>
+            <button type="button" class="btn-secondary" style="margin-top: 10px;" onclick="selectStudentExam(activeExamCode)">Try Again</button>
+          </div>
+        </div>
+      `;
+      actionBox.innerHTML = '';
+    }
+
+    window.addEventListener('beforeunload', function (event) {
+      const quizScreen = document.getElementById('screen-quiz');
+      if (quizScreen && quizScreen.classList.contains('active') && !isSubmitting && !examFinished) {
+        event.preventDefault();
+        event.returnValue = '';
+      }
+    });
 
     window.addEventListener('DOMContentLoaded', () => {
       const params = new URLSearchParams(window.location.search);
@@ -1123,6 +1240,7 @@
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
       const target = document.getElementById(screenId);
       if (target) target.classList.add('active');
+      window.scrollTo(0, 0);
     }
 
     function returnToGateway() {
@@ -1130,9 +1248,13 @@
     }
 
     /* STUDENT PORTAL LOGIC (100% ISOLATED) */
-    function openStudentPortal(studentKey) {
+    function openStudentPortal(studentKey, preferredExamCode) {
       currentStudentKey = studentKey;
       const student = STUDENT_DATA[studentKey];
+      if (!student) {
+        showScreen('screen-gateway');
+        return;
+      }
 
       document.getElementById('sp-student-title').innerText = `${student.name}'s Assessment Portal`;
       document.getElementById('sp-student-grade').innerText = `${student.grade} • International School`;
@@ -1141,26 +1263,31 @@
       const listEl = document.getElementById('sp-exams-list');
       listEl.innerHTML = '';
 
-      student.exams.forEach((ex, idx) => {
-        const card = document.createElement('div');
-        card.className = 'exam-item-card' + (idx === 0 ? ' active' : '');
+      const selectedCode = (preferredExamCode && student.exams.some(ex => ex.code === preferredExamCode))
+        ? preferredExamCode
+        : student.exams[0].code;
+
+      student.exams.forEach((ex) => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'exam-item-card' + (ex.code === selectedCode ? ' active' : '');
         card.id = 'exam-item-' + ex.code;
         card.innerHTML = `
           <div>
-            <div class="exam-item-title">${ex.title}</div>
-            <div class="exam-item-meta">${ex.subject} &bull; ${ex.count} Questions &bull; ${ex.duration} Mins</div>
+            <div class="exam-item-title">${escapeHtml(ex.title)}</div>
+            <div class="exam-item-meta">${escapeHtml(ex.subject)} &bull; ${ex.count} Questions &bull; ${ex.duration} Mins</div>
           </div>
-          <span class="exam-item-tag">${student.grade}</span>
+          <span class="exam-item-tag">${escapeHtml(student.grade)}</span>
         `;
-        card.onclick = () => {
+        card.addEventListener('click', () => {
           document.querySelectorAll('.exam-item-card').forEach(c => c.classList.remove('active'));
           card.classList.add('active');
           selectStudentExam(ex.code);
-        };
+        });
         listEl.appendChild(card);
       });
 
-      selectStudentExam(student.exams[0].code);
+      selectStudentExam(selectedCode);
       showScreen('screen-student');
     }
 
@@ -1183,7 +1310,7 @@
 
       // INSTANT CLEANUP: Clear stale data immediately upon click so old scores never flash!
       statusBox.innerHTML = `
-        <div style="background: #f8fafc; border: 1px dashed var(--border); border-radius: 10px; padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+        <div style="background: #f8fafc; border: 1px dashed var(--border); border-radius: 10px; padding: 14px; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
           <div class="spinner" style="display: inline-block; width: 16px; height: 16px; margin-right: 6px; vertical-align: middle;"></div>
           Fetching live assessment records...
         </div>
@@ -1193,92 +1320,116 @@
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => {
-            if (res.success) {
+            if (res && res.success) {
               renderStudentStatus(res, studentName, examCode);
+            } else {
+              showStatusError(res && res.message ? res.message : 'Server error');
             }
+          })
+          .withFailureHandler(err => {
+            showStatusError(err && err.message ? err.message : String(err));
           })
           .getStudentExamStatus(studentName, examCode);
       } else {
-        if (localLock) {
-          const lData = JSON.parse(localLock);
-          renderStudentStatus({ hasSubmitted: true, lastScore: lData.score, canAttempt: false, retakeStatus: 'NONE' }, studentName, examCode);
-        } else {
-          renderStudentStatus({ hasSubmitted: false, canAttempt: true, retakeStatus: 'NONE' }, studentName, examCode);
-        }
+        // Local preview only: never let an undefined lock crash the whole portal.
+        const student = STUDENT_DATA[currentStudentKey];
+        const lockKey = 'lock_' + examCode + '_' + student.name.replace(/\s+/g, '_');
+        const localLock = localStorage.getItem(lockKey);
+        const fallback = localLock
+          ? { hasSubmitted: true, attempts: [], lastScore: '', canAttempt: false, retakeStatus: 'NONE', maxAttempts: 2 }
+          : { hasSubmitted: false, attempts: [], canAttempt: true, retakeStatus: 'NONE', maxAttempts: 2 };
+        setTimeout(() => renderStudentStatus(fallback, studentName, examCode), 200);
       }
     }
 
     function renderStudentStatus(data, studentName, examCode) {
       const statusBox = document.getElementById('sp-status-container');
       const actionBox = document.getElementById('sp-action-container');
+      const attempts = Array.isArray(data.attempts) ? data.attempts : [];
+      const maxAttempts = Number(data.maxAttempts) || 2;
 
-      const attempts = data.attempts || [];
+      if (data.exam) {
+        document.getElementById('sp-hero-title').innerText = data.exam.title || document.getElementById('sp-hero-title').innerText;
+        document.getElementById('sp-hero-subject').innerText = data.exam.subject || '';
+        document.getElementById('sp-hero-duration').innerText = data.exam.duration || 20;
+        document.getElementById('sp-hero-count').innerText = data.exam.questionsCount || 10;
+      }
+
+      function percentageOf(attempt) {
+        if (!attempt || !attempt.total) return 0;
+        return attempt.score / attempt.total;
+      }
 
       if (!data.hasSubmitted || attempts.length === 0) {
-        // CASE 1: Fresh attempt (0 attempts)
         statusBox.innerHTML = `
           <div class="alert-box alert-warning">
             <span style="font-size: 1.2rem;">⚠️</span>
             <div>
               <strong>Assessment Policy:</strong>
-              <div style="font-size: 0.8rem; margin-top: 2px;">
-                You have 2 official attempts for this assessment. Once started, the timer begins immediately.
+              <div style="font-size: 0.9rem; margin-top: 2px;">
+                You have ${maxAttempts} attempts for this assessment. Once started, the timer begins immediately and is enforced by the server.
               </div>
             </div>
           </div>
         `;
-        actionBox.innerHTML = `
-          <button class="btn-primary" onclick="promptStartConfirmation()">
-            <span>Start Assessment Now</span> &rarr;
-          </button>
-        `;
+        actionBox.innerHTML = data.canAttempt === false
+          ? `<div class="alert-box alert-danger" style="justify-content:center;text-align:center;font-weight:700;">Assessment attempts are not available.</div>`
+          : `<button type="button" class="btn-primary" onclick="promptStartConfirmation()">
+               <span>Start Assessment Now</span> &rarr;
+             </button>`;
         return;
       }
 
-      // MULTI-ATTEMPT DISPLAY: Render all attempts under each other!
+      const bestAttempt = attempts.reduce((best, current) => {
+        if (!best) return current;
+        return percentageOf(current) > percentageOf(best) ? current : best;
+      }, null);
+      const totalAllowed = Math.max(maxAttempts, attempts.length);
+
       let attemptsHtml = `
         <div style="margin-top: 6px; margin-bottom: 14px;">
-          <div style="font-size: 0.86rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between;">
-            <span>📋 Recorded Attempts History (${attempts.length} Completed):</span>
-            <span style="color: var(--accent); font-weight: 700;">Best Score: ${Math.max(...attempts.map(a => a.score))} / ${attempts[0].total}</span>
+          <div style="font-size: 0.9rem; font-weight: 800; color: var(--text-main); margin-bottom: 8px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+            <span>📋 Recorded Attempts (${attempts.length} of ${totalAllowed}):</span>
+            <span style="color: var(--accent); font-weight: 700;">Best: ${bestAttempt.score} / ${bestAttempt.total} (${Math.round(percentageOf(bestAttempt) * 100)}%)</span>
           </div>
       `;
 
       attempts.forEach((att, idx) => {
-        const isBest = att.score === Math.max(...attempts.map(a => a.score));
+        const isBest = bestAttempt === att;
+        const pct = percentageOf(att);
         let detailsHtml = '';
         (att.review || []).forEach((r, qIdx) => {
           const isCorrect = r.isCorrect === true || r.isCorrect === 'true';
           detailsHtml += `
-            <div style="font-size: 0.8rem; padding: 6px 8px; margin-top: 4px; border-radius: 6px; background: ${isCorrect ? '#f8fafc' : '#fef2f2'}; border-left: 3px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
-              <div><strong>Q${qIdx + 1}:</strong> ${r.questionText}</div>
-              <div style="margin-top: 2px; font-size: 0.78rem;">
+            <div style="font-size: 0.86rem; padding: 7px 9px; margin-top: 4px; border-radius: 6px; background: ${isCorrect ? '#f8fafc' : '#fef2f2'}; border-inline-start: 3px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
+              <div><strong>Q${qIdx + 1}:</strong> ${plainText(r.questionText)}</div>
+              <div style="margin-top: 2px; font-size: 0.84rem;">
                 <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'}; font-weight: 700;">
-                  ${isCorrect ? '✓ ' + (r.studentAnswer || 'Correct') : '✗ Student: ' + (r.studentAnswer || '(None)')}
+                  ${isCorrect ? '✓ ' + escapeHtml(r.studentAnswer || 'Correct') : '✗ Student: ' + escapeHtml(r.studentAnswer || '(None)')}
                 </span>
-                ${!isCorrect ? ` &bull; <span style="color: #047857; font-weight: 700;">Correct: ${r.correctAnswer}</span>` : ''}
+                ${!isCorrect ? ` &bull; <span style="color: var(--success); font-weight: 700;">Correct: ${escapeHtml(r.correctAnswer)}</span>` : ''}
               </div>
             </div>
           `;
         });
 
         attemptsHtml += `
-          <div style="background: #fff; border: 1.5px solid ${isBest ? '#10b981' : 'var(--border)'}; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow-sm);">
+          <div style="background: #fff; border: 1.5px solid ${isBest ? '#047857' : 'var(--border)'}; border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; box-shadow: var(--shadow-sm);">
             <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
               <div>
-                <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary);">
-                  🎯 Attempt ${att.attemptNumber || (idx + 1)} ${isBest ? '🌟 (Highest Score)' : ''}
+                <div style="font-weight: 800; font-size: 0.98rem; color: var(--primary);">
+                  🎯 Attempt ${att.attemptNumber || (idx + 1)} ${isBest ? '🌟 (Best)' : ''}
                 </div>
-                <div style="font-size: 0.76rem; color: var(--text-muted); margin-top: 2px;">
-                  📅 ${att.timestamp} &bull; ⏱️ ${att.duration}
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;">
+                  📅 ${escapeHtml(att.timestamp)} &bull; ⏱️ ${escapeHtml(att.duration)}
                 </div>
               </div>
-              <div style="font-size: 0.95rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: ${att.score >= 9 ? '#ecfdf5' : '#fef3c7'}; color: ${att.score >= 9 ? '#047857' : '#b45309'};">
-                ${att.score} / ${att.total} (${att.percentage}) &bull; ${att.rating}
+              <div style="font-size: 0.95rem; font-weight: 800; padding: 4px 10px; border-radius: 8px; background: ${pct >= 0.85 ? '#ecfdf5' : '#fef3c7'}; color: ${pct >= 0.85 ? '#047857' : '#92400e'};">
+                ${att.score} / ${att.total} (${escapeHtml(att.percentage)}) &bull; ${escapeHtml(att.rating)}
               </div>
             </div>
             ${detailsHtml ? `
-              <details style="margin-top: 8px; font-size: 0.8rem;">
+              <details style="margin-top: 8px; font-size: 0.86rem;">
                 <summary style="font-weight: 700; color: var(--accent); cursor: pointer;">🔍 View Questions & Answers Breakdown ↓</summary>
                 <div style="margin-top: 6px;">${detailsHtml}</div>
               </details>
@@ -1290,44 +1441,82 @@
       attemptsHtml += `</div>`;
       statusBox.innerHTML = attemptsHtml;
 
-      // ACTION BUTTON BASED ON ATTEMPTS COUNT
-      if (attempts.length >= 2) {
+      const lastScore = attempts.length ? `${attempts[attempts.length - 1].score} / ${attempts[attempts.length - 1].total}` : '';
+      const retakeStatus = String(data.retakeStatus || 'NONE').toUpperCase();
+
+      if (retakeStatus === 'PENDING') {
         actionBox.innerHTML = `
-          <div class="alert-box alert-success" style="justify-content: center; text-align: center; font-weight: 700;">
-            ✅ Maximum Attempts Completed (2 of 2 Attempts Saved Successfully)
+          <div class="alert-box alert-pending" style="justify-content:center;text-align:center;font-weight:700;">
+            ⏳ Retake request is waiting for parent approval.
           </div>
+        `;
+      } else if (data.canAttempt && attempts.length >= maxAttempts) {
+        actionBox.innerHTML = `
+          <button type="button" class="btn-primary btn-purple" onclick="promptStartConfirmation()">
+            <span>🚀 Start Approved Attempt</span> &rarr;
+          </button>
+        `;
+      } else if (data.canAttempt) {
+        actionBox.innerHTML = `
+          <button type="button" class="btn-primary btn-purple" onclick="promptStartConfirmation()">
+            <span>🚀 Start Attempt ${attempts.length + 1} of ${maxAttempts}</span> &rarr;
+          </button>
+        `;
+      } else if (retakeStatus === 'APPROVED') {
+        actionBox.innerHTML = `
+          <button type="button" class="btn-primary btn-purple" onclick="promptStartConfirmation()">
+            <span>🚀 Start Approved Attempt</span> &rarr;
+          </button>
         `;
       } else {
         actionBox.innerHTML = `
-          <button class="btn-primary btn-purple" onclick="promptStartConfirmation()">
-            <span>🚀 Start 2nd Attempt Now</span> &rarr;
+          <div class="alert-box alert-success" style="justify-content:center;text-align:center;font-weight:700;margin-bottom:10px;">
+            ✅ Maximum attempts completed (${attempts.length} of ${totalAllowed}).
+          </div>
+          <button type="button" class="btn-primary" id="retake-request-btn">
+            📩 Request an Extra Attempt
           </button>
         `;
+        const retakeButton = document.getElementById('retake-request-btn');
+        if (retakeButton) {
+          retakeButton.addEventListener('click', () => requestRetakePrompt(studentName, examCode, lastScore));
+        }
       }
     }
 
     function requestRetakePrompt(studentName, examCode, prevScore) {
-      const reason = prompt('Please enter a brief note for your parent:', 'Requesting a second attempt to review and correct mistakes');
+      const reason = prompt(
+        'Please enter a brief note for your parent:',
+        'Requesting an extra attempt to review and correct mistakes'
+      );
       if (reason === null) return;
 
       const payload = {
         studentName: studentName,
         examCode: examCode,
-        examTitle: document.getElementById('sp-hero-title').innerText,
-        previousScore: prevScore,
-        reason: reason
+        reason: String(reason || '').slice(0, 500)
       };
 
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => {
-            alert(res.message);
+            alert(res.message || 'Request sent.');
             checkExamStatus(studentName, examCode);
+          })
+          .withFailureHandler(err => {
+            alert('Could not send the request: ' + (err && err.message ? err.message : err));
           })
           .requestExamRetake(payload);
       } else {
         alert('Simulation: Retake request logged.');
-        renderStudentStatus({ hasSubmitted: true, lastScore: prevScore, canAttempt: false, retakeStatus: 'PENDING' }, studentName, examCode);
+        renderStudentStatus({
+          hasSubmitted: true,
+          attempts: [{ attemptNumber: 1, score: 0, total: 10, percentage: '0%', rating: '', duration: '', review: [] }],
+          lastScore: prevScore,
+          canAttempt: false,
+          retakeStatus: 'PENDING',
+          maxAttempts: 2
+        }, studentName, examCode);
       }
     }
 
@@ -1338,11 +1527,21 @@
       document.getElementById('m-exam-title').innerText = document.getElementById('sp-hero-title').innerText;
       document.getElementById('m-exam-duration').innerText = document.getElementById('sp-hero-duration').innerText + ' Minutes';
       document.getElementById('start-modal').classList.add('active');
+      const primary = document.querySelector('#start-modal .btn-primary');
+      if (primary) setTimeout(() => primary.focus(), 50);
     }
 
     function closeStartModal() {
-      document.getElementById('start-modal').classList.remove('active');
+      const modal = document.getElementById('start-modal');
+      if (!modal.classList.contains('active')) return;
+      modal.classList.remove('active');
+      const trigger = document.querySelector('#sp-action-container .btn-primary');
+      if (trigger) trigger.focus();
     }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeStartModal();
+    });
 
     function confirmStartAssessment() {
       closeStartModal();
@@ -1356,17 +1555,24 @@
       box.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div>Loading questions...</div>';
 
       if (typeof google !== 'undefined' && google.script && google.script.run) {
+        const student = STUDENT_DATA[currentStudentKey];
         google.script.run
           .withSuccessHandler(onQuizLoaded)
-          .withFailureHandler(err => alert('Connection error: ' + err))
-          .getExamData(code);
+          .withFailureHandler(err => {
+            alert('Connection error: ' + (err && err.message ? err.message : err));
+            showScreen('screen-student');
+            checkExamStatus(student.name, activeExamCode);
+          })
+          .getExamData(code, student.name);
       } else {
         setTimeout(() => {
           onQuizLoaded({
             success: true,
+            sessionKey: 'DEMO_SESSION',
+            remainingSeconds: 20 * 60,
             exam: { title: 'Practice Test', duration: 20 },
             questions: [
-              { id: 'DEMO', text: 'Sample Assessment Question', type: 'MCQ', options: ['Option A', 'Option B'], points: 1 }
+              { id: 'DEMO', unit: 'Demo', text: 'Sample Assessment Question', type: 'MCQ', options: ['Option A', 'Option B'], points: 1 }
             ]
           });
         }, 300);
@@ -1374,18 +1580,35 @@
     }
 
     function onQuizLoaded(res) {
-      if (!res.success || !res.questions || res.questions.length === 0) {
-        alert('No questions available.');
-        returnToStudentPortal();
+      if (!res || !res.success || !res.questions || res.questions.length === 0) {
+        alert((res && res.message) || 'No questions available.');
+        showScreen('screen-student');
+        checkExamStatus(STUDENT_DATA[currentStudentKey].name, activeExamCode);
         return;
       }
+
       examData = res.exam;
       questions = res.questions;
       currentSessionKey = res.sessionKey || "";
       currentIdx = 0;
       studentAnswers = {};
-      startTime = new Date();
-      secondsRemaining = (examData.duration || 20) * 60;
+      isSubmitting = false;
+      examFinished = false;
+
+      const saved = loadProgress(currentSessionKey);
+      if (saved) {
+        studentAnswers = saved.answers || {};
+        currentIdx = Math.max(0, Math.min(Number(saved.currentIdx) || 0, questions.length - 1));
+      }
+
+      secondsRemaining = Number(res.remainingSeconds);
+      if (!isFinite(secondsRemaining)) secondsRemaining = (examData.duration || 20) * 60;
+
+      if (secondsRemaining <= 0) {
+        submitQuiz(true);
+        return;
+      }
+
       startTimer();
       renderQuizQuestion();
     }
@@ -1396,9 +1619,11 @@
       timerInterval = setInterval(() => {
         secondsRemaining--;
         if (secondsRemaining <= 0) {
+          secondsRemaining = 0;
           clearInterval(timerInterval);
-          alert('Time expired. Auto-submitting answers.');
-          submitQuiz();
+          timerInterval = null;
+          updateTimerDisplay();
+          submitQuiz(true);
         } else {
           updateTimerDisplay();
         }
@@ -1406,166 +1631,240 @@
     }
 
     function updateTimerDisplay() {
+      const display = document.getElementById('quiz-timer-display');
       const mins = Math.floor(secondsRemaining / 60);
       const secs = secondsRemaining % 60;
-      document.getElementById('quiz-timer-display').innerText = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      display.innerText = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      display.style.color = secondsRemaining <= 60 ? 'var(--danger)' : 'var(--primary)';
+      display.style.background = secondsRemaining <= 60 ? 'var(--danger-bg)' : 'var(--primary-light)';
     }
 
     function renderQuizQuestion() {
       const q = questions[currentIdx];
       const total = questions.length;
+      const answered = Object.keys(studentAnswers).length;
 
-      document.getElementById('quiz-progress-indicator').innerText = `Question ${currentIdx + 1} of ${total}`;
-      document.getElementById('progress-bar-fill').style.width = (((currentIdx + 1) / total) * 100) + '%';
+      document.getElementById('quiz-progress-indicator').innerText =
+        `Question ${currentIdx + 1} of ${total} • Answered ${answered}`;
+      const progress = ((currentIdx + 1) / total) * 100;
+      document.getElementById('progress-bar-fill').style.width = progress + '%';
+      const progressBar = document.getElementById('quiz-progress-bar');
+      if (progressBar) progressBar.setAttribute('aria-valuenow', String(Math.round(progress)));
 
       const box = document.getElementById('quiz-question-box');
-      const isArabic = /[؀-ۿ]/.test(q.text);
+      const isArabic = /[\u0600-\u06FF]/.test(String(q.text || '') + ' ' + String(q.passage || ''));
 
       let optsHtml = '';
       (q.options || []).forEach(opt => {
         const isSelected = studentAnswers[q.id] === opt;
         optsHtml += `
-          <div class="option-item ${isSelected ? 'selected' : ''} ${isArabic ? 'rtl-content' : ''}" onclick="selectAnswer('${q.id}', '${opt.replace(/'/g, "\\'")}')">
-            <div class="opt-circle"></div>
-            <span>${opt}</span>
-          </div>
+          <button type="button"
+                  class="option-item ${isSelected ? 'selected' : ''} ${isArabic ? 'rtl-content' : ''}"
+                  data-qid="${escapeHtml(q.id)}"
+                  data-val="${escapeHtml(opt)}"
+                  aria-pressed="${isSelected ? 'true' : 'false'}"
+                  ${isArabic ? 'lang="ar" dir="rtl"' : ''}>
+            <span class="opt-circle" aria-hidden="true"></span>
+            <span>${escapeHtml(opt)}</span>
+          </button>
         `;
       });
 
-      
       let passageHtml = '';
       if (q.passage) {
         passageHtml = `
-          <div class="passage-box ${isArabic ? 'rtl-content' : ''}">
+          <div class="passage-box ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>
             <div class="passage-header">
-              <span>📖</span>
+              <span aria-hidden="true">📖</span>
               <span>${isArabic ? 'نص القراءة (اقرأ الفقرة بعناية للإجابة عن الأسئلة):' : 'Reading Passage (Read carefully before answering):'}</span>
             </div>
-            <div class="passage-text">${q.passage}</div>
+            <div class="passage-text">${escapeHtml(q.passage)}</div>
           </div>
         `;
       }
 
       box.innerHTML = `
         ${passageHtml}
-        <div class="q-meta-tag">${q.unit || q.lesson || 'Core Curriculum'}</div>
-        <div class="q-text ${isArabic ? 'rtl-content' : ''}">${q.text}</div>
+        <div class="q-meta-tag">${escapeHtml(q.unit || q.lesson || 'Core Curriculum')}</div>
+        <div class="q-text ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>${sanitizeRichText(q.text)}</div>
         <div class="options-grid">${optsHtml}</div>
         <div class="nav-btn-row">
-          <button class="btn-secondary" onclick="prevQuestion()" ${currentIdx === 0 ? 'disabled' : ''}>
+          <button type="button" class="btn-secondary" onclick="prevQuestion()" ${currentIdx === 0 ? 'disabled' : ''}>
             &larr; Previous
           </button>
-          <button class="btn-primary" style="width: auto; padding: 12px 24px;" onclick="${currentIdx === total - 1 ? 'submitQuiz()' : 'nextQuestion()'}">
+          <button type="button" class="btn-primary" id="quiz-submit-btn" style="width: auto; padding: 12px 24px;"
+                  onclick="${currentIdx === total - 1 ? 'submitQuiz(false)' : 'nextQuestion()'}">
             ${currentIdx === total - 1 ? 'Submit Assessment 🎯' : 'Next &rarr;'}
           </button>
         </div>
       `;
+
+      box.querySelectorAll('.option-item').forEach(button => {
+        button.addEventListener('click', () => selectAnswer(button.dataset.qid, button.dataset.val));
+      });
     }
 
     function selectAnswer(qId, val) {
       studentAnswers[qId] = val;
-      renderQuizQuestion();
+      saveProgress();
+
+      document.querySelectorAll('.option-item').forEach(button => {
+        const selected = button.dataset.qid === qId && button.dataset.val === val;
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+
+      const answered = Object.keys(studentAnswers).length;
+      document.getElementById('quiz-progress-indicator').innerText =
+        `Question ${currentIdx + 1} of ${questions.length} • Answered ${answered}`;
     }
 
     function nextQuestion() {
-      if (currentIdx < questions.length - 1) { currentIdx++; renderQuizQuestion(); }
+      if (currentIdx < questions.length - 1) {
+        currentIdx++;
+        saveProgress();
+        renderQuizQuestion();
+      }
     }
 
     function prevQuestion() {
-      if (currentIdx > 0) { currentIdx--; renderQuizQuestion(); }
+      if (currentIdx > 0) {
+        currentIdx--;
+        saveProgress();
+        renderQuizQuestion();
+      }
     }
 
-    function submitQuiz() {
-      clearInterval(timerInterval);
+    function submitQuiz(force) {
+      if (isSubmitting || examFinished) return;
+
       const total = questions.length;
       const answered = Object.keys(studentAnswers).length;
 
-      if (answered < total) {
+      if (!force && answered < total) {
         if (!confirm(`You answered ${answered} of ${total} questions. Are you sure you want to submit?`)) {
-          startTimer();
+          if (secondsRemaining > 0) startTimer();
           return;
         }
       }
 
-      showScreen('screen-result');
-      const container = document.getElementById('review-items-container');
-      container.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div>Generating report & recording score...</div>';
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isSubmitting = true;
+      const submitBtn = document.getElementById('quiz-submit-btn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
+      }
+      saveProgress();
 
       const student = STUDENT_DATA[currentStudentKey];
-      const endTime = new Date();
-      const diffSecs = Math.round((endTime - startTime) / 1000);
-      const durationStr = `${Math.floor(diffSecs / 60)} min ${diffSecs % 60} sec`;
-
       const payload = {
         studentName: student.name,
         schoolGroup: student.grade,
         examCode: activeExamCode,
         answers: studentAnswers,
-        durationSpent: durationStr,
         sessionKey: currentSessionKey
       };
 
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(onSubmissionSuccess)
-          .withFailureHandler(err => alert('Submission error: ' + err))
+          .withFailureHandler(onSubmissionFailure)
           .submitExamAnswers(payload);
       } else {
         setTimeout(() => {
           onSubmissionSuccess({
             success: true,
-            earnedScore: 10,
-            totalScore: 10,
-            percentage: 100,
-            rating: 'Excellent! 🌟',
+            earnedScore: 0,
+            totalScore: total,
+            percentage: 0,
+            rating: 'Practice mode',
+            durationSpent: '--',
             review: []
           });
-        }, 500);
+        }, 400);
+      }
+    }
+
+    function onSubmissionFailure(err) {
+      isSubmitting = false;
+      const submitBtn = document.getElementById('quiz-submit-btn');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Assessment 🎯';
+      }
+      alert('Submission error: ' + (err && err.message ? err.message : err) + '\nYour answers are still on this page. Please try again.');
+      if (secondsRemaining > 0) {
+        startTimer();
+      } else {
+        showScreen('screen-student');
+        checkExamStatus(STUDENT_DATA[currentStudentKey].name, activeExamCode);
       }
     }
 
     function onSubmissionSuccess(res) {
-      if (!res.success) {
-        alert(res.message);
+      if (!res || !res.success) {
+        onSubmissionFailure(res && res.message ? res.message : 'Unknown error');
         return;
       }
+
+      isSubmitting = false;
+      examFinished = true;
+      clearProgress();
+
       const student = STUDENT_DATA[currentStudentKey];
       const lockKey = 'lock_' + activeExamCode + '_' + student.name.replace(/\s+/g, '_');
-      localStorage.setItem(lockKey, JSON.stringify({
-        date: new Date().toLocaleDateString(),
-        score: `${res.earnedScore}/${res.totalScore} (${res.percentage}%)`
-      }));
+      try {
+        localStorage.setItem(lockKey, JSON.stringify({
+          date: new Date().toLocaleDateString(),
+          score: `${res.earnedScore}/${res.totalScore} (${res.percentage}%)`
+        }));
+      } catch (e) { /* ignore */ }
 
+      showScreen('screen-result');
       document.getElementById('res-student-header').innerText = `${student.name} • ${activeExamCode}`;
       document.getElementById('res-score-display').innerText = `${res.earnedScore} / ${res.totalScore}`;
       document.getElementById('res-rating-display').innerText = `${res.rating} (${res.percentage}%)`;
+      const timeEl = document.getElementById('res-time-spent');
+      if (timeEl) timeEl.innerText = 'Time Spent: ' + (res.durationSpent || '--');
 
       const container = document.getElementById('review-items-container');
       container.innerHTML = '';
 
       (res.review || []).forEach((item, idx) => {
-        const isCorrect = item.isCorrect;
+        const isCorrect = item.isCorrect === true || item.isCorrect === 'true';
+        const isArabicItem = /[\u0600-\u06FF]/.test(String(item.questionText || '') + ' ' + String(item.correctAnswer || ''));
         const card = document.createElement('div');
-        card.className = `review-item ${isCorrect ? 'correct' : 'incorrect'}`;
+        card.className = `review-item ${isCorrect ? 'correct' : 'incorrect'}${isArabicItem ? ' rtl-content' : ''}`;
+        card.setAttribute('lang', isArabicItem ? 'ar' : 'en');
         card.innerHTML = `
           <div class="review-header">
-            <div class="review-q-title">Q${idx + 1}: ${item.questionText}</div>
+            <div class="review-q-title">Q${idx + 1}: ${plainText(item.questionText)}</div>
             <span class="${isCorrect ? 'badge-correct' : 'badge-incorrect'}">
-              ${isCorrect ? '✓ Correct (+1)' : '✗ Incorrect (0)'}
+              ${isCorrect ? '✓ Correct' : '✗ Incorrect'} (${item.pointsAwarded}/${item.maxPoints})
             </span>
           </div>
-          <div style="font-size: 0.88rem; margin-top: 6px;">
-            <div><strong>Student's Answer:</strong> <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'};">${item.studentAnswer || '(No answer)'}</span></div>
-            ${!isCorrect ? `<div><strong>Correct Answer:</strong> <span style="color: var(--success); font-weight: 700;">${item.correctAnswer}</span></div>` : ''}
+          <div style="font-size: 0.92rem; margin-top: 6px;">
+            <div><strong>Student's Answer:</strong> <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'};">${escapeHtml(item.studentAnswer || '(No answer)')}</span></div>
+            ${!isCorrect ? `<div><strong>Correct Answer:</strong> <span style="color: var(--success); font-weight: 700;">${escapeHtml(item.correctAnswer)}</span></div>` : ''}
           </div>
-          <div class="explanation-box">${item.explanation}</div>
+          <div class="explanation-box">${sanitizeRichText(item.explanation)}</div>
         `;
         container.appendChild(card);
       });
+
+      if (res.alreadySubmitted) {
+        const notice = document.createElement('div');
+        notice.className = 'alert-box alert-pending';
+        notice.style.marginBottom = '12px';
+        notice.textContent = 'This attempt was already submitted. Showing the saved result.';
+        container.insertBefore(notice, container.firstChild);
+      }
     }
 
     function returnToStudentPortal() {
-      openStudentPortal(currentStudentKey);
+      openStudentPortal(currentStudentKey, activeExamCode);
     }
 
     /* PARENT PORTAL LOGIC (100% ENGLISH, STRICT ISOLATION) */
@@ -1581,7 +1880,9 @@
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(onParentDataLoaded)
-          .withFailureHandler(err => alert('Failed to load parent records: ' + err))
+          .withFailureHandler(err => {
+            container.innerHTML = `<div class="alert-box alert-danger">Could not load parent records: ${escapeHtml(err && err.message ? err.message : err)}</div>`;
+          })
           .getAdminDashboardData();
       } else {
         setTimeout(() => {
@@ -1598,8 +1899,9 @@
     }
 
     function onParentDataLoaded(res) {
-      if (!res.success) {
-        alert(res.message);
+      if (!res || !res.success) {
+        document.getElementById('admin-submissions-container').innerHTML =
+          `<div class="alert-box alert-danger">${escapeHtml(res && res.message ? res.message : 'Could not load records.')}</div>`;
         return;
       }
       cachedAdminData = res;
@@ -1617,8 +1919,14 @@
 
       if (!cachedAdminData) return;
 
-      const subs = (cachedAdminData.submissions || []).filter(s => s.studentName.toLowerCase().includes(student.toLowerCase()));
-      const retakes = (cachedAdminData.retakeRequests || []).filter(r => r.studentName.toLowerCase().includes(student.toLowerCase()) && r.status === 'PENDING');
+      const targetName = student === 'Ali' ? 'ali ahmed' : 'mostafa ahmed';
+      const subs = (cachedAdminData.submissions || []).filter(s =>
+        String(s.studentName || '').trim().toLowerCase() === targetName
+      );
+      const retakes = (cachedAdminData.retakeRequests || []).filter(r =>
+        String(r.studentName || '').trim().toLowerCase() === targetName &&
+        String(r.status || '').toUpperCase() === 'PENDING'
+      );
 
       // KPIs
       document.getElementById('kpi-student-attempts').innerText = subs.length;
@@ -1632,17 +1940,19 @@
         retakeList.innerHTML = '';
         retakes.forEach(r => {
           const row = document.createElement('div');
-          row.style = 'background: #fff; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;';
+          row.style = 'background: #fff; border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;';
           row.innerHTML = `
             <div>
-              <div style="font-weight: 700; font-size: 0.9rem;">${r.examTitle}</div>
-              <div style="font-size: 0.78rem; color: var(--text-muted);">Previous: <strong>${r.previousScore}</strong> &bull; Note: "${r.reason}"</div>
+              <div style="font-weight: 700; font-size: 0.92rem;">${escapeHtml(r.examTitle)}</div>
+              <div style="font-size: 0.84rem; color: var(--text-muted);">Previous: <strong>${escapeHtml(r.previousScore)}</strong> &bull; Note: "${escapeHtml(r.reason)}"</div>
             </div>
             <div style="display: flex; gap: 6px;">
-              <button class="btn-success-sm" onclick="approveRetake('${r.id}')">Approve</button>
-              <button class="btn-danger-sm" onclick="rejectRetake('${r.id}')">Decline</button>
+              <button type="button" class="btn-success-sm" data-action="approve" data-id="${escapeHtml(r.id)}">Approve</button>
+              <button type="button" class="btn-danger-sm" data-action="reject" data-id="${escapeHtml(r.id)}">Decline</button>
             </div>
           `;
+          row.querySelector('[data-action="approve"]').addEventListener('click', () => approveRetake(r.id));
+          row.querySelector('[data-action="reject"]').addEventListener('click', () => rejectRetake(r.id));
           retakeList.appendChild(row);
         });
       } else {
@@ -1673,17 +1983,17 @@
           s.review.forEach((r, idx) => {
             const isCorrect = r.isCorrect === true || r.isCorrect === 'true';
             detailsHtml += `
-              <div style="font-size: 0.84rem; padding: 10px 12px; margin-top: 8px; border-radius: 8px; background: ${isCorrect ? '#f8fafc' : '#fef2f2'}; border-left: 4px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
+              <div style="font-size: 0.88rem; padding: 10px 12px; margin-top: 8px; border-radius: 8px; background: ${isCorrect ? '#f8fafc' : '#fef2f2'}; border-inline-start: 4px solid ${isCorrect ? 'var(--success)' : 'var(--danger)'};">
                 <div style="font-weight: 700; color: var(--text-main); margin-bottom: 4px;">
-                  Q${idx + 1}: ${r.questionText}
+                  Q${idx + 1}: ${plainText(r.questionText)}
                 </div>
-                <div style="font-size: 0.82rem; margin-top: 3px; display: flex; gap: 14px; flex-wrap: wrap;">
+                <div style="font-size: 0.86rem; margin-top: 3px; display: flex; gap: 14px; flex-wrap: wrap;">
                   <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'}; font-weight: 700;">
-                    ${isCorrect ? '✓ Correct Choice: ' + (r.studentAnswer || '(Completed)') : '✗ Student Chose: ' + (r.studentAnswer || '(None)')}
+                    ${isCorrect ? '✓ Correct Choice: ' + escapeHtml(r.studentAnswer || '(Completed)') : '✗ Student Chose: ' + escapeHtml(r.studentAnswer || '(None)')}
                   </span>
-                  ${!isCorrect ? `<span style="color: #047857; font-weight: 700;">✓ Correct Answer: ${r.correctAnswer}</span>` : ''}
+                  ${!isCorrect ? `<span style="color: var(--success); font-weight: 700;">✓ Correct Answer: ${escapeHtml(r.correctAnswer)}</span>` : ''}
                 </div>
-                ${r.explanation ? `<div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 5px; line-height: 1.4;">💡 <strong>Rule Explanation:</strong> ${r.explanation}</div>` : ''}
+                ${r.explanation ? `<div style="font-size: 0.84rem; color: var(--text-muted); margin-top: 5px; line-height: 1.5;">💡 <strong>Rule Explanation:</strong> ${sanitizeRichText(r.explanation)}</div>` : ''}
               </div>
             `;
           });
@@ -1695,11 +2005,11 @@
         card.innerHTML = `
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
             <div>
-              <div style="font-size: 1.05rem; font-weight: 800; color: var(--primary);">${s.examCode}</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">⏱️ Duration: <strong>${s.durationSpent}</strong> &bull; 📅 Date: ${s.timestamp}</div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: var(--primary);">${escapeHtml(s.examCode)}</div>
+              <div style="font-size: 0.86rem; color: var(--text-muted); margin-top: 2px;">⏱️ Duration: <strong>${escapeHtml(s.durationSpent)}</strong> &bull; 📅 Date: ${escapeHtml(s.timestamp)}</div>
             </div>
             <div style="font-size: 0.95rem; font-weight: 800; padding: 6px 14px; border-radius: 8px; background: #ecfdf5; color: #047857;">
-              ${s.earnedScore} / ${s.totalScore} (${s.percentage}) &bull; ${s.rating}
+              ${s.earnedScore} / ${s.totalScore} (${escapeHtml(s.percentage)}) &bull; ${escapeHtml(s.rating)}
             </div>
           </div>
           <details ${isLatest ? 'open' : ''} style="margin-top: 8px; border-top: 1px solid #f1f5f9; padding-top: 8px;">
@@ -1723,13 +2033,14 @@
 
       exams.forEach((ex, idx) => {
         const chip = document.createElement('button');
+        chip.type = 'button';
         chip.className = 'inspect-chip' + (idx === 0 ? ' active' : '');
         chip.innerText = ex.title;
-        chip.onclick = () => {
+        chip.addEventListener('click', () => {
           document.querySelectorAll('.inspect-chip').forEach(c => c.classList.remove('active'));
           chip.classList.add('active');
           renderInspectQuestions(ex.code);
-        };
+        });
         chipsBox.appendChild(chip);
       });
 
@@ -1749,20 +2060,22 @@
       qList.forEach((q, idx) => {
         const card = document.createElement('div');
         card.style = 'background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 12px;';
+        const isArabicQuestion = /[\u0600-\u06FF]/.test(String(q.text || '') + ' ' + String(q.passage || ''));
+        const options = Array.isArray(q.options) ? q.options.map(escapeHtml).join(' • ') : '';
         card.innerHTML = `
-          <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--accent); font-weight: 700;">
-            <span>Question ${idx + 1} &bull; ${q.id}</span>
-            <span>${q.lesson || q.unit}</span>
+          <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 0.84rem; color: var(--accent); font-weight: 700;">
+            <span>Question ${idx + 1} &bull; ${escapeHtml(q.id)}</span>
+            <span>${escapeHtml(q.lesson || q.unit || '')}</span>
           </div>
-          ${q.passage ? `<div class="passage-box ${q.passage.match(/[\u0600-\u06FF]/) ? 'rtl-content' : ''}" style="margin: 10px 0; padding: 10px 14px; font-size: 0.86rem;"><div style="font-weight:700; color:var(--primary); margin-bottom:4px;">📖 Reading Passage:</div>${q.passage}</div>` : ''}
-          <div style="font-size: 0.98rem; font-weight: 700; margin: 8px 0; color: var(--text-main);">${q.text}</div>
-          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 6px;">
-            <strong>Options:</strong> ${q.options.join(' &bull; ')}
+          ${q.passage ? `<div class="passage-box ${isArabicQuestion ? 'rtl-content' : ''}" ${isArabicQuestion ? 'lang="ar" dir="rtl"' : ''} style="margin: 10px 0; padding: 10px 14px; font-size: 0.9rem;"><div style="font-weight:700; color:var(--primary); margin-bottom:4px;">📖 Reading Passage:</div>${escapeHtml(q.passage)}</div>` : ''}
+          <div style="font-size: 1rem; font-weight: 700; margin: 8px 0; color: var(--text-main);" ${isArabicQuestion ? 'lang="ar" dir="rtl"' : ''}>${sanitizeRichText(q.text)}</div>
+          <div style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 6px;">
+            <strong>Options:</strong> ${options}
           </div>
-          <div style="display: inline-block; background: #ecfdf5; color: #047857; font-weight: 700; font-size: 0.8rem; padding: 3px 8px; border-radius: 6px;">
-            ✓ Correct: ${q.correctAnswer}
+          <div style="display: inline-block; background: #ecfdf5; color: #047857; font-weight: 700; font-size: 0.86rem; padding: 3px 8px; border-radius: 6px;">
+            ✓ Correct: ${escapeHtml(q.correctAnswer)}
           </div>
-          <div class="explanation-box" style="margin-top: 8px;">${q.explanation}</div>
+          <div class="explanation-box" style="margin-top: 8px;">${sanitizeRichText(q.explanation)}</div>
         `;
         container.appendChild(card);
       });
@@ -1779,6 +2092,7 @@
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => { alert(res.message); loadParentData(); })
+          .withFailureHandler(err => alert('Could not approve: ' + (err && err.message ? err.message : err)))
           .approveRetakeRequest(id);
       } else {
         alert('Simulation: Approved.');
@@ -1790,6 +2104,7 @@
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         google.script.run
           .withSuccessHandler(res => { alert(res.message); loadParentData(); })
+          .withFailureHandler(err => alert('Could not decline: ' + (err && err.message ? err.message : err)))
           .rejectRetakeRequest(id);
       } else {
         alert('Simulation: Declined.');
@@ -1798,11 +2113,11 @@
     }
 
     function clearDeviceLocks() {
-      if (confirm('Reset device locks for all completed exams on this browser?')) {
+      if (confirm('Reset local device locks and saved in-progress answers for all exams on this browser?')) {
         Object.keys(localStorage).forEach(k => {
-          if (k.startsWith('lock_')) localStorage.removeItem(k);
+          if (k.startsWith('lock_') || k.startsWith('progress_')) localStorage.removeItem(k);
         });
-        alert('Device locks reset successfully.');
+        alert('Device data reset successfully.');
       }
     }
   </script>
