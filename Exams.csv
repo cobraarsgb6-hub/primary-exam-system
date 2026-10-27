@@ -1,4 +1,33 @@
-﻿كود الامتحان,عنوان الامتحان,الصف الدراسي,المادة,عدد الأسئلة,المدة (دقائق),الحالة,رابط الحل للطلاب,تاريخ الإنشاء
-EX_Y5_ENG_ADV01,"Year 5 Grammar: Adverbials of Time, Place & Manner (Unit 2 Lesson 3)",Year 5 (G5),English Grammar,10,20,نشط,,2026-10-24
-EX_Y6_ENG_FANTASY01,Grade 6 English: Fantasy Reading 'The City That Waited' & Grammar,Grade 6 (G6),English Literacy,10,20,نشط,,2026-10-24
-EX_Y6_ARB_PRIO01,الصف السادس - لغة عربية: القراءة المتحررة، النكرة والمعرفة، والهمزة المتوسطة,Grade 6 (G6),اللغة العربية,10,20,نشط,,2026-10-24
+﻿كود الامتحان,عنوان الامتحان,الصف الدراسي,المادة,عدد الأسئلة,مدة الامتحان (بالدقائق),حالة الامتحان,رابط Google Form,تاريخ الإنشاء,نوع الامتحان,الفترة
+DAILY_Y5_ENG_W1D1,Ali - Day 1: Adverbs of Manner,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W1
+DAILY_Y5_ENG_W1D2,Ali - Day 2: Adverbials of Time,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W1
+DAILY_Y5_ENG_W1D3,Ali - Day 3: Adverbials of Place,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W1
+DAILY_Y5_ENG_W1D4,Ali - Day 4: Fronted Adverbials & Commas,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W1
+DAILY_Y5_ENG_W1D5,Ali - Day 5: Compound Adverbials,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W1
+DAILY_Y5_ENG_W1D6,Ali - Day 6: Sentence Repair & Error Hunting,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W1
+EX_Y5_ENG_W1,Ali - Week 1 Milestone: Adverbials Mastery,Year 5 (G5),English Grammar,10,20,ACTIVE,,2026-10-25,Weekly,W1
+DAILY_Y5_ENG_W2D8,Ali - Day 8: Relative Pronouns (who/which/that),Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W2
+DAILY_Y5_ENG_W2D9,Ali - Day 9: Non-defining Relative Clauses & Commas,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W2
+DAILY_Y5_ENG_W2D10,Ali - Day 10: Defining vs Non-defining Clauses,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-25,Daily,W2
+EX_Y5_ENG_W2_CUMULATIVE,Ali - Week 2 Cumulative Exam (W1 + W2 Balanced),Year 5 (G5),English Grammar,12,25,ACTIVE,,2026-10-25,Cumulative,W2
+EX_Y5_ENG_W3_CUMULATIVE,Ali - Week 3 Cumulative Exam (W1 + W2 + W3),Year 5 (G5),English Grammar,15,30,ACTIVE,,2026-10-25,Cumulative,W3
+EX_Y5_ENG_W4_CUMULATIVE,Ali - Week 4 Milestone Exam (W1 - W4),Year 5 (G5),English Grammar,18,35,ACTIVE,,2026-10-25,Cumulative,W4
+EX_Y5_ENG_M1_CAPSTONE,Ali - Month 1 Comprehensive Capstone Exam,Year 5 (G5),English Grammar,20,40,ACTIVE,,2026-10-25,Monthly,M1
+DAILY_Y6_ARB_W1D4,Mostafa - Day 4: إدارة الوقت وترتيب الأولويات,Grade 6 (G6),اللغة العربية,5,10,ACTIVE,,2026-10-25,Daily,W1
+DAILY_Y6_ARB_W1D5,Mostafa - Day 5: النكرة والمعرفة,Grade 6 (G6),اللغة العربية,5,10,ACTIVE,,2026-10-25,Daily,W1
+DAILY_Y6_ARB_W1D6,Mostafa - Day 6: الهمزة المتوسطة على ألف,Grade 6 (G6),اللغة العربية,5,10,ACTIVE,,2026-10-25,Daily,W1
+EX_Y6_ARB_W1,Mostafa - Week 1 Milestone: لغة عربية,Grade 6 (G6),اللغة العربية,10,20,ACTIVE,,2026-10-25,Weekly,W1
+DAILY_Y6_ARB_W2D8,Mostafa - Day 8: أنواع الخبر (المفرد),Grade 6 (G6),اللغة العربية,5,10,ACTIVE,,2026-10-25,Daily,W2
+DAILY_Y6_ARB_W2D9,Mostafa - Day 9: أنواع الخبر (الجملة وشبه الجملة),Grade 6 (G6),اللغة العربية,5,10,ACTIVE,,2026-10-25,Daily,W2
+DAILY_Y6_ARB_W2D10,Mostafa - Day 10: الهمزة المتوسطة على واو,Grade 6 (G6),اللغة العربية,5,10,ACTIVE,,2026-10-25,Daily,W2
+EX_Y6_ARB_W2_CUMULATIVE,Mostafa - Week 2 Cumulative Exam (W1 + W2),Grade 6 (G6),اللغة العربية,12,25,ACTIVE,,2026-10-25,Cumulative,W2
+EX_Y6_ARB_W3_CUMULATIVE,Mostafa - Week 3 Cumulative Exam (W1 + W2 + W3),Grade 6 (G6),اللغة العربية,15,30,ACTIVE,,2026-10-25,Cumulative,W3
+EX_Y6_ARB_W4_CUMULATIVE,Mostafa - Week 4 Milestone Exam (W1 - W4),Grade 6 (G6),اللغة العربية,18,35,ACTIVE,,2026-10-25,Cumulative,W4
+EX_Y6_ARB_M1_CAPSTONE,Mostafa - Month 1 Comprehensive Capstone Exam,Grade 6 (G6),اللغة العربية,20,40,ACTIVE,,2026-10-25,Monthly,M1
+EX_Y5_ENG_ADV01,English Grammar: Adverbials Mastery & Sentence Expansion (Diagnostic),Year 5 (G5),English Grammar,10,20,ACTIVE,,2026-10-25,Diagnostic,W1
+EX_Y6_ARB_PRIO01,Arabic Grammar: الأولويات والنكرة والمعرفة (Diagnostic),Grade 6 (G6),اللغة العربية,10,20,ACTIVE,,2026-10-25,Diagnostic,W1
+EX_Y6_ENG_FANTASY01,English Literature: Fantasy Genre & Reading Comprehension (Diagnostic),Grade 6 (G6),English Literature,10,20,ACTIVE,,2026-10-25,Diagnostic,W1
+EX_Y5_ICT_QUIZ01,"Ali - ICT Assessment: Variables, Loops, Input/Output & Operators",Year 5 (G5),ICT Computing,6,12,ACTIVE,,2026-10-26,Milestone,W7
+DAILY_Y5_ENG_W7D1,Ali - Day 1: Simple & Compound Sentences,Year 5 (G5),English Grammar,5,10,ACTIVE,,2026-10-26,Daily,W7
+EX_Y6_ICT_QUIZ01,Mostafa - ICT Assessment: Programming Constructs & Flowcharts,Grade 6 (G6),ICT Computing,6,12,ACTIVE,,2026-10-26,Milestone,W7
+DAILY_Y6_ARB_W7D1,Mostafa - Day 1: سر القوة والنجاح وأنواع الخبر,Grade 6 (G6),اللغة العربية,5,10,ACTIVE,,2026-10-26,Daily,W7

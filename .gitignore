@@ -2,5 +2,12 @@ node_modules/
 __pycache__/
 *.pyc
 backups/
+backup_*/
+*.bak_*
+scratch/
+.coligo_session/
 *.log
 .DS_Store
+*.png
+*.pdf
+videos/
