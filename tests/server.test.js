@@ -482,10 +482,11 @@ test('today mission, student exam list, homework status and drive/coligo guards'
   const mostafaExams = app.sandbox.getStudentAvailableExams('mostafa');
   assert.equal(mostafaExams.exams.length, 0, 'grade isolation hides Year 5 exams');
 
-  const hw = app.sandbox.recordHomeworkStatus('Ali Ahmed', 'English Grammar', true);
+  const hw = app.sandbox.recordHomeworkStatus('ali', 'English Grammar', true);
   assert.equal(hw.success, true);
+  assert.equal(hw.student, 'Ali Ahmed', 'portal keys are stored as full names');
   const hwRows = app.sheets.Homework_Status.rows.length;
-  const unset = app.sandbox.recordHomeworkStatus('Ali Ahmed', 'English Grammar', false);
+  const unset = app.sandbox.recordHomeworkStatus('ali', 'English Grammar', false);
   assert.equal(unset.success, true);
   assert.equal(unset.done, false);
   assert.equal(app.sheets.Homework_Status.rows.length, hwRows, 'homework status upserts');
@@ -508,9 +509,9 @@ test('today mission, student exam list, homework status and drive/coligo guards'
 
 test('admin dashboard now exposes studyPlan and Drive metadata fields', () => {
   const app = createApp();
-  app.sandbox.setupDatabase();
   const token = app.sandbox.verifyAdminPin('1990').token;
 
+  // Legacy sheets without Study_Plan are provisioned lazily on first open.
   const result = app.sandbox.getAdminDashboardData(token);
   assert.equal(result.success, true);
   assert.ok(Array.isArray(result.studyPlan));
@@ -518,5 +519,58 @@ test('admin dashboard now exposes studyPlan and Drive metadata fields', () => {
   assert.equal(result.studyPlan[0].student, 'Ali Ahmed');
   assert.equal(Object.keys(result.driveVideos).length, 0);
   assert.equal(result.driveFolderId, '');
+});
+
+test('Arabic headers resolve to canonical columns and are not duplicated', () => {
+  const app = createApp();
+  app.sheets.Exams.rows[0] = [
+    'كود الامتحان', 'عنوان الامتحان', 'الصف الدراسي', 'المادة', 'عدد الأسئلة',
+    'المدة', 'الحالة', 'الرابط المباشر', 'تاريخ الإنشاء', 'نوع الامتحان', 'الفترة المستهدفة'
+  ];
+  app.sheets.Question_Bank.rows[0] = [
+    'رقم السؤال', 'الصف الدراسي', 'المادة', 'الوحدة / الموضوع', 'نص السؤال', 'النوع',
+    'الخيارات', 'الإجابة الصحيحة', 'النقاط', 'الشرح', 'كود الامتحان', 'الأسبوع', 'الصعوبة'
+  ];
+  app.sheets.Submissions.rows[0] = [
+    'التاريخ والوقت', 'اسم الطالب', 'الصف الدراسي', 'كود الامتحان', 'الدرجة',
+    'الدرجة الكلية', 'النسبة المئوية', 'التقدير', 'المدة', 'الملخص', 'مراجعة تفصيلية JSON'
+  ];
+
+  const examMap = app.sandbox.getSheetHeaderMap_(app.sheets.Exams);
+  assert.equal(examMap['exam code'], 0);
+  assert.equal(examMap['grade level'], 2);
+  assert.equal(examMap['target period'], 10);
+  assert.equal(app.sandbox.headerIndex_(examMap, 'Duration', 99), 5, 'base header match');
+
+  const data = app.sandbox.getExamData('EX_Y5_ENG_ADV01', 'Ali Ahmed');
+  assert.equal(data.success, true, data.message);
+  assert.equal(data.exam.grade, 'Year 5 (G5)');
+  assert.equal(data.exam.subject, 'English Grammar');
+  assert.equal(data.questions.length, 3);
+
+  const session = sessionFor(app, data.sessionKey);
+  const submitted = app.sandbox.submitExamAnswers({
+    studentName: 'Ali Ahmed',
+    examCode: 'EX_Y5_ENG_ADV01',
+    sessionKey: data.sessionKey,
+    answers: { [session[0].id]: session[0].correctAnswer }
+  });
+  assert.equal(submitted.success, true, submitted.message);
+  assert.equal(submitted.earnedScore, 1);
+
+  const subRow = app.sheets.Submissions.rows[1];
+  assert.equal(subRow[1], 'Ali Ahmed');
+  assert.equal(subRow[3], 'EX_Y5_ENG_ADV01');
+  assert.equal(subRow[4], 1);
+  assert.equal(subRow[5], 3);
+
+  // Migration must recognise the Arabic columns instead of appending blanks.
+  const examsWidth = app.sheets.Exams.rows[0].length;
+  const bankWidth = app.sheets.Question_Bank.rows[0].length;
+  const subWidth = app.sheets.Submissions.rows[0].length;
+  app.sandbox.setupDatabase();
+  assert.equal(app.sheets.Exams.rows[0].length, examsWidth);
+  assert.equal(app.sheets.Question_Bank.rows[0].length, bankWidth);
+  assert.equal(app.sheets.Submissions.rows[0].length, subWidth);
 });
 

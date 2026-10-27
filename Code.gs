@@ -178,7 +178,11 @@ function ensureSheetHeaders_(sheet, requiredHeaders, bgColor) {
   const lastColumn = Math.max(sheet.getLastColumn(), 1);
   const current = sheet.getRange(1, 1, 1, lastColumn).getValues()[0]
     .map(value => String(value || '').trim());
-  const missing = requiredHeaders.filter(header => current.indexOf(header) === -1);
+  // A header written in Arabic (alias) satisfies the canonical English column.
+  // Without this the migration would append an empty duplicate column and every
+  // read would see blank values for that field.
+  const present = current.map(canonicalHeader_).map(header => header.toLowerCase());
+  const missing = requiredHeaders.filter(header => present.indexOf(String(header).trim().toLowerCase()) === -1);
   if (missing.length) {
     sheet.getRange(1, current.length + 1, 1, missing.length).setValues([missing]);
   }
@@ -285,9 +289,17 @@ function normalizeExam_(value) {
 }
 
 function normalizeAnswer_(value) {
-  return (value == null ? '' : String(value))
+  let text = (value == null ? '' : String(value));
+  if (typeof text.normalize === 'function') {
+    text = text.normalize('NFKC');
+  }
+  return text
     .replace(/\u0640/g, '')
-    .replace(/[\u064B-\u0652]/g, '')
+    .replace(/[\u064B-\u0652\u0670]/g, '')
+    .replace(/[\u0622\u0623\u0625]/g, '\u0627')
+    .replace(/\u0649/g, '\u064A')
+    .replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660))
+    .replace(/[\u06F0-\u06F9]/g, d => String(d.charCodeAt(0) - 0x06F0))
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
@@ -325,12 +337,72 @@ function getSessionSheet_() {
   return ensureSessionSheet_(getSpreadsheet());
 }
 
+const HEADER_ALIASES_ = {
+  // Submissions
+  'اسم الطالب': 'Student Name',
+  'كود الامتحان': 'Exam Code',
+  'عنوان الامتحان': 'Exam Title',
+  'المادة': 'Subject',
+  'المادة الدراسية': 'Subject',
+  'الدرجة': 'Score',
+  'الدرجة الكلية': 'Total',
+  'النسبة المئوية': 'Percentage',
+  'التقدير': 'Rating',
+  'المدة': 'Duration (Mins)',
+  'الملخص': 'Summary',
+  'التاريخ والوقت': 'Timestamp',
+  'الوقت': 'Timestamp',
+  'مراجعة تفصيلية JSON': 'Detailed Review JSON',
+  'مراجعة تفصيلية': 'Detailed Review JSON',
+  // Question_Bank
+  'رقم السؤال': 'Question ID',
+  'نص السؤال': 'Question Text',
+  'النوع': 'Type',
+  'الإجابة الصحيحة': 'Correct Answer',
+  'الخيارات': 'Options (delimited by |)',
+  'النقاط': 'Points',
+  'الشرح': 'Pedagogical Explanation & Mistake Breakdown',
+  'الأسبوع': 'Week',
+  'الصعوبة': 'Difficulty',
+  'الوحدة': 'Unit / Topic',
+  'الوحدة / الموضوع': 'Unit / Topic',
+  'الوحدة الدراسية': 'Unit / Topic',
+  // Exams
+  'الصف الدراسي': 'Grade Level',
+  'الصف': 'Grade Level',
+  'عدد الأسئلة': 'Questions',
+  'الرابط': 'URL',
+  'الرابط المباشر': 'Direct URL',
+  'تاريخ الإنشاء': 'Created Date',
+  'نوع الامتحان': 'Exam Type',
+  'الفترة': 'Target Period',
+  'الفترة المستهدفة': 'Target Period',
+  // Study_Plan / shared
+  'الطالب': 'Student',
+  'اليوم': 'Day',
+  'التاريخ': 'Date',
+  'المهارات': 'Skills',
+  'الحالة': 'Status'
+};
+
+function canonicalHeader_(header) {
+  const clean = String(header || '').trim();
+  return HEADER_ALIASES_[clean] || clean;
+}
+
 function getSheetHeaderMap_(sheet) {
   const lastColumn = Math.max(sheet.getLastColumn(), 1);
   const headers = sheet.getRange(1, 1, 1, lastColumn).getValues()[0];
   const map = {};
   headers.forEach((header, index) => {
-    map[String(header || '').trim().toLowerCase()] = index;
+    const raw = String(header || '').trim();
+    if (!raw) return;
+    map[raw.toLowerCase()] = index;
+    const canonical = canonicalHeader_(raw).toLowerCase();
+    if (typeof map[canonical] !== 'number') map[canonical] = index;
+    // "Duration (Mins)" and "Duration" should resolve to the same column.
+    const base = canonical.replace(/\s*\([^)]*\)\s*$/, '').trim();
+    if (base && typeof map[base] !== 'number') map[base] = index;
   });
   return map;
 }
@@ -2113,7 +2185,7 @@ function getAdminDashboardData(adminToken) {
     let exSheet = ss.getSheetByName('Exams');
     let retakeSheet = ss.getSheetByName('Retake_Requests');
 
-    if (!subSheet || !exSheet) {
+    if (!subSheet || !exSheet || !ss.getSheetByName('Study_Plan')) {
       setupDatabase(ss);
       subSheet = ss.getSheetByName('Submissions');
       exSheet = ss.getSheetByName('Exams');
@@ -2429,6 +2501,9 @@ function markStudyPlanProgress_(studentName, examCode) {
       if (rowName !== targetName || rowExam !== targetExam) continue;
       if (String(rowValue_(data[i], map, 'Status', 11) || '').toLowerCase() === 'completed') continue;
       sheet.getRange(i + 1, statusCol).setValue('Completed');
+      // One successful attempt advances one roadmap step, not every lesson
+      // that happens to share the same exam code.
+      break;
     }
   } catch (e) {
     Logger.log('markStudyPlanProgress_ skipped: ' + e);
@@ -3286,11 +3361,16 @@ function syncColigoAuto_() {
 
 function recordHomeworkStatus(studentName, subject, done) {
   try {
-    const name = String(studentName || '').trim();
+    const rawName = String(studentName || '').trim();
     const subjectName = String(subject || '').trim();
-    if (!name || !subjectName) {
+    if (!rawName || !subjectName) {
       return { success: false, message: 'اسم الطالب والمادة مطلوبان.' };
     }
+    // The client sends the portal key ('ali' / 'mostafa'); store full names so
+    // the sheet stays readable and consistent with Submissions.
+    const key = normalizeName_(rawName);
+    const name = (key === 'ali' || key === 'ali ahmed') ? 'Ali Ahmed'
+      : ((key === 'mostafa' || key === 'mostafa ahmed') ? 'Mostafa Ahmed' : rawName);
     const isDone = (done === true || done === 'true' || done === 1);
 
     const ss = getSpreadsheet();

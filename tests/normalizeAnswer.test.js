@@ -47,6 +47,18 @@ test('normalizeAnswer_: combined real-world Arabic test case', () => {
   assert.equal(normalizeAnswer_(student), normalizeAnswer_(expected));
 });
 
+test('normalizeAnswer_: folds alef forms and alef maqsura', () => {
+  assert.equal(normalizeAnswer_('أحمد'), normalizeAnswer_('احمد'));
+  assert.equal(normalizeAnswer_('إجابة'), normalizeAnswer_('اجابة'));
+  assert.equal(normalizeAnswer_('آمن'), normalizeAnswer_('امن'));
+  assert.equal(normalizeAnswer_('مصطفى'), normalizeAnswer_('مصطفي'));
+});
+
+test('normalizeAnswer_: converts Arabic-Indic digits', () => {
+  assert.equal(normalizeAnswer_('١٢٣'), '123');
+  assert.equal(normalizeAnswer_('۴۵۶'), '456');
+});
+
 test('normalizeName_: normalizes student names cleanly and collapses spaces', () => {
   assert.equal(normalizeName_('  Mostafa   Ahmed  '), 'mostafa ahmed');
   assert.equal(normalizeName_('علي   أحمد'), 'علي أحمد');
