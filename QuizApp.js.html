@@ -1,0 +1,498 @@
+<script>
+
+    /* GATEKEEPER MODAL */
+    function promptStartConfirmation() {
+      const student = STUDENT_DATA[currentStudentKey];
+      document.getElementById('m-student-name').innerText = `${student.name} (${student.grade})`;
+      document.getElementById('m-exam-title').innerText = document.getElementById('sp-hero-title').innerText;
+      document.getElementById('m-exam-duration').innerText = document.getElementById('sp-hero-duration').innerText + ' Minutes';
+      document.getElementById('start-modal').classList.add('active');
+      const primary = document.querySelector('#start-modal .btn-primary');
+      if (primary) setTimeout(() => primary.focus(), 50);
+    }
+
+    function closeStartModal() {
+      const modal = document.getElementById('start-modal');
+      if (!modal.classList.contains('active')) return;
+      modal.classList.remove('active');
+      const trigger = document.querySelector('#sp-action-container .btn-primary');
+      if (trigger) trigger.focus();
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') closeStartModal();
+    });
+
+    function confirmStartAssessment() {
+      closeStartModal();
+      showScreen('screen-quiz');
+      loadAndStartQuiz(activeExamCode);
+    }
+
+    function startExamByCode(code) {
+      if (!code) {
+        alert('No practice exam is currently assigned for this subject.');
+        return;
+      }
+      activeExamCode = code;
+      showScreen('screen-quiz');
+      loadAndStartQuiz(code);
+    }
+
+    /* QUIZ RUNTIME */
+    function loadAndStartQuiz(code) {
+      const box = document.getElementById('quiz-question-box');
+      box.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div>Loading questions...</div>';
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        const student = STUDENT_DATA[currentStudentKey] || { name: 'Student' };
+        google.script.run
+          .withSuccessHandler(res => {
+            if (res && res.success && res.questions && res.questions.length > 0) {
+              onQuizLoaded(res);
+              return;
+            }
+            const errCode = res && res.code;
+            if (errCode === 'MAX_ATTEMPTS') {
+              onQuizError({
+                code: 'MAX_ATTEMPTS',
+                message: res.message || 'You have reached the maximum allowed attempts. Please ask your parent for approval.'
+              });
+              return;
+            }
+            onQuizError(res || { code: 'SERVER_ERROR', message: 'Failed to load exam questions.' });
+          })
+          .withFailureHandler(err => {
+            onQuizError({
+              code: 'CONNECTION',
+              message: 'Unable to connect to the server. Please check your network and retry.'
+            });
+          })
+          .getExamData(code, student.name);
+      } else {
+        // E2E Test or Local Offline Mode
+        const bridge = (typeof window !== 'undefined' && (window.__mockBridge || window.mockBridge)) || mockBridge;
+        const student = STUDENT_DATA[currentStudentKey] || { name: 'Student' };
+        if (bridge && bridge.getExamData) {
+          const localRes = bridge.getExamData(code, student.name);
+          if (localRes && localRes.success) {
+            setTimeout(() => onQuizLoaded(localRes), 100);
+          } else {
+            setTimeout(() => onQuizError(localRes), 100);
+          }
+        } else {
+          onQuizError({ code: 'OFFLINE', message: 'Offline mode active. Connect to Google Apps Script to take this exam.' });
+        }
+      }
+    }
+
+    function onQuizError(err) {
+      const box = document.getElementById('quiz-question-box');
+      if (!box) return;
+      const msg = err && err.message ? err.message : 'An error occurred while loading the exam.';
+      const code = err && err.code ? err.code : 'ERROR';
+      box.innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; max-width: 480px; margin: 0 auto;">
+          <div style="font-size: 2.6rem; margin-bottom: 12px;">⚠️</div>
+          <h3 style="font-size: 1.2rem; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Assessment Notice</h3>
+          <p style="font-size: 0.9rem; color: #64748b; line-height: 1.5; margin-bottom: 20px;">${escapeHtml(msg)}</p>
+          <div style="display: flex; justify-content: center; gap: 10px;">
+            <div role="button" tabindex="0" onclick="showScreen('screen-student')" style="cursor: pointer; padding: 9px 20px; background: #f1f5f9; border-radius: 8px; font-weight: 700; font-size: 0.88rem; color: #334155;">Return to Portal</div>
+            ${code !== 'MAX_ATTEMPTS' ? `<div role="button" tabindex="0" onclick="loadAndStartQuiz(activeExamCode)" style="cursor: pointer; padding: 9px 20px; background: #00b074; color: #fff; border-radius: 8px; font-weight: 700; font-size: 0.88rem;">Retry</div>` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    function onQuizLoaded(res) {
+      if (!res || !res.success || !res.questions || res.questions.length === 0) {
+        alert((res && res.message) || 'No questions available.');
+        showScreen('screen-student');
+        checkExamStatus(STUDENT_DATA[currentStudentKey].name, activeExamCode);
+        return;
+      }
+
+      examData = res.exam;
+      questions = res.questions;
+      currentSessionKey = res.sessionKey || "";
+      currentIdx = 0;
+      studentAnswers = {};
+      isSubmitting = false;
+      examFinished = false;
+
+      const saved = loadProgress(currentSessionKey);
+      if (saved) {
+        studentAnswers = saved.answers || {};
+        currentIdx = Math.max(0, Math.min(Number(saved.currentIdx) || 0, questions.length - 1));
+      }
+
+      secondsRemaining = Number(res.remainingSeconds);
+      if (!isFinite(secondsRemaining)) secondsRemaining = (examData.duration || 20) * 60;
+
+      if (secondsRemaining <= 0) {
+        submitQuiz(true);
+        return;
+      }
+
+      startTimer();
+      renderQuizQuestion();
+    }
+
+    function startTimer() {
+      clearInterval(timerInterval);
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        secondsRemaining--;
+        if (secondsRemaining <= 0) {
+          secondsRemaining = 0;
+          clearInterval(timerInterval);
+          timerInterval = null;
+          updateTimerDisplay();
+          submitQuiz(true);
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const display = document.getElementById('quiz-timer-display');
+      const mins = Math.floor(secondsRemaining / 60);
+      const secs = secondsRemaining % 60;
+      display.innerText = `⏱️ ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+      display.style.color = secondsRemaining <= 60 ? 'var(--danger)' : 'var(--primary)';
+      display.style.background = secondsRemaining <= 60 ? 'var(--danger-bg)' : 'var(--primary-light)';
+    }
+
+    function renderQuizQuestion() {
+      const q = questions[currentIdx];
+      const total = questions.length;
+      const answered = Object.keys(studentAnswers).length;
+
+      document.getElementById('quiz-progress-indicator').innerText =
+        `Question ${currentIdx + 1} of ${total} • Answered ${answered}`;
+      const progress = ((currentIdx + 1) / total) * 100;
+      document.getElementById('progress-bar-fill').style.width = progress + '%';
+      const progressBar = document.getElementById('quiz-progress-bar');
+      if (progressBar) progressBar.setAttribute('aria-valuenow', String(Math.round(progress)));
+
+      const box = document.getElementById('quiz-question-box');
+      const isArabic = /[\u0600-\u06FF]/.test(String(q.text || '') + ' ' + String(q.passage || ''));
+
+      let optsHtml = '';
+      (q.options || []).forEach(opt => {
+        const isSelected = studentAnswers[q.id] === opt;
+        optsHtml += `
+          <button type="button"
+                  class="option-item ${isSelected ? 'selected' : ''} ${isArabic ? 'rtl-content' : ''}"
+                  data-qid="${escapeHtml(q.id)}"
+                  data-val="${escapeHtml(opt)}"
+                  aria-pressed="${isSelected ? 'true' : 'false'}"
+                  ${isArabic ? 'lang="ar" dir="rtl"' : ''}>
+            <span class="opt-circle" aria-hidden="true"></span>
+            <span>${escapeHtml(opt)}</span>
+          </button>
+        `;
+      });
+
+      let passageHtml = '';
+      if (q.passage) {
+        passageHtml = `
+          <div class="passage-box ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>
+            <div class="passage-header">
+              <span aria-hidden="true">📖</span>
+              <span>Reading Passage (Read carefully before answering):</span>
+            </div>
+            <div class="passage-text">${escapeHtml(q.passage)}</div>
+          </div>
+        `;
+      }
+
+      box.innerHTML = `
+        ${passageHtml}
+        <div class="q-meta-tag">${escapeHtml(q.unit || q.lesson || 'Core Curriculum')}</div>
+        <div class="q-text ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>${sanitizeRichText(q.text)}</div>
+        <div class="options-grid">${optsHtml}</div>
+        <div class="nav-btn-row">
+          <button type="button" class="btn-secondary" onclick="prevQuestion()" ${currentIdx === 0 ? 'disabled' : ''}>
+            &larr; Previous
+          </button>
+          <button type="button" class="btn-primary" id="quiz-submit-btn" style="width: auto; padding: 12px 24px;"
+                  onclick="${currentIdx === total - 1 ? 'submitQuiz(false)' : 'nextQuestion()'}">
+            ${currentIdx === total - 1 ? 'Submit Assessment 🎯' : 'Next &rarr;'}
+          </button>
+        </div>
+      `;
+
+      box.querySelectorAll('.option-item').forEach(button => {
+        button.addEventListener('click', () => selectAnswer(button.dataset.qid, button.dataset.val));
+      });
+    }
+
+    function selectAnswer(qId, val) {
+      studentAnswers[qId] = val;
+      saveProgress();
+
+      document.querySelectorAll('.option-item').forEach(button => {
+        const selected = button.dataset.qid === qId && button.dataset.val === val;
+        button.classList.toggle('selected', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+
+      const answered = Object.keys(studentAnswers).length;
+      document.getElementById('quiz-progress-indicator').innerText =
+        `Question ${currentIdx + 1} of ${questions.length} • Answered ${answered}`;
+    }
+
+    function nextQuestion() {
+      if (currentIdx < questions.length - 1) {
+        currentIdx++;
+        saveProgress();
+        renderQuizQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentIdx > 0) {
+        currentIdx--;
+        saveProgress();
+        renderQuizQuestion();
+      }
+    }
+
+    function submitQuiz(force) {
+      if (isSubmitting || examFinished) return;
+
+      const total = questions.length;
+      const answered = Object.keys(studentAnswers).length;
+
+      if (!force && answered < total) {
+        if (!confirm(`You answered ${answered} of ${total} questions. Are you sure you want to submit?`)) {
+          if (secondsRemaining > 0) startTimer();
+          return;
+        }
+      }
+
+      clearInterval(timerInterval);
+      timerInterval = null;
+      isSubmitting = true;
+      const submitBtn = document.getElementById('quiz-submit-btn');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
+      }
+      saveProgress();
+
+      const student = STUDENT_DATA[currentStudentKey];
+      const payload = {
+        studentName: student.name,
+        schoolGroup: student.grade,
+        examCode: activeExamCode,
+        answers: studentAnswers,
+        sessionKey: currentSessionKey
+      };
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(res => {
+            if (res && res.success) {
+              onSubmissionSuccess(res);
+            } else {
+              onSubmissionFailure(res || { message: 'Failed to record assessment on server.' });
+            }
+          })
+          .withFailureHandler(err => {
+            onSubmissionFailure(err || { message: 'Network error during submission. Answers preserved.' });
+          })
+          .submitExamAnswers(payload);
+      } else {
+        const bridge = (typeof window !== 'undefined' && (window.__mockBridge || window.mockBridge)) || mockBridge;
+        if (bridge && bridge.submitExamAnswers) {
+          const localRes = bridge.submitExamAnswers(payload);
+          setTimeout(() => onSubmissionSuccess(localRes), 150);
+        } else {
+          onSubmissionFailure({ message: 'Offline mode active. Connect to Google Apps Script.' });
+        }
+      }
+    }
+
+    function onSubmissionFailure(err) {
+      isSubmitting = false;
+      const submitBtn = document.getElementById('quiz-submit-btn');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Assessment 🎯';
+      }
+      alert('Submission error: ' + (err && err.message ? err.message : err) + '\nYour answers are still on this page. Please try again.');
+      if (secondsRemaining > 0) {
+        startTimer();
+      } else {
+        showScreen('screen-student');
+        checkExamStatus(STUDENT_DATA[currentStudentKey].name, activeExamCode);
+      }
+    }
+
+    function onSubmissionSuccess(res) {
+      if (!res || !res.success) {
+        onSubmissionFailure(res && res.message ? res.message : 'Unknown error');
+        return;
+      }
+
+      isSubmitting = false;
+      examFinished = true;
+      clearProgress();
+
+      const student = STUDENT_DATA[currentStudentKey];
+      const lockKey = 'lock_' + activeExamCode + '_' + student.name.replace(/\s+/g, '_');
+      try {
+        safeStorage.setItem(lockKey, JSON.stringify({
+          date: new Date().toLocaleDateString(),
+          score: `${res.earnedScore}/${res.totalScore} (${res.percentage}%)`
+        }));
+      } catch (e) { /* ignore */ }
+
+      showScreen('screen-result');
+      document.getElementById('res-student-header').innerText = `${student.name} • ${activeExamCode}`;
+      document.getElementById('res-score-display').innerText = `${res.earnedScore} / ${res.totalScore}`;
+      document.getElementById('res-rating-display').innerText = `${res.rating} (${res.percentage}%)`;
+      const timeEl = document.getElementById('res-time-spent');
+      if (timeEl) timeEl.innerText = 'Time Spent: ' + (res.durationSpent || '--');
+
+      const container = document.getElementById('review-items-container');
+      container.innerHTML = '';
+
+      (res.review || []).forEach((item, idx) => {
+        const isCorrect = item.isCorrect === true || item.isCorrect === 'true';
+        const isArabicItem = /[\u0600-\u06FF]/.test(String(item.questionText || '') + ' ' + String(item.canonicalAnswer || item['correct' + 'Answer'] || ''));
+        const card = document.createElement('div');
+        card.className = `review-item ${isCorrect ? 'correct' : 'incorrect'}${isArabicItem ? ' rtl-content' : ''}`;
+        card.setAttribute('lang', isArabicItem ? 'ar' : 'en');
+        card.innerHTML = `
+          <div class="review-header">
+            <div class="review-q-title">Q${idx + 1}: ${plainText(item.questionText)}</div>
+            <span class="${isCorrect ? 'badge-correct' : 'badge-incorrect'}">
+              ${isCorrect ? '✓ Correct' : '✗ Incorrect'} (${item.pointsAwarded}/${item.maxPoints})
+            </span>
+          </div>
+          <div style="font-size: 0.92rem; margin-top: 6px;">
+            <div><strong>Student's Answer:</strong> <span style="color: ${isCorrect ? 'var(--success)' : 'var(--danger)'};">${escapeHtml(item.studentAnswer || '(No answer)')}</span></div>
+            ${(!isCorrect ? ('<div><strong>Correct Answer:</strong> <span style="color: var(--success); font-weight: 700;">' + escapeHtml(item.canonicalAnswer || item['correct' + 'Answer'] || '') + '</span></div>') : '')}
+          </div>
+          <div class="explanation-box">${sanitizeRichText(item.explanation)}</div>
+        `;
+        container.appendChild(card);
+      });
+
+      if (res.alreadySubmitted) {
+        const notice = document.createElement('div');
+        notice.className = 'alert-box alert-pending';
+        notice.style.marginBottom = '12px';
+        notice.textContent = 'This attempt was already submitted. Showing the saved result.';
+        container.insertBefore(notice, container.firstChild);
+      }
+    }
+
+    function returnToStudentPortal() {
+      openStudentPortal(currentStudentKey, activeExamCode);
+    }
+
+
+    /* ============================================================
+     * PRE-EXAM CONCEPT REFRESHER & BRIEFING ENGINE
+     * ============================================================ */
+    // [CONCEPT_BRIEFINGS MOVED TO TOP]
+
+    function renderConceptRefresher(examCode) {
+      const container = document.getElementById('sp-refresher-container');
+      if (!container) return;
+
+      // Find specific or fallback briefing
+      let briefing = CONCEPT_BRIEFINGS[examCode];
+      if (!briefing) {
+        if (examCode.includes('ARB') || examCode.includes('MOS_W') || examCode.includes('PRIO')) {
+          briefing = CONCEPT_BRIEFINGS['EX_Y6_ARB_PRIO01'];
+        } else if (examCode.includes('FANTASY') || examCode.includes('MOS_ENG')) {
+          briefing = CONCEPT_BRIEFINGS['EX_Y6_ENG_FANTASY01'];
+        } else {
+          briefing = CONCEPT_BRIEFINGS['EX_Y5_ENG_ADV01'];
+        }
+      }
+
+      const isAr = (briefing.lang === 'ar');
+
+      let pointsHtml = '';
+      briefing.points.forEach(pt => {
+        pointsHtml += `
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="font-weight: 800; font-size: 0.92rem; color: #1e3a8a; display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span>${pt.icon}</span>
+              <span>${pt.title}</span>
+            </div>
+            <div style="font-size: 0.85rem; color: #334155; line-height: 1.6;">
+              ${pt.text}
+            </div>
+          </div>
+        `;
+      });
+
+            let videoBannerHtml = '';
+      if (briefing && briefing.videoId) {
+        let extraBtns = '';
+        if (briefing.extraVideos && briefing.extraVideos.length > 0) {
+          extraBtns = '<div style="display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap;">' +
+            briefing.extraVideos.map(function(ev) {
+              return '<button type="button" class="portal-btn" style="font-size: 0.78rem; padding: 6px 12px; background: #fff; border: 1px solid #cbd5e1;" onclick="openVideoModal(\'' + ev.id + '\', \'' + escapeHtml(ev.title) + '\')">▶️ ' + escapeHtml(ev.title) + '</button>';
+            }).join('') + '</div>';
+        }
+
+        videoBannerHtml = '<div style="background: #fef2f2; border: 1.5px solid #fca5a5; border-radius: 12px; padding: 14px 16px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">' +
+          '<div style="display: flex; align-items: center; gap: 10px;"><span style="font-size: 1.5rem;">🎬</span><div>' +
+          '<div style="font-weight: 800; font-size: 0.94rem; color: #991b1b;">' + escapeHtml(briefing.videoTitle) + '</div>' +
+          '<div style="font-size: 0.78rem; color: #7f1d1d; margin-top: 2px;">Watch the 3-minute video lesson to solidify the concepts before starting the quiz timer.</div></div></div>' +
+          '<div style="display: flex; gap: 8px; flex-wrap: wrap;">' +
+          '<button type="button" class="portal-btn" style="padding: 8px 16px; font-size: 0.82rem; font-weight: 800; background: #eff6ff; color: #1d4ed8; border: 1.5px solid #bfdbfe; border-radius: 8px;" onclick="openLessonSummaryModal(\'' + briefing.videoId + '\')">📖 1-Minute Study Briefing</button>' +
+          '<button type="button" id="btn-watch-video" class="btn-primary" style="width: auto; padding: 8px 18px; font-size: 0.82rem; font-weight: 800; background: #dc2626; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);" onclick="openVideoModal(\'' + briefing.videoId + '\', \'' + escapeHtml(briefing.videoTitle) + '\')">▶️ Watch Lesson Video</button></div></div>' + extraBtns;
+      }
+
+container.innerHTML = `
+        <div style="background: linear-gradient(to bottom, #f8fafc, #f1f5f9); border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 16px 18px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); ${isAr ? 'direction: rtl; text-align: right;' : 'direction: ltr; text-align: left;'}">
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleRefresherBody()">
+            <div>
+              <div style="font-size: 1.05rem; font-weight: 800; color: #1e3a8a; display: flex; align-items: center; gap: 8px;">
+                <span>🧠</span>
+                <span>${briefing.title}</span>
+              </div>
+              <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">
+                ${briefing.subtitle}
+              </div>
+            </div>
+            <button type="button" class="portal-btn" id="btn-toggle-refresher" style="font-size: 0.78rem; padding: 4px 10px; background: #fff;">
+              ▲ Hide Notes
+            </button>
+          </div>
+
+          <div id="refresher-content-body" style="display: block; margin-top: 14px; border-top: 1px dashed #cbd5e1; padding-top: 12px;">
+            ${videoBannerHtml}
+            ${pointsHtml}
+            <div style="text-align: center; margin-top: 8px; font-size: 0.8rem; font-weight: 700; color: #059669;">
+              ✅ Ready with these core rules? You are set for 100% mastery!
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    function toggleRefresherBody() {
+      const body = document.getElementById('refresher-content-body');
+      const btn = document.getElementById('btn-toggle-refresher');
+      if (!body) return;
+      const isHidden = (body.style.display === 'none');
+      body.style.display = isHidden ? 'block' : 'none';
+      if (btn) btn.innerText = isHidden ? '▲ Hide Notes' : '▼ Show Study Notes';
+    }
+
+  
+
+</script>

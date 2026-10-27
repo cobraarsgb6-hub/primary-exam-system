@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mostafa Ahmed — CorelDraw Learning Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       CORELDRAW WORKSPACE DESIGN SYSTEM (Minimalist, Modular, On-Demand)
+       ========================================================================== */
+    :root {
+      --canvas-bg: #0f172a;        /* Corel Studio Dark Slate */
+      --canvas-grid: #1e293b;
+      --card-bg: #1e293b;          /* Docked Palette Background */
+      --card-hover: #24344d;
+      --card-border: #334155;
+      --accent: #2563eb;           /* Corel Blue */
+      --accent-hover: #1d4ed8;
+      --accent-glow: rgba(37, 99, 235, 0.25);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --text-muted: #64748b;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --radius: 12px;
+      --font: 'Cairo', 'Inter', -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--canvas-bg);
+      background-image: 
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+      background-size: 24px 24px;
+      font-family: var(--font);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* TOP APPLICATION MENU BAR (Corel Style) */
+    .corel-app-bar {
+      height: 56px;
+      background: #090d16;
+      border-bottom: 1px solid #1e293b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      user-select: none;
+    }
+
+    .corel-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .corel-logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+      color: white;
+    }
+
+    .corel-app-title {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .corel-app-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-right: 6px;
+    }
+
+    .corel-status-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    /* MAIN WORKSPACE CANVAS */
+    .workspace-canvas {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px;
+    }
+
+    /* STUDENT HERO HEADER (Clean, Compact, Inspiring) */
+    .student-hero {
+      background: linear-gradient(180deg, #1e293b 0%, #131c2e 100%);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+
+    .hero-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .student-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: #2563eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
+
+    .student-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .student-tagline {
+      font-size: 13px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+    }
+
+    .tag-grade {
+      background: rgba(37, 99, 235, 0.15);
+      color: #60a5fa;
+      border: 1px solid rgba(37, 99, 235, 0.3);
+      padding: 1px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11px;
+    }
+
+    /* PALETTES CONTAINER (The CorelDraw Concept: All Closed by Default) */
+    .palettes-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .palettes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    /* THE MODULAR PALETTE (CLOSED DOCKER) */
+    .palette-box {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: var(--radius);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    .palette-box:hover {
+      border-color: #475569;
+      background: var(--card-hover);
+    }
+
+    .palette-box.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    /* PALETTE HEADER BAR (Always Visible, Click to Toggle) */
+    .palette-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .palette-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .palette-icon-frame {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .palette-meta h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin: 0;
+    }
+
+    .palette-meta span {
+      font-size: 12px;
+      color: var(--text-sub);
+      display: block;
+      margin-top: 2px;
+    }
+
+    .palette-chevron {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: #0f172a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .palette-box.active .palette-chevron {
+      transform: rotate(180deg);
+      color: #60a5fa;
+      background: rgba(37, 99, 235, 0.2);
+    }
+
+    /* PALETTE DRAWER CONTENT (STRICTLY HIDDEN BY DEFAULT) */
+    .palette-drawer {
+      display: none;
+      border-top: 1px solid #334155;
+      background: #141e30;
+      padding: 16px;
+      animation: slideDown 0.2s ease-out;
+    }
+
+    .palette-box.active .palette-drawer {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* LESSON & QUIZ TILES INSIDE DRAWER */
+    .item-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: background 0.15s;
+    }
+
+    .item-card:last-child { margin-bottom: 0; }
+
+    .item-card:hover {
+      background: #27374d;
+      border-color: #475569;
+    }
+
+    .item-details h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 0 0 4px 0;
+    }
+
+    .item-details p {
+      font-size: 12px;
+      color: var(--text-sub);
+      margin: 0;
+    }
+
+    .btn-action-quiz {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.15s;
+      white-space: nowrap;
+      min-height: 38px;
+    }
+
+    .btn-action-quiz:hover {
+      background: var(--accent-hover);
+    }
+
+    /* FULLSCREEN FOCUS MODAL (Clean Exam Environment) */
+    .focus-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      padding: 24px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .focus-overlay.active {
+      display: flex;
+    }
+
+    .focus-modal {
+      background: #1e293b;
+      border: 1.5px solid #3b82f6;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 760px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+
+    .modal-head {
+      background: #0f172a;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #334155;
+    }
+
+    .modal-title h2 {
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      margin: 0;
+    }
+
+    .modal-title span {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .btn-close-modal {
+      background: #334155;
+      color: #cbd5e1;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-close-modal:hover { background: #475569; color: #fff; }
+
+    .modal-body {
+      padding: 24px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .quiz-question-box {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .question-prompt {
+      font-size: 15px;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 14px;
+      line-height: 1.6;
+    }
+
+    .option-btn {
+      width: 100%;
+      text-align: right;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .option-btn:hover {
+      background: #2563eb;
+      border-color: #3b82f6;
+      color: #fff;
+    }
+
+    .modal-foot {
+      padding: 16px 24px;
+      background: #0f172a;
+      border-top: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TOP MENUBAR (CorelDraw Style) -->
+  <header class="corel-app-bar">
+    <div class="corel-brand">
+      <div class="corel-logo-badge">M</div>
+      <div>
+        <span class="corel-app-title">Corel Workspace</span>
+        <span class="corel-app-subtitle">| Mostafa Ahmed G6</span>
+      </div>
+    </div>
+    <div class="corel-status-pill">
+      <span class="status-dot"></span>
+      <span>وضع التركيز التفاعلي (Click-to-Open Mode)</span>
+    </div>
+  </header>
+
+  <!-- 2. MAIN WORKSPACE CANVAS -->
+  <main class="workspace-canvas">
+    
+    <!-- STUDENT HERO CARD -->
+    <div class="student-hero">
+      <div class="hero-info">
+        <div class="student-avatar">👦</div>
+        <div>
+          <h1 class="student-name">مصطفى أحمد — Grade 6 (G6)</h1>
+          <div class="student-tagline">
+            <span class="tag-grade">Year 6 International</span>
+            <span>كل شيء مقفل ومستقل؛ انقر على أي مادة لفتح أدواتها</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palettes-section-title">
+      <span>📐 ألواح مواد مصطفى (Docked Subject Palettes) — انقر على أي لوح لفتحه</span>
+    </div>
+
+    <!-- PALETTES GRID: All 100% Closed Initially -->
+    <div class="palettes-grid">
+
+      <!-- PALETTE 1: MATHEMATICS -->
+      <div class="palette-box" id="palette-math">
+        <div class="palette-header" onclick="togglePalette('palette-math')">
+          <div class="palette-left">
+            <div class="palette-icon-frame">📐</div>
+            <div class="palette-meta">
+              <h3>الرياضيات (Mathematics G6)</h3>
+              <span>3 اختبارات ومراجعات جاهزة</span>
+            </div>
+          </div>
+          <div class="palette-chevron">▼</div>
+        </div>
+        <div class="palette-drawer">
+          <div class="item-card">
+            <div class="item-details">
+              <h4>Divisibility & Factorization</h4>
+              <p>مراجعة قواعد قابلية القسمة والتحليل (6 أسئلة)</p>
+            </div>
+            <button class="btn-action-quiz" onclick="startFocusQuiz('G6 Math: Divisibility Rules', 'math1')">📝 ابدأ الآن</button>
+          </div>
+          <div class="item-card">
+            <div class="item-details">
+              <h4>Greatest Common Factor (GCF)</h4>
+              <p>العامل المشترك الأكبر والمضاعف المشترك (5 أسئلة)</p>
+            </div>
+            <button class="btn-action-quiz" onclick="startFocusQuiz('G6 Math: GCF & LCM', 'math2')">📝 ابدأ الآن</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PALETTE 2: ARABIC STUDIES -->
+      <div class="palette-box" id="palette-arabic">
+        <div class="palette-header" onclick="togglePalette('palette-arabic')">
+          <div class="palette-left">
+            <div class="palette-icon-frame">🕌</div>
+            <div class="palette-meta">
+              <h3>اللغة العربية (Arabic Studies)</h3>
+              <span>أنواع الخبر، النكرة والمعرفة، الهمزات</span>
+            </div>
+          </div>
+          <div class="palette-chevron">▼</div>
+        </div>
+        <div class="palette-drawer">
+          <div class="item-card">
+            <div class="item-details">
+              <h4>أنواع الخبر (المفرد والجملة)</h4>
+              <p>تطبيقات نحوية مكثفة على أنواع الخبر (5 أسئلة)</p>
+            </div>
+            <button class="btn-action-quiz" onclick="startFocusQuiz('لغة عربية: أنواع الخبر', 'arb1')">📝 ابدأ الآن</button>
+          </div>
+          <div class="item-card">
+            <div class="item-details">
+              <h4>الهمزة المتوسطة على ألف وواو</h4>
+              <p>قواعد الإملاء ونماذج الإجابة المعتمدة (5 أسئلة)</p>
+            </div>
+            <button class="btn-action-quiz" onclick="startFocusQuiz('لغة عربية: الهمزة المتوسطة', 'arb2')">📝 ابدأ الآن</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PALETTE 3: ENGLISH LITERACY -->
+      <div class="palette-box" id="palette-english">
+        <div class="palette-header" onclick="togglePalette('palette-english')">
+          <div class="palette-left">
+            <div class="palette-icon-frame">📖</div>
+            <div class="palette-meta">
+              <h3>اللغة الإنجليزية (English Literacy)</h3>
+              <span>Unit 8 Fantasy & Advanced Grammar</span>
+            </div>
+          </div>
+          <div class="palette-chevron">▼</div>
+        </div>
+        <div class="palette-drawer">
+          <div class="item-card">
+            <div class="item-details">
+              <h4>Unit 8: Fantasy Reading & Vocab</h4>
+              <p>نصوص القراءة والفهم والمفردات اللغوية (5 أسئلة)</p>
+            </div>
+            <button class="btn-action-quiz" onclick="startFocusQuiz('English: Fantasy & Vocabulary', 'eng1')">📝 ابدأ الآن</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PALETTE 4: ICT & COMPUTING -->
+      <div class="palette-box" id="palette-ict">
+        <div class="palette-header" onclick="togglePalette('palette-ict')">
+          <div class="palette-left">
+            <div class="palette-icon-frame">💻</div>
+            <div class="palette-meta">
+              <h3>تكنولوجيا المعلومات (ICT & Computing)</h3>
+              <span>Flowcharts & Programming Constructs</span>
+            </div>
+          </div>
+          <div class="palette-chevron">▼</div>
+        </div>
+        <div class="palette-drawer">
+          <div class="item-card">
+            <div class="item-details">
+              <h4>Flowcharts & Logic Decision</h4>
+              <p>خرائط التدفق والعمليات المنطقية والـ Loops (6 أسئلة)</p>
+            </div>
+            <button class="btn-action-quiz" onclick="startFocusQuiz('ICT: Constructs & Flowcharts', 'ict1')">📝 ابدأ الآن</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PALETTE 5: SCIENCE & EXPERIMENTS -->
+      <div class="palette-box" id="palette-science">
+        <div class="palette-header" onclick="togglePalette('palette-science')">
+          <div class="palette-left">
+            <div class="palette-icon-frame">🔬</div>
+            <div class="palette-meta">
+              <h3>العلوم (Science G6)</h3>
+              <span>Body Systems & Energy Transformations</span>
+            </div>
+          </div>
+          <div class="palette-chevron">▼</div>
+        </div>
+        <div class="palette-drawer">
+          <div class="item-card">
+            <div class="item-details">
+              <h4>Cellular Respiration & Energy</h4>
+              <p>شرح مبسط وتدريب عملي بالرسومات (5 أسئلة)</p>
+            </div>
+            <button class="btn-action-quiz" onclick="startFocusQuiz('Science: Energy & Respiration', 'sci1')">📝 ابدأ الآن</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- 3. FOCUS MODAL: Opens strictly on click for zero distraction -->
+  <div class="focus-overlay" id="focus-overlay">
+    <div class="focus-modal">
+      <div class="modal-head">
+        <div class="modal-title">
+          <h2 id="modal-quiz-title">عنوان الاختبار</h2>
+          <span id="modal-quiz-sub">مصطفى أحمد • Grade 6 • وقت محدد: 10 دقائق</span>
+        </div>
+        <button class="btn-close-modal" onclick="closeFocusQuiz()" title="إغلاق والعودة للوحة">✕</button>
+      </div>
+      <div class="modal-body" id="modal-quiz-body">
+        <!-- Interactive question injected here -->
+      </div>
+      <div class="modal-foot">
+        <span style="font-size: 13px; color: #94a3b8;">سؤال 1 من 1</span>
+        <button class="btn-action-quiz" onclick="submitFocusQuiz()">تسجيل الإجابة واعتماد الدرجة ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // CorelDraw Click-to-Open logic
+    function togglePalette(paletteId) {
+      const target = document.getElementById(paletteId);
+      const wasActive = target.classList.contains('active');
+      
+      // Close all other palettes (Clean CorelDraw Accordion)
+      document.querySelectorAll('.palette-box').forEach(p => {
+        p.classList.remove('active');
+      });
+
+      // Toggle clicked palette
+      if (!wasActive) {
+        target.classList.add('active');
+      }
+    }
+
+    // Launch Clean Focus Modal
+    function startFocusQuiz(title, quizKey) {
+      document.getElementById('modal-quiz-title').innerText = title;
+      const body = document.getElementById('modal-quiz-body');
+      
+      let samplePrompt = "ما هو المعنى الدقيق لقابلية القسمة على 3 في الأعداد الصحيحة؟";
+      let options = [
+        "إذا كان مجموع أرقام العدد يقبل القسمة على 3",
+        "إذا كان رقم الآحاد هو 0 أو 5",
+        "إذا كان العدد زوجياً فقط",
+        "إذا كان الفرق بين الآحاد والعشرات يساوي 3"
+      ];
+
+      if (quizKey === 'arb1') {
+        samplePrompt = "حدد نوع الخبر في الجملة التالية: «العلمُ ينيرُ العقولَ»";
+        options = ["خبر جملة فعلية", "خبر مفرد", "خبر شبه جملة (جار ومجرور)", "خبر جملة اسمية"];
+      } else if (quizKey === 'ict1') {
+        samplePrompt = "في خرائط التدفق (Flowcharts)، ما الشكل الهندسي المستخدم لاتخاذ القرار والشرط؟";
+        options = ["المعين (Diamond)", "المستطيل (Process)", "متوازي الأضلاع (Input/Output)", "الشكل البيضاوي (Start/End)"];
+      }
+
+      body.innerHTML = `
+        <div class="quiz-question-box">
+          <div class="question-prompt">❓ ${samplePrompt}</div>
+          <div>
+            ${options.map((opt, i) => `
+              <button class="option-btn" onclick="selectQuizOption(this)">
+                <strong>(${i+1})</strong> ${opt}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('focus-overlay').classList.add('active');
+    }
+
+    function selectQuizOption(btn) {
+      document.querySelectorAll('.option-btn').forEach(b => {
+        b.style.background = '#1e293b';
+        b.style.borderColor = '#334155';
+      });
+      btn.style.background = '#2563eb';
+      btn.style.borderColor = '#60a5fa';
+    }
+
+    function closeFocusQuiz() {
+      document.getElementById('focus-overlay').classList.remove('active');
+    }
+
+    function submitFocusQuiz() {
+      alert("ممتاز يا مصطفى! تم تسجيل إجابتك واعتماد الدرجة بنجاح 10/10 🎉");
+      closeFocusQuiz();
+    }
+  </script>
+</body>
+</html>
