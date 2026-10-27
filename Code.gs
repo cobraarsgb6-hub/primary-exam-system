@@ -47,6 +47,9 @@ function onOpen() {
   ui.createMenu('🎯 Assessment Management')
     .addItem('⚙️ Full Database Auto-Format & Setup', 'setupDatabase')
     .addItem('📝 Generate Google Form from Exam', 'generateGoogleFormPrompt')
+    .addItem('⚡ Create Weekly Exam', 'promptCreateWeeklyExam')
+    .addItem('🗓️ Create Monthly Cumulative Exam', 'promptCreateMonthlyExam')
+    .addItem('🎯 Create Mistakes Review Exam', 'promptCreateMistakesExam')
     .addSeparator()
     .addItem('🔗 Copy Interactive Web App URL', 'copyWebAppUrl')
     .addItem('📊 Open Linked Google Sheet', 'openLinkedSheetUrl')
@@ -97,12 +100,9 @@ function setupDatabase(targetSs) {
     exSheet = ss.insertSheet('Exams');
   }
   const exHeaders = [
-    ['Exam Code', 'Exam Title', 'Grade Level', 'Subject', 'Questions', 'Duration (Mins)', 'Status', 'Direct URL', 'Created Date']
+    ['Exam Code', 'Exam Title', 'Grade Level', 'Subject', 'Questions', 'Duration (Mins)', 'Status', 'Direct URL', 'Created Date', 'Exam Type', 'Target Period']
   ];
-  if (exSheet.getLastRow() === 0) {
-    exSheet.getRange(1, 1, 1, exHeaders[0].length).setValues(exHeaders);
-    formatHeaderRow(exSheet, '#4338ca');
-  }
+  ensureSheetHeaders_(exSheet, exHeaders[0], '#4338ca');
 
   const sampleExams = [
     ['EX_Y5_ENG_ADV01', 'Year 5 Grammar: Adverbials of Time, Place & Manner (Unit 2 Lesson 3)', 'Year 5 (G5)', 'English Grammar', 10, 20, 'ACTIVE', '', new Date()],
@@ -131,10 +131,56 @@ function setupDatabase(targetSs) {
   // 5. TAB: Sessions (server-side attempt sessions; never cleared here)
   ensureSessionSheet_(ss);
 
+  // 6. TAB: Study_Plan (28-day curriculum roadmap)
+  let spSheet = ss.getSheetByName('Study_Plan');
+  if (!spSheet) spSheet = ss.insertSheet('Study_Plan');
+  const spHeaders = [
+    'Plan ID', 'Week', 'Day', 'Date', 'Student', 'Grade Level', 'Subject',
+    'Unit / Topic', 'Lesson', 'Skills', 'Daily Questions', 'Status', 'Exam Code'
+  ];
+  ensureSheetHeaders_(spSheet, spHeaders, '#b45309');
+  if (spSheet.getLastRow() <= 1) {
+    const starterPlans = getStarterStudyPlan_();
+    if (starterPlans.length) {
+      spSheet.getRange(2, 1, starterPlans.length, starterPlans[0].length).setValues(starterPlans);
+    }
+  }
+  styleStudyPlanSheet(spSheet);
+
+  // 7. TAB: Coligo_Hub (materials pulled from the Coligo LMS feed)
+  let coligoSheet = ss.getSheetByName('Coligo_Hub');
+  if (!coligoSheet) coligoSheet = ss.insertSheet('Coligo_Hub');
+  ensureSheetHeaders_(coligoSheet, [
+    'Item ID', 'Synced At', 'Student', 'Grade', 'Course', 'Type', 'Title', 'URL', 'Content'
+  ], '#0369a1');
+
+  // 8. TAB: Homework_Status (student self-reported homework checkboxes)
+  let hwSheet = ss.getSheetByName('Homework_Status');
+  if (!hwSheet) hwSheet = ss.insertSheet('Homework_Status');
+  ensureSheetHeaders_(hwSheet, ['Updated At', 'Student', 'Subject', 'Done'], '#be185d');
+
   try {
     SpreadsheetApp.getUi().alert('✅ Google Sheet formatted professionally with executive styling!');
   } catch(e) {
     Logger.log('Database initialized successfully.');
+  }
+}
+
+/**
+ * Adds any missing headers to row 1 without touching existing columns or data.
+ */
+function ensureSheetHeaders_(sheet, requiredHeaders, bgColor) {
+  if (sheet.getLastRow() === 0) {
+    sheet.getRange(1, 1, 1, requiredHeaders.length).setValues([requiredHeaders]);
+    formatHeaderRow(sheet, bgColor || '#1e3a8a');
+    return;
+  }
+  const lastColumn = Math.max(sheet.getLastColumn(), 1);
+  const current = sheet.getRange(1, 1, 1, lastColumn).getValues()[0]
+    .map(value => String(value || '').trim());
+  const missing = requiredHeaders.filter(header => current.indexOf(header) === -1);
+  if (missing.length) {
+    sheet.getRange(1, current.length + 1, 1, missing.length).setValues([missing]);
   }
 }
 
@@ -196,7 +242,9 @@ function styleExamsSheet(sheet) {
   sheet.setColumnWidth(7, 90);
   sheet.setColumnWidth(8, 160);
   sheet.setColumnWidth(9, 110);
-  sheet.getRange(2, 1, Math.max(sheet.getLastRow() - 1, 1), 9).setVerticalAlignment('middle').setFontSize(10);
+  sheet.setColumnWidth(10, 110);
+  sheet.setColumnWidth(11, 100);
+  sheet.getRange(2, 1, Math.max(sheet.getLastRow() - 1, 1), 11).setVerticalAlignment('middle').setFontSize(10);
 }
 
 function styleRetakeSheet(sheet) {
@@ -645,6 +693,11 @@ function buildExamQuestions_(examCode) {
   if (!exam) throw new Error('EXAM_NOT_FOUND');
 
   let questions = loadBankQuestions_(exam.code);
+  // Weekly/monthly exams registered by the exam factory carry a target period
+  // instead of per-exam bank rows. Fall back to the period slice of the bank.
+  if (!questions.length && exam.targetPeriod) {
+    questions = loadBankQuestionsByPeriod_(exam.grade, exam.subject, exam.targetPeriod);
+  }
   if (!questions.length) {
     if (exam.code === 'EX_Y5_ENG_ADV01') {
       questions = generateAliAdverbialExam();
@@ -1447,7 +1500,9 @@ function getExamInfo(examCode) {
         subject: String(rowValue_(data[i], map, 'Subject', 3) || (fallback ? fallback.subject : '')),
         questionsCount: Number(rowValue_(data[i], map, 'Questions', 4)) || 10,
         duration: Number(rowValue_(data[i], map, 'Duration (Mins)', 5)) || 20,
-        status: status
+        status: status,
+        examType: String(rowValue_(data[i], map, 'Exam Type', 9) || ''),
+        targetPeriod: String(rowValue_(data[i], map, 'Target Period', 10) || '')
       };
     }
   }
@@ -1710,6 +1765,7 @@ function submitExamAnswers(payload) {
 
     persistSubmission_(session, data, result, timestamp, durationStr, summaryStr);
     consumeRetake_(session.studentName, session.examCode);
+    markStudyPlanProgress_(session.studentName, session.examCode);
 
     return Object.assign({ success: true, alreadySubmitted: false }, result);
 
@@ -2157,13 +2213,45 @@ function getAdminDashboardData(adminToken) {
       retakeRequests.reverse();
     }
 
+    // Study plan roadmap (28-day curriculum)
+    const studyPlan = [];
+    const spSheet = ss.getSheetByName('Study_Plan');
+    if (spSheet && spSheet.getLastRow() > 1) {
+      const spData = spSheet.getDataRange().getValues();
+      const spMap = getSheetHeaderMap_(spSheet);
+      for (let s = 1; s < spData.length; s++) {
+        const row = spData[s];
+        studyPlan.push({
+          id: String(rowValue_(row, spMap, 'Plan ID', 0) || ('PLAN_' + s)),
+          week: String(rowValue_(row, spMap, 'Week', 1) || 'W1'),
+          day: String(rowValue_(row, spMap, 'Day', 2) || '1'),
+          date: String(rowValue_(row, spMap, 'Date', 3) || ''),
+          student: String(rowValue_(row, spMap, 'Student', 4) || ''),
+          grade: String(rowValue_(row, spMap, 'Grade Level', 5) || ''),
+          subject: String(rowValue_(row, spMap, 'Subject', 6) || ''),
+          unit: String(rowValue_(row, spMap, 'Unit / Topic', 7) || ''),
+          lesson: String(rowValue_(row, spMap, 'Lesson', 8) || ''),
+          skills: String(rowValue_(row, spMap, 'Skills', 9) || ''),
+          dailyQuestions: Number(rowValue_(row, spMap, 'Daily Questions', 10)) || 5,
+          status: String(rowValue_(row, spMap, 'Status', 11) || 'Planned'),
+          examCode: String(rowValue_(row, spMap, 'Exam Code', 12) || '')
+        });
+      }
+    }
+
+    const driveVideos = readDriveVideoMap_();
+    const driveFolderId = PropertiesService.getScriptProperties().getProperty('DRIVE_VIDEOS_FOLDER_ID') || '';
+
     return {
       success: true,
       sheetUrl: ss.getUrl(),
       submissions: submissions,
       exams: exams,
       allQuestions: allQuestions,
-      retakeRequests: retakeRequests
+      retakeRequests: retakeRequests,
+      studyPlan: studyPlan,
+      driveVideos: driveVideos,
+      driveFolderId: driveFolderId
     };
 
   } catch (err) {
@@ -2268,5 +2356,974 @@ function openLinkedSheetUrl() {
     SpreadsheetApp.getUi().alert('Linked Google Sheet URL:\n\n' + ss.getUrl());
   } catch(e) {
     Logger.log(ss.getUrl());
+  }
+}
+
+// ============================================================
+// STUDY PLAN (28-DAY CURRICULUM ROADMAP)
+// ============================================================
+
+function styleStudyPlanSheet(sheet) {
+  const widths = [100, 70, 60, 110, 120, 110, 130, 180, 200, 260, 100, 90, 140];
+  widths.forEach((width, index) => sheet.setColumnWidth(index + 1, width));
+  const lastCol = Math.max(sheet.getLastColumn(), 13);
+  sheet.getRange(2, 1, Math.max(sheet.getLastRow() - 1, 1), lastCol)
+    .setVerticalAlignment('middle')
+    .setFontSize(10);
+}
+
+function getStarterStudyPlan_() {
+  return [
+    // Ali Ahmed - Year 5 (Month 1 Roadmap)
+    ['PLAN_Y5_D01', 'W1', '1', 'Day 1', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 3: Adverbials', 'Adverbs of Manner', 'Identifying manner adverbs ending in -ly', 5, 'Completed', 'EX_Y5_ENG_ADV01'],
+    ['PLAN_Y5_D02', 'W1', '2', 'Day 2', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 3: Adverbials', 'Adverbials of Time', 'Prepositional time phrases (at dawn, in 1969)', 5, 'Completed', 'EX_Y5_ENG_ADV01'],
+    ['PLAN_Y5_D03', 'W1', '3', 'Day 3', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 3: Adverbials', 'Adverbials of Place', 'Answering WHERE (inside the station, on lunar surface)', 5, 'Completed', 'EX_Y5_ENG_ADV01'],
+    ['PLAN_Y5_D04', 'W1', '4', 'Day 4', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 3: Adverbials', 'Fronted Adverbials & Commas', 'Mandatory comma punctuation rule after fronted adverbials', 5, 'Completed', 'EX_Y5_ENG_ADV01'],
+    ['PLAN_Y5_D05', 'W1', '5', 'Day 5', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 3: Adverbials', 'Compound Adverbials (Time + Place)', 'Sentence restructuring with multiple adverbials', 5, 'Completed', 'EX_Y5_ENG_ADV01'],
+    ['PLAN_Y5_D06', 'W1', '6', 'Day 6', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 3: Adverbials', 'Error Hunting & Sentence Repair', 'Fixing missing commas and misidentified adverbs', 5, 'Completed', 'EX_Y5_ENG_ADV01'],
+    ['PLAN_Y5_D07', 'W1', '7', 'Day 7', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Milestone Assessment', 'W1 Comprehensive Adverbials Exam', '100% Mastery evaluation of Unit 2 Lesson 3', 10, 'Completed', 'EX_Y5_ENG_ADV01'],
+    ['PLAN_Y5_D08', 'W2', '8', 'Day 8', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 4: Relative Clauses', 'Relative Pronouns (who, which, that)', 'Defining who vs which for persons and objects', 5, 'Planned', 'EX_Y5_ALI_W2_ENG'],
+    ['PLAN_Y5_D09', 'W2', '9', 'Day 9', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 4: Relative Clauses', 'Non-defining Relative Clauses & Commas', 'Enclosing parenthetical relative clauses between 2 commas', 5, 'Planned', 'EX_Y5_ALI_W2_ENG'],
+    ['PLAN_Y5_D10', 'W2', '10', 'Day 10', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Unit 2 - Lesson 4: Relative Clauses', 'Connecting Sentences', 'Combining short sentences using relative pronouns', 5, 'Planned', 'EX_Y5_ALI_W2_ENG'],
+    ['PLAN_Y5_D14', 'W2', '14', 'Day 14', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Milestone Assessment', 'W2 Cumulative Exam (W1 + W2 50/50)', 'Adverbials + Relative Clauses balanced synthesis', 12, 'Planned', 'EX_Y5_ALI_W2_ENG'],
+    ['PLAN_Y5_D21', 'W3', '21', 'Day 21', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Milestone Assessment', 'W3 Cumulative Exam (W1-W3 40/30/30)', 'Subject-verb agreement + Relative clauses + Adverbials', 15, 'Planned', 'EX_Y5_ALI_W3_ENG'],
+    ['PLAN_Y5_D28', 'W4', '28', 'Day 28', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Milestone Assessment', 'W4 Cumulative Exam (W1-W4)', 'Comprehensive grammar readiness before monthly exam', 18, 'Planned', 'EX_Y5_ALI_W4_ENG'],
+    ['PLAN_Y5_D30', 'M1', '30', 'Day 30', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'Monthly Capstone', 'Month 1 Comprehensive Grammar Exam', 'Full month retention check with Challenge tier', 20, 'Planned', 'EX_Y5_ALI_M1_CUMULATIVE'],
+
+    // Mostafa Ahmed - Grade 6 (Month 1 Roadmap)
+    ['PLAN_Y6_D01', 'W1', '1', 'Day 1', 'Mostafa Ahmed', 'Grade 6 (G6)', 'English Literacy', 'Unit 2: Fantasy Reading', 'Similes & Imagery in The City That Waited', 'Analyzing comparisons using like and as', 5, 'Completed', 'EX_Y6_ENG_FANTASY01'],
+    ['PLAN_Y6_D02', 'W1', '2', 'Day 2', 'Mostafa Ahmed', 'Grade 6 (G6)', 'English Literacy', 'Unit 2: Fantasy Reading', 'Personification & Atmosphere', 'Explaining non-human actions and eerie moods', 5, 'Completed', 'EX_Y6_ENG_FANTASY01'],
+    ['PLAN_Y6_D03', 'W1', '3', 'Day 3', 'Mostafa Ahmed', 'Grade 6 (G6)', 'English Literacy', 'Unit 2: Non-Chronological Reports', 'Scientific Vocabulary & Homophones', 'Hard shell vs herd shell spelling and context', 5, 'Completed', 'EX_Y6_ENG_FANTASY01'],
+    ['PLAN_Y6_D04', 'W1', '4', 'Day 4', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Arabic Language', 'المحور الأول: إدارة الوقت', 'استيعاب المقروء وترتيب الأولويات', 'معاني المفردات والمضاد (تأجيل وعكسها تعجيل)', 5, 'Completed', 'EX_Y6_ARB_PRIO01'],
+    ['PLAN_Y6_D05', 'W1', '5', 'Day 5', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Arabic Language', 'القواعد النحوية: النكرة والمعرفة', 'تحديد المعرف بأل والعلم وتمييز الاسم النكرة', 5, 'Completed', 'EX_Y6_ARB_PRIO01'],
+    ['PLAN_Y6_D06', 'W1', '6', 'Day 6', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Arabic Language', 'القواعد الإملائية: الهمزة المتوسطة', 'حركة الهمزة وما قبلها (يَسْـأَلُ - فأس - تأمل)', 5, 'Completed', 'EX_Y6_ARB_PRIO01'],
+    ['PLAN_Y6_D07', 'W1', '7', 'Day 7', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Arabic Language', 'Milestone Assessment', 'W1 Arabic Language Diagnostic Exam', 'Mastery assessment (Retake 10/10 verified)', 10, 'Completed', 'EX_Y6_ARB_PRIO01'],
+    ['PLAN_Y6_D08', 'W2', '8', 'Day 8', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Arabic Language', 'القواعد النحوية: أنواع المعارف الستة', 'الضمائر وأسماء الإشارة والأسماء الموصولة', 5, 'Planned', 'EX_Y6_MOS_W2_ARB'],
+    ['PLAN_Y6_D09', 'W2', '9', 'Day 9', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Arabic Language', 'القواعد الإملائية: الهمزة المتوسطة على واو', 'رسم الهمزة إذا كانت مضمومة أو ما قبلها مضموم', 5, 'Planned', 'EX_Y6_MOS_W2_ARB'],
+    ['PLAN_Y6_D14', 'W2', '14', 'Day 14', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mixed Assessment', 'W2 Cumulative Exam (W1 + W2 50/50)', 'Literacy + Arabic Language balanced synthesis', 14, 'Planned', 'EX_Y6_MOS_W2_ARB'],
+    ['PLAN_Y6_D21', 'W3', '21', 'Day 21', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mixed Assessment', 'W3 Cumulative Exam (W1-W3 40/30/30)', 'Grammar + Spelling + Reading retention', 16, 'Planned', 'EX_Y6_MOS_W3_ARB'],
+    ['PLAN_Y6_D28', 'W4', '28', 'Day 28', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mixed Assessment', 'W4 Cumulative Exam (W1-W4)', 'Comprehensive curriculum mastery test', 20, 'Planned', 'EX_Y6_MOS_W4_ARB'],
+    ['PLAN_Y6_D30', 'M1', '30', 'Day 30', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Capstone Assessment', 'Month 1 Comprehensive Assessment', 'Grade 6 Full Month Capstone Exam with Challenge tier', 22, 'Planned', 'EX_Y6_MOS_M1_CUMULATIVE']
+  ];
+}
+
+/**
+ * Marks matching roadmap rows as completed after a successful submission.
+ * Never throws: a missing Study_Plan tab must not fail a valid submission.
+ */
+function markStudyPlanProgress_(studentName, examCode) {
+  try {
+    const ss = getSpreadsheet();
+    const sheet = ss.getSheetByName('Study_Plan');
+    if (!sheet || sheet.getLastRow() <= 1) return;
+
+    const map = getSheetHeaderMap_(sheet);
+    const data = sheet.getDataRange().getValues();
+    const targetName = normalizeName_(studentName);
+    const targetExam = normalizeExam_(examCode);
+    const statusCol = headerIndex_(map, 'Status', 11) + 1;
+
+    for (let i = 1; i < data.length; i++) {
+      const rowName = normalizeName_(rowValue_(data[i], map, 'Student', 4));
+      const rowExam = normalizeExam_(rowValue_(data[i], map, 'Exam Code', 12));
+      if (rowName !== targetName || rowExam !== targetExam) continue;
+      if (String(rowValue_(data[i], map, 'Status', 11) || '').toLowerCase() === 'completed') continue;
+      sheet.getRange(i + 1, statusCol).setValue('Completed');
+    }
+  } catch (e) {
+    Logger.log('markStudyPlanProgress_ skipped: ' + e);
+  }
+}
+
+/**
+ * Computes today's active assessment mission for the student based on Study_Plan.
+ */
+function getTodayMission(studentKey) {
+  try {
+    const key = String(studentKey || 'ali').toLowerCase();
+    const isAli = (key === 'ali');
+    const targetStudent = isAli ? 'Ali Ahmed' : 'Mostafa Ahmed';
+
+    const ss = getSpreadsheet();
+    const spSheet = ss.getSheetByName('Study_Plan');
+    let mission = null;
+
+    if (spSheet && spSheet.getLastRow() > 1) {
+      const spData = spSheet.getDataRange().getValues();
+      const spMap = getSheetHeaderMap_(spSheet);
+      for (let i = 1; i < spData.length; i++) {
+        const row = spData[i];
+        const student = normalizeName_(rowValue_(row, spMap, 'Student', 4));
+        if (student !== normalizeName_(targetStudent)) continue;
+
+        const status = String(rowValue_(row, spMap, 'Status', 11) || 'Planned').trim().toLowerCase();
+        if (status === 'planned' || status === 'active' || !mission) {
+          mission = {
+            planId: String(rowValue_(row, spMap, 'Plan ID', 0) || ''),
+            week: String(rowValue_(row, spMap, 'Week', 1) || 'W1'),
+            day: String(rowValue_(row, spMap, 'Day', 2) || '1'),
+            dateTitle: String(rowValue_(row, spMap, 'Date', 3) || 'Today'),
+            subject: String(rowValue_(row, spMap, 'Subject', 6) || ''),
+            lesson: String(rowValue_(row, spMap, 'Lesson', 8) || ''),
+            skills: String(rowValue_(row, spMap, 'Skills', 9) || ''),
+            questionsCount: Number(rowValue_(row, spMap, 'Daily Questions', 10)) || 10,
+            examCode: String(rowValue_(row, spMap, 'Exam Code', 12) || (isAli ? 'EX_Y5_ENG_ADV01' : 'EX_Y6_ARB_PRIO01'))
+          };
+          if (status === 'planned' || status === 'active') break;
+        }
+      }
+    }
+
+    if (!mission) {
+      mission = {
+        planId: isAli ? 'PLAN_Y5_DEFAULT' : 'PLAN_Y6_DEFAULT',
+        week: 'W1',
+        day: '1',
+        dateTitle: 'Today',
+        subject: isAli ? 'English Grammar' : 'Arabic Language',
+        lesson: isAli ? 'Unit 2: Adverbials Mastery' : 'المحور الأول: النكرة والمعرفة والهمزة',
+        skills: isAli ? 'Adverbs of Time, Place & Manner' : 'القراءة المتحررة وإدارة الوقت',
+        questionsCount: 10,
+        examCode: isAli ? 'EX_Y5_ENG_ADV01' : 'EX_Y6_ARB_PRIO01'
+      };
+    }
+
+    return { success: true, mission: mission };
+  } catch (err) {
+    Logger.log('getTodayMission error: ' + err);
+    return { success: false, message: err.message };
+  }
+}
+
+// ============================================================
+// EXAM FACTORY (WEEKLY / MONTHLY / MISTAKES REVIEW)
+// ============================================================
+
+const ADMIN_REQUIRED_RESULT = {
+  success: false,
+  code: 'UNAUTHORIZED',
+  message: 'غير مصرح بالدخول. أعد فتح بوابة ولي الأمر.'
+};
+
+function subjectFamily_(subject) {
+  const s = String(subject || '').toLowerCase();
+  if (s.indexOf('arab') !== -1 || s.indexOf('عرب') !== -1 || s.indexOf('لغة') !== -1) return 'arabic';
+  if (s.indexOf('english') !== -1 || s.indexOf('grammar') !== -1 || s.indexOf('literacy') !== -1) return 'english';
+  return '';
+}
+
+function simpleHash_(text) {
+  let hash = 5381;
+  const str = String(text || '');
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
+  }
+  return (hash >>> 0).toString(36);
+}
+
+function computeExamUrl_(studentKey, examCode) {
+  try {
+    if (typeof ScriptApp === 'undefined' || !ScriptApp.getService) return '';
+    const base = ScriptApp.getService().getUrl() || '';
+    if (!base) return '';
+    return base + '?student=' + encodeURIComponent(studentKey) + '&exam=' + encodeURIComponent(examCode);
+  } catch (e) {
+    return '';
+  }
+}
+
+function loadBankQuestionsByPeriod_(grade, subject, period) {
+  const ss = getSpreadsheet();
+  const sheet = ss.getSheetByName('Question_Bank');
+  if (!sheet || sheet.getLastRow() <= 1) return [];
+
+  const map = getSheetHeaderMap_(sheet);
+  const data = sheet.getDataRange().getValues();
+  const questions = [];
+  const targetPeriod = String(period || '').trim().toUpperCase();
+  const isMonthly = targetPeriod.startsWith('M');
+  const family = subjectFamily_(subject);
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const rowGrade = String(row[headerIndex_(map, 'Grade Level', 1)] || '');
+    const rowSubject = String(row[headerIndex_(map, 'Subject', 2)] || '');
+    const rowWeek = String(rowValue_(row, map, 'Week', 11) || 'W1').trim().toUpperCase();
+
+    const gradeMatches = (normalizeName_(rowGrade).indexOf('5') !== -1 && normalizeName_(grade).indexOf('5') !== -1) ||
+                         (normalizeName_(rowGrade).indexOf('6') !== -1 && normalizeName_(grade).indexOf('6') !== -1);
+    if (!gradeMatches) continue;
+
+    // Keep Arabic and English papers from mixing when the subject is known.
+    const rowFamily = subjectFamily_(rowSubject);
+    if (family && rowFamily && family !== rowFamily) continue;
+
+    let periodMatches = false;
+    if (isMonthly) {
+      periodMatches = true;
+    } else if (targetPeriod === rowWeek || targetPeriod === 'ALL') {
+      periodMatches = true;
+    }
+    if (!periodMatches) continue;
+
+    const text = String(row[headerIndex_(map, 'Question Text', 4)] || '').trim();
+    const answer = String(row[headerIndex_(map, 'Correct Answer', 7)] || '').trim();
+    if (!text || !answer) continue;
+
+    const type = String(row[headerIndex_(map, 'Type', 5)] || 'MCQ').trim().toUpperCase();
+    let options = String(row[headerIndex_(map, 'Options (delimited by |)', 6)] || '')
+      .split('|')
+      .map(option => String(option || '').trim())
+      .filter(option => option.length > 0);
+
+    if (type === 'TRUE_FALSE' && options.length < 2) options = ['True', 'False'];
+    if (options.length < 2) continue;
+
+    const answerMatchesOption = options.some(option => normalizeAnswer_(option) === normalizeAnswer_(answer));
+    if (!answerMatchesOption) {
+      Logger.log('Skipping malformed bank question ' + String(row[0] || ('row ' + (i + 1))) + ': answer not in options');
+      continue;
+    }
+
+    const unit = String(row[headerIndex_(map, 'Unit / Topic', 3)] || '');
+    const passageIndex = map['passage'];
+    const passage = (typeof passageIndex === 'number')
+      ? String(row[passageIndex] || '')
+      : getPassageForQuestion_(String(rowValue_(row, map, 'Exam Code', 10) || ''), unit, text);
+
+    questions.push({
+      id: String(row[headerIndex_(map, 'Question ID', 0)] || ('BANK_' + i)),
+      grade: rowGrade,
+      subject: rowSubject,
+      unit: unit,
+      text: text,
+      type: type,
+      options: options,
+      correctAnswer: answer,
+      points: Number(row[headerIndex_(map, 'Points', 8)]) || 1,
+      explanation: String(row[headerIndex_(map, 'Pedagogical Explanation & Mistake Breakdown', 9)] || ''),
+      passage: passage
+    });
+  }
+
+  return questions;
+}
+
+/**
+ * Returns all active exams for a student based on grade isolation.
+ */
+function getStudentAvailableExams(studentKey) {
+  try {
+    const ss = getSpreadsheet();
+    const exSheet = ss.getSheetByName('Exams');
+    if (!exSheet || exSheet.getLastRow() <= 1) {
+      return { success: true, exams: [], driveVideos: readDriveVideoMap_() };
+    }
+
+    const key = String(studentKey || 'ali').toLowerCase();
+    const isAli = (key === 'ali');
+
+    const map = getSheetHeaderMap_(exSheet);
+    const data = exSheet.getDataRange().getValues();
+    const exams = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const grade = String(rowValue_(row, map, 'Grade Level', 2) || '');
+      const status = String(rowValue_(row, map, 'Status', 6) || 'ACTIVE').toUpperCase();
+
+      if (['ACTIVE', 'ENABLED', 'نشط', 'مفعل'].indexOf(status) === -1) continue;
+
+      // Grade isolation: Ali only sees G5, Mostafa only sees G6.
+      const matchesGrade = isAli
+        ? (grade.indexOf('5') !== -1 || grade.toLowerCase().indexOf('ali') !== -1)
+        : (grade.indexOf('6') !== -1 || grade.toLowerCase().indexOf('mostafa') !== -1);
+
+      if (!matchesGrade) continue;
+
+      exams.push({
+        code: String(rowValue_(row, map, 'Exam Code', 0) || ''),
+        title: String(rowValue_(row, map, 'Exam Title', 1) || ''),
+        grade: grade,
+        subject: String(rowValue_(row, map, 'Subject', 3) || ''),
+        count: Number(rowValue_(row, map, 'Questions', 4)) || 10,
+        duration: Number(rowValue_(row, map, 'Duration (Mins)', 5)) || 20,
+        type: String(rowValue_(row, map, 'Exam Type', 9) || 'Standard'),
+        period: String(rowValue_(row, map, 'Target Period', 10) || 'W1')
+      });
+    }
+
+    return { success: true, exams: exams, driveVideos: readDriveVideoMap_() };
+  } catch (err) {
+    Logger.log('getStudentAvailableExams error: ' + err);
+    return { success: false, message: err.message, exams: [] };
+  }
+}
+
+function upsertExamRow_(exSheet, examCode, examRow) {
+  const map = getSheetHeaderMap_(exSheet);
+  const data = exSheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (normalizeExam_(rowValue_(data[i], map, 'Exam Code', 0)) === normalizeExam_(examCode)) {
+      exSheet.getRange(i + 1, 1, 1, examRow.length).setValues([examRow]);
+      return i + 1;
+    }
+  }
+  exSheet.appendRow(examRow);
+  return exSheet.getLastRow();
+}
+
+function createWeeklyExam(payload, adminToken) {
+  const token = adminToken || (payload && payload.adminToken);
+  if (!isAdminTokenValid_(token)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  return createWeeklyExam_(payload);
+}
+
+function createWeeklyExam_(payload) {
+  try {
+    const ss = getSpreadsheet();
+    let exSheet = ss.getSheetByName('Exams');
+    if (!exSheet) {
+      setupDatabase(ss);
+      exSheet = ss.getSheetByName('Exams');
+    }
+
+    const studentKey = String((payload && payload.studentKey) || 'ali').toLowerCase();
+    const isAli = (studentKey === 'ali');
+    const grade = isAli ? 'Year 5 (G5)' : 'Grade 6 (G6)';
+    const weekCode = String((payload && payload.weekCode) || 'W2').toUpperCase();
+    const subject = String((payload && payload.subject) || (isAli ? 'English Grammar' : 'English Literacy'));
+    const count = Number(payload && payload.count) || 10;
+    const duration = Number(payload && payload.duration) || 20;
+
+    if (!/^W[1-9][0-9]?$/.test(weekCode)) {
+      return { success: false, message: 'كود الأسبوع غير صالح. استخدم مثالاً مثل W2 أو W3.' };
+    }
+
+    const bankQuestions = loadBankQuestionsByPeriod_(grade, subject, weekCode);
+    if (!bankQuestions.length) {
+      return {
+        success: false,
+        message: 'لا توجد أسئلة في بنك الأسئلة لـ ' + grade + ' / ' + subject + ' / ' + weekCode + '. أضف الأسئلة أولاً ثم أعد المحاولة.'
+      };
+    }
+
+    const subjectPrefix = subjectFamily_(subject) === 'arabic' ? 'ARB' : 'ENG';
+    const examCode = 'EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_' + weekCode + '_' + subjectPrefix;
+    const title = (isAli ? 'Ali' : 'Mostafa') + ' - Week ' + weekCode.replace('W', '') + ' Assessment: ' + subject;
+    const available = bankQuestions.length;
+
+    const examRow = [
+      examCode,
+      title,
+      grade,
+      subject,
+      Math.min(count, available),
+      duration,
+      'ACTIVE',
+      '',
+      new Date(),
+      'Weekly',
+      weekCode
+    ];
+
+    upsertExamRow_(exSheet, examCode, examRow);
+    styleExamsSheet(exSheet);
+
+    return {
+      success: true,
+      examCode: examCode,
+      title: title,
+      grade: grade,
+      subject: subject,
+      weekCode: weekCode,
+      questionsCount: examRow[4],
+      studentUrl: computeExamUrl_(studentKey, examCode),
+      message: 'تم إنشاء امتحان الأسبوع (' + weekCode + ') بنجاح برمز: ' + examCode + ' — ' + examRow[4] + ' أسئلة متاحة.'
+    };
+  } catch (err) {
+    Logger.log('createWeeklyExam error: ' + err);
+    return { success: false, message: 'حدث خطأ: ' + err.message };
+  }
+}
+
+function createMonthlyExam(payload, adminToken) {
+  const token = adminToken || (payload && payload.adminToken);
+  if (!isAdminTokenValid_(token)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  return createMonthlyExam_(payload);
+}
+
+function createMonthlyExam_(payload) {
+  try {
+    const ss = getSpreadsheet();
+    let exSheet = ss.getSheetByName('Exams');
+    if (!exSheet) {
+      setupDatabase(ss);
+      exSheet = ss.getSheetByName('Exams');
+    }
+
+    const studentKey = String((payload && payload.studentKey) || 'ali').toLowerCase();
+    const isAli = (studentKey === 'ali');
+    const grade = isAli ? 'Year 5 (G5)' : 'Grade 6 (G6)';
+    const monthCode = String((payload && payload.monthCode) || 'M1').toUpperCase();
+    const requestedSubject = String((payload && payload.subject) || (isAli ? 'English Grammar' : 'Cumulative Assessment'));
+    const count = Number(payload && payload.count) || 15;
+    const duration = Number(payload && payload.duration) || 30;
+
+    if (!/^M[1-9][0-9]?$/.test(monthCode)) {
+      return { success: false, message: 'كود الشهر غير صالح. استخدم مثالاً مثل M1 أو M2.' };
+    }
+
+    const bankQuestions = loadBankQuestionsByPeriod_(grade, requestedSubject, monthCode);
+    if (!bankQuestions.length) {
+      return {
+        success: false,
+        message: 'لا توجد أسئلة تراكمية في بنك الأسئلة لـ ' + grade + '. أضف أسئلة الأسابيع W1-W4 أولاً.'
+      };
+    }
+
+    const examCode = 'EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_' + monthCode + '_CUMULATIVE';
+    const title = (isAli ? 'Ali' : 'Mostafa') + ' - Month ' + monthCode.replace('M', '') + ' Comprehensive Cumulative Exam';
+    const available = bankQuestions.length;
+
+    const examRow = [
+      examCode,
+      title,
+      grade,
+      requestedSubject,
+      Math.min(count, available),
+      duration,
+      'ACTIVE',
+      '',
+      new Date(),
+      'Monthly',
+      monthCode
+    ];
+
+    upsertExamRow_(exSheet, examCode, examRow);
+    styleExamsSheet(exSheet);
+
+    return {
+      success: true,
+      examCode: examCode,
+      title: title,
+      grade: grade,
+      studentUrl: computeExamUrl_(studentKey, examCode),
+      message: 'تم إنشاء الامتحان الشهري التراكمي (' + monthCode + ') بنجاح برمز: ' + examCode + ' — ' + examRow[4] + ' أسئلة متاحة.'
+    };
+  } catch (err) {
+    Logger.log('createMonthlyExam error: ' + err);
+    return { success: false, message: 'حدث خطأ: ' + err.message };
+  }
+}
+
+function createMistakesReviewExam(payload, adminToken) {
+  const token = adminToken || (payload && payload.adminToken);
+  if (!isAdminTokenValid_(token)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  return createMistakesReviewExam_(payload);
+}
+
+function createMistakesReviewExam_(payload) {
+  try {
+    const ss = getSpreadsheet();
+    const subSheet = ss.getSheetByName('Submissions');
+    const qbSheet = ss.getSheetByName('Question_Bank');
+    let exSheet = ss.getSheetByName('Exams');
+
+    if (!subSheet || subSheet.getLastRow() <= 1) {
+      return { success: false, message: 'لا توجد سجلات تسليم سابقة لاستخراج الأخطاء.' };
+    }
+    if (!qbSheet) {
+      return { success: false, message: 'بنك الأسئلة غير موجود. شغّل إعداد قاعدة البيانات أولاً.' };
+    }
+    if (!exSheet) {
+      setupDatabase(ss);
+      exSheet = ss.getSheetByName('Exams');
+    }
+
+    const studentKey = String((payload && payload.studentKey) || 'ali').toLowerCase();
+    const isAli = (studentKey === 'ali');
+    const targetStudent = isAli ? 'Ali Ahmed' : 'Mostafa Ahmed';
+    const grade = isAli ? 'Year 5 (G5)' : 'Grade 6 (G6)';
+
+    const sMap = getSheetHeaderMap_(subSheet);
+    const sData = subSheet.getDataRange().getValues();
+    const mistakes = [];
+    const seenQuestions = {};
+
+    for (let i = 1; i < sData.length; i++) {
+      const row = sData[i];
+      const name = normalizeName_(rowValue_(row, sMap, 'Student Name', 1));
+      if (name !== normalizeName_(targetStudent)) continue;
+
+      const rawJson = rowValue_(row, sMap, 'Detailed Review JSON', 10);
+      if (!rawJson) continue;
+
+      let review = [];
+      try {
+        const parsed = JSON.parse(rawJson);
+        review = Array.isArray(parsed) ? parsed : (parsed.review || parsed.mistakes || []);
+      } catch (e) {
+        continue;
+      }
+
+      review.forEach(item => {
+        if (item.isCorrect === false || (Number(item.pointsAwarded) < Number(item.maxPoints))) {
+          const qText = String(item.questionText || item.question || '').trim();
+          if (qText && !seenQuestions[qText]) {
+            seenQuestions[qText] = true;
+            mistakes.push(item);
+          }
+        }
+      });
+    }
+
+    if (mistakes.length === 0) {
+      return {
+        success: false,
+        message: '🎉 رائع جداً! لا توجد أخطاء مسجلة لـ ' + targetStudent + '، أو تم تصحيح جميع الأخطاء في المحاولات اللاحقة!'
+      };
+    }
+
+    const examCode = 'EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_MISTAKES_REV';
+    const title = (isAli ? 'Ali' : 'Mostafa') + ' - Targeted Mistakes Review (' + mistakes.length + ' Questions)';
+
+    const qbMap = getSheetHeaderMap_(qbSheet);
+    const existingQbData = qbSheet.getDataRange().getValues();
+    const existingQbIds = {};
+    for (let r = 1; r < existingQbData.length; r++) {
+      existingQbIds[String(rowValue_(existingQbData[r], qbMap, 'Question ID', 0) || '')] = true;
+    }
+
+    const newQbRows = [];
+    mistakes.forEach((m, idx) => {
+      const qText = String(m.questionText || m.question || '').trim();
+      const qId = 'MISTAKE_' + (isAli ? 'ALI' : 'MOS') + '_' + simpleHash_(qText);
+      if (existingQbIds[qId]) return;
+
+      const correctAnswer = String(m.correctAnswer || '').trim();
+      if (!correctAnswer) return;
+      const studentAnswer = String(m.studentAnswer || '').trim();
+      let options = [correctAnswer];
+      if (studentAnswer && normalizeAnswer_(studentAnswer) !== normalizeAnswer_(correctAnswer)) {
+        options.push(studentAnswer);
+      }
+      if (options.length < 2) options.push('None of the above');
+
+      newQbRows.push([
+        qId,
+        grade,
+        isAli ? 'English Grammar' : 'Mixed Review',
+        'Review: Targeted Mistake Retest',
+        qText,
+        'MCQ',
+        options.join(' | '),
+        correctAnswer,
+        1,
+        m.explanation || '💡 مراجعة الخطأ السابق لتثبيت القاعدة والإتقان الكامل.',
+        examCode,
+        'MistakesReview',
+        'Targeted'
+      ]);
+    });
+
+    if (newQbRows.length > 0) {
+      qbSheet.getRange(qbSheet.getLastRow() + 1, 1, newQbRows.length, newQbRows[0].length).setValues(newQbRows);
+      styleQuestionBankSheet(qbSheet);
+    }
+
+    const totalQuestions = loadBankQuestions_(examCode).length;
+    if (!totalQuestions) {
+      return { success: false, message: 'تعذر بناء أسئلة المراجعة من الأخطاء المسجلة. أعد المحاولة بعد تسليم اختبار جديد.' };
+    }
+
+    const exRow = [
+      examCode,
+      title,
+      grade,
+      'Mistakes Review',
+      totalQuestions,
+      15,
+      'ACTIVE',
+      '',
+      new Date(),
+      'Mistakes Review',
+      'Continuous'
+    ];
+
+    upsertExamRow_(exSheet, examCode, exRow);
+    styleExamsSheet(exSheet);
+
+    return {
+      success: true,
+      examCode: examCode,
+      title: title,
+      mistakesCount: mistakes.length,
+      questionsCount: totalQuestions,
+      studentUrl: computeExamUrl_(studentKey, examCode),
+      message: 'تم تجميع (' + totalQuestions + ') سؤال مراجعة من أخطاء سابقة في امتحان مخصص برمز: ' + examCode
+    };
+  } catch (err) {
+    Logger.log('createMistakesReviewExam error: ' + err);
+    return { success: false, message: 'حدث خطأ: ' + err.message };
+  }
+}
+
+/**
+ * Spreadsheet UI menu prompts (run as the sheet owner, so no web token needed).
+ */
+function promptCreateWeeklyExam() {
+  const ui = SpreadsheetApp.getUi();
+  const studentPrompt = ui.prompt('إنشاء امتحان أسبوعي', 'اختر الطالب:\nاكتب 1 لـ علي أحمد (Year 5)\nاكتب 2 لـ مصطفى أحمد (Grade 6)', ui.ButtonSet.OK_CANCEL);
+  if (studentPrompt.getSelectedButton() !== ui.Button.OK) return;
+
+  const choice = studentPrompt.getResponseText().trim();
+  const studentKey = (choice === '2') ? 'mostafa' : 'ali';
+
+  const weekPrompt = ui.prompt('رقم الأسبوع', 'اكتب كود الأسبوع (مثال: W2 أو W3):', ui.ButtonSet.OK_CANCEL);
+  if (weekPrompt.getSelectedButton() !== ui.Button.OK) return;
+
+  const weekCode = weekPrompt.getResponseText().trim().toUpperCase() || 'W2';
+  const res = createWeeklyExam_({ studentKey: studentKey, weekCode: weekCode });
+  ui.alert('نتيجة إنشاء الامتحان', res.message + '\n\nرابط الطالب المباشر:\n' + (res.studentUrl || 'افتح التطبيق للنسخ'), ui.ButtonSet.OK);
+}
+
+function promptCreateMonthlyExam() {
+  const ui = SpreadsheetApp.getUi();
+  const studentPrompt = ui.prompt('إنشاء امتحان شهري تراكمي', 'اختر الطالب:\nاكتب 1 لـ علي أحمد (Year 5)\nاكتب 2 لـ مصطفى أحمد (Grade 6)', ui.ButtonSet.OK_CANCEL);
+  if (studentPrompt.getSelectedButton() !== ui.Button.OK) return;
+
+  const choice = studentPrompt.getResponseText().trim();
+  const studentKey = (choice === '2') ? 'mostafa' : 'ali';
+
+  const monthPrompt = ui.prompt('كود الشهر', 'اكتب كود الشهر (مثال: M1 أو M2):', ui.ButtonSet.OK_CANCEL);
+  if (monthPrompt.getSelectedButton() !== ui.Button.OK) return;
+
+  const monthCode = monthPrompt.getResponseText().trim().toUpperCase() || 'M1';
+  const res = createMonthlyExam_({ studentKey: studentKey, monthCode: monthCode });
+  ui.alert('نتيجة إنشاء الامتحان الشهري', res.message + '\n\nالرابط:\n' + (res.studentUrl || 'افتح التطبيق للنسخ'), ui.ButtonSet.OK);
+}
+
+function promptCreateMistakesExam() {
+  const ui = SpreadsheetApp.getUi();
+  const studentPrompt = ui.prompt('امتحان مراجعة الأخطاء الذاتي', 'اختر الطالب:\nاكتب 1 لـ علي أحمد\nاكتب 2 لـ مصطفى أحمد', ui.ButtonSet.OK_CANCEL);
+  if (studentPrompt.getSelectedButton() !== ui.Button.OK) return;
+
+  const choice = studentPrompt.getResponseText().trim();
+  const studentKey = (choice === '2') ? 'mostafa' : 'ali';
+
+  const res = createMistakesReviewExam_({ studentKey: studentKey });
+  ui.alert('امتحان مراجعة الأخطاء', res.message + (res.studentUrl ? ('\n\nالرابط:\n' + res.studentUrl) : ''), ui.ButtonSet.OK);
+}
+
+// ============================================================
+// COLIGO LMS FEED, GOOGLE DRIVE VIDEOS & HOMEWORK STATUS
+// ============================================================
+
+function readDriveVideoMap_() {
+  try {
+    const raw = PropertiesService.getScriptProperties().getProperty('DRIVE_VIDEO_MAP');
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed === 'object') ? parsed : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function persistJsonProperty_(key, value) {
+  const props = PropertiesService.getScriptProperties();
+  let payload = JSON.stringify(value);
+  // Script properties are capped near 9KB; trim the oldest entries rather than fail.
+  if (payload.length > 8000) {
+    const keys = Object.keys(value);
+    while (keys.length > 1 && payload.length > 8000) {
+      keys.pop();
+      const trimmed = {};
+      keys.forEach(k => { trimmed[k] = value[k]; });
+      payload = JSON.stringify(trimmed);
+    }
+  }
+  props.setProperty(key, payload);
+}
+
+function extractDriveFolderId_(ref) {
+  const value = String(ref || '').trim();
+  if (!value) return '';
+  const match = value.match(/\/folders\/([A-Za-z0-9_-]{10,})/);
+  if (match) return match[1];
+  const idMatch = value.match(/[?&]id=([A-Za-z0-9_-]{10,})/);
+  if (idMatch) return idMatch[1];
+  if (/^[A-Za-z0-9_-]{10,}$/.test(value)) return value;
+  return '';
+}
+
+function syncGoogleDriveVideos(folderRef, adminToken) {
+  const token = adminToken || folderRef && folderRef.adminToken;
+  if (!isAdminTokenValid_(token)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+
+  const ref = (folderRef && typeof folderRef === 'object') ? folderRef.folder : folderRef;
+  const folderId = extractDriveFolderId_(ref);
+  if (!folderId) {
+    return { success: false, message: 'رابط مجلد Google Drive غير صالح. انسخ رابط المجلد كاملاً أو معرّفه.' };
+  }
+  if (typeof DriveApp === 'undefined') {
+    return { success: false, message: 'خدمة Google Drive غير متاحة في هذه البيئة.' };
+  }
+
+  let folder;
+  try {
+    folder = DriveApp.getFolderById(folderId);
+  } catch (e) {
+    return { success: false, message: 'تعذر فتح المجلد: ' + e.message };
+  }
+
+  const videoMap = {};
+  let scanned = 0;
+  try {
+    const files = folder.getFiles();
+    while (files.hasNext() && scanned < 500) {
+      scanned++;
+      const file = files.next();
+      const name = String(file.getName() || '');
+      const mime = String(file.getMimeType() || '');
+      if (mime.indexOf('video/') !== 0 && !/\.(mp4|webm|mov|m4v|avi|mkv)$/i.test(name)) continue;
+
+      const id = String(file.getId() || '');
+      const key = name.replace(/\.[^.]+$/, '').trim();
+      videoMap[key] = {
+        id: id,
+        name: name,
+        previewUrl: 'https://drive.google.com/file/d/' + id + '/preview',
+        downloadUrl: 'https://drive.google.com/uc?export=download&id=' + id
+      };
+    }
+  } catch (e) {
+    return { success: false, message: 'تعذر قراءة ملفات المجلد: ' + e.message };
+  }
+
+  const count = Object.keys(videoMap).length;
+  if (!count) {
+    return { success: false, message: 'لم يتم العثور على ملفات فيديو داخل هذا المجلد.' };
+  }
+
+  PropertiesService.getScriptProperties().setProperty('DRIVE_VIDEOS_FOLDER_ID', folderId);
+  persistJsonProperty_('DRIVE_VIDEO_MAP', videoMap);
+
+  return {
+    success: true,
+    videoMap: videoMap,
+    folderId: folderId,
+    count: count,
+    message: 'تم ربط ' + count + ' فيديو من Google Drive بنجاح.'
+  };
+}
+
+function getColigoHubData() {
+  try {
+    const ss = getSpreadsheet();
+    const sheet = ss.getSheetByName('Coligo_Hub');
+    if (!sheet || sheet.getLastRow() <= 1) return { success: true, items: [] };
+
+    const map = getSheetHeaderMap_(sheet);
+    const data = sheet.getDataRange().getValues();
+    const items = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const title = String(rowValue_(row, map, 'Title', 6) || '').trim();
+      if (!title) continue;
+      items.push({
+        id: String(rowValue_(row, map, 'Item ID', 0) || ('COLIGO_' + i)),
+        syncedAt: formatMaybeDate_(rowValue_(row, map, 'Synced At', 1)),
+        student: String(rowValue_(row, map, 'Student', 2) || ''),
+        grade: String(rowValue_(row, map, 'Grade', 3) || ''),
+        course: String(rowValue_(row, map, 'Course', 4) || ''),
+        type: String(rowValue_(row, map, 'Type', 5) || '@material-type/file'),
+        title: title,
+        url: String(rowValue_(row, map, 'URL', 7) || ''),
+        content: String(rowValue_(row, map, 'Content', 8) || '')
+      });
+    }
+    return { success: true, items: items.reverse() };
+  } catch (err) {
+    Logger.log('getColigoHubData error: ' + err);
+    return { success: false, message: err.message, items: [] };
+  }
+}
+
+function formatMaybeDate_(value) {
+  if (value instanceof Date) {
+    return Utilities.formatDate(value, Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
+  }
+  return String(value || '');
+}
+
+function normalizeColigoItem_(raw, index) {
+  const item = raw || {};
+  return {
+    id: String(item.id || item._id || ('COLIGO_' + index)),
+    student: String(item.student || item.studentName || ''),
+    grade: String(item.grade || item.schoolGrade || ''),
+    course: String(item.course || item.courseName || ''),
+    type: String(item.type || '@material-type/file'),
+    title: String(item.title || item.name || item.filename || ''),
+    url: String(item.url || item.link || ''),
+    content: String(item.content || item.description || '')
+  };
+}
+
+function syncColigoOnline(force, adminToken) {
+  if (!isAdminTokenValid_(adminToken)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  return syncColigoOnline_();
+}
+
+function syncColigoOnline_() {
+  const props = PropertiesService.getScriptProperties();
+  const feedUrl = String(props.getProperty('COLIGO_HUB_FEED_URL') || '').trim();
+  if (!feedUrl) {
+    return {
+      success: false,
+      code: 'NOT_CONFIGURED',
+      message: 'لم يتم ضبط رابط موجز كوليجو. أضف الخاصية COLIGO_HUB_FEED_URL في إعدادات التطبيق.'
+    };
+  }
+  if (typeof UrlFetchApp === 'undefined') {
+    return { success: false, message: 'خدمة جلب البيانات غير متاحة في هذه البيئة.' };
+  }
+
+  let response;
+  try {
+    response = UrlFetchApp.fetch(feedUrl, { muteHttpExceptions: true, followRedirects: true });
+  } catch (e) {
+    return { success: false, message: 'تعذر الاتصال بكوليجو: ' + e.message };
+  }
+
+  const code = response.getResponseCode();
+  if (code < 200 || code >= 300) {
+    return { success: false, message: 'أعادت سحابة كوليجو رمز خطأ: ' + code };
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(response.getContentText());
+  } catch (e) {
+    return { success: false, message: 'رد كوليجو ليس JSON صالحاً.' };
+  }
+
+  const rawItems = Array.isArray(payload) ? payload
+    : (payload && (payload.items || payload.materials || payload.data)) || [];
+  if (!Array.isArray(rawItems) || !rawItems.length) {
+    return { success: false, message: 'لم تُرجع سحابة كوليجو أي عناصر جديدة.' };
+  }
+
+  const items = rawItems.map(normalizeColigoItem_).filter(item => item.title);
+
+  const ss = getSpreadsheet();
+  let sheet = ss.getSheetByName('Coligo_Hub');
+  if (!sheet) {
+    setupDatabase(ss);
+    sheet = ss.getSheetByName('Coligo_Hub');
+  }
+
+  const headers = ['Item ID', 'Synced At', 'Student', 'Grade', 'Course', 'Type', 'Title', 'URL', 'Content'];
+  const stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
+  const rows = items.map(item => [
+    item.id, stamp, item.student, item.grade, item.course, item.type, item.title, item.url, item.content
+  ]);
+
+  const capacity = Math.max(sheet.getLastRow() - 1, rows.length);
+  const matrix = [];
+  for (let i = 0; i < capacity; i++) {
+    matrix.push(rows[i] || ['', '', '', '', '', '', '', '', '']);
+  }
+  sheet.getRange(2, 1, Math.max(capacity, 1), headers.length).setValues(matrix);
+
+  persistJsonProperty_('COLIGO_HUB_CACHE', items);
+
+  return {
+    success: true,
+    count: items.length,
+    items: items,
+    message: 'تمت مزامنة ' + items.length + ' عنصراً من كوليجو وتحديث مركز المواد.'
+  };
+}
+
+function setupColigoAutoSyncTrigger(adminToken) {
+  if (!isAdminTokenValid_(adminToken)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  if (typeof ScriptApp === 'undefined' || !ScriptApp.getProjectTriggers) {
+    return { success: false, message: 'خدمة المجدول غير متاحة في هذه البيئة.' };
+  }
+  try {
+    ScriptApp.getProjectTriggers().forEach(trigger => {
+      if (trigger.getHandlerFunction && trigger.getHandlerFunction() === 'syncColigoAuto_') {
+        ScriptApp.deleteTrigger(trigger);
+      }
+    });
+    ScriptApp.newTrigger('syncColigoAuto_').timeBased().atHour(15).nearMinute(30).everyDays(1).create();
+    return { success: true, message: 'تم تفعيل المزامنة التلقائية اليومية الساعة 3:30 عصراً.' };
+  } catch (e) {
+    return { success: false, message: 'تعذر إنشاء المجدول: ' + e.message };
+  }
+}
+
+/**
+ * Time-driven trigger entry point. Configure COLIGO_HUB_FEED_URL first.
+ */
+function syncColigoAuto_() {
+  try {
+    if (!PropertiesService.getScriptProperties().getProperty('COLIGO_HUB_FEED_URL')) return;
+    const lock = LockService.getScriptLock();
+    if (!lock.tryLock(30000)) return;
+    try {
+      syncColigoOnline_();
+    } finally {
+      lock.releaseLock();
+    }
+  } catch (e) {
+    Logger.log('syncColigoAuto_ error: ' + e);
+  }
+}
+
+function recordHomeworkStatus(studentName, subject, done) {
+  try {
+    const name = String(studentName || '').trim();
+    const subjectName = String(subject || '').trim();
+    if (!name || !subjectName) {
+      return { success: false, message: 'اسم الطالب والمادة مطلوبان.' };
+    }
+    const isDone = (done === true || done === 'true' || done === 1);
+
+    const ss = getSpreadsheet();
+    let sheet = ss.getSheetByName('Homework_Status');
+    if (!sheet) {
+      setupDatabase(ss);
+      sheet = ss.getSheetByName('Homework_Status');
+    }
+
+    const map = getSheetHeaderMap_(sheet);
+    const data = sheet.getDataRange().getValues();
+    const targetName = normalizeName_(name);
+    const targetSubject = normalizeName_(subjectName);
+    const stamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
+    let rowIndex = -1;
+
+    for (let i = 1; i < data.length; i++) {
+      if (normalizeName_(rowValue_(data[i], map, 'Student', 1)) === targetName &&
+          normalizeName_(rowValue_(data[i], map, 'Subject', 2)) === targetSubject) {
+        rowIndex = i + 1;
+        break;
+      }
+    }
+
+    if (rowIndex > 0) {
+      sheet.getRange(rowIndex, 1, 1, 4).setValues([[stamp, name, subjectName, isDone ? 'TRUE' : 'FALSE']]);
+    } else {
+      sheet.appendRow([stamp, name, subjectName, isDone ? 'TRUE' : 'FALSE']);
+    }
+
+    return { success: true, student: name, subject: subjectName, done: isDone };
+  } catch (err) {
+    Logger.log('recordHomeworkStatus error: ' + err);
+    return { success: false, message: err.message };
   }
 }

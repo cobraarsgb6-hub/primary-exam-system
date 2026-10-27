@@ -379,3 +379,144 @@ test('admin dashboard requires valid admin token and shows the real bank', () =>
   assert.equal(result.allQuestions.length, 3);
   assert.equal(result.allQuestions[0].examCode, 'EX_Y5_ENG_ADV01');
 });
+
+test('setupDatabase seeds the study plan and the weekly/monthly exam factory uses the bank', () => {
+  const app = createApp();
+  app.sandbox.setupDatabase();
+
+  assert.ok(app.sheets.Study_Plan, 'Study_Plan tab is created');
+  assert.ok(app.sheets.Study_Plan.rows.length > 20, 'roadmap rows are seeded');
+  assert.deepEqual(
+    app.sheets.Exams.rows[0].slice(9, 11),
+    ['Exam Type', 'Target Period'],
+    'Exams sheet is migrated to 11 columns'
+  );
+
+  const token = app.sandbox.verifyAdminPin('1990').token;
+
+  const weekly = app.sandbox.createWeeklyExam({ studentKey: 'ali', weekCode: 'W1', subject: 'English Grammar' }, token);
+  assert.equal(weekly.success, true, weekly.message);
+  assert.equal(weekly.examCode, 'EX_Y5_ALI_W1_ENG');
+
+  const before = app.sheets.Exams.rows.length;
+  const again = app.sandbox.createWeeklyExam({ studentKey: 'ali', weekCode: 'W1', subject: 'English Grammar' }, token);
+  assert.equal(again.success, true);
+  assert.equal(app.sheets.Exams.rows.length, before, 're-creating the same week updates instead of duplicating');
+
+  // The generated exam must open from the period slice of the bank.
+  const exam = app.sandbox.getExamData('EX_Y5_ALI_W1_ENG', 'Ali Ahmed');
+  assert.equal(exam.success, true, exam.message);
+  assert.equal(exam.questions.length, 3);
+  assert.equal(Object.prototype.hasOwnProperty.call(exam.questions[0], 'correctAnswer'), false);
+
+  const monthly = app.sandbox.createMonthlyExam({ studentKey: 'ali', monthCode: 'M1' }, token);
+  assert.equal(monthly.success, true, monthly.message);
+  assert.equal(monthly.examCode, 'EX_Y5_ALI_M1_CUMULATIVE');
+});
+
+test('exam factory rejects unauthenticated callers and empty bank periods', () => {
+  const app = createApp({ empty: true });
+  const token = app.sandbox.verifyAdminPin('1990').token;
+
+  const denied = app.sandbox.createWeeklyExam({ studentKey: 'ali', weekCode: 'W1' });
+  assert.equal(denied.success, false);
+  assert.equal(denied.code, 'UNAUTHORIZED');
+
+  const noBank = app.sandbox.createWeeklyExam({ studentKey: 'ali', weekCode: 'W3' }, token);
+  assert.equal(noBank.success, false);
+  assert.match(noBank.message, /بنك الأسئلة/);
+
+  const badWeek = app.sandbox.createWeeklyExam({ studentKey: 'ali', weekCode: '../../etc' }, token);
+  assert.equal(badWeek.success, false);
+});
+
+test('mistakes review exam is built from graded submission errors', () => {
+  const review = [{
+    questionText: 'Question one?',
+    isCorrect: false,
+    pointsAwarded: 0,
+    maxPoints: 1,
+    correctAnswer: 'B',
+    studentAnswer: 'A',
+    explanation: 'Because B.'
+  }];
+  const app = createApp({
+    submissions: [[
+      '2026-10-20 10:00', 'Ali Ahmed', 'Year 5 (G5)', 'EX_Y5_ENG_ADV01',
+      0, 1, 0, 'Needs Practice', '4 min', '0/1 Correct (0%)', JSON.stringify(review)
+    ]]
+  });
+  const token = app.sandbox.verifyAdminPin('1990').token;
+
+  const result = app.sandbox.createMistakesReviewExam({ studentKey: 'ali' }, token);
+  assert.equal(result.success, true, result.message);
+  assert.equal(result.questionsCount, 1);
+
+  const exam = app.sandbox.getExamData('EX_Y5_ALI_MISTAKES_REV', 'Ali Ahmed');
+  assert.equal(exam.success, true, exam.message);
+  assert.equal(exam.questions.length, 1);
+  assert.equal(exam.questions[0].text, 'Question one?');
+
+  // A second run must stay idempotent for the same mistake.
+  const again = app.sandbox.createMistakesReviewExam({ studentKey: 'ali' }, token);
+  assert.equal(again.success, true);
+  assert.equal(again.questionsCount, 1);
+});
+
+test('today mission, student exam list, homework status and drive/coligo guards', () => {
+  const app = createApp();
+  app.sandbox.setupDatabase();
+  const token = app.sandbox.verifyAdminPin('1990').token;
+
+  const mission = app.sandbox.getTodayMission('ali');
+  assert.equal(mission.success, true);
+  assert.match(mission.mission.examCode, /^EX_Y5_(ENG_ADV01|ALI_W2_ENG)$/);
+  assert.ok(mission.mission.lesson);
+  assert.equal(mission.mission.week, 'W2', 'completed W1 rows are skipped');
+
+  const available = app.sandbox.getStudentAvailableExams('ali');
+  assert.equal(available.success, true);
+  assert.equal(available.exams.length, 1);
+  assert.equal(available.exams[0].code, 'EX_Y5_ENG_ADV01');
+
+  const mostafaExams = app.sandbox.getStudentAvailableExams('mostafa');
+  assert.equal(mostafaExams.exams.length, 0, 'grade isolation hides Year 5 exams');
+
+  const hw = app.sandbox.recordHomeworkStatus('Ali Ahmed', 'English Grammar', true);
+  assert.equal(hw.success, true);
+  const hwRows = app.sheets.Homework_Status.rows.length;
+  const unset = app.sandbox.recordHomeworkStatus('Ali Ahmed', 'English Grammar', false);
+  assert.equal(unset.success, true);
+  assert.equal(unset.done, false);
+  assert.equal(app.sheets.Homework_Status.rows.length, hwRows, 'homework status upserts');
+  assert.equal(app.sheets.Homework_Status.rows[1][3], 'FALSE');
+
+  const coligo = app.sandbox.getColigoHubData();
+  assert.equal(coligo.success, true);
+  assert.equal(coligo.items.length, 0);
+
+  const driveDenied = app.sandbox.syncGoogleDriveVideos('https://drive.google.com/drive/folders/abc123456789');
+  assert.equal(driveDenied.code, 'UNAUTHORIZED');
+
+  const coligoNoFeed = app.sandbox.syncColigoOnline(true, token);
+  assert.equal(coligoNoFeed.success, false);
+  assert.equal(coligoNoFeed.code, 'NOT_CONFIGURED');
+
+  const trigger = app.sandbox.setupColigoAutoSyncTrigger(token);
+  assert.equal(trigger.success, false);
+});
+
+test('admin dashboard now exposes studyPlan and Drive metadata fields', () => {
+  const app = createApp();
+  app.sandbox.setupDatabase();
+  const token = app.sandbox.verifyAdminPin('1990').token;
+
+  const result = app.sandbox.getAdminDashboardData(token);
+  assert.equal(result.success, true);
+  assert.ok(Array.isArray(result.studyPlan));
+  assert.ok(result.studyPlan.length > 20);
+  assert.equal(result.studyPlan[0].student, 'Ali Ahmed');
+  assert.equal(Object.keys(result.driveVideos).length, 0);
+  assert.equal(result.driveFolderId, '');
+});
+

@@ -1090,7 +1090,7 @@ window.DRIVE_VIDEOS = {};
             fb.style.color = '#dc2626';
             fb.innerText = '❌ Error: ' + (err && err.message ? err.message : err);
           })
-          .syncGoogleDriveVideos(val);
+          .syncGoogleDriveVideos(val, (typeof currentAdminToken !== 'undefined' ? currentAdminToken : null));
       } else {
         fb.style.color = '#059669';
         fb.innerText = '✅ [Simulation Mode] Google Drive videos synchronized.';
@@ -1305,7 +1305,7 @@ window.DRIVE_VIDEOS = {};
               fb.innerHTML = '❌ <b>فشل الاتصال بالسحابة: ' + (err && err.message ? err.message : err) + '</b>';
             }
           })
-          .syncColigoOnline(true);
+          .syncColigoOnline(true, (typeof currentAdminToken !== 'undefined' ? currentAdminToken : null));
       } else {
         setTimeout(function() {
           if (fb) {
@@ -1341,7 +1341,7 @@ window.DRIVE_VIDEOS = {};
               fb.innerHTML = '❌ خطأ: ' + (err && err.message ? err.message : err);
             }
           })
-          .setupColigoAutoSyncTrigger();
+          .setupColigoAutoSyncTrigger((typeof currentAdminToken !== 'undefined' ? currentAdminToken : null));
       } else {
         if (fb) fb.innerHTML = '✅ [وضع التجربة] تم تفعيل المجدول التلقائي اليومي الساعة 3:30 عصراً.';
       }

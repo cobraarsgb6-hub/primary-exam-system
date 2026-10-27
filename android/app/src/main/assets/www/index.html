@@ -4502,7 +4502,7 @@ window.DRIVE_VIDEOS = {};
             fb.style.color = '#dc2626';
             fb.innerText = '❌ Error: ' + (err && err.message ? err.message : err);
           })
-          .syncGoogleDriveVideos(val);
+          .syncGoogleDriveVideos(val, (typeof currentAdminToken !== 'undefined' ? currentAdminToken : null));
       } else {
         fb.style.color = '#059669';
         fb.innerText = '✅ [Simulation Mode] Google Drive videos synchronized.';
@@ -4717,7 +4717,7 @@ window.DRIVE_VIDEOS = {};
               fb.innerHTML = '❌ <b>فشل الاتصال بالسحابة: ' + (err && err.message ? err.message : err) + '</b>';
             }
           })
-          .syncColigoOnline(true);
+          .syncColigoOnline(true, (typeof currentAdminToken !== 'undefined' ? currentAdminToken : null));
       } else {
         setTimeout(function() {
           if (fb) {
@@ -4753,7 +4753,7 @@ window.DRIVE_VIDEOS = {};
               fb.innerHTML = '❌ خطأ: ' + (err && err.message ? err.message : err);
             }
           })
-          .setupColigoAutoSyncTrigger();
+          .setupColigoAutoSyncTrigger((typeof currentAdminToken !== 'undefined' ? currentAdminToken : null));
       } else {
         if (fb) fb.innerHTML = '✅ [وضع التجربة] تم تفعيل المجدول التلقائي اليومي الساعة 3:30 عصراً.';
       }
@@ -6985,7 +6985,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
             btn.innerText = '⚡ Generate Weekly Exam Link';
             alert('Server error: ' + (err && err.message ? err.message : err));
           })
-          .createWeeklyExam(payload);
+          .createWeeklyExam(payload, currentAdminToken);
       } else {
         setTimeout(() => {
           btn.disabled = false;
@@ -7031,7 +7031,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
             btn.innerText = '🗓️ Generate Monthly Exam Link';
             alert('Server error: ' + (err && err.message ? err.message : err));
           })
-          .createMonthlyExam(payload);
+          .createMonthlyExam(payload, currentAdminToken);
       } else {
         setTimeout(() => {
           btn.disabled = false;
@@ -7071,7 +7071,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
             btn.innerText = '🎯 Generate Mistakes Retest Exam';
             alert('Server error: ' + (err && err.message ? err.message : err));
           })
-          .createMistakesReviewExam(payload);
+          .createMistakesReviewExam(payload, currentAdminToken);
       } else {
         setTimeout(() => {
           btn.disabled = false;
@@ -7131,6 +7131,14 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
     function launchTodayMission() {
       if (!currentTodayMission || !currentTodayMission.examCode) return;
+      // Never silently launch a different exam when the roadmap exam has not
+      // been generated/published yet.
+      const student = STUDENT_DATA[currentStudentKey];
+      const exists = student && student.exams.some(e => e.code === currentTodayMission.examCode);
+      if (!exists) {
+        alert("This mission's assessment hasn't been published yet. Ask your parent to generate it from the Parent Portal.");
+        return;
+      }
       selectStudentExam(currentTodayMission.examCode);
       // Immediately open the assessment prompt modal for zero-friction launch
       promptStartConfirmation();
