@@ -1,4 +1,4 @@
-# Project: primary-exam-system Audit, Verification & Hardening
+﻿# Project: primary-exam-system Audit, Verification & Hardening
 
 ## Architecture
 The `primary-exam-system` is an assessment, learning, and analytics platform designed for primary school students (Ali - Year 5, Mostafa - Grade 6) and their parents. It comprises:
@@ -62,12 +62,12 @@ The `primary-exam-system` is an assessment, learning, and analytics platform des
 - `getSheetHeaderMap_(sheet)` / `canonicalHeader_(header)` — resolve Arabic header aliases to canonical English keys; `ensureSheetHeaders_` treats an alias as the canonical column and never appends duplicates.
 
 ## Code Layout
-- `Code.gs`: Google Apps Script server backend (91 functions)
+- `Code.gs`: Google Apps Script server backend (92 functions)
 - `Index.html`: portal shell, screens and modals; pulls the four templates via `include()`
 - `Styles.html`, `HubData.js.html`, `QuizApp.js.html`, `Portal.js.html`: extracted frontend modules
 - `Index.bundle.html`: fully resolved single-file build (also copied to `android/app/src/main/assets/www/index.html`)
 - `Question_Bank.csv`: Source question items and pedagogical explanations
 - `Exams.csv`: Exam definitions and schedule
-- `tests/`: Node VM server/unit tests (`server.test.js` is the fake-Sheets harness; 41 tests across 4 files)
+- `tests/`: Node VM server/unit tests (`server.test.js` is the fake-Sheets harness; 43 tests across 5 files)
 - `tests/e2e/`: Playwright E2E suites (Tiers 1-4, 51 scenarios)
 - `test_ui_buttons.py`: 51 static button audit

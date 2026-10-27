@@ -1,4 +1,4 @@
-# Primary Exam System — G5 & G6
+﻿# Primary Exam System — G5 & G6
 
 A Google Apps Script + Google Sheets assessment portal for primary grades.
 
@@ -28,7 +28,7 @@ The project is a **single-family / small-class pilot**, not a multi-tenant schoo
 ## Run tests
 
 ```bash
-npm test                      # 41 unit + server tests
+npm test                      # 43 unit + server tests
 python tests/e2e/run_all_e2e.py   # 51 E2E scenarios
 python test_ui_buttons.py         # 51 static button controls
 ```
