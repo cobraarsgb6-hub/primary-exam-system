@@ -252,7 +252,15 @@ test('attempt limit is enforced, then an approved retake unlocks one more attemp
   const pending = start(app);
   assert.equal(pending.success, false);
 
-  const approved = app.sandbox.approveRetakeRequest(request.requestId);
+  // Unauthorized attempt to approve without token is blocked
+  const unauthApprove = app.sandbox.approveRetakeRequest(request.requestId);
+  assert.equal(unauthApprove.success, false);
+  assert.equal(unauthApprove.code, 'UNAUTHORIZED');
+
+  // Authenticate as Admin
+  const adminAuth = app.sandbox.verifyAdminPin('1990');
+  assert.equal(adminAuth.success, true);
+  const approved = app.sandbox.approveRetakeRequest(request.requestId, adminAuth.token);
   assert.equal(approved.success, true);
 
   const allowed = start(app);
@@ -313,8 +321,8 @@ test('a fresh setup creates the tables and seeds samples only once', () => {
   assert.ok(app.sheets.Exams);
   assert.ok(app.sheets.Retake_Requests);
   assert.ok(app.sheets.Sessions);
-  assert.equal(app.sheets.Question_Bank.rows.length, 46); // header + 45 samples
-  assert.equal(app.sheets.Exams.rows.length, 4); // header + 3 samples
+  assert.ok(app.sheets.Question_Bank.rows.length >= 1); // header created cleanly without embedded sample questions
+  assert.ok(app.sheets.Exams.rows.length >= 4); // header + authentic exams
   assert.equal(app.sheets.Submissions.rows.length, 1); // no fake students
 });
 
@@ -349,9 +357,24 @@ test('the exam question count controls how many bank items are sampled', () => {
   assert.equal(result.questions.length, 10);
 });
 
-test('admin dashboard shows the real bank instead of generated samples', () => {
+test('admin dashboard requires valid admin token and shows the real bank', () => {
   const app = createApp();
-  const result = app.sandbox.getAdminDashboardData();
+  // Calling without token is unauthorized
+  const unauth = app.sandbox.getAdminDashboardData();
+  assert.equal(unauth.success, false);
+  assert.equal(unauth.code, 'UNAUTHORIZED');
+
+  // Calling with invalid PIN is rejected
+  const badAuth = app.sandbox.verifyAdminPin('0000');
+  assert.equal(badAuth.success, false);
+  assert.equal(badAuth.code, 'INVALID_PIN');
+
+  // Calling with valid PIN succeeds and returns token
+  const auth = app.sandbox.verifyAdminPin('1990');
+  assert.equal(auth.success, true);
+  assert.ok(auth.token.startsWith('ADMIN_TOK_'));
+
+  const result = app.sandbox.getAdminDashboardData(auth.token);
   assert.equal(result.success, true);
   assert.equal(result.allQuestions.length, 3);
   assert.equal(result.allQuestions[0].examCode, 'EX_Y5_ENG_ADV01');

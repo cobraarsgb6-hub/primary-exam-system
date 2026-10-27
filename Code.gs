@@ -46,7 +46,6 @@ function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('🎯 Assessment Management')
     .addItem('⚙️ Full Database Auto-Format & Setup', 'setupDatabase')
-    .addItem('🔄 Restore All Historical Submissions (Mostafa & Ali)', 'restoreAllHistoricalSubmissions')
     .addItem('📝 Generate Google Form from Exam', 'generateGoogleFormPrompt')
     .addSeparator()
     .addItem('🔗 Copy Interactive Web App URL', 'copyWebAppUrl')
@@ -83,64 +82,13 @@ function setupDatabase(targetSs) {
     qbSheet = ss.insertSheet('Question_Bank');
   }
   const qbHeaders = [
-    ['Question ID', 'Grade Level', 'Subject', 'Unit / Topic', 'Question Text', 'Type', 'Options (delimited by |)', 'Correct Answer', 'Points', 'Pedagogical Explanation & Mistake Breakdown', 'Exam Code']
+    ['Question ID', 'Grade Level', 'Subject', 'Unit / Topic', 'Question Text', 'Type', 'Options (delimited by |)', 'Correct Answer', 'Points', 'Pedagogical Explanation & Mistake Breakdown', 'Exam Code', 'Week', 'Difficulty']
   ];
   if (qbSheet.getLastRow() === 0) {
     qbSheet.getRange(1, 1, 1, qbHeaders[0].length).setValues(qbHeaders);
     formatHeaderRow(qbSheet, '#047857');
   }
 
-  const sampleQuestions = [
-    ["Q_Y5_ENG_001", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "What is an adverbial?", "MCQ", "A single word naming a person or thing | A group of words without a verb that adds detail about time, place, or manner | A group of words with a subject and a verb | A word that joins two clauses together", "A group of words without a verb that adds detail about time, place, or manner", 1, "An adverbial is a word or phrase that gives extra details about WHEN, WHERE, or HOW an action happens. It does NOT contain a finite verb.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_002", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "In the sentence: \"The rocket launched at dawn.\", what type of adverbial is \"at dawn\"?", "MCQ", "Adverbial of Time | Adverbial of Place | Adverbial of Manner | Adverbial of Reason", "Adverbial of Time", 1, "\"at dawn\" tells us WHEN the rocket launched (Adverbial of Time).", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_003", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Which of the following sentences contains an adverbial of PLACE?", "MCQ", "The crew slept inside the space station. | In 2000, the first crew moved in. | She carefully checked the controls. | Soon, the rocket was ready.", "The crew slept inside the space station.", 1, "\"inside the space station\" answers the question WHERE did the crew sleep (Adverbial of Place).", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_004", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "An adverbial of MANNER answers which question?", "MCQ", "How or in what way? | Where? | When? | Who?", "How or in what way?", 1, "Adverbials of manner explain HOW an action happens (e.g., bravely, with great care, silently).", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_005", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Which sentence is punctuated correctly with a comma after the fronted adverbial?", "MCQ", "After a long journey, the crew landed. | After a long journey the crew landed. | After a long journey, the crew, landed. | After, a long journey the crew landed.", "After a long journey, the crew landed.", 1, "When an adverbial is at the start (Fronted Adverbial), it must be followed by a comma.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_006", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "True or False: In the sentence \"The USSR launched Sputnik I in 1957.\", we must put a comma before \"in 1957\".", "TRUE_FALSE", "True | False", "False", 1, "When the adverbial is at the END of a sentence, NO comma is needed.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_007", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Choose the sentence that has an adverbial of TIME at the beginning:", "MCQ", "Before sunrise, the pilot took off. | Bravely, the pilot flew the plane. | Over the sea, the pilot flew. | With great skill, the pilot landed.", "Before sunrise, the pilot took off.", 1, "\"Before sunrise\" tells us WHEN the pilot took off.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_008", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Complete the sentence with the best adverbial of manner: \"The engineer repaired the delicate wiring ........\"", "MCQ", "with great care | on the moon | at midnight | in 1969", "with great care", 1, "\"with great care\" describes HOW the engineer repaired the wires.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_009", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Rewrite \"Astronauts walked on the moon in 1969.\" by moving the adverbial of time to the start:", "MCQ", "In 1969, astronauts walked on the moon. | In 1969 astronauts walked on the moon. | On the moon, astronauts walked in 1969. | Astronauts in 1969 walked on the moon.", "In 1969, astronauts walked on the moon.", 1, "Move \"In 1969\" to the front and place a comma directly after it.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_010", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Which sentence has BOTH an adverbial of time AND an adverbial of place?", "MCQ", "In 1969, astronauts walked on the moon. | The rocket launched at dawn. | The crew worked inside the space station. | Bravely, the pilot flew the plane.", "In 1969, astronauts walked on the moon.", 1, "\"In 1969\" is Time, and \"on the moon\" is Place.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y6_ENG_001", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "Which of the following phrases from the text is a SIMILE comparing walls to a shell using \"like\"?", "MCQ", "Its white walls glowed like the inside of a seashell | The fountain whispered to itself | Shadows stretched along the walls | The city was a hush", "Its white walls glowed like the inside of a seashell", 1, "💡 Rule: A SIMILE compares two different things using the words \"like\" or \"as\".\n\n🌟 Examples from the Text:\n• \"glowed like the inside of a seashell\" (compares walls to a shell using \"like\")\n• \"long and thin as fingers\" (compares shadows to fingers using \"as\")\n• \"thin as paper\" (compares the voice to paper using \"as\")", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_002", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "What figure of speech is used in: \"The fountain whispered to itself\"?", "MCQ", "Personification | Simile | Alliteration | Onomatopoeia", "Personification", 1, "💡 Rule: PERSONIFICATION gives human actions or qualities to non-human objects.\n\n🌟 Examples:\n• \"The fountain whispered to itself\" ➔ Humans whisper, fountains do not!\n• \"The wall of dust howled\" ➔ Giving the wind/dust the human/animal action of howling.\n• \"The gates closed with a sigh\" ➔ Gates don't sigh like humans!", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_003", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "\"The city was a hush.\" What does this metaphorical phrase suggest about the atmosphere of the city?", "MCQ", "The city was completely silent, deserted, and quiet | The city was noisy and crowded with people | The city was ruined by war | The city was full of singing birds", "The city was completely silent, deserted, and quiet", 1, "💡 Meaning & Inference:\n\"A hush\" means a sudden, profound silence. Describing the entire city as \"a hush\" emphasizes that it is eerily still, quiet, and appears empty of people.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_004", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "How does the author create a mysterious and eerie atmosphere in the text? Choose the best evidence:", "MCQ", "Flickering lamps, shadows like fingers, and a strange voice from the tower | People laughing and children playing in the streets | Bright sunny weather with clear blue skies | The sound of loud car horns and busy traffic", "Flickering lamps, shadows like fingers, and a strange voice from the tower", 1, "💡 Atmosphere Building in Fantasy Fiction:\nWriters create suspense and mystery through sensory details:\n• Sight: \"every lamp flickered at once\", \"shadows long and thin as fingers\"\n• Sound: \"silver bell rang\", \"a voice, thin as paper, drifted down\"\n• Physical reaction: \"Kesh's hand tightened on his stick. Tamsin forgot to breathe.\"", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_005", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "In the sentence \"Pale light crept over the cobbles.\", what does the word \"cobbles\" mean?", "MCQ", "Rounded stones used to pave old streets | Wooden floorboards | Sandy desert dunes | Soft grass fields", "Rounded stones used to pave old streets", 1, "💡 Vocabulary in Context:\n\"Cobbles\" (or cobblestones) are traditional rounded stones fitted together to make roads in historical or fantasy cities.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_006", "Grade 6 (G6)", "English Literacy", "Unit 2: Report Writing & Grammar", "Which sentence uses a RELATIVE CLAUSE with correct comma punctuation?", "MCQ", "Sea turtles, which are marine reptiles, live in the ocean. | Sea turtles which are marine reptiles live in the ocean. | Sea turtles, which are marine reptiles live, in the ocean. | Sea turtles which, are marine reptiles, live in the ocean.", "Sea turtles, which are marine reptiles, live in the ocean.", 1, "💡 Rule: Non-defining relative clauses (starting with \"which\" or \"who\") add extra information and MUST be enclosed between TWO commas!\n\n🌟 Correct Pattern:\n✓ Main clause: \"Sea turtles ... live in the ocean.\"\n✓ Extra relative clause: \", which are marine reptiles,\"\n✓ Full sentence: \"Sea turtles, which are marine reptiles, live in the ocean.\"", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_007", "Grade 6 (G6)", "English Literacy", "Unit 2: Report Writing & Grammar", "Select the sentence with correct SUBJECT-VERB AGREEMENT:", "MCQ", "Sea turtles lay their eggs on sandy beaches. | Sea turtles lays their eggs on sandy beaches. | A sea turtle lay their eggs on sandy beaches. | Sea turtles is laying their eggs on sandy beaches.", "Sea turtles lay their eggs on sandy beaches.", 1, "💡 Subject-Verb Agreement Rule:\n• Plural subject (\"Sea turtles\") takes base verb (\"lay\").\n• Singular subject (\"A sea turtle\") takes \"-s\" verb (\"lays\").\n\n🌟 Compare:\n✓ \"Sea turtles lay eggs.\" (Plural)\n✓ \"A sea turtle lays eggs.\" (Singular)", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_008", "Grade 6 (G6)", "English Literacy", "Unit 2: Report Writing & Grammar", "Correct the spelling mistake in: \"Some sea turtles have a herd shell on their backs.\"", "MCQ", "hard shell | heard shell | hurt shell | heared shell", "hard shell", 1, "💡 Homophones & Spelling:\n• \"herd\" = a group of animals (e.g. a herd of cattle).\n• \"hard\" = solid and firm (e.g. a hard shell).\nSea turtles have a tough, solid shell, so the correct spelling is \"hard shell\".", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_009", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "True or False: In \"Shadows stretched along the walls, long and thin as fingers.\", the author uses a simile to describe the shadows.", "TRUE_FALSE", "True | False", "True", 1, "💡 Rule: \"long and thin as fingers\" is a simile because it uses the word \"as\" to compare the shape of the shadows to elongated fingers.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_010", "Grade 6 (G6)", "English Literacy", "Unit 2: Report Writing & Grammar", "Complete the conclusion sentence using formal connective: \"Protecting sea turtles matters ........ they play a vital role in marine ecosystems.\"", "MCQ", "because | but | although | while", "because", 1, "💡 Explanation of Cause & Effect:\n\"because\" gives the reason WHY protecting sea turtles is important.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ARB_001", "الصف السادس (G6)", "اللغة العربية", "المحور الأول: ترتيب الأولويات وإدارة الوقت", "معنى كلمة (إنجاز) في سياق: \"يتطلب إنجاز المهام وقتًا محددًا\" هو:", "MCQ", "إتمام وتحقيق بنجاح | تأجيل وتعطيل | نسيان وإهمال | بدء وتخطيط", "إتمام وتحقيق بنجاح", 1, "💡 معنى المفردات:\n• إنجاز الشيء = إتمامه وقضاؤه بنجاح.\n• مثل: \"إنجاز الواجبات المدرسية\" أي الانتهاء منها بشكل متقن.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_002", "الصف السادس (G6)", "اللغة العربية", "المحور الأول: ترتيب الأولويات وإدارة الوقت", "مضاد كلمة (تأجيل) هو:", "MCQ", "تعجيل وتبكير | تسويف | إبطاء | ترك", "تعجيل وتبكير", 1, "💡 التضاد اللغوي:\n• التأجيل: إرجاء العمل لوقت لاحق.\n• التعجيل: المسارعة في أداء العمل دون تأخير.\n• لذلك مضاد تأجيل هو (تعجيل).", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_003", "الصف السادس (G6)", "اللغة العربية", "المحور الأول: ترتيب الأولويات وإدارة الوقت", "لكي ننجح في إدارة يومنا وتحقيق أهدافنا، يجب أن نصنف ونرتب المهام حسب:", "MCQ", "أهميتها (البدء بالأكثر أهمية أولاً) | سهولتها فقط | عشوائياً بدون ترتيب | تأجيل كل المهام الصعبة", "أهميتها (البدء بالأكثر أهمية أولاً)", 1, "💡 استيعاب المقروء:\nنصت الفقرة على: \"يجب علينا أن نتعلم كيف نحدد الأولويات ونرتب المهام حسب أهميتها؛ أي نبدأ بالمهام الأكثر أهمية ثم ننتقل إلى الأقل أهمية\".", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_004", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "في جملة \"الوقتُ من ذهبٍ\"، كلمة (ذهبٍ) هي اسم:", "MCQ", "نكرة | معرفة بأل | اسم علم | ضمير", "نكرة", 1, "💡 قاعدة النكرة والمعرفة:\n• النكرة: اسم يدل على شيء غير معين أو محدد، ومجرد من (أل) والإضافة (مثل: ذهبٍ، كتابٌ، قلمٌ).\n• المعرفة: اسم يدل على شيء معين (مثل: الوقتُ - معرف بأل).", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_005", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "في جملة \"التشتتُ يفقدنا التركيزَ والإنجازَ\"، الكلمات (التركيز) و(الإنجاز) هي أسماء:", "MCQ", "معرفة لأنها معرفة بأل | نكرة لأنها ليست علماً | أفعال وليست أسماء | حروف عطف", "معرفة لأنها معرفة بأل", 1, "💡 أنواع المعارف:\nمن أهم أنواع المعارف هو \"المعرّف بأل\". أي كلمة تقبل أو تبدأ بـ (ال) مثل: (التركيز، الإنجاز، الوقت، المدرسة) هي اسم معرفة.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_006", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "أكمل الجملة باسم نكرة مناسب: \"الوقتُ ........ عظيمٌ من الله تعالى.\"", "MCQ", "نعمةٌ | النعمةُ | تلك النعمة | هو النعمة", "نعمةٌ", 1, "💡 شروط الاسم النكرة:\nالمطلوب اسم نكرة (بدون أل ويكون منوناً): كلمة (نعمةٌ) نكرة، بينما (النعمة) معرفة بأل.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_007", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "أكمل الجملة باسم معرفة: \"........ هم الذين يفوزون بسباق تنظيم الوقت.\"", "MCQ", "المجتهدون | طلابٌ | أذكياءٌ | مجتهدون", "المجتهدون", 1, "💡 تحديد المعرفة:\n(المجتهدون) اسم معرفة لأنه يبدأ بأل التعريف، بينما (طلابٌ) و(أذكياءٌ) و(مجتهدون) نكرات.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_008", "الصف السادس (G6)", "اللغة العربية", "القواعد الإملائية: الهمزة المتوسطة على ألف", "اختر الرسم الإملائي الصحيح: \"حينما ........ السماء أشعر بالراحة.\"", "MCQ", "أتأَمَّلُ | اتأملُ (بدون همزة) | أتاءمل | أتيمل", "أتأَمَّلُ", 1, "💡 قاعدة الهمزة المتوسطة على ألف:\nتُكتب الهمزة المتوسطة على ألف إذا كانت مفتوحة وما قبلها مفتوح: (أ-تَ-أَ-مَّ-ل).\n\n🌟 أمثلة مشابهة:\n• سَأَلَ (الهمزة مفتوحة وقبلها فتح)\n• تَأَخَّرَ (مفتوحة وقبلها فتح)\n• رَأَى (مفتوحة وقبلها فتح)", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_009", "الصف السادس (G6)", "اللغة العربية", "القواعد الإملائية: الهمزة المتوسطة على ألف", "اختر الكلمة الصحيحة إملائياً: \"يستخدم الفلاحُ ........ في حرث وتقليب الأرض.\"", "MCQ", "الفَأْسَ | الفئس | الفأسُ (بالياء) | الفاس (بدون همزة)", "الفَأْسَ", 1, "💡 قاعدة الهمزة الساكنة بعد فتح:\nتُكتب الهمزة المتوسطة على ألف إذا كانت ساكنة بعد فتح: الفَـأْس (الفاء مفتوحة والهمزة ساكنة ➔ ترسم على ألف).\n\n🌟 أمثلة مشابهة:\n• رَأْس (فتحة ثم سكون ➔ ألف)\n• كَأْس (فتحة ثم سكون ➔ ألف)", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_010", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "حدد نوع الكلمة التي تحتها خط في جملة: \"مصرُ وطنٌ عظيمٌ\":", "MCQ", "مصر (معرفة لأنها علم) ، وطن (نكرة) | كلاهما نكرة | كلاهما معرفة | مصر (نكرة) ، وطن (معرفة)", "مصر (معرفة لأنها علم) ، وطن (نكرة)", 1, "💡 أنواع المعارف (العلم):\n• أسماء البلاد والأشخاص (مثل: مصر، مصطفى، أحمد) هي أسماء معارف لأنها \"عَلَم\".\n• أما كلمة (وطنٌ) فهي نكرة لأنها غير محددة ومجردة من أل والإضافة.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y5_ENG_011", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Which word is an adverb of MANNER in: 'The engineer carefully examined the rocket engine.'?", "MCQ", "carefully | engineer | examined | rocket", "carefully", 1, "💡 Adverb of Manner:\n'Carefully' tells us HOW the engineer examined the engine (in a careful manner). Most adverbs ending in -ly describe manner.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_012", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Identify the fronted adverbial of PLACE: 'Behind the launch tower, the sun began to rise.'", "MCQ", "Behind the launch tower | the sun began | to rise | began to rise", "Behind the launch tower", 1, "💡 Fronted Adverbial of Place:\n'Behind the launch tower' is at the front of the sentence and answers WHERE the action happens.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_013", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "Choose the correct punctuation for this fronted adverbial of time:", "MCQ", "Every morning, the astronauts train for four hours. | Every morning the astronauts, train for four hours. | Every morning the astronauts train, for four hours. | Every, morning the astronauts train for four hours.", "Every morning, the astronauts train for four hours.", 1, "💡 Comma Rule:\nA comma must always follow a fronted adverbial when it begins a sentence: 'Every morning, ...'", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_014", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "In the sentence: 'The satellite orbits Earth at high speed.', what does 'at high speed' describe?", "MCQ", "HOW the satellite orbits (Manner) | WHEN the satellite orbits (Time) | WHERE the satellite orbits (Place) | WHY the satellite orbits (Reason)", "HOW the satellite orbits (Manner)", 1, "💡 Identifying Manner Phrases:\nPrepositional phrases like 'at high speed' explain the manner (how fast or in what way) an action happens.", "EX_Y5_ENG_ADV01"],
-    ["Q_Y5_ENG_015", "Year 5 (G5)", "English Grammar", "Unit 2 - Lesson 3: Adverbials", "True or False: 'Yesterday' can function as a fronted adverbial of time.", "TRUE_FALSE", "True | False", "True", 1, "💡 Time Words at the Front:\nYes! Example: 'Yesterday, Ali completed his homework.'", "EX_Y5_ENG_ADV01"],
-    ["Q_Y6_ENG_011", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "In 'The wind moaned through the empty archways', what literary technique is used?", "MCQ", "Personification | Simile | Rhyme | Pun", "Personification", 1, "💡 Personification:\nGiving the human action of 'moaning' to the non-human wind.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_012", "Grade 6 (G6)", "English Literacy", "Unit 2: Non-Chronological Report (Sea Turtles)", "Which sentence fixes the run-on error in: 'people can stop throwing plastic people can ask boats not to dump rubbish'?", "MCQ", "People can stop throwing plastic into the sea, and they can ask boats not to dump rubbish. | People can stop throwing plastic people can ask boats. | People can, stop throwing plastic and boats. | People can stop throwing, plastic not to dump rubbish.", "People can stop throwing plastic into the sea, and they can ask boats not to dump rubbish.", 1, "💡 Run-on Sentence Fix:\nJoin two independent clauses using a comma and coordinating conjunction (', and') or separate them with a full stop.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_013", "Grade 6 (G6)", "English Literacy", "Unit 2: Non-Chronological Report (Sea Turtles)", "Identify the correct spelling of the missing word: 'If sea turtles ________, marine ecosystems will suffer.'", "MCQ", "disappear | disapper | dissappear | dissapper", "disappear", 1, "💡 Spelling Alert (Prefix dis- + appear):\ndis + appear = disappear (one 's', two 'p's).", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_014", "Grade 6 (G6)", "English Literacy", "Unit 2: Fantasy Reading (The City That Waited)", "Which adjective best describes the overall mood of the deserted city in Part 6?", "MCQ", "Eerie and desolate | Joyful and vibrant | Crowded and lively | Chaotic and angry", "Eerie and desolate", 1, "💡 Atmosphere Analysis:\nThe quiet fountain, pale light, and silent cobblestones create an eerie and desolate mood.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ENG_015", "Grade 6 (G6)", "English Literacy", "Unit 2: Non-Chronological Report (Sea Turtles)", "Which relative pronoun correctly completes: 'Plastic waste, ________ is dumped into the ocean, harms marine life.'?", "MCQ", "which | who | where | whose", "which", 1, "💡 Relative Pronoun for Things:\nUse 'which' for non-human objects and materials like 'plastic waste'.", "EX_Y6_ENG_FANTASY01"],
-    ["Q_Y6_ARB_011", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "عيّن الاسم المعرفة في جملة: 'قرأ التلميذُ كتاباً مفيداً':", "MCQ", "التلميذُ (معرف بأل) | كتاباً | مفيداً | قرأ", "التلميذُ (معرف بأل)", 1, "💡 المعرّف بأل:\n(التلميذُ) اسم معرفة لأنه مقترن بأل التعريف، أما (كتاباً ومفيداً) فهما اسمان نكرتان.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_012", "الصف السادس (G6)", "اللغة العربية", "القواعد الإملائية: الهمزة المتوسطة على ألف", "ما سبب كتابة الهمزة على ألف في كلمة (يَسْـأَلُ)؟", "MCQ", "لأن الهمزة مفتوحة وما قبلها ساكن | لأن الهمزة مكسورة | لأن الهمزة مضمومة | لأن ما قبلها ألف مد", "لأن الهمزة مفتوحة وما قبلها ساكن", 1, "💡 قاعدة الهمزة المتوسطة:\nفي كلمة (يَسْـأَل): السين ساكنة والهمزة مفتوحة، والفتحة أقوى من السكون ➔ فتُرسم على ألف.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_013", "الصف السادس (G6)", "اللغة العربية", "القراءة المتحررة: استيعاب المقروء وإدارة الوقت", "الفكرة الرئيسة لنص إدارة الوقت هي أن النجاح يتحقق من خلال:", "MCQ", "التخطيط المسبق وترتيب الأولويات | تأجيل الواجبات الصعبة | العمل طوال اليوم دون راحة | الاعتماد على الحظ", "التخطيط المسبق وترتيب الأولويات", 1, "💡 الفكرة الرئيسة:\nإدارة الوقت تبدأ بتحديد الأهداف وترتيب الأولويات والبدء بالمهام العاجلة والمهمة.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_014", "الصف السادس (G6)", "اللغة العربية", "القواعد النحوية: النكرة والمعرفة", "الضمائر (أنا، نحن، هو، هي) وأسماء الإشارة والأسماء الموصولة كلها تعتبر:", "MCQ", "معارف دائماً | نكرات دائماً | حروفاً وليست أسماء | أفعالاً ماضية", "معارف دائماً", 1, "💡 أنواع المعارف الستة:\nالضمائر وأسماء الإشارة والأسماء الموصولة وأسماء الأعلام والمعرف بأل والمضاف إلى معرفة كلها معارف.", "EX_Y6_ARB_PRIO01"],
-    ["Q_Y6_ARB_015", "الصف السادس (G6)", "اللغة العربية", "القواعد الإملائية: الهمزة المتوسطة على ألف", "اختر الرسم الإملائي الصحيح للكلمة المكملة: 'لا ........ عن مساعدة المحتاجين.'", "MCQ", "تَتَأَخَّرْ | تتأخر (بدون همزة) | تتءخر | تتآخر", "تَتَأَخَّرْ", 1, "💡 رسم الهمزة المتوسطة:\nتَـتَـأَخَّـر (الهمزة مفتوحة وقبلها تاء مفتوحة ➔ ترسم على ألف).", "EX_Y6_ARB_PRIO01"]
-  ];
-  // Seed sample questions only when the bank is empty (header-only counts as empty).
-  if (qbSheet.getLastRow() <= 1) {
-    qbSheet.getRange(2, 1, sampleQuestions.length, sampleQuestions[0].length).setValues(sampleQuestions);
-  }
   styleQuestionBankSheet(qbSheet);
 
   // 3. TAB: Exams (Active Assessment Registry)
@@ -289,7 +237,7 @@ function normalizeExam_(value) {
 }
 
 function normalizeAnswer_(value) {
-  return String(value || '')
+  return (value == null ? '' : String(value))
     .replace(/\u0640/g, '')
     .replace(/[\u064B-\u0652]/g, '')
     .replace(/\s+/g, ' ')
@@ -417,6 +365,78 @@ function getAttemptState_(studentName, examCode) {
   };
 }
 
+function recordExpiredSessionSubmission_(sessionOrRow, sessionId) {
+  try {
+    const ss = getSpreadsheet();
+    let subSheet = ss.getSheetByName('Submissions');
+    if (!subSheet) {
+      setupDatabase(ss);
+      subSheet = ss.getSheetByName('Submissions');
+    }
+    if (!subSheet) return;
+
+    let sName = '';
+    let sGrade = '';
+    let sExam = '';
+    let sSessionId = sessionId || '';
+    let qCount = 10;
+
+    if (Array.isArray(sessionOrRow)) {
+      sSessionId = sSessionId || String(sessionOrRow[SESSION_COLS.id] || '').trim();
+      sName = String(sessionOrRow[SESSION_COLS.name] || '').trim();
+      sGrade = String(sessionOrRow[SESSION_COLS.grade] || 'General').trim();
+      sExam = String(sessionOrRow[SESSION_COLS.exam] || '').trim();
+      try {
+        const q = JSON.parse(sessionOrRow[SESSION_COLS.questions] || '[]');
+        if (Array.isArray(q) && q.length) qCount = q.length;
+      } catch (e) {}
+    } else if (sessionOrRow && typeof sessionOrRow === 'object') {
+      sSessionId = sSessionId || String(sessionOrRow.id || '').trim();
+      sName = String(sessionOrRow.studentName || '').trim();
+      sGrade = String(sessionOrRow.grade || 'General').trim();
+      sExam = String(sessionOrRow.examCode || '').trim();
+      if (Array.isArray(sessionOrRow.questions) && sessionOrRow.questions.length) {
+        qCount = sessionOrRow.questions.length;
+      }
+    }
+
+    if (!sName || !sExam) return;
+
+    // Idempotency check: verify this expired session is not already recorded
+    const existing = subSheet.getDataRange().getValues();
+    const targetName = normalizeName_(sName);
+    const targetExam = normalizeExam_(sExam);
+    for (let r = 1; r < existing.length; r++) {
+      if (normalizeName_(existing[r][1]) === targetName &&
+          normalizeExam_(existing[r][3]) === targetExam &&
+          String(existing[r][9] || '').indexOf('انتهت الجلسة دون تسليم') !== -1) {
+        const rev = String(existing[r][10] || '');
+        if (sSessionId && rev.indexOf(sSessionId) !== -1) {
+          // Already recorded
+          return;
+        }
+      }
+    }
+
+    const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
+    subSheet.appendRow([
+      timestamp,
+      sName,
+      sGrade || 'General',
+      sExam,
+      0,
+      qCount,
+      0,
+      'Needs Practice 🌱',
+      'Expired',
+      'انتهت الجلسة دون تسليم (محاولة مستهلكة)',
+      JSON.stringify({ expiredSessionId: sSessionId })
+    ]);
+  } catch (err) {
+    Logger.log('recordExpiredSessionSubmission_ error: ' + err);
+  }
+}
+
 function findActiveSession_(studentName, examCode) {
   const sheet = getSessionSheet_();
   if (sheet.getLastRow() <= 1) return null;
@@ -434,7 +454,12 @@ function findActiveSession_(studentName, examCode) {
 
     const expires = valueToMillis_(row[SESSION_COLS.expires]);
     if (!expires || expires <= now) {
-      sheet.getRange(i + 1, SESSION_COLS.status + 1).setValue('EXPIRED');
+      const rStatus = sheet.getRange(i + 1, SESSION_COLS.status + 1);
+      const currentVal = String((typeof rStatus.getValue === 'function' ? rStatus.getValue() : row[SESSION_COLS.status]) || '').trim().toUpperCase();
+      if (currentVal === 'ACTIVE') {
+        sheet.getRange(i + 1, SESSION_COLS.status + 1).setValue('EXPIRED_CONSUMED');
+        recordExpiredSessionSubmission_(row, String(row[SESSION_COLS.id] || ''));
+      }
       continue;
     }
 
@@ -1451,41 +1476,18 @@ function getExamData(examCode, studentName) {
       return { success: false, code: 'STUDENT_REQUIRED', message: 'اسم الطالب مطلوب لبدء الامتحان.' };
     }
 
-    // If an attempt is already running, resume it instead of generating new questions.
-    let active = findActiveSession_(name, exam.code);
-    if (active) {
-      return {
-        success: true,
-        sessionKey: active.id,
-        sessionId: active.id,
-        exam: Object.assign({}, exam, { questionsCount: active.questions.length }),
-        questions: publicQuestions_(active.questions),
-        remainingSeconds: Math.max(0, Math.floor((valueToMillis_(active.expiresAt) - Date.now()) / 1000)),
-        attemptNumber: getAttemptState_(name, exam.code).attemptsCount + 1,
-        maxAttempts: MAX_ATTEMPTS,
-        resumed: true
-      };
-    }
-
-    const state = getAttemptState_(name, exam.code);
-    if (!state.canAttempt) {
-      return {
-        success: false,
-        code: 'MAX_ATTEMPTS',
-        message: 'تم استنفاد المحاولات المتاحة. اطلب من ولي الأمر الموافقة على محاولة إضافية.',
-        maxAttempts: state.maxAttempts,
-        retakeStatus: state.retakeStatus
-      };
-    }
-
     const lock = LockService.getScriptLock();
     if (!lock.tryLock(30000)) {
       return { success: false, code: 'BUSY', message: 'الخادم مشغول، حاول مرة أخرى بعد لحظات.' };
     }
 
     try {
-      // Re-check inside the lock to avoid creating two sessions from a double click.
-      active = findActiveSession_(name, exam.code);
+      // 1. Check/Sweep active sessions under lock (consuming expired sessions safely)
+      let active = findActiveSession_(name, exam.code);
+
+      // 2. Compute attempt state fresh AFTER any expired session sweep
+      const state = getAttemptState_(name, exam.code);
+
       if (active) {
         return {
           success: true,
@@ -1500,6 +1502,18 @@ function getExamData(examCode, studentName) {
         };
       }
 
+      // 3. Strict attempt limit validation on FRESH state
+      if (!state.canAttempt) {
+        return {
+          success: false,
+          code: 'MAX_ATTEMPTS',
+          message: 'تم استنفاد المحاولات المتاحة. اطلب من ولي الأمر الموافقة على محاولة إضافية.',
+          maxAttempts: state.maxAttempts,
+          retakeStatus: state.retakeStatus
+        };
+      }
+
+      // 4. Build and persist fresh session under the same lock
       const built = buildExamQuestions_(exam.code);
       const session = createSession_(name, built.exam, built.questions);
 
@@ -1527,6 +1541,140 @@ function getExamData(examCode, studentName) {
   }
 }
 
+function validateSession_(data, now) {
+  const sessionId = String(data.sessionKey || data.sessionId || '').trim();
+  if (!sessionId) {
+    return { error: { success: false, code: 'SESSION_REQUIRED', message: 'جلسة الامتحان غير موجودة. أعد تحميل الامتحان.' } };
+  }
+
+  const session = findSessionById_(sessionId);
+  if (!session) {
+    return { error: { success: false, code: 'SESSION_NOT_FOUND', message: 'جلسة الامتحان غير موجودة أو انتهت. أعد تحميل الامتحان.' } };
+  }
+
+  // Idempotency: a repeated click returns the saved result instead of a second row.
+  if (session.status === 'COMPLETED') {
+    if (session.result) return { error: Object.assign({ success: true, alreadySubmitted: true }, session.result) };
+    return { error: { success: false, code: 'ALREADY_SUBMITTED', message: 'تم تسليم هذا الامتحان بالفعل.' } };
+  }
+
+  if (session.status !== 'ACTIVE') {
+    return { error: { success: false, code: 'SESSION_CLOSED', message: 'هذه الجلسة لم تعد صالحة. ابدأ محاولة جديدة.' } };
+  }
+
+  if (normalizeName_(data.studentName) !== normalizeName_(session.studentName)) {
+    return { error: { success: false, code: 'STUDENT_MISMATCH', message: 'اسم الطالب لا يطابق جلسة الامتحان.' } };
+  }
+  if (normalizeExam_(data.examCode) !== normalizeExam_(session.examCode)) {
+    return { error: { success: false, code: 'EXAM_MISMATCH', message: 'كود الامتحان لا يطابق جلسة الامتحان.' } };
+  }
+
+  const expiresMillis = valueToMillis_(session.expiresAt);
+  if (expiresMillis && now > expiresMillis + (ATTEMPT_GRACE_SECONDS * 1000)) {
+    const sheet = getSessionSheet_();
+    sheet.getRange(session.rowIndex, SESSION_COLS.status + 1).setValue('EXPIRED_CONSUMED');
+    recordExpiredSessionSubmission_(session);
+    return { error: { success: false, code: 'TIME_EXPIRED', message: 'انتهى وقت الامتحان. اطلب من ولي الأمر محاولة جديدة.' } };
+  }
+
+  const questions = Array.isArray(session.questions) ? session.questions : [];
+  if (!questions.length) {
+    return { error: { success: false, code: 'EMPTY_SESSION', message: 'جلسة الامتحان لا تحتوي على أسئلة.' } };
+  }
+
+  return { session: session };
+}
+
+function gradeAnswers_(questions, answers) {
+  let earnedScore = 0;
+  let totalScore = 0;
+  const reviewDetails = [];
+
+  questions.forEach(question => {
+    const points = Number(question.points) || 1;
+    totalScore += points;
+
+    const hasAnswer = Object.prototype.hasOwnProperty.call(answers, question.id);
+    const studentAnswer = hasAnswer ? String(answers[question.id] == null ? '' : answers[question.id]).trim() : '';
+    const isCorrect = studentAnswer !== '' &&
+      normalizeAnswer_(studentAnswer) === normalizeAnswer_(question.correctAnswer);
+
+    if (isCorrect) earnedScore += points;
+
+    reviewDetails.push({
+      questionId: question.id,
+      questionText: question.text,
+      studentAnswer: studentAnswer,
+      correctAnswer: question.correctAnswer,
+      isCorrect: isCorrect,
+      pointsAwarded: isCorrect ? points : 0,
+      maxPoints: points,
+      explanation: question.explanation || ''
+    });
+  });
+
+  const percentage = totalScore > 0 ? Math.round((earnedScore / totalScore) * 100) : 0;
+  let rating = 'Needs Practice 🌱';
+  if (percentage >= 85) rating = 'Excellent 🌟';
+  else if (percentage >= 75) rating = 'Very Good 👏';
+  else if (percentage >= 65) rating = 'Good 👍';
+  else if (percentage >= 50) rating = 'Satisfactory 📚';
+
+  return {
+    earnedScore: earnedScore,
+    totalScore: totalScore,
+    percentage: percentage,
+    rating: rating,
+    reviewDetails: reviewDetails
+  };
+}
+
+function persistSubmission_(session, payloadData, result, timestamp, durationStr, summaryStr) {
+  const ss = getSpreadsheet();
+  let subSheet = ss.getSheetByName('Submissions');
+  if (!subSheet) {
+    setupDatabase(ss);
+    subSheet = ss.getSheetByName('Submissions');
+  }
+
+  subSheet.appendRow([
+    timestamp,
+    session.studentName,
+    session.grade || payloadData.schoolGroup || 'General',
+    session.examCode,
+    result.earnedScore,
+    result.totalScore,
+    result.percentage,
+    result.rating,
+    durationStr,
+    summaryStr,
+    JSON.stringify(result.review)
+  ]);
+
+  const lastRow = subSheet.getLastRow();
+  subSheet.getRange(lastRow, 1, 1, 11).setVerticalAlignment('middle').setFontSize(10);
+  subSheet.getRange(lastRow, 5, 1, 3).setHorizontalAlignment('center');
+
+  const sessionSheet = getSessionSheet_();
+  sessionSheet.getRange(session.rowIndex, SESSION_COLS.status + 1).setValue('COMPLETED');
+  sessionSheet.getRange(session.rowIndex, SESSION_COLS.result + 1).setValue(JSON.stringify(result));
+}
+
+function consumeRetake_(studentName, examCode) {
+  const ss = getSpreadsheet();
+  const retakeSheet = ss.getSheetByName('Retake_Requests');
+  if (retakeSheet && retakeSheet.getLastRow() > 1) {
+    const rData = retakeSheet.getDataRange().getValues();
+    for (let i = 1; i < rData.length; i++) {
+      if (normalizeName_(rData[i][2]) === normalizeName_(studentName) &&
+          normalizeExam_(rData[i][3]) === normalizeExam_(examCode) &&
+          String(rData[i][6] || '').trim().toUpperCase() === 'APPROVED') {
+        retakeSheet.getRange(i + 1, 7).setValue('CONSUMED');
+      }
+    }
+  }
+}
+
 function submitExamAnswers(payload) {
   const lock = LockService.getScriptLock();
   try {
@@ -1535,141 +1683,33 @@ function submitExamAnswers(payload) {
     }
 
     const data = (typeof payload === 'string') ? JSON.parse(payload) : payload;
-    const sessionId = String(data.sessionKey || data.sessionId || '').trim();
-    if (!sessionId) {
-      return { success: false, code: 'SESSION_REQUIRED', message: 'جلسة الامتحان غير موجودة. أعد تحميل الامتحان.' };
-    }
-
-    const session = findSessionById_(sessionId);
-    if (!session) {
-      return { success: false, code: 'SESSION_NOT_FOUND', message: 'جلسة الامتحان غير موجودة أو انتهت. أعد تحميل الامتحان.' };
-    }
-
-    // Idempotency: a repeated click returns the saved result instead of a second row.
-    if (session.status === 'COMPLETED') {
-      if (session.result) return Object.assign({ success: true, alreadySubmitted: true }, session.result);
-      return { success: false, code: 'ALREADY_SUBMITTED', message: 'تم تسليم هذا الامتحان بالفعل.' };
-    }
-
-    if (session.status !== 'ACTIVE') {
-      return { success: false, code: 'SESSION_CLOSED', message: 'هذه الجلسة لم تعد صالحة. ابدأ محاولة جديدة.' };
-    }
-
-    if (normalizeName_(data.studentName) !== normalizeName_(session.studentName)) {
-      return { success: false, code: 'STUDENT_MISMATCH', message: 'اسم الطالب لا يطابق جلسة الامتحان.' };
-    }
-    if (normalizeExam_(data.examCode) !== normalizeExam_(session.examCode)) {
-      return { success: false, code: 'EXAM_MISMATCH', message: 'كود الامتحان لا يطابق جلسة الامتحان.' };
-    }
-
     const now = Date.now();
-    const startedMillis = valueToMillis_(session.startedAt);
-    const expiresMillis = valueToMillis_(session.expiresAt);
-    if (expiresMillis && now > expiresMillis + (ATTEMPT_GRACE_SECONDS * 1000)) {
-      const sheet = getSessionSheet_();
-      sheet.getRange(session.rowIndex, SESSION_COLS.status + 1).setValue('EXPIRED');
-      return { success: false, code: 'TIME_EXPIRED', message: 'انتهى وقت الامتحان. اطلب من ولي الأمر محاولة جديدة.' };
-    }
+    const validation = validateSession_(data, now);
+    if (validation.error) return validation.error;
 
-    const questions = Array.isArray(session.questions) ? session.questions : [];
-    if (!questions.length) {
-      return { success: false, code: 'EMPTY_SESSION', message: 'جلسة الامتحان لا تحتوي على أسئلة.' };
-    }
-
+    const session = validation.session;
     const answers = (data.answers && typeof data.answers === 'object') ? data.answers : {};
-    let earnedScore = 0;
-    let totalScore = 0;
-    const reviewDetails = [];
+    const graded = gradeAnswers_(session.questions || [], answers);
 
-    questions.forEach(question => {
-      const points = Number(question.points) || 1;
-      totalScore += points;
-
-      const hasAnswer = Object.prototype.hasOwnProperty.call(answers, question.id);
-      const studentAnswer = hasAnswer ? String(answers[question.id] == null ? '' : answers[question.id]).trim() : '';
-      const isCorrect = studentAnswer !== '' &&
-        normalizeAnswer_(studentAnswer) === normalizeAnswer_(question.correctAnswer);
-
-      if (isCorrect) earnedScore += points;
-
-      reviewDetails.push({
-        questionId: question.id,
-        questionText: question.text,
-        studentAnswer: studentAnswer,
-        correctAnswer: question.correctAnswer,
-        isCorrect: isCorrect,
-        pointsAwarded: isCorrect ? points : 0,
-        maxPoints: points,
-        explanation: question.explanation || ''
-      });
-    });
-
-    const percentage = totalScore > 0 ? Math.round((earnedScore / totalScore) * 100) : 0;
-
-    let rating = 'Needs Practice 🌱';
-    if (percentage >= 85) rating = 'Excellent 🌟';
-    else if (percentage >= 75) rating = 'Very Good 👏';
-    else if (percentage >= 65) rating = 'Good 👍';
-    else if (percentage >= 50) rating = 'Satisfactory 📚';
-
+    const startedMillis = valueToMillis_(session.startedAt);
     const durationSeconds = Math.max(0, Math.round((now - (startedMillis || now)) / 1000));
     const durationStr = `${Math.floor(durationSeconds / 60)} min ${durationSeconds % 60} sec`;
     const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
-    const summaryStr = `${earnedScore}/${totalScore} Correct (${percentage}%)`;
-
-    const ss = getSpreadsheet();
-    let subSheet = ss.getSheetByName('Submissions');
-    if (!subSheet) {
-      setupDatabase(ss);
-      subSheet = ss.getSheetByName('Submissions');
-    }
-
-    subSheet.appendRow([
-      timestamp,
-      session.studentName,
-      session.grade || data.schoolGroup || 'General',
-      session.examCode,
-      earnedScore,
-      totalScore,
-      percentage + '%',
-      rating,
-      durationStr,
-      summaryStr,
-      JSON.stringify(reviewDetails)
-    ]);
-
-    const lastRow = subSheet.getLastRow();
-    subSheet.getRange(lastRow, 1, 1, 10).setVerticalAlignment('middle').setFontSize(10);
-    subSheet.getRange(lastRow, 5, 1, 3).setHorizontalAlignment('center');
+    const summaryStr = `${graded.earnedScore}/${graded.totalScore} Correct (${graded.percentage}%)`;
 
     const result = {
-      earnedScore: earnedScore,
-      totalScore: totalScore,
-      percentage: percentage,
-      rating: rating,
+      earnedScore: graded.earnedScore,
+      totalScore: graded.totalScore,
+      percentage: graded.percentage,
+      rating: graded.rating,
       durationSpent: durationStr,
-      review: reviewDetails,
+      review: graded.reviewDetails,
       submittedAt: timestamp,
       sessionId: session.id
     };
 
-    // Persist the final result on the session before releasing the lock.
-    const sessionSheet = getSessionSheet_();
-    sessionSheet.getRange(session.rowIndex, SESSION_COLS.status + 1).setValue('COMPLETED');
-    sessionSheet.getRange(session.rowIndex, SESSION_COLS.result + 1).setValue(JSON.stringify(result));
-
-    // Consume only an approved retake for this exact student/exam.
-    const retakeSheet = ss.getSheetByName('Retake_Requests');
-    if (retakeSheet && retakeSheet.getLastRow() > 1) {
-      const rData = retakeSheet.getDataRange().getValues();
-      for (let i = 1; i < rData.length; i++) {
-        if (normalizeName_(rData[i][2]) === normalizeName_(session.studentName) &&
-            normalizeExam_(rData[i][3]) === normalizeExam_(session.examCode) &&
-            String(rData[i][6] || '').trim().toUpperCase() === 'APPROVED') {
-          retakeSheet.getRange(i + 1, 7).setValue('CONSUMED');
-        }
-      }
-    }
+    persistSubmission_(session, data, result, timestamp, durationStr, summaryStr);
+    consumeRetake_(session.studentName, session.examCode);
 
     return Object.assign({ success: true, alreadySubmitted: false }, result);
 
@@ -1685,6 +1725,26 @@ function submitExamAnswers(payload) {
   }
 }
 
+function normalizePercentageColumn() {
+  const ss = getSpreadsheet();
+  const subSheet = ss.getSheetByName('Submissions');
+  if (!subSheet || subSheet.getLastRow() <= 1) return { success: true, count: 0 };
+  const range = subSheet.getRange(2, 7, subSheet.getLastRow() - 1, 1);
+  const values = range.getValues();
+  let changed = 0;
+  for (let i = 0; i < values.length; i++) {
+    const raw = values[i][0];
+    let numVal = typeof raw === 'number' ? raw : parseFloat(String(raw || '').replace('%', '').trim());
+    if (isNaN(numVal)) numVal = 0;
+    if (numVal <= 1 && numVal > 0) numVal = Math.round(numVal * 100);
+    if (raw !== numVal) {
+      values[i][0] = numVal;
+      changed++;
+    }
+  }
+  if (changed > 0) range.setValues(values);
+  return { success: true, count: changed };
+}
 
 function formatPercentValue(val) {
   if (typeof val === 'number') {
@@ -1699,154 +1759,6 @@ function formatPercentValue(val) {
   }
   return s;
 }
-
-function ensureAliRecord(subSheet) {
-  if (!subSheet) return;
-  if (subSheet.getLastRow() <= 1) {
-    seedAliSubmissionRow(subSheet);
-    return;
-  }
-  
-  const data = subSheet.getDataRange().getValues();
-  let found = false;
-  for (let i = 1; i < data.length; i++) {
-    const name = String(data[i][1] || '').trim().toLowerCase();
-    const exam = String(data[i][3] || '').trim().toUpperCase();
-    if ((name.includes('ali') || name.includes('علي')) && (exam.includes('ADV01') || exam.includes('ENG') || exam.includes('Y5'))) {
-      found = true;
-      break;
-    }
-  }
-  
-  if (!found) {
-    seedAliSubmissionRow(subSheet);
-  }
-}
-
-function seedAliSubmissionRow(subSheet) {
-  const timestamp = Utilities.formatDate(new Date(), Session.getScriptTimeZone() || 'GMT+2', 'yyyy-MM-dd HH:mm');
-  const reviewJson = JSON.stringify([
-    {
-      questionId: "Q_Y5_ENG_001",
-      questionText: "What is an adverbial?",
-      studentAnswer: "A group of words without a verb that adds detail about time, place, or manner",
-      correctAnswer: "A group of words without a verb that adds detail about time, place, or manner",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "An adverbial is a word or phrase that gives extra details about WHEN, WHERE, or HOW an action happens. It does NOT contain a finite verb."
-    },
-    {
-      questionId: "Q_Y5_ENG_002",
-      questionText: 'In the sentence: "The rocket launched at dawn.", what type of adverbial is "at dawn"?',
-      studentAnswer: "Adverbial of Time",
-      correctAnswer: "Adverbial of Time",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"at dawn" tells us WHEN the rocket launched (Adverbial of Time).'
-    },
-    {
-      questionId: "Q_Y5_ENG_003",
-      questionText: "Which of the following sentences contains an adverbial of PLACE?",
-      studentAnswer: "The crew slept inside the space station.",
-      correctAnswer: "The crew slept inside the space station.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"inside the space station" answers the question WHERE did the crew sleep (Adverbial of Place).'
-    },
-    {
-      questionId: "Q_Y5_ENG_004",
-      questionText: "An adverbial of MANNER answers which question?",
-      studentAnswer: "How or in what way?",
-      correctAnswer: "How or in what way?",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "Adverbials of manner explain HOW an action happens (e.g., bravely, with great care, silently)."
-    },
-    {
-      questionId: "Q_Y5_ENG_005",
-      questionText: "Which sentence is punctuated correctly with a comma after the fronted adverbial?",
-      studentAnswer: "After a long journey the crew landed.",
-      correctAnswer: "After a long journey, the crew landed.",
-      isCorrect: false,
-      pointsAwarded: 0,
-      maxPoints: 1,
-      explanation: "When an adverbial is at the start (Fronted Adverbial), it must be followed by a comma."
-    },
-    {
-      questionId: "Q_Y5_ENG_006",
-      questionText: 'True or False: In the sentence "The USSR launched Sputnik I in 1957.", we must put a comma before "in 1957".',
-      studentAnswer: "False",
-      correctAnswer: "False",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "When the adverbial is at the END of a sentence, NO comma is needed."
-    },
-    {
-      questionId: "Q_Y5_ENG_007",
-      questionText: "Choose the sentence that has an adverbial of TIME at the beginning:",
-      studentAnswer: "Before sunrise, the pilot took off.",
-      correctAnswer: "Before sunrise, the pilot took off.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"Before sunrise" tells us WHEN the pilot took off.'
-    },
-    {
-      questionId: "Q_Y5_ENG_008",
-      questionText: 'Complete the sentence with the best adverbial of manner: "The engineer repaired the delicate wiring ........',
-      studentAnswer: "with great care",
-      correctAnswer: "with great care",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"with great care" describes HOW the engineer repaired the wires.'
-    },
-    {
-      questionId: "Q_Y5_ENG_009",
-      questionText: 'Rewrite "Astronauts walked on the moon in 1969." by moving the adverbial of time to the start:',
-      studentAnswer: "In 1969, astronauts walked on the moon.",
-      correctAnswer: "In 1969, astronauts walked on the moon.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: 'Move "In 1969" to the front and place a comma directly after it.'
-    },
-    {
-      questionId: "Q_Y5_ENG_010",
-      questionText: "Which sentence has BOTH an adverbial of time AND an adverbial of place?",
-      studentAnswer: "In 1969, astronauts walked on the moon.",
-      correctAnswer: "In 1969, astronauts walked on the moon.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"In 1969" is Time, and "on the moon" is Place.'
-    }
-  ]);
-
-  subSheet.appendRow([
-    timestamp,
-    'Ali Ahmed',
-    'Year 5 (G5)',
-    'EX_Y5_ENG_ADV01',
-    9,
-    10,
-    '90%',
-    'Excellent 🌟',
-    '7 min 42 sec',
-    '9/10 Correct (1 mistake reviewed)',
-    reviewJson
-  ]);
-  
-  const lastRow = subSheet.getLastRow();
-  subSheet.getRange(lastRow, 1, 1, 10).setVerticalAlignment('middle').setFontSize(10);
-  subSheet.getRange(lastRow, 5, 1, 3).setHorizontalAlignment('center');
-}
-
 
 function getStudentExamStatus(studentName, examCode) {
   try {
@@ -1938,11 +1850,160 @@ function requestExamRetake(payload) {
   }
 }
 
-function approveRetakeRequest(requestId) {
+const memoryTokenCache_ = {};
+
+function storeAdminToken_(token, ttlSeconds) {
+  memoryTokenCache_[token] = Date.now() + (ttlSeconds || 1800) * 1000;
+  try {
+    const cache = CacheService.getScriptCache();
+    if (cache && cache.put) cache.put(token, 'VALID', ttlSeconds || 1800);
+  } catch (e) {}
+}
+
+function isAdminTokenValid_(token) {
+  if (!token) return false;
+  const strToken = String(token || '').trim();
+  if (!strToken.startsWith('ADMIN_TOK_')) return false;
+
+  const expiry = memoryTokenCache_[strToken];
+  if (expiry && expiry > Date.now()) return true;
+
+  try {
+    const cache = CacheService.getScriptCache();
+    if (cache && cache.get) {
+      const val = cache.get(strToken);
+      if (val === 'VALID') return true;
+    }
+  } catch (e) {}
+
+  return false;
+}
+
+function hashPin_(pin, salt) {
+  const s = salt || 'PRIMARY_EXAM_SALT_2026';
+  const raw = s + ':' + String(pin || '').trim();
+  if (typeof Utilities !== 'undefined' && Utilities.computeDigest && Utilities.DigestAlgorithm) {
+    const digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, raw, Utilities.Charset.UTF_8);
+    return digest.map(b => ('0' + (b & 0xFF).toString(16)).slice(-2)).join('');
+  }
+  let hash = 0;
+  for (let i = 0; i < raw.length; i++) {
+    hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+    hash |= 0;
+  }
+  return 'FALLBACK_HASH_' + Math.abs(hash);
+}
+
+function normalizePin_(str) {
+  if (!str) return '';
+  let s = String(str);
+  s = s.replace(/[٠-٩]/g, function(c) { return c.charCodeAt(0) - 0x0660; });
+  s = s.replace(/[۰-۹]/g, function(c) { return c.charCodeAt(0) - 0x06F0; });
+  return s.replace(/\D/g, '').trim();
+}
+
+function verifyGatewayPin(enteredPin) {
+  try {
+    const norm = normalizePin_(enteredPin);
+    if (!norm) {
+      return { success: false, code: 'EMPTY_PIN', message: 'يرجى إدخال رمز الدخول.' };
+    }
+
+    const props = PropertiesService.getScriptProperties();
+
+    // 1. Parent PIN Check
+    let expectedAdminHash = props.getProperty('ADMIN_PIN_HASH');
+    if (!expectedAdminHash) {
+      expectedAdminHash = hashPin_('1990');
+      props.setProperty('ADMIN_PIN_HASH', expectedAdminHash);
+    }
+    if (hashPin_(norm) === expectedAdminHash) {
+      const token = 'ADMIN_TOK_' + Utilities.getUuid().replace(/-/g, '').slice(0, 24);
+      storeAdminToken_(token, 1800);
+      return {
+        success: true,
+        role: 'parent',
+        token: token,
+        message: 'Welcome Parent! Opening Dashboard...'
+      };
+    }
+
+    // 2. Mostafa PIN Check
+    let mostafaHash = props.getProperty('STUDENT_PIN_MOSTAFA');
+    if (!mostafaHash) {
+      mostafaHash = hashPin_('2014');
+      props.setProperty('STUDENT_PIN_MOSTAFA', mostafaHash);
+    }
+    if (hashPin_(norm) === mostafaHash) {
+      return {
+        success: true,
+        role: 'student',
+        studentKey: 'mostafa',
+        message: 'Welcome Mostafa! Opening Grade 6...'
+      };
+    }
+
+    // 3. Ali PIN Check
+    let aliHash = props.getProperty('STUDENT_PIN_ALI');
+    if (!aliHash) {
+      aliHash = hashPin_('2016');
+      props.setProperty('STUDENT_PIN_ALI', aliHash);
+    }
+    if (hashPin_(norm) === aliHash) {
+      return {
+        success: true,
+        role: 'student',
+        studentKey: 'ali',
+        message: 'Welcome Ali! Opening Grade 5...'
+      };
+    }
+
+    return {
+      success: false,
+      code: 'INVALID_PIN',
+      message: 'رمز الدخول غير صحيح. يرجى المحاولة مرة أخرى.'
+    };
+  } catch (err) {
+    Logger.log('verifyGatewayPin error: ' + err);
+    return { success: false, code: 'SERVER_ERROR', message: err.message };
+  }
+}
+
+function verifyAdminPin(enteredPin) {
+  try {
+    const norm = String(enteredPin || '').trim();
+    const props = PropertiesService.getScriptProperties();
+    let expectedHash = props.getProperty('ADMIN_PIN_HASH');
+    if (!expectedHash) {
+      expectedHash = hashPin_('1990');
+      props.setProperty('ADMIN_PIN_HASH', expectedHash);
+    }
+
+    const enteredHash = hashPin_(norm);
+    if (enteredHash !== expectedHash) {
+      return { success: false, code: 'INVALID_PIN', message: 'رمز الدخول غير صحيح' };
+    }
+
+    const token = 'ADMIN_TOK_' + Utilities.getUuid().replace(/-/g, '').slice(0, 24);
+    storeAdminToken_(token, 1800);
+    return { success: true, token: token };
+  } catch (err) {
+    Logger.log('verifyAdminPin error: ' + err);
+    return { success: false, code: 'SERVER_ERROR', message: err.message };
+  }
+}
+
+function approveRetakeRequest(requestId, adminToken) {
+  if (!isAdminTokenValid_(adminToken)) {
+    return { success: false, code: 'UNAUTHORIZED', message: 'غير مصرح بالدخول. يرجى إدخال رمز الإدارة.' };
+  }
   return decideRetakeRequest_(requestId, 'APPROVED');
 }
 
-function rejectRetakeRequest(requestId) {
+function rejectRetakeRequest(requestId, adminToken) {
+  if (!isAdminTokenValid_(adminToken)) {
+    return { success: false, code: 'UNAUTHORIZED', message: 'غير مصرح بالدخول. يرجى إدخال رمز الإدارة.' };
+  }
   return decideRetakeRequest_(requestId, 'REJECTED');
 }
 
@@ -1986,8 +2047,11 @@ function decideRetakeRequest_(requestId, decision) {
   }
 }
 
-function getAdminDashboardData() {
+function getAdminDashboardData(adminToken) {
   try {
+    if (!isAdminTokenValid_(adminToken)) {
+      return { success: false, code: 'UNAUTHORIZED', message: 'غير مصرح بالدخول. يرجى إدخال رمز الإدارة.' };
+    }
     const ss = getSpreadsheet();
     let subSheet = ss.getSheetByName('Submissions');
     let exSheet = ss.getSheetByName('Exams');
@@ -2205,555 +2269,4 @@ function openLinkedSheetUrl() {
   } catch(e) {
     Logger.log(ss.getUrl());
   }
-}
-
-/**
- * ============================================================
- * FULL HISTORICAL RESTORATION ENGINE (Ali Ahmed & Mostafa Ahmed)
- * Fully restores all 3 completed assessments with exact scores & reviews.
- * ============================================================
- */
-function getHistoricalSubmissionsData() {
-  const aliReview = [
-    {
-      questionId: "Q_Y5_ENG_001",
-      questionText: "What is an adverbial?",
-      studentAnswer: "A group of words without a verb that adds detail about time, place, or manner",
-      correctAnswer: "A group of words without a verb that adds detail about time, place, or manner",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "An adverbial is a word or phrase that gives extra details about WHEN, WHERE, or HOW an action happens. It does NOT contain a finite verb."
-    },
-    {
-      questionId: "Q_Y5_ENG_002",
-      questionText: 'In the sentence: "The rocket launched at dawn.", what type of adverbial is "at dawn"?',
-      studentAnswer: "Adverbial of Time",
-      correctAnswer: "Adverbial of Time",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"at dawn" tells us WHEN the rocket launched (Adverbial of Time).'
-    },
-    {
-      questionId: "Q_Y5_ENG_003",
-      questionText: "Which of the following sentences contains an adverbial of PLACE?",
-      studentAnswer: "The crew slept inside the space station.",
-      correctAnswer: "The crew slept inside the space station.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"inside the space station" answers the question WHERE did the crew sleep (Adverbial of Place).'
-    },
-    {
-      questionId: "Q_Y5_ENG_004",
-      questionText: "An adverbial of MANNER answers which question?",
-      studentAnswer: "How or in what way?",
-      correctAnswer: "How or in what way?",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "Adverbials of manner explain HOW an action happens (e.g., bravely, with great care, silently)."
-    },
-    {
-      questionId: "Q_Y5_ENG_005",
-      questionText: "Which sentence is punctuated correctly with a comma after the fronted adverbial?",
-      studentAnswer: "After a long journey the crew landed.",
-      correctAnswer: "After a long journey, the crew landed.",
-      isCorrect: false,
-      pointsAwarded: 0,
-      maxPoints: 1,
-      explanation: "When an adverbial is at the start (Fronted Adverbial), it must be followed by a comma."
-    },
-    {
-      questionId: "Q_Y5_ENG_006",
-      questionText: 'True or False: In the sentence "The USSR launched Sputnik I in 1957.", we must put a comma before "in 1957".',
-      studentAnswer: "False",
-      correctAnswer: "False",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "When the adverbial is at the END of a sentence, NO comma is needed."
-    },
-    {
-      questionId: "Q_Y5_ENG_007",
-      questionText: "Choose the sentence that has an adverbial of TIME at the beginning:",
-      studentAnswer: "Before sunrise, the pilot took off.",
-      correctAnswer: "Before sunrise, the pilot took off.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"Before sunrise" tells us WHEN the pilot took off.'
-    },
-    {
-      questionId: "Q_Y5_ENG_008",
-      questionText: 'Complete the sentence with the best adverbial of manner: "The engineer repaired the delicate wiring ........',
-      studentAnswer: "with great care",
-      correctAnswer: "with great care",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"with great care" describes HOW the engineer repaired the wires.'
-    },
-    {
-      questionId: "Q_Y5_ENG_009",
-      questionText: 'Rewrite "Astronauts walked on the moon in 1969." by moving the adverbial of time to the start:',
-      studentAnswer: "In 1969, astronauts walked on the moon.",
-      correctAnswer: "In 1969, astronauts walked on the moon.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: 'Move "In 1969" to the front and place a comma directly after it.'
-    },
-    {
-      questionId: "Q_Y5_ENG_010",
-      questionText: "Which sentence has BOTH an adverbial of time AND an adverbial of place?",
-      studentAnswer: "In 1969, astronauts walked on the moon.",
-      correctAnswer: "In 1969, astronauts walked on the moon.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"In 1969" is Time, and "on the moon" is Place.'
-    }
-  ];
-
-  const mostafaEngReview = [
-    {
-      questionId: "Q_Y6_ENG_001",
-      questionText: 'What genre best describes "The City That Waited"?',
-      studentAnswer: "Fantasy Fiction with mysterious world-building",
-      correctAnswer: "Fantasy Fiction with mysterious world-building",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "The story takes place in a magical city frozen in time."
-    },
-    {
-      questionId: "Q_Y6_ENG_002",
-      questionText: 'Identify the non-finite clause in: "Climbing the winding spiral staircase, Leo heard distant gears."',
-      studentAnswer: "Climbing the winding spiral staircase",
-      correctAnswer: "Climbing the winding spiral staircase",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "Begins with an -ing participle and has no finite verb."
-    },
-    {
-      questionId: "Q_Y6_ENG_003",
-      questionText: 'Which relative pronoun best combines: "The ancient clock tower, ________ gears were made of polished bronze, chimed."',
-      studentAnswer: "whose",
-      correctAnswer: "whose",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"whose" shows possession of the gears.'
-    },
-    {
-      questionId: "Q_Y6_ENG_004",
-      questionText: "In a non-chronological report about Sea Turtles, which heading is most appropriate for their nesting habits?",
-      studentAnswer: "Breeding and Nesting Behaviour",
-      correctAnswer: "Breeding and Nesting Behaviour",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "Formal sub-heading organizing biological facts."
-    },
-    {
-      questionId: "Q_Y6_ENG_005",
-      questionText: "Choose the formal non-chronological report connective expressing contrast:",
-      studentAnswer: "In contrast",
-      correctAnswer: "In contrast",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"In contrast" is a formal connective comparing differences.'
-    },
-    {
-      questionId: "Q_Y6_ENG_006",
-      questionText: "Which sentence embeds a non-restrictive relative clause correctly?",
-      studentAnswer: "Sea turtles, which are ancient reptiles, lay their eggs on sandy beaches.",
-      correctAnswer: "Sea turtles, which are ancient reptiles, lay their eggs on sandy beaches.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "Non-restrictive relative clause surrounded by a pair of commas."
-    },
-    {
-      questionId: "Q_Y6_ENG_007",
-      questionText: "Choose the sentence with correct subject-verb agreement:",
-      studentAnswer: "Sea turtles lay their eggs on sandy beaches.",
-      correctAnswer: "Sea turtles lay their eggs on sandy beaches.",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: 'Plural subject "Sea turtles" takes base plural verb "lay".'
-    },
-    {
-      questionId: "Q_Y6_ENG_008",
-      questionText: 'Correct the spelling mistake in: "Some sea turtles have a herd shell on their backs."',
-      studentAnswer: "hard shell",
-      correctAnswer: "hard shell",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "Tough, solid shell = hard shell."
-    },
-    {
-      questionId: "Q_Y6_ENG_009",
-      questionText: 'True or False: In "Shadows stretched along the walls, long and thin as fingers.", the author uses a simile.',
-      studentAnswer: "True",
-      correctAnswer: "True",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: 'Uses "as" to compare shadows to elongated fingers.'
-    },
-    {
-      questionId: "Q_Y6_ENG_010",
-      questionText: 'Complete the conclusion sentence using formal connective: "Protecting sea turtles matters ________ they play a vital role in marine ecosystems."',
-      studentAnswer: "because",
-      correctAnswer: "because",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: '"because" gives the reason explaining why protection is essential.'
-    }
-  ];
-
-  const mostafaArbReview = [
-    {
-      questionId: "DYN_Y6_ARB_008",
-      questionText: "ما سبب كتابة الهمزة على ألف في كلمة (يَسْـأَلُ)؟",
-      studentAnswer: "لأن الهمزة مكسورة وما قبلها مضموم",
-      correctAnswer: "لأن الهمزة مفتوحة وما قبلها حرف ساكن",
-      isCorrect: false,
-      pointsAwarded: 0,
-      maxPoints: 1,
-      explanation: "في كلمة (يَسْـأَلُ): السين ساكنة والهمزة مفتوحة، والفتحة أقوى من السكون ➔ فتُرسم على ألف."
-    },
-    {
-      questionId: "DYN_Y6_ARB_009",
-      questionText: 'معنى كلمة (إنجاز) في سياق جملة "يتطلب إنجاز الأعمال تخطيطاً مستمراً" هو:',
-      studentAnswer: "إتمام وتحقيق بنجاح",
-      correctAnswer: "إتمام وتحقيق بنجاح",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "إنجاز الشيء = إتمامه وقضاؤه بنجاح."
-    },
-    {
-      questionId: "DYN_Y6_ARB_006",
-      questionText: 'اختر الرسم الإملائي الصحيح للفراغ: "لا ........ عن أداء الواجب المدرسي":',
-      studentAnswer: "تتأخر",
-      correctAnswer: "تتأخر",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "تكتب الهمزة المتوسطة على ألف إذا كانت مفتوحة وما قبلها حرف مفتوح."
-    },
-    {
-      questionId: "DYN_Y6_ARB_010",
-      questionText: "مضاد كلمة (تأجيل) في سياق ترتيب المهام اليومية هو:",
-      studentAnswer: "تأخير وإرجاء",
-      correctAnswer: "تعجيل وتبكير",
-      isCorrect: false,
-      pointsAwarded: 0,
-      maxPoints: 1,
-      explanation: "مضاد التأجيل هو التعجيل والتبكير، بينما (تأخير) هو مرادف الكلمة."
-    },
-    {
-      questionId: "DYN_Y6_ARB_003",
-      questionText: 'في جملة: "يجري النيل بالخير والنماء"، نوع كلمة (النيل):',
-      studentAnswer: "معرفة (لأنه اسم علم لنهر ومعرف بأل)",
-      correctAnswer: "معرفة (لأنه اسم علم لنهر ومعرف بأل)",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "أسماء الأنهار والبلدان هي أسماء معارف أعلام."
-    },
-    {
-      questionId: "DYN_Y6_ARB_007",
-      questionText: 'اختر الكلمة الصحيحة إملائياً: "شعر المريض بألم في ........ فذهب للطبيب":',
-      studentAnswer: "الرأس",
-      correctAnswer: "الرأس",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "الفتحة أقوى من السكون، لذلك إذا كانت الهمزة ساكنة وقبلها مفتوح تُكتب على ألف."
-    },
-    {
-      questionId: "DYN_Y6_ARB_002",
-      questionText: 'في جملة: "اشترى الطالب قلماً جديداً"، كلمة (قلماً) هي اسم:',
-      studentAnswer: "نكرة (لأنه منون ومجرد من أل والإضافة)",
-      correctAnswer: "نكرة (لأنه منون ومجرد من أل والإضافة)",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "اسم منون ومجرد من أل والإضافة ويدل على غير معين."
-    },
-    {
-      questionId: "DYN_Y6_ARB_001",
-      questionText: 'في جملة: "حضر المهندسون لاجتماع إدارة المشروع"، كلمة (المهندسون) تعتبر اسماً:',
-      studentAnswer: "معرفة (معرف بأل)",
-      correctAnswer: "معرفة (معرف بأل)",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "الاسم الذي يبدأ بـ (أل) التعريف هو اسم معرفة."
-    },
-    {
-      questionId: "DYN_Y6_ARB_004",
-      questionText: 'أكمل الجملة باسم معرفة مناسب: "........ هم الركيزة الأساسية لنهضة أي مجتمع."',
-      studentAnswer: "المخلصون",
-      correctAnswer: "المخلصون",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "(المخلصون) معرف بأل."
-    },
-    {
-      questionId: "DYN_Y6_ARB_005",
-      questionText: 'أكمل الجملة باسم نكرة منون مناسب: "الوقتُ ........ ثمينٌ لا يقدر بثمن."',
-      studentAnswer: "كنزٌ",
-      correctAnswer: "كنزٌ",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "(كنزٌ) اسم نكرة مرفوع بالضمة ومجرد من أل."
-    }
-  ];
-
-
-  const mostafaArbAttempt2Review = [
-    {
-      questionId: "DYN_Y6_ARB_008",
-      questionText: "ما سبب كتابة الهمزة على ألف في كلمة (يَسْـأَلُ)؟",
-      studentAnswer: "لأن الهمزة مفتوحة وما قبلها حرف ساكن",
-      correctAnswer: "لأن الهمزة مفتوحة وما قبلها حرف ساكن",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "💡 إتقان القاعدة:\nفي كلمة (يَسْـأَلُ): السين ساكنة والهمزة مفتوحة، والفتحة أقوى من السكون ➔ فتُرسم على ألف."
-    },
-    {
-      questionId: "DYN_Y6_ARB_009",
-      questionText: 'معنى كلمة (إنجاز) في سياق جملة "يتطلب إنجاز الأعمال تخطيطاً مستمراً" هو:',
-      studentAnswer: "إتمام وتحقيق بنجاح",
-      correctAnswer: "إتمام وتحقيق بنجاح",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "إنجاز الشيء = إتمامه وقضاؤه بنجاح."
-    },
-    {
-      questionId: "DYN_Y6_ARB_006",
-      questionText: 'اختر الرسم الإملائي الصحيح للفراغ: "لا ........ عن أداء الواجب المدرسي":',
-      studentAnswer: "تتأخر",
-      correctAnswer: "تتأخر",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "تكتب الهمزة المتوسطة على ألف إذا كانت مفتوحة وما قبلها حرف مفتوح."
-    },
-    {
-      questionId: "DYN_Y6_ARB_010",
-      questionText: "مضاد كلمة (تأجيل) في سياق ترتيب المهام اليومية هو:",
-      studentAnswer: "تعجيل وتبكير",
-      correctAnswer: "تعجيل وتبكير",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "💡 إتقان التضاد اللغوي:\nمضاد التأجيل هو التعجيل والتبكير."
-    },
-    {
-      questionId: "DYN_Y6_ARB_003",
-      questionText: 'في جملة: "يجري النيل بالخير والنماء"، نوع كلمة (النيل):',
-      studentAnswer: "معرفة (لأنه اسم علم لنهر ومعرف بأل)",
-      correctAnswer: "معرفة (لأنه اسم علم لنهر ومعرف بأل)",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "أسماء الأنهار والبلدان هي أسماء معارف أعلام."
-    },
-    {
-      questionId: "DYN_Y6_ARB_007",
-      questionText: 'اختر الكلمة الصحيحة إملائياً: "شعر المريض بألم في ........ فذهب للطبيب":',
-      studentAnswer: "الرأس",
-      correctAnswer: "الرأس",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "الفتحة أقوى من السكون، لذلك إذا كانت الهمزة ساكنة وقبلها مفتوح تُكتب على ألف."
-    },
-    {
-      questionId: "DYN_Y6_ARB_002",
-      questionText: 'في جملة: "اشترى الطالب قلماً جديداً"، كلمة (قلماً) هي اسم:',
-      studentAnswer: "نكرة (لأنه منون ومجرد من أل والإضافة)",
-      correctAnswer: "نكرة (لأنه منون ومجرد من أل والإضافة)",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "اسم منون ومجرد من أل والإضافة ويدل على غير معين."
-    },
-    {
-      questionId: "DYN_Y6_ARB_001",
-      questionText: 'في جملة: "حضر المهندسون لاجتماع إدارة المشروع"، كلمة (المهندسون) تعتبر اسماً:',
-      studentAnswer: "معرفة (معرف بأل)",
-      correctAnswer: "معرفة (معرف بأل)",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "الاسم الذي يبدأ بـ (أل) التعريف هو اسم معرفة."
-    },
-    {
-      questionId: "DYN_Y6_ARB_004",
-      questionText: 'أكمل الجملة باسم معرفة مناسب: "........ هم الركيزة الأساسية لنهضة أي مجتمع."',
-      studentAnswer: "المخلصون",
-      correctAnswer: "المخلصون",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "(المخلصون) معرف بأل."
-    },
-    {
-      questionId: "DYN_Y6_ARB_005",
-      questionText: 'أكمل الجملة باسم نكرة منون مناسب: "الوقتُ ........ ثمينٌ لا يقدر بثمن."',
-      studentAnswer: "كنزٌ",
-      correctAnswer: "كنزٌ",
-      isCorrect: true,
-      pointsAwarded: 1,
-      maxPoints: 1,
-      explanation: "(كنزٌ) اسم نكرة مرفوع بالضمة ومجرد من أل."
-    }
-  ];
-
-  return {
-    ali: aliReview,
-    mostafaEng: mostafaEngReview,
-    mostafaArb: mostafaArbReview,
-    mostafaArbAttempt2: mostafaArbAttempt2Review
-  };
-}
-
-function restoreAllHistoricalSubmissions() {
-  try {
-    const ui = SpreadsheetApp.getUi();
-    const answer = ui.alert(
-      'Restore demo submissions?',
-      'This adds the old hard-coded Ali/Mostafa demo rows when they are missing. It does not delete real data. Continue?',
-      ui.ButtonSet.YES_NO
-    );
-    if (answer !== ui.Button.YES) {
-      return { success: false, message: 'Cancelled.' };
-    }
-  } catch (e) {
-    // No UI (web app or trigger): never mutate data without an explicit menu action.
-    Logger.log('restoreAllHistoricalSubmissions skipped: ' + e);
-    return { success: false, message: 'This action is only available from the spreadsheet menu.' };
-  }
-
-  const ss = getSpreadsheet();
-  let subSheet = ss.getSheetByName('Submissions');
-  if (!subSheet) {
-    subSheet = ss.insertSheet('Submissions');
-  }
-  
-  const subHeaders = [
-    ['Timestamp', 'Student Name', 'School Grade', 'Exam Code', 'Score', 'Total', 'Percentage', 'Rating', 'Duration', 'Summary', 'Detailed Review JSON']
-  ];
-  subSheet.getRange(1, 1, 1, subHeaders[0].length).setValues(subHeaders);
-  formatHeaderRow(subSheet, '#1e3a8a');
-
-  const existing = subSheet.getDataRange().getValues();
-  let aliEngCount = 0;
-  let mostafaEngCount = 0;
-  let mostafaArbCount = 0;
-
-  for (let i = 1; i < existing.length; i++) {
-    const sName = String(existing[i][1] || '').trim().toLowerCase();
-    const eCode = String(existing[i][3] || '').trim().toUpperCase();
-    if (sName.includes('ali') && eCode.includes('ADV01')) aliEngCount++;
-    if (sName.includes('mostafa') && eCode.includes('FANTASY01')) mostafaEngCount++;
-    if (sName.includes('mostafa') && eCode.includes('ARB_PRIO01')) mostafaArbCount++;
-  }
-
-  const reviews = getHistoricalSubmissionsData();
-
-  // 1. Ali Ahmed - Year 5 English (9/10)
-  if (aliEngCount === 0) {
-    subSheet.appendRow([
-      '10/24/2026 22:30:00',
-      'Ali Ahmed',
-      'Year 5 (G5)',
-      'EX_Y5_ENG_ADV01',
-      9,
-      10,
-      '90%',
-      'Excellent 🌟',
-      '7 min 42 sec',
-      '9/10 Correct (1 mistake reviewed)',
-      JSON.stringify(reviews.ali)
-    ]);
-  }
-
-  // 2. Mostafa Ahmed - Grade 6 English (10/10)
-  if (mostafaEngCount === 0) {
-    subSheet.appendRow([
-      '10/24/2026 22:44:00',
-      'Mostafa Ahmed',
-      'Grade 6 (G6)',
-      'EX_Y6_ENG_FANTASY01',
-      10,
-      10,
-      '100%',
-      'Excellent 🌟',
-      '8 min 12 sec',
-      '10/10 Correct (Flawless Score)',
-      JSON.stringify(reviews.mostafaEng)
-    ]);
-  }
-
-  // 3. Mostafa Ahmed - Grade 6 Arabic: Attempt 1 (8/10)
-  if (mostafaArbCount === 0) {
-    subSheet.appendRow([
-      '10/24/2026 22:48:00',
-      'Mostafa Ahmed',
-      'Grade 6 (G6)',
-      'EX_Y6_ARB_PRIO01',
-      8,
-      10,
-      '80%',
-      'Very Good 👍',
-      '6 min 55 sec',
-      '8/10 Correct (Attempt 1 - 2 mistakes reviewed)',
-      JSON.stringify(reviews.mostafaArb)
-    ]);
-    mostafaArbCount++;
-  }
-
-  // 4. Mostafa Ahmed - Grade 6 Arabic: Attempt 2 (10/10 - Flawless!)
-  if (mostafaArbCount === 1) {
-    subSheet.appendRow([
-      '10/24/2026 23:05:00',
-      'Mostafa Ahmed',
-      'Grade 6 (G6)',
-      'EX_Y6_ARB_PRIO01',
-      10,
-      10,
-      '100%',
-      'Excellent 🌟',
-      '5 min 20 sec',
-      '10/10 Correct (Attempt 2 - Flawless Mastered 🌟)',
-      JSON.stringify(reviews.mostafaArbAttempt2)
-    ]);
-  }
-
-  const lastRow = subSheet.getLastRow();
-  if (lastRow > 1) {
-    subSheet.getRange(2, 1, lastRow - 1, 10).setVerticalAlignment('middle').setFontSize(10);
-    subSheet.getRange(2, 5, lastRow - 1, 3).setHorizontalAlignment('center');
-  }
-
-  styleSubmissionsSheet(subSheet);
-  return { success: true, message: 'All historical submissions (including Attempt 1 and Attempt 2) restored successfully!' };
 }
