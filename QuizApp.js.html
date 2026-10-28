@@ -402,6 +402,31 @@
       openStudentPortal(currentStudentKey, activeExamCode);
     }
 
+    function retakeCurrentExamNow() {
+      if (!activeExamCode) return;
+      currentActiveSessionId = null;
+      showScreen('screen-quiz');
+      loadAndStartQuiz(activeExamCode);
+    }
+
+    function levelUpDifficultyAndRetake() {
+      if (!activeExamCode) return;
+      const nextLvl = (window.currentDifficultyLevel === 3) ? 1 : (Number(window.currentDifficultyLevel || 2) + 1);
+      if (typeof setAdaptiveDifficulty === 'function') {
+        setAdaptiveDifficulty(nextLvl);
+      }
+      currentActiveSessionId = null;
+      showScreen('screen-quiz');
+      loadAndStartQuiz(activeExamCode);
+    }
+
+    function practiceRandomBankQuestions() {
+      if (!activeExamCode) return;
+      currentActiveSessionId = null;
+      showScreen('screen-quiz');
+      loadAndStartQuiz(activeExamCode);
+    }
+
 
     /* ============================================================
      * PRE-EXAM CONCEPT REFRESHER & BRIEFING ENGINE

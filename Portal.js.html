@@ -393,6 +393,7 @@
       activeExamCode = selectedCode;
 
       function renderExamCards() {
+        window.renderExamCards = renderExamCards;
         const listEl = document.getElementById('sp-exams-list');
         if (!listEl) return;
         listEl.innerHTML = '';
@@ -453,7 +454,14 @@
               <div class="exam-item-title">${escapeHtml(ex.title)}</div>
               <div class="exam-item-meta">${escapeHtml(ex.subject)} &bull; ${ex.count || 10} Questions &bull; ${ex.duration || 20} Mins</div>
             </div>
-            <span class="exam-item-tag">${escapeHtml(ex.period || ex.type || student.grade)}</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="exam-item-tag">${escapeHtml(ex.period || ex.type || student.grade)}</span>
+              ${(ex.type === 'Diagnostic' || ex.type === 'Foundational') 
+                ? '<span style="font-size:0.68rem; font-weight:800; background:#e0f2fe; color:#0369a1; padding:2px 7px; border-radius:10px;">L1</span>' 
+                : (ex.type === 'Cumulative' || ex.type === 'Monthly' || ex.type === 'Capstone') 
+                ? '<span style="font-size:0.68rem; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 7px; border-radius:10px;">L3</span>' 
+                : '<span style="font-size:0.68rem; font-weight:800; background:#ecfdf5; color:#047857; padding:2px 7px; border-radius:10px;">L2</span>'}
+            </div>
           `;
           card.addEventListener('click', () => {
             selectStudentExam(ex.code);
@@ -700,11 +708,16 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       } else {
         actionBox.innerHTML = `
           <div class="alert-box alert-success" style="justify-content:center;text-align:center;font-weight:700;margin-bottom:10px;">
-            ✅ Maximum attempts completed (${attempts.length} of ${totalAllowed}).
+            ✅ Official attempts recorded (${attempts.length} of ${totalAllowed}).
           </div>
-          <button type="button" class="btn-primary" id="retake-request-btn">
-            📩 Request an Extra Attempt
-          </button>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%;">
+            <button type="button" class="btn-primary" style="background: #0284c7;" onclick="startExamByCode(activeExamCode)">
+              <span>🔁 Free Practice Mode</span> &rarr;
+            </button>
+            <button type="button" class="btn-primary" id="retake-request-btn">
+              <span>📩 Request Extra Attempt</span> &rarr;
+            </button>
+          </div>
         `;
         const retakeButton = document.getElementById('retake-request-btn');
         if (retakeButton) {
@@ -1067,14 +1080,85 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       if (subjectSelect) {
         if (isAli) {
           subjectSelect.innerHTML = `
-            <option value="English Grammar" selected>English Grammar (Adverbials & Punctuation)</option>
+            <option value="Mathematics" selected>Mathematics (📐 Place Value, Decimals & Fractions)</option>
+            <option value="Science">Science (🔬 Forces, Earth & Living Things)</option>
+            <option value="English Grammar">English Grammar (📖 Adverbials & Punctuation)</option>
+            <option value="Arabic Language">Arabic Language (📝 الجملة الاسمية والضمائر)</option>
+            <option value="ICT Computing">ICT Computing (💻 Technology & Digital Skills)</option>
           `;
         } else {
           subjectSelect.innerHTML = `
-            <option value="English Literacy" selected>English Literacy (Fantasy & Reports)</option>
-            <option value="Arabic Language">Arabic Language (النكرة والمعرفة والهمزة)</option>
+            <option value="Mathematics" selected>Mathematics (📐 Prime Factorization, Algebra & Ratios)</option>
+            <option value="Science">Science (🔬 Circulatory System & Electricity)</option>
+            <option value="English Literacy">English Literacy (📖 Fantasy Reading & Report Writing)</option>
+            <option value="Arabic Language">Arabic Language (📝 إدارة الوقت والنكرة والمعرفة)</option>
+            <option value="ICT Computing">ICT Computing (💻 Flowcharts & Computational Logic)</option>
           `;
         }
+      }
+    }
+
+    function seedCurriculumBankAction() {
+      const btn = document.getElementById('btn-seed-curriculum-bank');
+      const feedback = document.getElementById('seed-bank-feedback');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = '⏳ Seeding 234 Questions & 48 Exams...';
+      }
+      if (feedback) {
+        feedback.style.display = 'inline-block';
+        feedback.style.background = '#f3e8ff';
+        feedback.style.color = '#7e22ce';
+        feedback.innerText = 'Writing to Google Sheets...';
+      }
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerText = '📥 Seed Bank to Google Sheets (1-Click)';
+            }
+            if (res && res.success) {
+              if (feedback) {
+                feedback.style.background = '#dcfce7';
+                feedback.style.color = '#15803d';
+                feedback.innerText = '✅ ' + (res.message || 'Question Bank & Exams Seeded!');
+              }
+              showOpsResult('Curriculum Bank Seeded', res.message, '');
+              loadParentData();
+            } else {
+              if (feedback) {
+                feedback.style.background = '#fee2e2';
+                feedback.style.color = '#b91c1c';
+                feedback.innerText = '❌ ' + (res && res.message ? res.message : 'Error seeding database');
+              }
+            }
+          })
+          .withFailureHandler(function(err) {
+            if (btn) {
+              btn.disabled = false;
+              btn.innerText = '📥 Seed Bank to Google Sheets (1-Click)';
+            }
+            if (feedback) {
+              feedback.style.background = '#fee2e2';
+              feedback.style.color = '#b91c1c';
+              feedback.innerText = '❌ RPC Error: ' + (err && err.message ? err.message : String(err));
+            }
+          })
+          .seedCompleteQuestionBank(cachedAdminToken);
+      } else {
+        setTimeout(function() {
+          if (btn) {
+            btn.disabled = false;
+            btn.innerText = '📥 Seed Bank to Google Sheets (1-Click)';
+          }
+          if (feedback) {
+            feedback.style.background = '#dcfce7';
+            feedback.style.color = '#15803d';
+            feedback.innerText = '✅ Local Simulation: 234 questions & 48 exams staged successfully.';
+          }
+        }, 600);
       }
     }
 
@@ -1112,10 +1196,13 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       btn.disabled = true;
       btn.innerText = '⏳ Generating Weekly Assessment...';
 
+      const diffEl = document.getElementById('ops-weekly-difficulty');
+      const difficulty = diffEl ? diffEl.value : 'ALL';
       const payload = {
         studentKey: studentKey,
         weekCode: weekCode,
         subject: subject,
+        difficulty: difficulty,
         count: 10,
         duration: 20
       };
@@ -1159,9 +1246,15 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       btn.disabled = true;
       btn.innerText = '⏳ Generating Cumulative Exam...';
 
+      const subjEl = document.getElementById('ops-monthly-subject');
+      const diffEl = document.getElementById('ops-monthly-difficulty');
+      const subject = subjEl ? subjEl.value : 'ALL';
+      const difficulty = diffEl ? diffEl.value : 'ALL';
       const payload = {
         studentKey: studentKey,
         monthCode: monthCode,
+        subject: subject,
+        difficulty: difficulty,
         count: 15,
         duration: 30
       };
@@ -1812,13 +1905,15 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
     // Adaptive Difficulty Controller
     function setAdaptiveDifficulty(level) {
+      window.currentDifficultyLevel = level;
       safeStorage.setItem('coligo_target_difficulty', level);
       [1, 2, 3].forEach(l => {
         const p = document.getElementById('diff-pill-' + l);
         if (p) p.classList.toggle('active', l === level);
       });
-      // Filter or render exam cards accordingly
-      renderExamCatalog();
+      if (typeof window.renderExamCards === 'function') {
+        window.renderExamCards();
+      }
     }
 
     // Interactive Homework Done & Reviewed Controller
@@ -1836,14 +1931,22 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       renderDailyHub(currentStudentKey, currentSchoolDay);
     }
 
-    // Direct auto-enter for human browsing while keeping headless Playwright tests compatible
+    // Unified Entry Router: Default to Gateway screen while supporting deep-links
     window.addEventListener('DOMContentLoaded', function() {
-      // If NOT running under automated Playwright (navigator.webdriver === false)
-      // and no explicit ?gateway=1 is specified in URL:
-      if (!navigator.webdriver && !location.search.includes('gateway=1')) {
-        const savedStudent = safeStorage.getItem('coligo_active_student') || 'mostafa';
-        if (typeof openStudentPortal === 'function') {
-          openStudentPortal(savedStudent);
+      const serverParams = window.SERVER_INITIAL_PARAMS || {};
+      const urlParams = new URLSearchParams(window.location.search || '');
+      const studentParam = serverParams.student || urlParams.get('student');
+      const examParam = serverParams.exam || urlParams.get('exam');
+      const adminParam = serverParams.admin || urlParams.get('admin');
+
+      if (studentParam && typeof openStudentPortal === 'function') {
+        openStudentPortal(studentParam, examParam);
+      } else if ((adminParam === '1' || adminParam === 'true') && typeof openParentPortal === 'function') {
+        openParentPortal();
+      } else {
+        // By default, always display the direct 1-click Gateway screen (Ali, Mostafa, Parents Control)
+        if (typeof showScreen === 'function') {
+          showScreen('screen-gateway');
         }
       }
     });
@@ -2059,7 +2162,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
           hwTeacher: 'Math Department',
           rule: 'A prime number has only 2 factors (1 and itself). Any composite number can be written as a product of prime factors using a factor tree.',
           workedExample: '<strong>Find prime factorization of 36 in index form:</strong><br>36 = 2 &times; 18 = 2 &times; 2 &times; 9 = 2 &times; 2 &times; 3 &times; 3<br>➔ In index form: <strong>2&sup2; &times; 3&sup2;</strong>',
-          videoId: 'XGbOiYhHY2c',
+          videoId: '',
           examCode: 'DAILY_Y6_MATH_W1D1',
           examTitle: 'Mostafa - Day 1: Prime Factors & Index Notation'
         },
@@ -2173,7 +2276,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
           hwTeacher: 'Math Teacher',
           rule: 'Divisible by 3: sum of all digits divides by 3. Divisible by 4: last 2 digits divide by 4. Divisible by 9: sum of digits divides by 9.',
           workedExample: '<strong>Test 4,356:</strong><br>Sum: 4 + 3 + 5 + 6 = 18 (divisible by 3 and 9).<br>Last 2 digits: 56 &divide; 4 = 14 (divisible by 4).<br>➔ 4,356 is divisible by 3, 4, and 9!',
-          videoId: 'Luq06b4D6bE',
+          videoId: '',
           examCode: 'DAILY_Y5_MATH_W1D1',
           examTitle: 'Ali - Day 1: Tests of Divisibility (2, 5, 10)'
         },

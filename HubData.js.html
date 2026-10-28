@@ -1001,14 +1001,23 @@ window.DRIVE_VIDEOS = {};
           nativePlayer.src = '';
           nativePlayer.style.display = 'none';
         }
-        if (iframe) {
-          let cleanId = currentVideoId || 'XGbOiYhHY2c';
-          if (cleanId.indexOf('youtu.be/') !== -1) {
-            cleanId = cleanId.split('youtu.be/')[1].split('?')[0];
-          } else if (cleanId.indexOf('watch?v=') !== -1) {
-            cleanId = cleanId.split('watch?v=')[1].split('&')[0];
-          }
+        if (!currentVideoId || !currentVideoId.trim()) {
+          if (iframe) { iframe.src = ''; iframe.style.display = 'none'; }
+          if (placeholder) placeholder.style.display = 'flex';
+          if (btnCloud) { btnCloud.style.background = '#fff'; btnCloud.style.color = '#334155'; }
+          if (btnNative) { btnNative.style.background = '#fff'; btnNative.style.color = '#334155'; }
+          if (statusText) statusText.innerHTML = '🎬 <b>Lesson Video in Production</b> &bull; Review Summary & Worked Examples Below';
+          return;
+        }
 
+        let cleanId = currentVideoId.trim();
+        if (cleanId.indexOf('youtu.be/') !== -1) {
+          cleanId = cleanId.split('youtu.be/')[1].split('?')[0];
+        } else if (cleanId.indexOf('watch?v=') !== -1) {
+          cleanId = cleanId.split('watch?v=')[1].split('&')[0];
+        }
+
+        if (iframe) {
           // Strict In-Platform Policy:
           // 1. rel=0: No outside recommended videos
           // 2. loop=1 & playlist=cleanId: Loops only the same lesson video
@@ -1121,7 +1130,7 @@ window.DRIVE_VIDEOS = {};
         const savedCustom = safeStorage.getItem('custom_vid_' + currentActiveSubject.id);
         if (savedCustom) videoId = savedCustom;
       }
-      currentVideoId = videoId || 'XGbOiYhHY2c';
+      currentVideoId = (videoId && videoId.trim()) ? videoId.trim() : '';
       const modal = document.getElementById('video-modal');
       const titleEl = document.getElementById('video-modal-title');
       if (titleEl) titleEl.innerText = title || 'Lesson Video Briefing';
@@ -1131,7 +1140,7 @@ window.DRIVE_VIDEOS = {};
 
       // Populate custom input if exists
       const customInp = document.getElementById('custom-video-input');
-      if (customInp) customInp.value = (currentVideoId.startsWith('http') ? currentVideoId : 'https://www.youtube.com/watch?v=' + currentVideoId);
+      if (customInp) customInp.value = currentVideoId ? (currentVideoId.startsWith('http') ? currentVideoId : 'https://www.youtube.com/watch?v=' + currentVideoId) : '';
 
       // Default directly to Cloud (YouTube) on HTTPS or web apps
       if (window.DRIVE_VIDEOS && window.DRIVE_VIDEOS[currentVideoId]) {

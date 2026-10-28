@@ -659,6 +659,19 @@
         <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 6px;" id="res-time-spent">Time Spent: --</div>
       </div>
 
+      <!-- Quick Action Row: Retake / Next Level / Random Practice -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 20px;">
+        <button type="button" class="btn-primary" onclick="retakeCurrentExamNow()" style="background: #0284c7;">
+          🔁 Retake / Practice Again
+        </button>
+        <button type="button" class="btn-primary" onclick="levelUpDifficultyAndRetake()" style="background: #7c3aed;">
+          ⚡ Level Up (L3 Challenge)
+        </button>
+        <button type="button" class="btn-primary" onclick="practiceRandomBankQuestions()" style="background: #059669;">
+          🎲 Practice New Questions
+        </button>
+      </div>
+
       <div class="card">
         <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px;">Detailed Pedagogical Review & Corrections</h3>
         <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 18px;">
@@ -865,6 +878,29 @@
               </div>
             </div>
 
+            <!-- 5-Subject Curriculum Bank Synchronization -->
+            <div style="background: #fdf4ff; border: 1.5px solid #a855f7; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.4rem;">📚</span>
+                  <div>
+                    <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #7e22ce;">Complete 5-Subject Question Bank & Exam Registry</h4>
+                    <div style="font-size: 0.76rem; color: #9333ea;">234 Standardized Questions &bull; 48 Exams &bull; Math, Science, English, Arabic, ICT</div>
+                  </div>
+                </div>
+                <span class="meta-pill pill-purple">5 Subjects &bull; G5 & G6</span>
+              </div>
+              <p style="font-size: 0.83rem; color: #475569; margin: 0 0 12px 0;">
+                Populate or synchronize the entire question bank and all curriculum assessments directly into your linked Google Spreadsheet with 1 click.
+              </p>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <button type="button" id="btn-seed-curriculum-bank" class="btn-primary" style="width: auto; padding: 9px 18px; background: #7e22ce; font-weight: 700;" onclick="seedCurriculumBankAction()">
+                  📥 Seed Bank to Google Sheets (1-Click)
+                </button>
+                <div id="seed-bank-feedback" style="display: none; padding: 8px 12px; border-radius: 8px; font-size: 0.84rem; font-weight: 600;"></div>
+              </div>
+            </div>
+
 <!-- Operations Grid -->
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
               
@@ -889,10 +925,24 @@
                     </select>
                   </div>
 
-                  <div style="margin-bottom: 14px;">
+                  <div style="margin-bottom: 12px;">
                     <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">SUBJECT</label>
                     <select id="ops-weekly-subject" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
-                      <option value="English Grammar">English Grammar</option>
+                      <option value="Mathematics">Mathematics (📐 Math)</option>
+                      <option value="Science">Science (🔬 Science)</option>
+                      <option value="English Grammar" selected>English Grammar (📖 Literacy)</option>
+                      <option value="Arabic Language">Arabic Language (📝 اللغة العربية)</option>
+                      <option value="ICT Computing">ICT Computing (💻 Technology)</option>
+                    </select>
+                  </div>
+
+                  <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">DIFFICULTY LEVEL</label>
+                    <select id="ops-weekly-difficulty" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
+                      <option value="ALL" selected>Balanced Core (All Levels)</option>
+                      <option value="Foundational">Level 1: Foundational Focus</option>
+                      <option value="Standard">Level 2: Standard Core</option>
+                      <option value="Challenging">Level 3: Advanced Challenge</option>
                     </select>
                   </div>
                 </div>
@@ -918,6 +968,27 @@
                       <option value="M1" selected>Month 1 (Weeks 1 to 4 Cumulative)</option>
                       <option value="M2">Month 2 (Weeks 5 to 8 Cumulative)</option>
                       <option value="M3">Month 3 (Mid-term Comprehensive)</option>
+                    </select>
+                  </div>
+
+                  <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">SUBJECT FOCUS</label>
+                    <select id="ops-monthly-subject" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
+                      <option value="ALL" selected>All Subjects (Comprehensive Synthesis)</option>
+                      <option value="Mathematics">Mathematics Only</option>
+                      <option value="Science">Science Only</option>
+                      <option value="English Grammar">English Grammar Only</option>
+                      <option value="Arabic Language">Arabic Language Only</option>
+                    </select>
+                  </div>
+
+                  <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">DIFFICULTY LEVEL</label>
+                    <select id="ops-monthly-difficulty" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
+                      <option value="ALL" selected>Balanced Core (All Levels)</option>
+                      <option value="Foundational">Level 1: Foundational Focus</option>
+                      <option value="Standard">Level 2: Standard Core</option>
+                      <option value="Challenging">Level 3: Advanced Challenge</option>
                     </select>
                   </div>
 
