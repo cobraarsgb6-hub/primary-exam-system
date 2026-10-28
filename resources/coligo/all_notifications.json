@@ -1,10 +1,74 @@
 [
   {
+    "_id": "6ae1cc53021f1ad6826560c1",
+    "userId": "68da691317e1492e0ffcd878",
+    "message": "Mostafa has received a new announcement الواجب المنزلي from Mariam Abdelrhman",
+    "type": "@notification-type/info",
+    "state": "@notification-state/seen",
+    "imageUrl": null,
+    "redirection": {
+      "module": "@module/announcements",
+      "reference": "6ae1c8e5bf4eb8a02a6218e5",
+      "meta": {
+        "childId": "68e6ac96b5f1511f61d47eea"
+      }
+    },
+    "createdAt": 1793182803681,
+    "deleteAt": "2026-11-28T10:20:03.681Z"
+  },
+  {
+    "_id": "6ae1cc53021f1ad682655fcb",
+    "userId": "68da691317e1492e0ffcd878",
+    "message": "Ali has received a new announcement الواجب المنزلي from Mariam Abdelrhman",
+    "type": "@notification-type/info",
+    "state": "@notification-state/read",
+    "imageUrl": null,
+    "redirection": {
+      "module": "@module/announcements",
+      "reference": "6ae1c994bf4eb8a02a6253e6",
+      "meta": {
+        "childId": "68da68c843e7498ddb5573ba"
+      }
+    },
+    "createdAt": 1793182803183,
+    "deleteAt": "2026-11-28T10:20:03.183Z"
+  },
+  {
+    "_id": "6ae1cc50021f1ad682655428",
+    "userId": "68da691317e1492e0ffcd878",
+    "message": "Mariam Abdelrhman published a new announcement: الواجب المنزلي",
+    "type": "@notification-type/info",
+    "state": "@notification-state/seen",
+    "imageUrl": null,
+    "redirection": {
+      "module": "@module/announcements",
+      "reference": "6ae1c994bf4eb8a02a6253e6",
+      "meta": null
+    },
+    "createdAt": 1793182800523,
+    "deleteAt": "2026-11-28T10:20:00.523Z"
+  },
+  {
+    "_id": "6ae1cc50021f1ad682655402",
+    "userId": "68da691317e1492e0ffcd878",
+    "message": "Mariam Abdelrhman published a new announcement: الواجب المنزلي",
+    "type": "@notification-type/info",
+    "state": "@notification-state/seen",
+    "imageUrl": null,
+    "redirection": {
+      "module": "@module/announcements",
+      "reference": "6ae1c8e5bf4eb8a02a6218e5",
+      "meta": null
+    },
+    "createdAt": 1793182800502,
+    "deleteAt": "2026-11-28T10:20:00.502Z"
+  },
+  {
     "_id": "6ae1c260f5e4166fd50ca632",
     "userId": "68da691317e1492e0ffcd878",
     "message": "Ali has révision  d'octobre y.5 File has been created in French 105",
     "type": "@notification-type/info",
-    "state": "@notification-state/new",
+    "state": "@notification-state/seen",
     "imageUrl": null,
     "redirection": {
       "module": "@module/materials",
@@ -756,183 +820,5 @@
     },
     "createdAt": 1793039144957,
     "deleteAt": "2026-11-26T18:25:44.957Z"
-  },
-  {
-    "_id": "6adf9afaf5e4166fd58011b9",
-    "userId": "68da691317e1492e0ffcd878",
-    "message": "Ali has Class Notes Sunday 25-10-2026 File has been created in Math 105",
-    "type": "@notification-type/info",
-    "state": "@notification-state/seen",
-    "imageUrl": null,
-    "redirection": {
-      "module": "@module/materials",
-      "reference": "6adf9afaf5e4166fd580115a",
-      "meta": {
-        "material": {
-          "_id": "6adf9afaf5e4166fd580115a",
-          "title": "Class Notes Sunday 25-10-2026",
-          "description": "",
-          "type": "@material-type/file",
-          "materialState": "@material/state/published",
-          "schoolId": "68ac9f380396de90850769ce",
-          "courseId": "6aa6b93c106ddeec80ba6ce5",
-          "parentMaterialId": "6adf9ac3f5e4166fd57ffb6b",
-          "sharedWith": [],
-          "size": 2687722,
-          "authorId": "6acf2c325f0c25faa49a1984",
-          "updatedAt": 1793039098545,
-          "publishAt": "2026-10-26T18:24:58.545Z",
-          "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/math-105/materials/2026/oct/week-4/now-1793039096787/Class_Notes_Sunday_25-10-2026.pdf.zip",
-          "extension": ".pdf",
-          "isProtected": false,
-          "isRestricted": false,
-          "fileName": "Class_Notes_Sunday_25-10-2026.pdf",
-          "createdAt": 1793039098545,
-          "seenBy": [],
-          "updatedBy": "6acf2c325f0c25faa49a1984",
-          "__v": 0
-        },
-        "courseId": "6aa6b93c106ddeec80ba6ce5",
-        "parentId": "6adf9ac3f5e4166fd57ffb6b",
-        "parentColor": "#000000",
-        "parentName": "Class Notes",
-        "isHomeMaterial": false,
-        "childId": "68da68c843e7498ddb5573ba"
-      }
-    },
-    "createdAt": 1793039098916,
-    "deleteAt": "2026-11-26T18:24:58.916Z"
-  },
-  {
-    "_id": "6adf9ac4f5e4166fd57ffbf5",
-    "userId": "68da691317e1492e0ffcd878",
-    "message": "Ali has Class Notes Folder has been created in Math 105",
-    "type": "@notification-type/info",
-    "state": "@notification-state/seen",
-    "imageUrl": null,
-    "redirection": {
-      "module": "@module/materials",
-      "reference": "6adf9ac3f5e4166fd57ffb6b",
-      "meta": {
-        "material": {
-          "_id": "6adf9ac3f5e4166fd57ffb6b",
-          "title": "Class Notes",
-          "description": "",
-          "type": "@material-type/folder",
-          "materialState": "@material/state/published",
-          "schoolId": "68ac9f380396de90850769ce",
-          "courseId": "6aa6b93c106ddeec80ba6ce5",
-          "parentMaterialId": "6aa6b93c106ddeec80ba6d96",
-          "sharedWith": [],
-          "size": 0,
-          "authorId": "6acf2c325f0c25faa49a1984",
-          "updatedAt": 1793039043878,
-          "publishAt": "2026-10-26T18:24:03.878Z",
-          "color": "#000000",
-          "sharedWithMeCount": 0,
-          "createdAt": 1793039043878,
-          "seenBy": [],
-          "updatedBy": "6acf2c325f0c25faa49a1984",
-          "__v": 0
-        },
-        "courseId": "6aa6b93c106ddeec80ba6ce5",
-        "parentId": "6aa6b93c106ddeec80ba6d96",
-        "parentColor": "#194c9e",
-        "parentName": "Home",
-        "isHomeMaterial": true,
-        "childId": "68da68c843e7498ddb5573ba"
-      }
-    },
-    "createdAt": 1793039044339,
-    "deleteAt": "2026-11-26T18:24:04.339Z"
-  },
-  {
-    "_id": "6adf66bf68644386e51bb18b",
-    "userId": "68da691317e1492e0ffcd878",
-    "message": "Ali has الاسبوع الثالث:  درس لغة النصر  Link has been created in Arabic 105",
-    "type": "@notification-type/info",
-    "state": "@notification-state/read",
-    "imageUrl": null,
-    "redirection": {
-      "module": "@module/materials",
-      "reference": "6adf66be68644386e51bb0be",
-      "meta": {
-        "material": {
-          "_id": "6adf66be68644386e51bb0be",
-          "title": "الاسبوع الثالث:  درس لغة النصر ",
-          "description": "",
-          "type": "@material-type/link",
-          "materialState": "@material/state/published",
-          "schoolId": "68ac9f380396de90850769ce",
-          "courseId": "6aa6b93c106ddeec80ba6ce2",
-          "parentMaterialId": "6aa6b93c106ddeec80ba6d9e",
-          "sharedWith": [],
-          "size": 0,
-          "authorId": "693127318b3354ae195a5b87",
-          "updatedAt": 1793025726457,
-          "publishAt": "2026-10-26T14:42:06.457Z",
-          "url": "https://youtu.be/TVPsuhlOsEI?si=KiZi4iAaj_mM2sBc",
-          "contentType": "@content-type/video",
-          "createdAt": 1793025726457,
-          "seenBy": [],
-          "updatedBy": "693127318b3354ae195a5b87",
-          "__v": 0
-        },
-        "courseId": "6aa6b93c106ddeec80ba6ce2",
-        "parentId": "6aa6b93c106ddeec80ba6d9e",
-        "parentColor": "#194c9e",
-        "parentName": "Home",
-        "isHomeMaterial": true,
-        "childId": "68da68c843e7498ddb5573ba"
-      }
-    },
-    "createdAt": 1793025727342,
-    "deleteAt": "2026-11-26T14:42:07.342Z"
-  },
-  {
-    "_id": "6adf4649f5e4166fd559b934",
-    "userId": "68da691317e1492e0ffcd878",
-    "message": "Ali has Unit 2 - Biography  File has been created in English 105",
-    "type": "@notification-type/info",
-    "state": "@notification-state/read",
-    "imageUrl": null,
-    "redirection": {
-      "module": "@module/materials",
-      "reference": "6adf4647f5e4166fd559b6d3",
-      "meta": {
-        "material": {
-          "_id": "6adf4647f5e4166fd559b6d3",
-          "title": "Unit 2 - Biography ",
-          "description": "",
-          "type": "@material-type/file",
-          "materialState": "@material/state/published",
-          "schoolId": "68ac9f380396de90850769ce",
-          "courseId": "6aa6b93c106ddeec80ba6ce3",
-          "parentMaterialId": "6adf457668644386e50a5cb9",
-          "sharedWith": [],
-          "size": 160883,
-          "authorId": "68b7fbd4d14da440161e286b",
-          "updatedAt": 1793017415462,
-          "publishAt": "2026-10-26T12:23:35.462Z",
-          "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-105/materials/2026/oct/week-4/now-1793017414691/Unit2_Lesson2.8_Part2_Another_Biography.pptx.zip",
-          "extension": ".pptx",
-          "isProtected": false,
-          "isRestricted": false,
-          "fileName": "Unit2_Lesson2.8_Part2_Another_Biography.pptx",
-          "createdAt": 1793017415462,
-          "seenBy": [],
-          "updatedBy": "68b7fbd4d14da440161e286b",
-          "__v": 0
-        },
-        "courseId": "6aa6b93c106ddeec80ba6ce3",
-        "parentId": "6adf457668644386e50a5cb9",
-        "parentColor": "#000000",
-        "parentName": "Week 8",
-        "isHomeMaterial": false,
-        "childId": "68da68c843e7498ddb5573ba"
-      }
-    },
-    "createdAt": 1793017417476,
-    "deleteAt": "2026-11-26T12:23:37.476Z"
   }
 ]
