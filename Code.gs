@@ -795,22 +795,7 @@ function buildExamQuestions_(examCode) {
 }
 
 function doGet(e) {
-  const examCode = (e && e.parameter && e.parameter.exam) ? e.parameter.exam : '';
-  const student = (e && e.parameter && e.parameter.student) ? e.parameter.student.toLowerCase() : '';
-  const admin = (e && e.parameter && e.parameter.admin === '1') ? '1' : '0';
-  
-  let output;
-  try {
-    const template = HtmlService.createTemplateFromFile('Index');
-    template.examCode = examCode;
-    template.initialStudent = student;
-    template.initialAdmin = admin;
-    output = template.evaluate();
-  } catch (err) {
-    output = HtmlService.createHtmlOutputFromFile('Index');
-  }
-
-  return output
+  return HtmlService.createHtmlOutputFromFile('Index')
     .setTitle('Manaret El-Eman Assessment Portal')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1.0')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
