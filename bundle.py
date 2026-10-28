@@ -32,17 +32,33 @@ def resolve_template(html_path, base_dir=None):
     return re.sub(r'<\?!=\s*include\(([^)]+)\);?\s*\?>', repl, content)
 
 def build_bundle(output_path=None):
-    index_path = os.path.join(BASE_DIR, 'Index.html')
+    template_path = os.path.join(BASE_DIR, 'Index.template.html')
+    if not os.path.exists(template_path):
+        template_path = os.path.join(BASE_DIR, 'Index.html')
+
+    resolved = resolve_template(template_path, BASE_DIR)
+    
+    # 1. Primary Index.bundle.html
     if output_path is None:
         output_path = os.path.join(BASE_DIR, 'Index.bundle.html')
-
-    resolved = resolve_template(index_path, BASE_DIR)
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(resolved)
+
+    # 2. Synchronize Index.html as full standalone working file
+    full_index_path = os.path.join(BASE_DIR, 'Index.html')
+    with open(full_index_path, 'w', encoding='utf-8') as f:
+        f.write(resolved)
+
+    # 3. Synchronize Android kiosk assets if directory exists
+    android_asset = os.path.join(BASE_DIR, 'android', 'app', 'src', 'main', 'assets', 'www', 'index.html')
+    if os.path.exists(os.path.dirname(android_asset)):
+        with open(android_asset, 'w', encoding='utf-8') as f:
+            f.write(resolved)
 
     size_kb = os.path.getsize(output_path) / 1024
     lines_count = len(resolved.splitlines())
     print(f"Successfully assembled bundle -> {output_path}")
+    print(f"Synchronized full standalone Index.html -> {full_index_path}")
     print(f"Bundle size: {size_kb:.1f} KB | {lines_count} lines")
     return output_path
 

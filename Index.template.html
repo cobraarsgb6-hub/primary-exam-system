@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+
+
+  <title>Manaret El-Eman Assessment Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+
+  <?!= include('Styles'); ?>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Top Navigation -->
+    <header class="top-header">
+      <div class="brand-group">
+        <div class="brand-icon">M</div>
+        <div class="brand-meta">
+          <h1>Manaret El-Eman Assessment Portal</h1>
+          <p>Official Primary Interactive Assessment Platform</p>
+        </div>
+      </div>
+      <div>
+        <button id="btn-parent-portal-link" class="portal-btn" onclick="openParentPortal()">
+          🔐 Parent Portal
+        </button>
+      </div>
+    </header>
+
+    <!-- SCREEN 0: PORTAL GATEWAY (Zero Merging Doorway) -->
+    <div id="screen-gateway" class="screen active">
+      <div class="screen-view" style="text-align: center;">
+        <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 6px;">Select Student Assessment Portal</h2>
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 16px;">
+          Choose the student below to access their dedicated, grade-isolated assessment environment.
+        </p>
+        <!-- VISIBLE GATEWAY STUDENT CARDS: DIRECT & FAST 1-CLICK ACCESS -->
+        <div class="gateway-grid" id="gateway-test-grid" style="display: grid; margin-bottom: 24px;">
+          <!-- Ali Ahmed Gateway -->
+          <button type="button" id="btn-gateway-ali" class="gateway-card" onclick="openStudentPortal('ali')">
+            <div>
+              <div class="gateway-name">👦 Ali Ahmed</div>
+              <div class="gateway-grade">Year 5 (G5) &bull; International School</div>
+              <div class="gateway-desc">
+                <strong>Curriculum:</strong> English Grammar (Unit 2: Adverbials of Time, Place, Manner & Fronted Adverbials).
+              </div>
+            </div>
+            <span class="gateway-badge" id="badge-count-ali">10 Assessments Available</span>
+          </button>
+
+          <!-- Mostafa Ahmed Gateway -->
+          <button type="button" id="btn-gateway-mostafa" class="gateway-card" onclick="openStudentPortal('mostafa')">
+            <div>
+              <div class="gateway-name">👦 Mostafa Ahmed</div>
+              <div class="gateway-grade">Grade 6 (G6) &bull; International School</div>
+              <div class="gateway-desc">
+                <strong>Curricula:</strong> English Literacy (Fantasy Reading & Report Writing) + Arabic Language (Diagnostic Assessment).
+              </div>
+            </div>
+            <span class="gateway-badge" id="badge-count-mostafa">10 Assessments Available</span>
+          </button>
+        </div>
+
+        <!-- FAST PIN CODE ACCESS (Optional Alternative) -->
+        <div class="pin-gate-box" style="max-width: 440px; margin: 16px auto 20px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 20px 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
+          <div style="font-size: 1.5rem; margin-bottom: 4px;">🔐</div>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">Quick PIN Access</h3>
+          <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 14px;">
+            Or enter 4-digit PIN (Mostafa: <strong>2014</strong> &bull; Ali: <strong>2016</strong> &bull; Parent: <strong>1990</strong>)
+          </p>
+          <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px;">
+            <input type="password" id="pin-input" maxlength="8" placeholder="PIN Code" style="width: 150px; text-align: center; font-size: 1.3rem; letter-spacing: 4px; padding: 8px 12px; border: 2px solid #00b074; border-radius: 10px; outline: none; font-weight: 800; background: #f8fafc;" oninput="handlePinInput(this.value)" onkeydown="if(event.key==='Enter')submitPin()">
+            <div role="button" tabindex="0" id="btn-toggle-pin-visibility" onclick="togglePinVisibility()" title="Show/Hide PIN" style="cursor: pointer; padding: 9px 13px; background: #f1f5f9; border-radius: 10px; font-size: 1.1rem; user-select: none; border: 1px solid #cbd5e1;">👁️</div>
+          </div>
+          <div style="margin-top: 8px; margin-bottom: 6px;">
+            <div role="button" tabindex="0" id="btn-submit-pin" onclick="submitPin()" onkeydown="if(event.key==='Enter'||event.key===' ')submitPin()" style="display: inline-block; cursor: pointer; background: linear-gradient(135deg, #00b074 0%, #009661 100%); color: #ffffff; font-weight: 800; font-size: 0.92rem; padding: 8px 24px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 176, 116, 0.3); transition: all 0.15s ease;">
+              🚀 Enter Portal ➔
+            </div>
+          </div>
+          <div id="pin-feedback" style="font-size: 0.85rem; font-weight: 700; color: #dc2626; min-height: 20px; margin-top: 4px;"></div>
+        </div>
+      </div>
+    </div>
+
+        <!-- SCREEN 1: DEDICATED STUDENT PORTAL (100% Isolated & Coligo-Grade LMS) -->
+    <div id="screen-student" class="screen">
+      <div class="coligo-app-shell">
+
+        <!-- ========================================== -->
+        <!-- 1. LEFT COLIGO EMERALD GREEN SIDEBAR        -->
+        <!-- ========================================== -->
+        <aside class="coligo-sidebar" id="coligo-lms-sidebar">
+          <div class="coligo-brand-row">
+            <div class="coligo-brand-title">Coligo</div>
+          </div>
+
+          <!-- STUDENT SWITCHER PILL (Directly matches the screenshot!) -->
+          <div class="coligo-student-pill" id="sidebar-student-switcher" onclick="toggleStudentQuickSwitch()" title="Click to switch student between Ali and Mostafa" role="button" tabindex="0">
+            <div class="coligo-student-pill-left">
+              <span class="coligo-student-avatar" id="sidebar-student-avatar">🎓</span>
+              <span class="coligo-student-name" id="sidebar-student-name">Ali</span>
+            </div>
+            <span class="coligo-dropdown-arrow">▾</span>
+          </div>
+
+          <!-- VERTICAL MENU NAVIGATION (Matches screenshot items & links to sections) -->
+          <nav class="coligo-nav-menu" aria-label="Coligo Navigation">
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab active" id="tab-nav-today" onclick="if(typeof closeSubjectWorkspace==='function')closeSubjectWorkspace(); switchStudentSection('sec-today', true);">
+              <span class="coligo-nav-icon">📚</span>
+              <span class="coligo-nav-label">My Subjects</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-materials" onclick="if(typeof closeSubjectWorkspace==='function')closeSubjectWorkspace(); switchStudentSection('sec-today', true);" style="display: none;">
+              <span class="coligo-nav-icon">📄</span>
+              <span class="coligo-nav-label">Courses</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-exams" onclick="switchStudentSection('sec-exams', true);" style="display: none;">
+              <span class="coligo-nav-icon">🔖</span>
+              <span class="coligo-nav-label">Gradebook</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-videos" onclick="switchStudentSection('sec-videos', true);" style="display: none;">
+              <span class="coligo-nav-icon">📖</span>
+              <span class="coligo-nav-label">Channel Book</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-attendance" style="display: none;">
+              <span class="coligo-nav-icon">👤</span>
+              <span class="coligo-nav-label">Attendance</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-announcements" style="display: none;">
+              <span class="coligo-nav-icon">💬</span>
+              <span class="coligo-nav-label">Announcements</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-briefings" style="display: none;">
+              <span class="coligo-nav-icon">💡</span>
+              <span class="coligo-nav-label">Study Briefings</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-all" style="display: none;">
+              <span class="coligo-nav-icon">👁️</span>
+              <span class="coligo-nav-label">All Modules</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item coligo-tab" id="tab-nav-parent" onclick="returnToGateway();" style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 10px;">
+              <span class="coligo-nav-icon">🚪</span>
+              <span class="coligo-nav-label">Switch PIN / Exit</span>
+            </div>
+          </nav>
+
+          <!-- BOTTOM UTILITY MENU -->
+          <div class="coligo-sidebar-bottom" style="display: none;">
+            <div role="button" tabindex="0" class="coligo-nav-item" onclick="openColigoGuide()">
+              <span class="coligo-nav-icon">❓</span>
+              <span class="coligo-nav-label">Guide to Coligo</span>
+            </div>
+            <div role="button" tabindex="0" class="coligo-nav-item" onclick="reportAnIssue()">
+              <span class="coligo-nav-icon">🎧</span>
+              <span class="coligo-nav-label">Report an issue</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ========================================== -->
+        <!-- 2. RIGHT MAIN CONTENT WRAPPER               -->
+        <!-- ========================================== -->
+        <div class="coligo-main-wrapper">
+          
+          <!-- TOP COLIGO APP BAR (Matches screenshot topbar!) -->
+          <header class="coligo-topbar">
+            <div class="coligo-topbar-left">
+              <div class="coligo-toggle-sidebar" onclick="toggleSidebarCollapse()" title="Toggle Sidebar">⇄</div>
+              <div>
+                <h1 class="coligo-view-title" id="coligo-view-title">Dashboard</h1>
+                <div style="font-size: 0.78rem; color: #64748b; font-weight: 600;" id="sp-student-grade">Grade Level &bull; International School</div>
+              </div>
+            </div>
+
+            <div class="coligo-topbar-center">
+              <div class="coligo-school-badge">
+                <span style="font-size: 1.15rem;">🏫</span>
+                <span style="font-weight: 800; color: #0f172a;" id="sp-student-title">Manaret El-Eman International School</span>
+              </div>
+            </div>
+
+            <div class="coligo-topbar-right">
+              <span class="live-sync-pill" id="coligo-live-badge">🟢 Synced with Coligo: 215 Files &bull; 25 Updates</span>
+
+              <div class="coligo-action-icon" title="Notifications" onclick="alert('All curriculum updates synced from Coligo LMS.')">
+                <span class="icon-glyph">🔔</span>
+                <span class="notification-dot"></span>
+              </div>
+              <div class="coligo-action-icon" title="Messages" onclick="alert('Teacher Messages: All active instructions recorded in Today Hub.')">
+                <span class="icon-glyph">✉️</span>
+              </div>
+              <div class="coligo-lang-badge" title="Language: English (Pure)">En</div>
+              <div class="coligo-profile-avatar" onclick="openParentPortal()" title="Parent Portal Profile">
+                <span>👨‍👧‍👦</span>
+              </div>
+
+              <!-- Button #4 (Preserving invariant) -->
+              <button class="portal-btn" onclick="openParentPortal()" style="margin-left: 8px;">🔐 Parent Portal</button>
+              <a role="button" tabindex="0" class="portal-btn" style="background: linear-gradient(135deg, #1e3a8a, #4338ca); color: #fff; border: 1px solid #6366f1; text-decoration: none; display: inline-flex; align-items: center;" onclick="window.open('Mostafa_Corel_Workspace.html', '_blank')">🎨 CorelDraw Canvas</a>
+              <!-- Button #5 (Preserving invariant: Switch Portal / PIN Lock) -->
+              <button class="portal-btn" onclick="returnToGateway()">🚪 Switch PIN</button>
+            </div>
+          </header>
+
+          <!-- MAIN CANVAS CONTENT -->
+          <main class="coligo-main-canvas">
+
+            <!-- ============================================================= -->
+            <!-- 🌟 SUBJECT-FIRST MINIMALIST WORKSPACE (Clean & Zero-Bloat)   -->
+            <!-- ============================================================= -->
+
+            <!-- VIEW 1: MY SUBJECTS GRID (Default Home Screen) -->
+            <div id="view-subjects-hub" style="display: block; padding-top: 8px;">
+              <div style="margin-bottom: 20px;">
+                <h2 style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">📚 My Subjects</h2>
+                <p style="font-size: 0.88rem; color: #64748b;">Click on any subject below to see its homework, worked examples, practice quiz, and official grades.</p>
+              </div>
+
+              <!-- Clean Grid of Subjects -->
+              <div class="clean-subjects-grid" id="clean-subjects-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; margin-bottom: 30px;">
+                <!-- Populated dynamically per student -->
+              </div>
+            </div>
+
+            <!-- VIEW 2: SINGLE SUBJECT WORKSPACE (Inside the selected subject) -->
+            <div id="view-subject-workspace" style="display: none; padding-top: 8px;">
+              
+              <!-- Back button & Subject Title Header -->
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; flex-wrap: wrap; gap: 12px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div role="button" tabindex="0" onclick="closeSubjectWorkspace()" style="background: #ffffff; border: 1.5px solid #cbd5e1; padding: 8px 16px; border-radius: 10px; font-weight: 800; font-size: 0.88rem; color: #1e293b; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    ← Back to All Subjects
+                  </div>
+                  <div>
+                    <h2 id="sw-subject-title" style="font-size: 1.35rem; font-weight: 800; color: #0f172a; margin: 0;">Mathematics 106</h2>
+                    <span id="sw-subject-sub" style="font-size: 0.8rem; color: #64748b;">Year 6A &bull; Cambridge International</span>
+                  </div>
+                </div>
+                <div id="sw-subject-grade-badge" style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; font-weight: 800; font-size: 0.95rem; padding: 6px 14px; border-radius: 10px;">
+                  Official Grade: 90.32%
+                </div>
+              </div>
+
+              <!-- 4 CLEAN SECTIONS INSIDE THIS SUBJECT -->
+              <div style="display: flex; flex-direction: column; gap: 20px;">
+                
+                <!-- CARD 1: HOMEWORK REQUIRED -->
+                <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 1.3rem;">📝</span>
+                      <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">1. Active Homework</h3>
+                    </div>
+                    <span id="sw-hw-status-badge" style="font-size: 0.78rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; background: #fee2e2; color: #b91c1c;">
+                      🔴 Pending Completion
+                    </span>
+                  </div>
+                  <div id="sw-hw-content" style="background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 12px; padding: 16px; margin-bottom: 14px;">
+                    <!-- Populated dynamically -->
+                  </div>
+                  <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <div role="button" tabindex="0" id="sw-btn-toggle-done" onclick="toggleCurrentSubjectHomework()" style="background: #00b074; color: #ffffff; border: none; padding: 10px 22px; border-radius: 10px; font-weight: 800; font-size: 0.9rem; cursor: pointer; box-shadow: 0 2px 6px rgba(0,176,116,0.25);">
+                      ✓ Confirm Homework Completed
+                    </div>
+                    <span id="sw-hw-saved-msg" style="font-size: 0.8rem; color: #047857; font-weight: 700;"></span>
+                  </div>
+                </div>
+
+                <!-- CARD 2: QUICK BRIEFING & WORKED EXAMPLE -->
+                <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                    <span style="font-size: 1.3rem;">💡</span>
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">2. Lesson Briefing & Worked Example</h3>
+                  </div>
+                  <div id="sw-briefing-content" style="line-height: 1.6; font-size: 0.88rem; color: #334155;">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- CARD 3: PRACTICE QUIZ -->
+                <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 1.3rem;">🎯</span>
+                      <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">3. Practice Quiz</h3>
+                    </div>
+                    <span style="font-size: 0.78rem; font-weight: 700; color: #475569; background: #f1f5f9; padding: 3px 9px; border-radius: 6px;">⏱️ 10 Mins &bull; 5 Questions</span>
+                  </div>
+                  <p id="sw-exam-desc" style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
+                    Practice exam on today's core lessons with instant scoring and detailed pedagogical explanations.
+                  </p>
+                  <div>
+                    <div role="button" tabindex="0" id="sw-btn-start-exam" onclick="startCurrentSubjectExam()" style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: #ffffff; border: none; padding: 11px 26px; border-radius: 10px; font-weight: 800; font-size: 0.92rem; cursor: pointer; box-shadow: 0 3px 8px rgba(30,58,138,0.25);">
+                      🚀 Start Practice Quiz
+                    </div>
+                  </div>
+                </div>
+
+                <!-- CARD 4: SUBJECT GRADES & REPORT -->
+                <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
+                    <span style="font-size: 1.3rem;">📊</span>
+                    <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">4. Subject Grades & Performance</h3>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px;">
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px;">
+                      <div style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">Official Coligo School Grade</div>
+                      <div id="sw-coligo-grade-num" style="font-size: 1.5rem; font-weight: 900; color: #047857;">90.32%</div>
+                      <div id="sw-coligo-grade-detail" style="font-size: 0.76rem; color: #15803d; margin-top: 4px;">Classwork: 100% &bull; Homework: 95.8% &bull; Quizzes: 80%</div>
+                    </div>
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 14px;">
+                      <div style="font-size: 0.78rem; font-weight: 700; color: #1e40af; margin-bottom: 4px;">Our Practice Exams Average</div>
+                      <div id="sw-practice-grade-num" style="font-size: 1.5rem; font-weight: 900; color: #1d4ed8;">96%</div>
+                      <div style="font-size: 0.76rem; color: #2563eb; margin-top: 4px;">Mastery Level &bull; 0 Mistakes on Core Rules</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+            <!-- Streamlined Overview Bar -->
+            <div class="coligo-overview-bar" style="margin-bottom: 14px;">
+              <div class="coligo-overview-title" style="font-size: 1.15rem; font-weight: 800; color: #0f172a;">Today's Learning Desk</div>
+            </div>
+
+            <!-- SECTION 1: TODAY'S HUB & HOMEWORK (2-Column Cards matching Screenshot) -->
+            <section class="lms-section active" id="sec-today">
+              <div class="coligo-grid-layout">
+                
+                <!-- LEFT COLUMN: Announcements (What was taught + Homework) -->
+                <div class="coligo-white-card" id="card-announcements">
+                  <div class="coligo-card-title-row">
+                    <h3 class="coligo-card-title">Announcements</h3>
+                    <span class="section-badge" style="margin: 0; font-size: 0.72rem; background: #ecfdf5; color: #047857; border-color: #a7f3d0;">Live School Feed</span>
+                  </div>
+
+                  <!-- Classwork Sub-Card -->
+                  <div style="margin-bottom: 22px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                      <span style="font-size: 1.2rem;">📖</span>
+                      <div>
+                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #1e293b;">What Was Taught in School</h4>
+                        <span id="cw-date-sub" style="font-size: 0.78rem; color: #64748b;">Term 1 &bull; Week 8 &bull; October 2026</span>
+                      </div>
+                    </div>
+                    <div class="hub-card-body" id="daily-classwork-list">
+                      <!-- Dynamically populated per day and student -->
+                    </div>
+                  </div>
+
+                  <!-- Homework Sub-Card -->
+                  <div style="border-top: 1px solid #f1f5f9; padding-top: 18px;">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                      <span style="font-size: 1.2rem;">📝</span>
+                      <div>
+                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #1e293b;">Active Homework & Notices</h4>
+                        <span style="font-size: 0.78rem; color: #64748b;">Direct Live Feed from Coligo LMS</span>
+                      </div>
+                    </div>
+                    <div class="hub-card-body" id="daily-homework-list">
+                      <!-- Dynamically populated from notifications -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- RIGHT COLUMN: Attendance & Submission Deadlines -->
+                <div class="coligo-right-column">
+                  
+                  <!-- Attendance Card -->
+                  <div class="coligo-white-card" id="card-attendance">
+                    <div class="coligo-card-title-row">
+                      <h3 class="coligo-card-title">Attendance</h3>
+                      <div class="coligo-card-pills">
+                        <span class="coligo-pill-toggle active" id="att-pill-today" onclick="toggleAttendancePill('today')">Today</span>
+                        <span class="coligo-pill-toggle" id="att-pill-all" onclick="toggleAttendancePill('all')">All</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Days of the week selector -->
+                    <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 8px;">Select School Day:</div>
+                    <div class="day-picker-group" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px;">
+                      <div role="button" tabindex="0" class="day-pill" onclick="selectSchoolDay('sun')" id="dpill-sun">Sunday</div>
+                      <div role="button" tabindex="0" class="day-pill" onclick="selectSchoolDay('mon')" id="dpill-mon">Monday</div>
+                      <div role="button" tabindex="0" class="day-pill active" onclick="selectSchoolDay('tue')" id="dpill-tue">Tuesday (Today)</div>
+                      <div role="button" tabindex="0" class="day-pill" onclick="selectSchoolDay('wed')" id="dpill-wed">Wednesday</div>
+                      <div role="button" tabindex="0" class="day-pill" onclick="selectSchoolDay('thu')" id="dpill-thu">Thursday</div>
+                    </div>
+
+                    <div id="attendance-status-box" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px;">
+                      <span style="font-size: 1.5rem;">✅</span>
+                      <div>
+                        <div style="font-weight: 800; font-size: 0.88rem; color: #166534;">Present &bull; On-Time</div>
+                        <div style="font-size: 0.78rem; color: #15803d;">All core lessons registered &bull; 100% Attendance Rate</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Submission Deadlines Card (Hero Today Mission) -->
+                  <div class="coligo-white-card" id="card-submission-deadlines">
+                    <div class="coligo-card-title-row">
+                      <h3 class="coligo-card-title">Submission Deadlines</h3>
+                      <span style="font-size: 1.25rem;" title="Verified On Schedule">🛡️</span>
+                    </div>
+
+                    <!-- TODAY'S MISSION HERO BOX -->
+                    <div id="sp-today-mission-box" style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1.5px solid #bfdbfe; border-radius: 14px; padding: 16px;">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-size: 0.72rem; font-weight: 800; background: #00b074; color: #ffffff; padding: 3px 8px; border-radius: 6px;">🎯 TODAY'S MISSION</span>
+                        <span id="tm-date-badge" style="font-size: 0.76rem; font-weight: 700; color: #1e40af; background: #dbeafe; padding: 2px 7px; border-radius: 6px;">Active Schedule</span>
+                      </div>
+                      <h3 id="tm-mission-title" style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 4px 0 6px;">
+                        Daily Mastery Assessment
+                      </h3>
+                      <p id="tm-mission-desc" style="font-size: 0.82rem; color: #334155; margin-bottom: 12px; line-height: 1.45;">
+                        Focus: Core Curriculum Lesson & Targeted Cognitive Skill
+                      </p>
+                      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <!-- Button #6 -->
+                        <button type="button" class="btn-primary" id="btn-launch-today" style="width: auto; padding: 9px 20px; font-size: 0.88rem; font-weight: 800; background: #00b074; border-color: #009d66;" onclick="launchTodayMission()">
+                          🚀 Start Today's Mission &rarr;
+                        </button>
+                        <span id="tm-mission-meta" style="font-size: 0.78rem; font-weight: 600; color: #475569;">⏱️ 10-20 Mins &bull; 10 Questions</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </section>
+
+<section class="lms-section" id="sec-exams">
+
+          <!-- SUBTAB SWITCHER: Official Coligo Grades vs AI Practice Exams -->
+          <div class="gradebook-subnav-row">
+            <div role="button" tabindex="0" class="gradebook-subtab-btn" id="subtab-coligo-grades" onclick="switchGradebookSubview('coligo')">
+              <span>🏫</span> Official Coligo School Grades (<span id="btn-coligo-overall-score">59.88%</span>)
+            </div>
+            <div role="button" tabindex="0" class="gradebook-subtab-btn active" id="subtab-ai-exams" onclick="switchGradebookSubview('ai-exams')">
+              <span>📝</span> Autonomous AI Practice Exams
+            </div>
+          </div>
+
+          <!-- SUBVIEW 1: OFFICIAL COLIGO SCHOOL GRADES (Matches Coligo Gradebook Screenshot!) -->
+          <div id="view-coligo-grades" style="display: none;">
+            <!-- Overall Grade Banner -->
+            <div class="coligo-overall-banner">
+              <div class="coligo-overall-header">
+                <span>Overall Grade</span>
+                <span style="color: #00b074; font-size: 1.4rem;" id="coligo-overall-pct">59.88%</span>
+                <span style="font-size: 0.8rem; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-left: auto;">Trimester 1 &bull; Academic Year 2026/2027</span>
+              </div>
+              <div class="coligo-scores-rail" id="coligo-scores-rail">
+                <!-- Dynamically generated per student -->
+              </div>
+            </div>
+
+            <!-- 10 Course Grade Cards Grid -->
+            <div class="coligo-grade-cards-grid" id="coligo-grade-cards-grid">
+              <!-- Dynamically generated per student -->
+            </div>
+          </div>
+
+          <!-- SUBVIEW 2: AI PRACTICE EXAMS (Our Assessment Bank & Refreshers) -->
+          <div id="view-ai-exams" style="display: block;">
+            
+            <!-- Adaptive Difficulty Selector -->
+            <div class="diff-selector-card">
+              <div class="diff-selector-label">
+                <span style="font-size: 1.3rem;">⚡</span>
+                <div>
+                  <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;">Adaptive Difficulty Engine</div>
+                  <div style="font-size: 0.76rem; color: #64748b;">Targeted challenge level for generated questions</div>
+                </div>
+              </div>
+              <div class="diff-selector-options">
+                <div role="button" tabindex="0" class="diff-pill" id="diff-pill-1" onclick="setAdaptiveDifficulty(1)">Level 1: Foundational</div>
+                <div role="button" tabindex="0" class="diff-pill active" id="diff-pill-2" onclick="setAdaptiveDifficulty(2)">Level 2: Standard Cambridge</div>
+                <div role="button" tabindex="0" class="diff-pill" id="diff-pill-3" onclick="setAdaptiveDifficulty(3)">Level 3: Advanced Challenge</div>
+              </div>
+            </div>
+
+            <div class="section-header-row">
+              <div class="section-title-wrap">
+                <span class="section-badge">📝 Complete Assessment Bank</span>
+                <h3 class="section-heading">Assessment Center & Periodic Quizzes</h3>
+              </div>
+            <!-- Category Filter Chips -->
+            <div class="exam-filter-group" id="exam-category-chips">
+              <div role="button" tabindex="0" class="filter-chip active" onclick="filterExamCardsCategory('ALL')" id="efilter-ALL">All Categories</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsCategory('DAILY')" id="efilter-DAILY">📅 Daily</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsCategory('WEEKLY')" id="efilter-WEEKLY">🎯 Weekly (W1-W4)</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsCategory('MONTHLY')" id="efilter-MONTHLY">🏆 Monthly & Capstone</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsCategory('DIAGNOSTIC')" id="efilter-DIAGNOSTIC">🔍 Diagnostic & Foundational</div>
+            </div>
+          </div>
+
+          <!-- Coligo-Grade Subject Filter Bar (Multi-Subject Navigation) -->
+          <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span style="font-size: 1.1rem;">📚</span>
+              <span style="font-size: 0.88rem; font-weight: 800; color: #1e293b;">Filter by Subject:</span>
+            </div>
+            <div class="exam-filter-group" id="exam-subject-chips" style="margin: 0;">
+              <div role="button" tabindex="0" class="filter-chip active" onclick="filterExamCardsSubject('ALL')" id="esubj-ALL">✨ All Subjects</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsSubject('MATH')" id="esubj-MATH">📐 Mathematics</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsSubject('SCIENCE')" id="esubj-SCIENCE">🔬 Science</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsSubject('ENGLISH')" id="esubj-ENGLISH">📖 English Literacy</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsSubject('ARABIC')" id="esubj-ARABIC">📝 Arabic Language</div>
+              <div role="button" tabindex="0" class="filter-chip" onclick="filterExamCardsSubject('ICT')" id="esubj-ICT">💻 ICT Computing</div>
+            </div>
+          </div>
+
+          <!-- Master-Detail 2-Column Grid -->
+          <div class="exam-master-detail-grid">
+            <!-- Left Column: Exam List -->
+            <div class="exam-list-pane">
+              <div style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; display: flex; justify-content: space-between;">
+                <span>📚 Available Assessments</span>
+                <span id="exam-cards-count-label">14 Assessments</span>
+              </div>
+              <div id="sp-exams-list">
+                <!-- Dynamically populated with .exam-item-card buttons -->
+              </div>
+            </div>
+
+            <!-- Right Column: Assessment Preview Hero & Action Box -->
+            <div class="exam-hero-pane">
+              <div class="assessment-hero" style="margin-top: 0;">
+                <h3 id="sp-hero-title">Assessment Title</h3>
+                <div class="hero-meta-row">
+                  <div>📚 Subject: <span id="sp-hero-subject">English</span></div>
+                  <div>⏱️ Duration: <span id="sp-hero-duration">20</span> Mins</div>
+                  <div>❓ Questions: <span id="sp-hero-count">10</span></div>
+                  <div>🎯 2 Attempts</div>
+                </div>
+              </div>
+
+              <!-- PRE-EXAM QUICK CONCEPT REFRESHER (2-Minute Study Guide) -->
+              <div id="sp-refresher-container">
+                <!-- Populated dynamically based on active exam -->
+              </div>
+
+              <!-- Real-time Status Alert (New, Completed, Pending Approval, Approved) -->
+              <div id="sp-status-container" role="status" aria-live="polite">
+                <!-- Dynamic Status -->
+              </div>
+
+              <!-- Action Button (btn-start-exam injected dynamically) -->
+              <div id="sp-action-container">
+                <!-- Dynamic Action Button -->
+              </div>
+            </div>
+          </div>
+          </div> <!-- Close #view-ai-exams -->
+        </section>
+
+        <!-- SECTION 3: CURRICULUM MATERIALS & COLIGO DOWNLOADS (📚 Courses & Materials) -->
+        <section class="lms-section" id="sec-materials">
+          
+          <!-- Filter Bar matching Authentic Coligo Courses Screen -->
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-bottom: 22px;">
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 9px 16px; font-size: 0.88rem; font-weight: 700; color: #1e293b; user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+              📅 Trimester 1 (Sep 2026 - Jul 2027) ▾
+            </div>
+            <select id="courses-subject-select" onchange="filterColigoCourseGrid(this.value)" style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 9px 16px; font-size: 0.88rem; font-weight: 700; color: #1e293b; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+              <option value="ALL">✨ All Subjects (10 Enrolled Courses)</option>
+              <option value="Math">📐 Mathematics</option>
+              <option value="Science">🔬 Science</option>
+              <option value="English">📖 English</option>
+              <option value="Arabic">📝 Arabic</option>
+              <option value="French">🇫🇷 French</option>
+              <option value="ICT">💻 ICT &amp; Computing</option>
+              <option value="Social Studies">🌍 Social Studies</option>
+              <option value="Literature">📚 Literature</option>
+              <option value="Global Perspectives">🌐 Global Perspectives</option>
+              <option value="Attendance">👤 Attendance</option>
+            </select>
+            <input type="text" id="courses-search-input" oninput="searchColigoCourses(this.value)" placeholder="🔍 Search courses or download notes..." style="flex: 1; min-width: 220px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 9px 16px; font-size: 0.88rem; font-weight: 600; color: #1e293b; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          </div>
+
+          <!-- 10 Official School Course Cards Grid (Matching Coligo Screenshot 1) -->
+          <div class="coligo-courses-grid" id="coligo-courses-grid" style="margin-bottom: 32px;">
+            <!-- Dynamically populated with 10 courses per student -->
+          </div>
+
+          <!-- Downloadable Files Section -->
+          <div class="section-header-row" style="border-top: 2px solid #e2e8f0; padding-top: 24px;">
+            <div class="section-title-wrap">
+              <span class="section-badge">📚 Official School Materials</span>
+              <h3 class="section-heading">Course Materials & Downloaded School Notes (<span id="materials-count-badge">111 Files</span>)</h3>
+            </div>
+            <!-- Subject Filter Chips -->
+            <div class="exam-filter-group" id="materials-subject-chips">
+              <!-- Dynamically populated per student's subjects -->
+            </div>
+          </div>
+          <!-- Materials Grid -->
+          <div class="materials-cards-grid" id="materials-cards-container">
+            <!-- Dynamically populated with real files -->
+          </div>
+        </section>
+
+        <!-- SECTION 4: VIDEO EXPLANATIONS (🎬 Video Masterclasses) -->
+        <section class="lms-section" id="sec-videos">
+          <div class="section-header-row">
+            <div class="section-title-wrap">
+              <span class="section-badge">🎬 Interactive Video Masterclasses</span>
+              <h3 class="section-heading">Curated Video Lessons & Curriculum Tutorials</h3>
+            </div>
+          </div>
+          <!-- Video Cards Grid -->
+          <div class="video-cards-grid" id="student-video-cards-container">
+            <!-- Dynamically populated -->
+          </div>
+        </section>
+
+        <!-- SECTION 5: CONCEPT BRIEFINGS (💡 Quick Study Briefings) -->
+        <section class="lms-section" id="sec-briefings">
+          <div class="section-header-row">
+            <div class="section-title-wrap">
+              <span class="section-badge">💡 Quick Study Briefings</span>
+              <h3 class="section-heading">Core Rules & 2-Minute Concept Refresher Briefings</h3>
+            </div>
+          </div>
+          <div class="briefings-cards-grid" id="student-briefings-container">
+            <!-- Dynamically populated with concept briefings -->
+          </div>
+        </section>
+
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 2: ACTIVE ASSESSMENT QUIZ -->
+    <div id="screen-quiz" class="screen">
+      <div class="quiz-sticky-header">
+        <div>
+          <div class="quiz-progress-text" id="quiz-progress-indicator" aria-live="polite">Question 1 of 10</div>
+          <div class="progress-bar-container" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="quiz-progress-bar">
+            <div class="progress-bar-fill" id="progress-bar-fill"></div>
+          </div>
+        </div>
+        <div class="quiz-timer" id="quiz-timer-display" aria-live="off">⏱️ 20:00</div>
+      </div>
+
+      <div class="question-card" id="quiz-question-box">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- SCREEN 3: RESULT REPORT -->
+    <div id="screen-result" class="screen">
+      <div class="result-score-banner">
+        <div style="font-size: 0.95rem; opacity: 0.9;" id="res-student-header">Assessment Report</div>
+        <div class="score-circle" id="res-score-display">10 / 10</div>
+        <div class="score-rating" id="res-rating-display">Excellent! 🌟</div>
+        <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 6px;" id="res-time-spent">Time Spent: --</div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 12px;">Detailed Pedagogical Review & Corrections</h3>
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 18px;">
+          Review the complete analysis below, including rules, worked examples, and common mistake breakdowns.
+        </p>
+        <div id="review-items-container">
+          <!-- Dynamic reviews -->
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+          <button class="btn-secondary" style="flex: 1;" onclick="openParentPortal()">
+            Parent Dashboard
+          </button>
+          <button class="btn-primary" style="flex: 1;" onclick="returnToStudentPortal()">
+            Back to Assessments
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCREEN 4: PARENT & TEACHER PORTAL (Pure English, Zero Merging) -->
+    <div id="screen-admin" class="screen">
+      <div class="card" style="padding: 22px;">
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 8px;">
+          <div>
+            <h2 style="font-size: 1.25rem; font-weight: 800;">👨‍🏫 Parent & Teacher Portal</h2>
+            <p style="font-size: 0.82rem; color: var(--text-muted);">Real-time submissions, retake approvals, and question bank inspection</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <a id="admin-sheet-link" href="#" target="_blank" class="portal-btn" style="color: var(--primary);">
+              📂 Open Google Sheet
+            </a>
+            <button class="portal-btn" onclick="openParentPortal()" style="margin-right: 6px;">🔐 Parent Portal</button>
+            <button class="portal-btn" onclick="returnToGateway()">
+              « Exit Portal
+            </button>
+          </div>
+        </div>
+
+        <!-- Student Selector Tabs (Strict Isolation) -->
+        <div class="parent-student-switcher">
+          <button type="button" id="sw-ali" class="switch-student-btn active" onclick="switchAdminStudent('Ali')">
+            👦 Ali Ahmed (Year 5)
+          </button>
+          <button type="button" id="sw-mostafa" class="switch-student-btn" onclick="switchAdminStudent('Mostafa')">
+            👦 Mostafa Ahmed (Grade 6)
+          </button>
+        </div>
+
+        <!-- Pending Retake Requests Banner for Selected Student -->
+        <div id="admin-retake-banner" style="display: none; background: var(--purple-bg); border: 1.5px solid #c4b5fd; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px;">
+          <div style="font-weight: 800; font-size: 0.95rem; color: var(--purple); margin-bottom: 10px;">
+            🔔 Pending Retake Requests:
+          </div>
+          <div id="admin-retake-list"></div>
+        </div>
+
+        <!-- KPI Metric Cards for Active Student -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center;">
+            <span style="font-size: 1.6rem; font-weight: 800; color: var(--primary);" id="kpi-student-attempts">0</span>
+            <span style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-top: 2px;">Completed Assessments</span>
+          </div>
+          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 14px; text-align: center;">
+            <span style="font-size: 1.6rem; font-weight: 800; color: var(--success);" id="kpi-student-latest">--</span>
+            <span style="display: block; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); margin-top: 2px;">Latest Score Record</span>
+          </div>
+        </div>
+
+        <!-- Parent Sub Navigation Tabs (Complete Web Hub) -->
+        <div class="parent-tab-row">
+          <button id="ptab-history" class="parent-tab-btn active" onclick="switchParentView('history')">
+            📊 Submissions Archive
+          </button>
+          <button id="ptab-analytics" class="parent-tab-btn" onclick="switchParentView('analytics')">
+            📈 Diagnostic & Evaluation Report
+          </button>
+          <button id="ptab-plan" class="parent-tab-btn" onclick="switchParentView('plan')">
+            📅 28-Day Study Plan
+          </button>
+          <button id="ptab-inspector" class="parent-tab-btn" onclick="switchParentView('inspector')">
+            📖 Question Bank
+          </button>
+          <button id="ptab-operations" class="parent-tab-btn" onclick="switchParentView('operations')">
+            🚀 Weekly / Monthly Ops
+          </button>
+        </div>
+
+        <!-- VIEW A: SUBMISSION HISTORY -->
+        <div id="pview-history">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+            <button class="portal-btn" onclick="clearDeviceLocks()">
+              🔓 Reset Device Locks
+            </button>
+          </div>
+          <div id="admin-submissions-container">
+            <div style="text-align: center; padding: 30px; color: var(--text-muted);">
+              Loading student submissions...
+            </div>
+          </div>
+        </div>
+
+                <!-- VIEW C: WEEKLY & MONTHLY ASSESSMENT OPERATIONS -->
+        <div id="pview-operations" style="display: none;">
+          <div style="background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 4px;" id="ops-student-headline">
+                  Continuous Assessment Engine &bull; Ali Ahmed
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                  Automate weekly cycles, monthly cumulative milestones, and targeted mistake re-tests.
+                </p>
+              </div>
+              <span id="ops-student-badge" class="meta-pill pill-indigo">Year 5 (G5)</span>
+            </div>
+
+            <!-- Result Box (Hidden until generation) -->
+            <div id="ops-result-box" style="display: none; background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+              <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; color: #047857; margin-bottom: 6px;">
+                <span>✅</span> <span id="ops-result-title">Exam Generated Successfully!</span>
+              </div>
+              <p id="ops-result-desc" style="font-size: 0.86rem; color: #065f46; margin-bottom: 12px;">
+                The assessment is registered in the database and ready for the student.
+              </p>
+              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <input type="text" id="ops-result-url" readonly style="flex: 1; min-width: 200px; padding: 10px 12px; font-size: 0.85rem; border: 1px solid #a7f3d0; border-radius: 8px; background: #fff;" />
+                <button type="button" class="btn-primary" style="width: auto; padding: 10px 18px;" onclick="copyOpsUrl()">
+                  📋 Copy Link
+                </button>
+                <a id="ops-result-open" href="#" target="_blank" class="btn-secondary" style="width: auto; padding: 10px 18px; text-decoration: none; text-align: center;">
+                  🚀 Open Exam
+                </a>
+              </div>
+            </div>
+
+            <!-- Google Drive Cloud Video Sync Section -->
+            <div style="background: #f8fafc; border: 1.5px solid #0369a1; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.3rem;">☁️</span>
+                  <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #0369a1;">Google Drive Video Cloud Sync</h4>
+                </div>
+                <span class="meta-pill pill-cyan" id="drive-sync-pill">Ad-Free Cloud Streaming</span>
+              </div>
+              <p style="font-size: 0.85rem; color: #475569; margin: 0 0 12px 0;">
+                Paste your Google Drive shared folder link or folder ID. The assessment portal will automatically stream all uploaded educational videos directly to any tablet, iPad, or mobile phone without YouTube ads.
+              </p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <input type="text" id="drive-folder-url-input" placeholder="https://drive.google.com/drive/folders/..." style="flex: 1; min-width: 280px; padding: 10px 14px; font-size: 0.85rem; border: 1px solid #cbd5e1; border-radius: 8px; background: #fff;" />
+                <button type="button" class="btn-primary" style="width: auto; padding: 10px 20px; background: #0369a1;" onclick="syncGoogleDriveVideosAction()">
+                  🔄 Sync Drive Videos Now
+                </button>
+              </div>
+              <div id="drive-sync-feedback" style="margin-top: 10px; font-size: 0.84rem; display: none;"></div>
+            </div>
+
+            
+            <!-- Coligo LMS 24/7 Cloud Hub Section -->
+            <div style="background: #f0fdf4; border: 1.5px solid #15803d; border-radius: 12px; padding: 18px; margin-bottom: 20px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.4rem;">🏫</span>
+                  <div>
+                    <h4 style="margin: 0; font-size: 1.05rem; font-weight: 800; color: #15803d;">Coligo LMS Cloud Ingestion & Learning Vault</h4>
+                    <div style="font-size: 0.76rem; color: #166534;">24/7 Continuous Cloud Sync (Ali & Mostafa) &bull; Runs 100% Online via Cloudflare Edge</div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <span class="meta-pill" style="background: #dcfce7; color: #15803d; border: 1px solid #86efac; font-weight: 800;" id="coligo-cloud-status-pill">🟢 Coligo Cloud Active</span>
+                </div>
+              </div>
+              <p style="font-size: 0.83rem; color: #334155; margin: 0 0 12px 0;">
+                The system autonomously retrieves worksheets, textbooks, lesson presentations, weekly plans, announcements, and teacher notes directly from Coligo LMS to ensure 100% curriculum alignment.
+              </p>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px;">
+                <button type="button" class="btn-primary" style="width: auto; padding: 9px 18px; background: #15803d; font-weight: 700;" onclick="syncColigoCloudNowAction()">
+                  🔄 Run Coligo Cloud Sync (1-Click)
+                </button>
+                <button type="button" class="portal-btn" style="padding: 9px 16px; background: #fff; border: 1.5px solid #15803d; color: #15803d; font-weight: 700;" onclick="setupColigoTriggerAction()">
+                  ⏰ Enable Daily Auto Scheduler (3:30 PM)
+                </button>
+                <button type="button" class="portal-btn" style="padding: 9px 16px; background: #fff; border: 1px solid #cbd5e1; color: #475569; font-weight: 700;" onclick="loadColigoHubItemsAction()">
+                  📋 View Synced Materials & Worksheets
+                </button>
+              </div>
+              <div id="coligo-sync-feedback" style="display: none; padding: 10px 14px; border-radius: 8px; font-size: 0.84rem; margin-bottom: 12px;"></div>
+              
+              <!-- Synced Materials Container -->
+              <div id="coligo-hub-materials-container" style="display: none; background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 14px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 8px;">
+                  <div style="font-weight: 800; font-size: 0.88rem; color: #1e293b;">Course Materials & Plans Synced from Coligo:</div>
+                  <div style="display: flex; gap: 6px;" id="coligo-filter-chips">
+                    <button type="button" class="inspect-chip active" onclick="filterColigoHubItems('all')">All</button>
+                    <button type="button" class="inspect-chip" onclick="filterColigoHubItems('announcement')">📢 Plans & Notices</button>
+                    <button type="button" class="inspect-chip" onclick="filterColigoHubItems('file')">📚 Books & Worksheets</button>
+                    <button type="button" class="inspect-chip" onclick="filterColigoHubItems('link')">🔗 Videos & Links</button>
+                  </div>
+                </div>
+                <div id="coligo-items-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; max-height: 380px; overflow-y: auto;">
+                  <div style="text-align: center; color: #64748b; padding: 20px;">Click 'View Synced Materials & Worksheets' to load the latest curriculum materials.</div>
+                </div>
+              </div>
+            </div>
+
+<!-- Operations Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+              
+              <!-- Card 1: Weekly Exam -->
+              <div style="border: 1px solid var(--border); border-radius: 12px; padding: 18px; background: #f8fafc; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1rem; color: var(--primary); margin-bottom: 6px;">
+                    <span>📅</span> Weekly Assessment
+                  </div>
+                  <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
+                    Generates a focused 10-question weekly assessment mapped to that week's curriculum.
+                  </p>
+                  
+                  <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">TARGET WEEK</label>
+                    <select id="ops-weekly-week" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
+                      <option value="W1">Week 1 (Diagnostic / Baseline)</option>
+                      <option value="W2" selected>Week 2 (Active Week)</option>
+                      <option value="W3">Week 3</option>
+                      <option value="W4">Week 4</option>
+                      <option value="W5">Week 5</option>
+                    </select>
+                  </div>
+
+                  <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">SUBJECT</label>
+                    <select id="ops-weekly-subject" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
+                      <option value="English Grammar">English Grammar</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="button" id="btn-create-weekly" class="btn-primary" onclick="createWeeklyExamAction()">
+                  ⚡ Generate Weekly Exam Link
+                </button>
+              </div>
+
+              <!-- Card 2: Monthly Cumulative -->
+              <div style="border: 1px solid var(--border); border-radius: 12px; padding: 18px; background: #f8fafc; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1rem; color: #4338ca; margin-bottom: 6px;">
+                    <span>🗓️</span> Monthly Cumulative Exam
+                  </div>
+                  <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px;">
+                    Blends questions across weeks 1 to 4 to measure true long-term retention and mastery.
+                  </p>
+
+                  <div style="margin-bottom: 12px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">MONTH PERIOD</label>
+                    <select id="ops-monthly-period" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
+                      <option value="M1" selected>Month 1 (Weeks 1 to 4 Cumulative)</option>
+                      <option value="M2">Month 2 (Weeks 5 to 8 Cumulative)</option>
+                      <option value="M3">Month 3 (Mid-term Comprehensive)</option>
+                    </select>
+                  </div>
+
+                  <div style="font-size: 0.8rem; color: #3730a3; background: #eef2ff; border: 1px solid #c7d2fe; padding: 10px; border-radius: 8px; margin-bottom: 14px;">
+                    📊 Evaluates 15 balanced questions across all weekly topics.
+                  </div>
+                </div>
+
+                <button type="button" id="btn-create-monthly" class="btn-primary" style="background: #4338ca;" onclick="createMonthlyExamAction()">
+                  🗓️ Generate Monthly Exam Link
+                </button>
+              </div>
+
+              <!-- Card 3: Adaptive Mistakes Review -->
+              <div style="border: 1px solid var(--border); border-radius: 12px; padding: 18px; background: #fffbeb; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1rem; color: #b45309; margin-bottom: 6px;">
+                    <span>🎯</span> Targeted Mistakes Retest
+                  </div>
+                  <p style="font-size: 0.82rem; color: #92400e; margin-bottom: 14px;">
+                    Pulls actual historical errors from previous attempts to build a personalized mastery review test.
+                  </p>
+
+                  <div style="font-size: 0.8rem; color: #78350f; background: #fef3c7; border: 1px solid #fde68a; padding: 10px; border-radius: 8px; margin-bottom: 14px;">
+                    💡 <strong>Continuous Growth:</strong> Eliminates weaknesses (e.g. hemza rules, commas, antonyms) with zero guesswork.
+                  </div>
+                </div>
+
+                <button type="button" id="btn-create-mistakes" class="btn-primary" style="background: #b45309;" onclick="createMistakesExamAction()">
+                  🎯 Generate Mistakes Retest Exam
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+                        <!-- VIEW E: DIAGNOSTIC & EVALUATION REPORT (Dynamic In-App Analysis) -->
+        <div id="pview-analytics" style="display: none;">
+          <div style="background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 22px; margin-bottom: 20px;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; border-bottom: 1.5px solid var(--border); padding-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e3a8a; margin-bottom: 4px;" id="ana-student-title">
+                  📊 Diagnostic Evaluation Report &bull; Ali Ahmed
+                </h3>
+                <p style="font-size: 0.86rem; color: var(--text-muted); margin: 0;">
+                  Academic strengths, cognitive bottlenecks, and evidence-based remediation plan.
+                </p>
+              </div>
+              <span id="ana-student-badge" class="meta-pill pill-indigo" style="font-size: 0.82rem; padding: 6px 14px;">Year 5 (G5)</span>
+            </div>
+
+            <!-- Dynamic Evaluation Body Container -->
+            <div id="ana-report-content">
+              <!-- Injected dynamically based on active student (Ali vs Mostafa) -->
+            </div>
+
+            <!-- Curriculum & Question Types Audit Box -->
+            <div style="margin-top: 24px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 18px;">
+              <h4 style="font-size: 1.05rem; font-weight: 800; color: #334155; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <span>⚖️</span> Question Formats & Curriculum Quality Audit
+              </h4>
+              <p style="font-size: 0.84rem; color: #475569; line-height: 1.5; margin-bottom: 12px;">
+                Critical analysis of current assessment mechanisms and actionable upgrades:
+              </p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px;">
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+                  <strong style="color: #b45309; font-size: 0.85rem;">⚠️ MCQ Saturation (25% Guessing Factor)</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; margin-bottom: 0;">
+                    100% of current questions rely on multiple choice. Plan Phase 2 will introduce Fill-in-the-blank writing for spelling & grammar to eliminate lucky guesses.
+                  </p>
+                </div>
+                <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 12px;">
+                  <strong style="color: #047857; font-size: 0.85rem;">💡 Visual Anchoring for Antonyms</strong>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; margin-bottom: 0;">
+                    Highlighting keywords (مضاد / Meaning / NOT) with high-contrast badges prevents cognitive impulsivity slips in fast reading.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- VIEW D: 28-DAY STUDY PLAN & CURRICULUM ROADMAP -->
+        <div id="pview-plan" style="display: none;">
+          <div style="background: #ffffff; border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f766e; margin-bottom: 4px;" id="plan-student-headline">
+                  28-Day Curriculum Roadmap &bull; Ali Ahmed
+                </h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+                  Daily lessons, targeted cognitive skills, and milestone assessments mapped for Month 1.
+                </p>
+              </div>
+              <span id="plan-student-badge" class="meta-pill pill-green">Month 1 Active</span>
+            </div>
+
+            <!-- Filter by Week -->
+            <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;" id="plan-week-filter">
+              <button type="button" class="inspect-chip active" id="chip-plan-ALL" onclick="filterPlanByWeek('ALL')">All Weeks (28 Days)</button>
+              <button type="button" class="inspect-chip" id="chip-plan-W1" onclick="filterPlanByWeek('W1')">Week 1</button>
+              <button type="button" class="inspect-chip" id="chip-plan-W2" onclick="filterPlanByWeek('W2')">Week 2</button>
+              <button type="button" class="inspect-chip" id="chip-plan-W3" onclick="filterPlanByWeek('W3')">Week 3</button>
+              <button type="button" class="inspect-chip" id="chip-plan-W4" onclick="filterPlanByWeek('W4')">Week 4</button>
+            </div>
+
+            
+            <!-- MOSTAFA ARABIC VIDEO LIBRARY (13 Curated Videos) -->
+            <div id="plan-video-library-section" style="margin-top: 24px; background: #fdf2f8; border: 1.5px solid #fbcfe8; border-radius: 12px; padding: 18px; display: none;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-size: 1.3rem;">🎬</span>
+                  <h4 style="font-size: 1.05rem; font-weight: 800; color: #0f766e; margin: 0;">
+                    Interactive Video Lessons & Concept Briefings Library (Ali & Mostafa)
+                  </h4>
+                </div>
+                <div style="display: flex; gap: 6px;">
+                  <span class="meta-pill" style="background: #0f766e; color: #fff; font-size: 0.76rem;">⚡ 60-Second Briefings</span>
+                  <span class="meta-pill" style="background: #db2777; color: #fff; font-size: 0.76rem;">🎬 Video Lessons</span>
+                </div>
+              </div>
+              <p style="font-size: 0.82rem; color: #134e4a; margin-bottom: 14px;">
+                Curated multimedia library covering English, Mathematics, Science, Arabic, and ICT, supported by 2-minute concept briefings and self-check questions allowing students to master core concepts before taking assessments.
+              </p>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px;" id="video-cards-grid">
+                <!-- Injected via renderVideoLibraryUI() -->
+              </div>
+            </div>
+
+            <!-- Study Plan Table Container -->
+            <div id="admin-plan-container">
+              <div style="text-align: center; padding: 30px; color: var(--text-muted);">
+                Loading 28-day curriculum roadmap...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW B: EXAM BANK INSPECTOR -->
+        <div id="pview-inspector" style="display: none;">
+          <div class="inspect-filter-row" id="inspect-exam-chips">
+            <!-- Populated based on active student -->
+          </div>
+          <div id="inspect-questions-container">
+            <!-- Injected dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- GATEKEEPER CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="start-modal" role="dialog" aria-modal="true" aria-labelledby="start-modal-title">
+    <div class="modal-card">
+      <div class="modal-icon" aria-hidden="true">⚠️</div>
+      <div class="modal-title" id="start-modal-title">Important Confirmation</div>
+      <p class="modal-desc">
+        This assessment allows <strong>2 attempts</strong>.<br>
+        Once started, the timer begins immediately and cannot be paused. The timer is enforced by the server.
+      </p>
+
+      <div class="modal-info-box">
+        <div>👤 <strong>Student:</strong> <span id="m-student-name">Ali Ahmed</span></div>
+        <div>📘 <strong>Assessment:</strong> <span id="m-exam-title">English Grammar</span></div>
+        <div>⏱️ <strong>Duration:</strong> <span id="m-exam-duration">20 Minutes</span></div>
+      </div>
+
+      <div class="modal-btn-row">
+        <button type="button" class="btn-secondary" onclick="closeStartModal()">Cancel</button>
+        <button type="button" class="btn-primary" style="padding: 12px;" onclick="confirmStartAssessment()">
+          Yes, Start Now 🚀
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO LESSON MODAL -->
+  <div class="modal-overlay" id="video-modal" role="dialog" aria-modal="true" aria-labelledby="video-modal-title">
+    <div class="modal-card" style="max-width: 720px; width: 95%; padding: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">🎬</span>
+          <h3 id="video-modal-title" style="font-size: 1.05rem; font-weight: 800; color: #1e3a8a; margin: 0;">Lesson Video Briefing</h3>
+        </div>
+        <button type="button" class="portal-btn" onclick="closeVideoModal()" style="padding: 4px 10px; font-weight: 800;">✕ Close</button>
+      </div>
+
+      <!-- Video Modal Sub-Tabs -->
+      <div style="display: flex; gap: 8px; margin-bottom: 12px; border-bottom: 2px solid #f1f5f9; padding-bottom: 6px;">
+        <button type="button" class="inspect-chip active" id="btn-vtab-player" onclick="switchVideoModalView('player')">🎬 Watch Video</button>
+        <button type="button" class="inspect-chip" id="btn-vtab-summary" onclick="switchVideoModalView('summary')">📖 Lesson Summary & Rules</button>
+      </div>
+
+      <!-- Summary Container inside Video Modal -->
+      <div id="vmodal-summary-panel" style="display: none; max-height: 400px; overflow-y: auto; padding: 12px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; margin-bottom: 10px;">
+        <div id="vmodal-summary-inner"></div>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 6px 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; flex-wrap: wrap; gap: 8px;">
+        <span id="video-mode-status" style="color: #334155; font-weight: 700;">🌐 Online YouTube Stream (Ad-Free High Speed)</span>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <a id="btn-yt-direct" href="https://www.youtube.com" target="_blank" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 4px; background: #dc2626; color: #fff; text-decoration: none; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(220,38,38,0.3);">
+            ▶️ Watch on YouTube ↗
+          </a>
+          <button type="button" id="btn-mode-cloud" onclick="setVideoPlayerMode('cloud')" style="padding: 3px 10px; font-size: 0.75rem; border-radius: 4px; border: 1px solid #cbd5e1; background: #2563eb; color: #fff; cursor: pointer; font-weight: 700;">🌐 YouTube Stream</button>
+          <button type="button" id="btn-mode-native" onclick="setVideoPlayerMode('native')" style="padding: 3px 10px; font-size: 0.75rem; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; font-weight: 700;">⚡ Local Stream</button>
+        </div>
+      </div>
+      
+      <!-- Custom Teacher Video Link Option -->
+      <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 10px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px;">
+        <span style="font-size: 0.76rem; font-weight: 700; color: #475569; white-space: nowrap;">🔗 Custom Video URL:</span>
+        <input type="text" id="custom-video-input" placeholder="Paste YouTube link (e.g. teacher's lesson)..." style="flex: 1; padding: 4px 8px; font-size: 0.78rem; border: 1px solid #cbd5e1; border-radius: 6px; outline: none;">
+        <div role="button" tabindex="0" onclick="applyCustomVideoUrl()" style="background: #0284c7; color: #fff; padding: 4px 10px; font-size: 0.76rem; font-weight: 700; border-radius: 6px; cursor: pointer; white-space: nowrap;">Load URL</div>
+      </div>
+
+      <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; background: #000; box-shadow: 0 4px 14px rgba(0,0,0,0.2);">
+        <video id="native-video-player" controls playsinline controlslist="nodownload" preload="metadata" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; display: none; background: #000;"></video>
+        <iframe id="video-iframe" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; display: none;" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div id="video-placeholder" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; color: #f8fafc; padding: 24px; text-align: center;">
+          <div style="font-size: 2.4rem; margin-bottom: 8px;">🎬</div>
+          <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">Curriculum Video in Production</div>
+          <p style="font-size: 0.84rem; color: #94a3b8; max-width: 440px; margin-bottom: 14px; line-height: 1.5;">The teacher is recording the classroom video for this unit. In the meantime, review the worked examples and rules.</p>
+          <div role="button" tabindex="0" onclick="switchVideoModalView('summary')" style="background: #2563eb; color: #fff; padding: 8px 18px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer;">📖 Read Lesson Summary Now</div>
+        </div>
+      </div>
+      <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.8rem; color: #64748b;">
+          💡 Distraction-free high-speed playback with zero ads.
+        </div>
+        <button type="button" class="btn-primary" style="width: auto; padding: 8px 20px;" onclick="closeVideoModal()">
+          ✓ Lesson Understood &bull; Return to Assessment
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PEDAGOGICAL LESSON SUMMARY MODAL -->
+  <div class="modal-overlay" id="lesson-summary-modal" role="dialog" aria-modal="true" aria-labelledby="summary-modal-title">
+    <div class="modal-card" style="max-width: 760px; width: 95%; max-height: 90vh; overflow-y: auto; padding: 22px; border-radius: 16px;">
+      <!-- Modal Header -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.8rem;">📖</span>
+          <div>
+            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+              <span class="meta-pill pill-cyan" id="sum-modal-subject" style="font-size: 0.72rem;">English Language</span>
+              <span class="meta-pill" id="sum-modal-grade" style="font-size: 0.72rem; background: #fdf2f8; color: #be185d;">Grade 6</span>
+            </div>
+            <h3 id="summary-modal-title" style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Pedagogical Lesson Briefing</h3>
+          </div>
+        </div>
+        <button type="button" class="portal-btn" onclick="closeLessonSummaryModal()" style="padding: 5px 12px; font-weight: 800; font-size: 0.85rem;">✕ Close</button>
+      </div>
+
+      <!-- Quick Action Navigation Tabs -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; flex-wrap: wrap;">
+        <button type="button" class="inspect-chip active" id="tab-btn-sum-overview" onclick="switchSummaryTab('overview')">🎯 60-Second Overview</button>
+        <button type="button" class="inspect-chip" id="tab-btn-sum-rules" onclick="switchSummaryTab('rules')">📌 Key Rules & Principles</button>
+        <button type="button" class="inspect-chip" id="tab-btn-sum-examples" onclick="switchSummaryTab('examples')">💡 Worked Examples</button>
+        <button type="button" class="inspect-chip" id="tab-btn-sum-check" onclick="switchSummaryTab('check')">⚡ Quick Concept Check</button>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div id="sum-tab-overview" style="display: block;">
+        <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;">
+          <div style="font-weight: 800; color: #166534; font-size: 0.92rem; margin-bottom: 6px;">💡 1-Minute Concept Overview:</div>
+          <div id="sum-content-overview" style="font-size: 0.88rem; color: #14532d; line-height: 1.6;"></div>
+        </div>
+      </div>
+
+      <div id="sum-tab-rules" style="display: none;">
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;">
+          <div style="font-weight: 800; color: #1e293b; font-size: 0.92rem; margin-bottom: 8px;">📌 Core Rules & Principles:</div>
+          <div id="sum-content-rules" style="font-size: 0.86rem; color: #334155; line-height: 1.7;"></div>
+        </div>
+      </div>
+
+      <div id="sum-tab-examples" style="display: none;">
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;">
+          <div style="font-weight: 800; color: #1e40af; font-size: 0.92rem; margin-bottom: 8px;">💡 Worked Examples & Explanations:</div>
+          <div id="sum-content-examples" style="font-size: 0.86rem; color: #1e3a8a; line-height: 1.7;"></div>
+        </div>
+      </div>
+
+      <div id="sum-tab-check" style="display: none;">
+        <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 10px; padding: 14px 16px; margin-bottom: 14px;">
+          <div style="font-weight: 800; color: #92400e; font-size: 0.92rem; margin-bottom: 10px;">⚡ Quick Comprehension Check:</div>
+          <div id="sum-content-check" style="font-size: 0.86rem; color: #78350f;"></div>
+        </div>
+      </div>
+
+      <!-- Action Footer -->
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+        <button type="button" class="portal-btn" id="btn-sum-watch-video" style="background: #fdf2f8; color: #be185d; border: 1px solid #fbcfe8; font-weight: 700; padding: 8px 16px;">
+          🎬 Watch Full Lesson Video
+        </button>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-primary" id="btn-sum-start-quiz" style="background: #0369a1; width: auto; padding: 8px 18px; font-weight: 800;">
+            📝 Start Practice Quiz for This Lesson
+          </button>
+          <button type="button" class="portal-btn" onclick="closeLessonSummaryModal()" style="padding: 8px 14px;">
+            ✓ Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- COLIGO INSTITUTIONAL FOOTER -->
+    <footer class="coligo-institutional-footer">
+      <div class="coligo-footer-inner">
+        <div class="coligo-footer-brand">
+          <div class="coligo-footer-crest">🏫</div>
+          <div>
+            <div class="coligo-footer-title">Manaret El-Eman International School</div>
+            <div class="coligo-footer-sub">Autonomous Learning & Continuous Assessment Platform &bull; Fully Compatible with Coligo LMS</div>
+          </div>
+        </div>
+        <div class="coligo-footer-meta">
+          <span class="footer-badge">Academic Year 2026/2027 &bull; Term 1</span>
+          <span class="footer-badge">Coligo LMS Core v2.4</span>
+          <span class="footer-badge">🟢 System Status: Connected & Synced</span>
+        </div>
+      </div>
+      <div class="coligo-footer-bottom">
+        All Rights Reserved &copy; 2026 Manaret El-Eman International School &bull; Cambridge International Assessment Portal
+      </div>
+    </footer>
+
+
+  <?!= include('HubData.js'); ?>
+  <?!= include('QuizApp.js'); ?>
+  <?!= include('Portal.js'); ?>
+</body>
+</html>
