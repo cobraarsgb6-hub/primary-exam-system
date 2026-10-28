@@ -209,10 +209,16 @@
       }
 
       box.innerHTML = `
-        ${passageHtml}
-        <div class="q-meta-tag">${escapeHtml(q.unit || q.lesson || 'Core Curriculum')}</div>
-        <div class="q-text ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>${sanitizeRichText(q.text)}</div>
-        <div class="options-grid">${optsHtml}</div>
+        <div class="ai-gen-wrapper t-gen-reveal">
+          <div class="ai-gen-tag">
+            <span class="ai-gen-dot"></span>
+            <span>✨ AI Adaptive Question &bull; Level ${(typeof currentDifficultyLevel !== 'undefined' ? currentDifficultyLevel : 2)}</span>
+          </div>
+          ${passageHtml}
+          <div class="q-meta-tag">${escapeHtml(q.unit || q.lesson || 'Core Curriculum')}</div>
+          <div class="q-text ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>${sanitizeRichText(q.text)}</div>
+          <div class="options-grid">${optsHtml}</div>
+        </div>
         <div class="nav-btn-row">
           <button type="button" class="btn-secondary" onclick="prevQuestion()" ${currentIdx === 0 ? 'disabled' : ''}>
             &larr; Previous
