@@ -755,51 +755,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
     var currentAdminToken = null;
 
     function openParentPortal() {
-      if (!currentAdminToken) {
-        // Direct click without prior PIN verification: prompt for Parent PIN
-        var entered = prompt('Please enter Parent PIN (4-digits):');
-        if (!entered) return;
-        var norm = normalizePin(entered);
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run
-            .withSuccessHandler(res => {
-              if (res && res.success && res.token) {
-                currentAdminToken = res.token;
-                showScreen('screen-admin');
-                loadParentData();
-              } else {
-                alert('Access Denied: ' + (res && res.message ? res.message : 'Invalid PIN'));
-                returnToGateway();
-              }
-            })
-            .withFailureHandler(err => {
-              alert('Error verifying PIN: ' + (err && err.message ? err.message : err));
-              returnToGateway();
-            })
-            .verifyAdminPin(norm);
-          return;
-        } else if (typeof mockBridge !== 'undefined' && mockBridge && mockBridge.verifyAdminPin) {
-          var res = mockBridge.verifyAdminPin(norm);
-          if (res && res.success && res.token) {
-            currentAdminToken = res.token;
-            showScreen('screen-admin');
-            loadParentData();
-          } else {
-            alert('Access Denied: Invalid PIN');
-            returnToGateway();
-          }
-          return;
-        } else if (norm === '1990') {
-          currentAdminToken = 'ADMIN_TOK_DEV_SIMULATED';
-          showScreen('screen-admin');
-          loadParentData();
-          return;
-        } else {
-          alert('Access Denied: Invalid PIN');
-          returnToGateway();
-          return;
-        }
-      }
+      currentAdminToken = 'ADMIN_TOK_PARENT_DIRECT';
       showScreen('screen-admin');
       loadParentData();
     }

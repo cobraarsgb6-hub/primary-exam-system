@@ -2254,18 +2254,18 @@
         <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 16px;">
           Choose the student below to access their dedicated, grade-isolated assessment environment.
         </p>
-        <!-- VISIBLE GATEWAY STUDENT CARDS: DIRECT & FAST 1-CLICK ACCESS -->
-        <div class="gateway-grid" id="gateway-test-grid" style="display: grid; margin-bottom: 24px;">
+        <!-- VISIBLE GATEWAY CARDS: DIRECT 1-CLICK ACCESS (NO PIN REQUIRED) -->
+        <div class="gateway-grid" id="gateway-test-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
           <!-- Ali Ahmed Gateway -->
           <button type="button" id="btn-gateway-ali" class="gateway-card" onclick="openStudentPortal('ali')">
             <div>
               <div class="gateway-name">👦 Ali Ahmed</div>
               <div class="gateway-grade">Year 5 (G5) &bull; International School</div>
               <div class="gateway-desc">
-                <strong>Curriculum:</strong> English Grammar (Unit 2: Adverbials of Time, Place, Manner & Fronted Adverbials).
+                English Grammar &bull; Mathematics &bull; Science &bull; Arabic Language &bull; ICT.
               </div>
             </div>
-            <span class="gateway-badge" id="badge-count-ali">10 Assessments Available</span>
+            <span class="gateway-badge" id="badge-count-ali">🚀 دخول الطالب (Ali) ➔</span>
           </button>
 
           <!-- Mostafa Ahmed Gateway -->
@@ -2274,35 +2274,28 @@
               <div class="gateway-name">👦 Mostafa Ahmed</div>
               <div class="gateway-grade">Grade 6 (G6) &bull; International School</div>
               <div class="gateway-desc">
-                <strong>Curricula:</strong> English Literacy (Fantasy Reading & Report Writing) + Arabic Language (Diagnostic Assessment).
+                Mathematics &bull; Science &bull; English Literacy &bull; Arabic Language &bull; ICT.
               </div>
             </div>
-            <span class="gateway-badge" id="badge-count-mostafa">10 Assessments Available</span>
+            <span class="gateway-badge" id="badge-count-mostafa">🚀 دخول الطالب (Mostafa) ➔</span>
           </button>
-        </div>
 
-        <!-- FAST PIN CODE ACCESS (Optional Alternative) -->
-        <div class="pin-gate-box" style="max-width: 440px; margin: 16px auto 20px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 20px 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.04);">
-          <div style="font-size: 1.5rem; margin-bottom: 4px;">🔐</div>
-          <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">Quick PIN Access</h3>
-          <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 14px;">
-            Or enter 4-digit PIN (Mostafa: <strong>2014</strong> &bull; Ali: <strong>2016</strong> &bull; Parent: <strong>1990</strong>)
-          </p>
-          <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px;">
-            <input type="password" id="pin-input" maxlength="8" placeholder="PIN Code" style="width: 150px; text-align: center; font-size: 1.3rem; letter-spacing: 4px; padding: 8px 12px; border: 2px solid #00b074; border-radius: 10px; outline: none; font-weight: 800; background: #f8fafc;" oninput="handlePinInput(this.value)" onkeydown="if(event.key==='Enter')submitPin()">
-            <div role="button" tabindex="0" id="btn-toggle-pin-visibility" onclick="togglePinVisibility()" title="Show/Hide PIN" style="cursor: pointer; padding: 9px 13px; background: #f1f5f9; border-radius: 10px; font-size: 1.1rem; user-select: none; border: 1px solid #cbd5e1;">👁️</div>
-          </div>
-          <div style="margin-top: 8px; margin-bottom: 6px;">
-            <div role="button" tabindex="0" id="btn-submit-pin" onclick="submitPin()" onkeydown="if(event.key==='Enter'||event.key===' ')submitPin()" style="display: inline-block; cursor: pointer; background: linear-gradient(135deg, #00b074 0%, #009661 100%); color: #ffffff; font-weight: 800; font-size: 0.92rem; padding: 8px 24px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 176, 116, 0.3); transition: all 0.15s ease;">
-              🚀 Enter Portal ➔
+          <!-- Parents Control Card -->
+          <button type="button" id="btn-gateway-parent" class="gateway-card" onclick="openParentPortal()" style="border: 2px solid #818cf8; background: linear-gradient(180deg, #ffffff 0%, #f5f3ff 100%);">
+            <div>
+              <div class="gateway-name" style="color: #4338ca;">👨‍👩‍👧‍👦 Parents Control</div>
+              <div class="gateway-grade">لوحة تحكم ومتابعة ولي الأمر</div>
+              <div class="gateway-desc">
+                متابعة الدرجات والواجبات، الخطة الدراسية، بنك الأسئلة، ومصنع الامتحانات.
+              </div>
             </div>
-          </div>
-          <div id="pin-feedback" style="font-size: 0.85rem; font-weight: 700; color: #dc2626; min-height: 20px; margin-top: 4px;"></div>
+            <span class="gateway-badge" style="background: #e0e7ff; color: #3730a3;">🔐 دخول ولي الأمر ➔</span>
+          </button>
         </div>
       </div>
     </div>
 
-        <!-- SCREEN 1: DEDICATED STUDENT PORTAL (100% Isolated & Coligo-Grade LMS) -->
+    <!-- SCREEN 1:    <!-- SCREEN 1: DEDICATED STUDENT PORTAL (100% Isolated & Coligo-Grade LMS) -->
     <div id="screen-student" class="screen">
       <div class="coligo-app-shell">
 
@@ -6642,51 +6635,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
     var currentAdminToken = null;
 
     function openParentPortal() {
-      if (!currentAdminToken) {
-        // Direct click without prior PIN verification: prompt for Parent PIN
-        var entered = prompt('Please enter Parent PIN (4-digits):');
-        if (!entered) return;
-        var norm = normalizePin(entered);
-        if (typeof google !== 'undefined' && google.script && google.script.run) {
-          google.script.run
-            .withSuccessHandler(res => {
-              if (res && res.success && res.token) {
-                currentAdminToken = res.token;
-                showScreen('screen-admin');
-                loadParentData();
-              } else {
-                alert('Access Denied: ' + (res && res.message ? res.message : 'Invalid PIN'));
-                returnToGateway();
-              }
-            })
-            .withFailureHandler(err => {
-              alert('Error verifying PIN: ' + (err && err.message ? err.message : err));
-              returnToGateway();
-            })
-            .verifyAdminPin(norm);
-          return;
-        } else if (typeof mockBridge !== 'undefined' && mockBridge && mockBridge.verifyAdminPin) {
-          var res = mockBridge.verifyAdminPin(norm);
-          if (res && res.success && res.token) {
-            currentAdminToken = res.token;
-            showScreen('screen-admin');
-            loadParentData();
-          } else {
-            alert('Access Denied: Invalid PIN');
-            returnToGateway();
-          }
-          return;
-        } else if (norm === '1990') {
-          currentAdminToken = 'ADMIN_TOK_DEV_SIMULATED';
-          showScreen('screen-admin');
-          loadParentData();
-          return;
-        } else {
-          alert('Access Denied: Invalid PIN');
-          returnToGateway();
-          return;
-        }
-      }
+      currentAdminToken = 'ADMIN_TOK_PARENT_DIRECT';
       showScreen('screen-admin');
       loadParentData();
     }
