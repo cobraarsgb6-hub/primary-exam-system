@@ -2,8 +2,8 @@ name: Daily Autonomous Coligo Sync
 
 on:
   schedule:
-    # Runs Sunday through Thursday at 13:00 UTC (15:00 / 3:00 PM Cairo Time)
-    - cron: '0 13 * * 0-4'
+    # Runs every single day (7 days a week) at 13:00 UTC (15:00 / 3:00 PM Cairo Time)
+    - cron: '0 13 * * *'
   workflow_dispatch:
 
 permissions:
