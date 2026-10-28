@@ -1,0 +1,9 @@
+{
+  "url": "https://prod-api.coligolms.com/api/v0/users/me/feature-flags",
+  "data": {
+    "enableAssessmentAutoSave": false,
+    "quizzesEnabled": false,
+    "simplifiedCreateComplaints": true,
+    "strictMessaging": false
+  }
+}

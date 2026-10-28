@@ -1,0 +1,1 @@
+{"nodes": [{"id": "original_request_audit", "label": "Forensic Codebase Audit Request", "file_type": "document", "source_file": ".agents/teamwork/ORIGINAL_REQUEST.md", "rationale": "Mandates 100% zero-defect reliability and architectural review of the exam system.", "_origin": "semantic"}], "edges": [], "hyperedges": []}

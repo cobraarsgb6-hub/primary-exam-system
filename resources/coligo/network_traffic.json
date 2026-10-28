@@ -1,0 +1,155 @@
+[
+  {
+    "url": "https://coligolms.com/parent/courses",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/js/main.35058892.js",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/css/main.8773c6a3.css",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/media/Poppins-Regular.35d26b781dc5fda684cc.ttf",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/68da691317e1492e0ffcd878/gradebook/visibility",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/constants",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/feature-flags",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/messages/settings",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://coligolms.com/static/js/2608.8f533d6b.chunk.js",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/js/3116.755cdcf6.chunk.js",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/js/8445.687930ef.chunk.js",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/css/4907.e2033340.chunk.css",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/js/4907.edd96946.chunk.js",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://coligolms.com/parent/dashboard",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/js/main.35058892.js",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/css/main.8773c6a3.css",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://coligolms.com/static/media/Poppins-Regular.35d26b781dc5fda684cc.ttf",
+    "method": "GET",
+    "headers": {}
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/68da691317e1492e0ffcd878/gradebook/visibility",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/constants",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/feature-flags",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/messages/settings",
+    "method": "GET",
+    "headers": {
+      "authorization": "JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGRhNjkxMzE3ZTE0OTJlMGZmY2Q4NzgiLCJ1c2VybmFtZSI6ImFobWVkLmlicmFoaW0xNDQiLCJwcm9maWxlIjp7ImZ1bGxOYW1lIjoiQWhtZWQgRWlzYSBFaXNhIiwiZmlyc3ROYW1lIjoiQWhtZWQiLCJtaWRkbGVOYW1lIjoiRWlzYSIsImxhc3ROYW1lIjoiRWlzYSIsImVtYWlsIjoiQWhtZWRpc3NhaWJyYWhlZW1AZ21haWwuY29tIiwicGhvbmUiOiIwMTA5NzYzNTM2MCIsImF2YXRhciI6Imh0dHBzOi8vY29saWdvLmItY2RuLm5ldC91c2Vycy9haG1lZC5pYnJhaGltMTQ0L2F2YXRhci0xNzkxNzI1NjIyODA3In0sImJhc2VSb2xlIjp7Il9pZCI6IjVkNmZmMTlhMWMwN2I2MWZkMjNlNGY2MCIsIm5hbWUiOiJAYmFzZS1yb2xlL3BhcmVudCJ9LCJvcHRpb25zIjp7InNpZ25lZEluQWNjb3VudElkIjoiNjhkYTY5MTMxN2UxNDkyZTBmZmNkODc4In0sInZlcnNpb24iOjEsInB1cnBvc2UiOiJqd3QvYXV0aGVudGljYXRpb24iLCJpYXQiOjE3OTI5MTYwNjgsImV4cCI6MTc5Mzc4MDA2OH0.7sOLQGUqbYS_N9pPOSJOjERzuMJrlYI8GpmxZL7EQb4",
+      "accept": "application/json, text/plain, */*"
+    }
+  }
+]

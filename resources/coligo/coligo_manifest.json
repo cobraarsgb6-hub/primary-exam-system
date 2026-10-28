@@ -1,0 +1,17 @@
+{
+  "scanned_at": "2026-10-25 16:18:50",
+  "students": {
+    "Ali": {
+      "grade": "Year 5A",
+      "courses": [],
+      "announcements": [],
+      "downloaded_files": []
+    },
+    "Mostafa": {
+      "grade": "Year 6A",
+      "courses": [],
+      "announcements": [],
+      "downloaded_files": []
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "Ali": [
+    {
+      "id": "6aa6b93c106ddeec80ba6ce7",
+      "title": "Social Studies 105",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ce6",
+      "title": "Science 105",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ce5",
+      "title": "Math 105",
+      "code": null
+    },
+    {
+      "id": "6ab9821c5e77ff0d681d342e",
+      "title": "Literature 105",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ce4",
+      "title": "ICT 105",
+      "code": null
+    },
+    {
+      "id": "6ab98233fed75719cdeceb98",
+      "title": "Global Perspectives & Humanities 105",
+      "code": null
+    },
+    {
+      "id": "6aa875e30481e4d8126c5af4",
+      "title": "French 105",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ce3",
+      "title": "English 105",
+      "code": null
+    },
+    {
+      "id": "6ab78cb05e77ff0d687cac86",
+      "title": "Attendance 105",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ce2",
+      "title": "Arabic 105",
+      "code": null
+    }
+  ],
+  "Mostafa": [
+    {
+      "id": "6aa6b93c106ddeec80ba6ced",
+      "title": "Social Studies 106",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6cec",
+      "title": "Science 106",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ceb",
+      "title": "Math 106",
+      "code": null
+    },
+    {
+      "id": "6ab98245fed75719cdecef29",
+      "title": "Literature 106",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6cea",
+      "title": "ICT 106",
+      "code": null
+    },
+    {
+      "id": "6ab98258fed75719cdecf31a",
+      "title": "Global Perspectives & Humanities 106",
+      "code": null
+    },
+    {
+      "id": "6aa87640940b14235b9bece0",
+      "title": "French 106",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ce9",
+      "title": "English 106",
+      "code": null
+    },
+    {
+      "id": "6ab78cb05e77ff0d687cac87",
+      "title": "Attendance 106",
+      "code": null
+    },
+    {
+      "id": "6aa6b93c106ddeec80ba6ce8",
+      "title": "Arabic 106",
+      "code": null
+    }
+  ]
+}

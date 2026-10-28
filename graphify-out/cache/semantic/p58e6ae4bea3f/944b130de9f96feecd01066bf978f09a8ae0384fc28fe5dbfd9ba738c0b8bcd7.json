@@ -1,0 +1,1 @@
+{"nodes": [{"id": "setup_guide_md", "label": "Setup Guide (Arabic)", "file_type": "document", "source_file": "SETUP_GUIDE.md", "_origin": "semantic"}], "edges": [{"source": "setup_guide_md", "target": "index_html", "relation": "references", "confidence": "EXTRACTED", "confidence_score": 1.0, "source_file": "SETUP_GUIDE.md", "_origin": "semantic"}], "hyperedges": []}

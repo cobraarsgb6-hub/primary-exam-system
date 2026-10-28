@@ -1,0 +1,1482 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <title>مكتبة مدرسة منارة الإيمان - كوليجو (Ali & Mostafa)</title>
+  <style>
+    :root { --primary: #0284c7; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; --muted: #94a3b8; --border: #334155; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding: 24px; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .header h1 { color: #38bdf8; font-size: 1.8rem; margin-bottom: 6px; }
+    .header p { color: var(--muted); font-size: 0.95rem; }
+    .stats-bar { display: flex; gap: 16px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat-pill { background: var(--card); border: 1px solid var(--border); padding: 8px 16px; border-radius: 999px; font-weight: 700; font-size: 0.9rem; }
+    .tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 24px; }
+    .tab-btn { background: var(--card); color: var(--muted); border: 1.5px solid var(--border); padding: 10px 24px; border-radius: 8px; font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.2s; }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; max-width: 1400px; margin: 0 auto; }
+    .course-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; }
+    .course-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 12px; }
+    .course-title { font-size: 1.1rem; font-weight: 800; color: #38bdf8; }
+    .file-count { background: #0369a1; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 6px; font-weight: 700; }
+    .file-list { list-style: none; overflow-y: auto; max-height: 280px; }
+    .file-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem; }
+    .file-link { color: #e2e8f0; text-decoration: none; display: flex; align-items: center; gap: 6px; }
+    .file-link:hover { color: #38bdf8; text-decoration: underline; }
+    .badge-ext { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 800; background: #334155; }
+    .ext-pdf { background: #dc2626; color: #fff; }
+    .ext-pptx { background: #ea580c; color: #fff; }
+    .ext-docx { background: #2563eb; color: #fff; }
+    .ext-mp4 { background: #16a34a; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>📚 مكتبة مدرسة منارة الإيمان الرسمية (Coligo LMS Ingestion)</h1>
+    <p>تم سحب وتحميل كافة الكتب المدرسية، المحاضرات، الشيتات، والخطط الأسبوعية بالكامل من السيرفر مباشرة</p>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-pill">⚡ تم التحميل: 2026-10-25 16:33:50</div>
+    <div class="stat-pill">📅 الفصل الدراسي: Trimester 1 (2026/2027)</div>
+    <div class="stat-pill" style="border-color: #38bdf8; color: #38bdf8;">📦 إجمالي الملفات المسحوبة: 212 ملف</div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchStudent('Ali')">👦 علي أحمد (Year 5A)</button>
+    <button class="tab-btn" onclick="switchStudent('Mostafa')">🧑 مصطفى أحمد (Grade 6A)</button>
+  </div>
+  <div id="view-Ali" class="student-view">
+    <div class="grid">
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Social Studies 105</span>
+          <span class="file-count">15 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/5_British.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span> Weekly plan</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/Powerpoint_5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>The second week</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/5_British.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Weekly plan </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/Power_point_5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Power point 5</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/the_4_week_5.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Weekly plan </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/النباتات_الطبيعيه_والحيوانات_البريه_5_.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Power point 5</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/The_5_week_5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Weekly plan5</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/عوامل_قيام_الحضاره_المصريه_5_ب.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Powerpoint 5</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/VID-20261011-WA0039.mp4" target="_blank">
+              <span class="badge-ext ext-mp4">MP4</span>
+              <span>Educational video</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/مراجعه_الوحده_الاولي_٥ب.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Revision = questions + answers </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/map_year_5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Map unit 1</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/مراجعه_اكتوبر_٥_ب.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Revision Oct 1 sheet + model answer</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/‎⁨كيفيه_الاجابه_علي_السؤال_⁩.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>How to answer?</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/الحضاره_المصريه_القديمه_)العصور_ما_قبل_التاريخ).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Power point 7</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Social Studies 105/VID-20261023-WA0039.mp4" target="_blank">
+              <span class="badge-ext ext-mp4">MP4</span>
+              <span>Educational video </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Science 105</span>
+          <span class="file-count">13 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/booklet_y5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Booklet term 1 (20th of september > 24th of s</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/t-t-10000130-parts-of-a-plant-powerpoint-1_ver_4_(1).ppt" target="_blank">
+              <span class="badge-ext ">PPT</span>
+              <span>Power point on plant parts  (20th of septembe</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/t2-s-1510-ks2-parts-of-a-plant-powerpoint-powerpoint_ver_1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>ppt on plant parts  (20th of september > 24th</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/t2-s-1510-ks2-parts-of-a-plant-powerpoint-powerpoint_ver_1_(2).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Powerpoint on flower parts  (20th of septembe</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/t3-sc-809-parts-of-a-flowering-plant-cut-and-stick-activity-sheet-.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>worksheet (20th of september > 24th of septem</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/Copy_of_pollination-powerpoint-google-slides-for-k-2nd-grade-us-s-1686685037.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Powerpoint on pollination (20th of september </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/t-tp-1746465833-all-about-pollination-powerpoint_ver_2.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Powerpoint on pollination (20th of september </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/20260921104121.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Classified part 1 (20th of september > 24th o</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/classified_sound.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>classified</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/sound_h.w_sheet.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>worksheet</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/cfe-sc-20-what-is-sound-powerpoint_ver_4.ppt" target="_blank">
+              <span class="badge-ext ">PPT</span>
+              <span>powerpoint</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/us-t-2549112-how-sound-is-made-powerpoint-english-united-states_ver_3.ppt" target="_blank">
+              <span class="badge-ext ">PPT</span>
+              <span>powerpoint</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Science 105/sheet_of_sound.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>sound worksheet</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Math 105</span>
+          <span class="file-count">3 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Math 105/Maths_Term_1_Year_5_Quiz_2_MS.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Quiz 2 Model Answer</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Math 105/Learner_Book_Year_5_-_compressed.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Learner Book </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Math 105/Work_Book_Year_5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Workbook</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Literature 105</span>
+          <span class="file-count">3 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Literature 105/British_Section_(Year_5)_-_1st_Story_(Part_1).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>British Section (Year 5) - 1st Story (Part 1)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Literature 105/British_Section_(Year_5)_-_1st_Story_(Part_2).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>British Section (Year 5) - 1st Story (Part 2)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Literature 105/British_Section_(Year_5)_-_2nd_Story_(Part_1).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>2nd story (Six Go Through The World) - Part 1</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">ICT 105</span>
+          <span class="file-count">15 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5__lesson_1_T1_-_Copy_(2).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>What is an Algorithm & what is a loop</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/Week1-ICT-Y5-Weekly-Plan.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Weekly plan (Sept 20- Sept 24)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/Week2-ICT-Y5-Weekly-Plan.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Weekly plan (Sept 20- Sept 24)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5__lesson_1_part_2_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Introducing variables</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5__lesson_1_part_3_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Assigning Values to Variables & Worksheet pra</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5__lesson_1_part_3_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Variables practice on Scratch</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5__lesson_2_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Using operators</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5__lesson_1_part_3_T1_(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>ICT – Revision  Dear Students, Please study t</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5__lesson_2_T1_(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>ICT – Quiz  Students will take the ICT Quiz o</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/f882f4b1-1245-417e-a194-d1329adf8f94.jpg" target="_blank">
+              <span class="badge-ext ">JPG</span>
+              <span>Algorithms Worksheet</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT__Year_5___Worksheet_Variables_&_Count-Controlled_Loops.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Variables & Count-Controlled Loops Worksheet</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/ICT_Year5_10Min_Quick_Check.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>10-Minute Quick Check: Variables & Loops</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/Year_5_Operators_in_Scratch_Worksheet-1.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Operators Worksheet</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/Year5_ICT_Input_Output_Worksheet.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Input & Output Worksheet</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/ICT 105/Y5_Input_and_Output_Worksheet.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Input & Output Worksheet</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Global Perspectives & Humanities 105</span>
+          <span class="file-count">3 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Global Perspectives & Humanities 105/(SDGs)_Goals_-_GP_introduction.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>(SDGs) Goals - GP introduction</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Global Perspectives & Humanities 105/(SDGs)_Goals_-_SDGs_1-3.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>(SDGs) Goals - SDGs 1-3</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Global Perspectives & Humanities 105/(SDGs)_Goals_-_SDGs_4-6.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>(SDGs) Goals - SDGs 4-6</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">French 105</span>
+          <span class="file-count">5 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/French 105/explore_1.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Explore 1 livre</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/French 105/lecon_1_26-27.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>lecon 1 u1</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/French 105/Les_pronoms_sujets_presentation(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>les pronoms personnels sujets</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/French 105/lecon_2_26-27.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>lecon 2 u1</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/French 105/les_nationalites_y5_u2_25-26.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>lecon 1 u2 les nationalités</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">English 105</span>
+          <span class="file-count">50 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Unit_1_Lesson_1_Aesop_Professional_PPT_--.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 - lesson 1 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/fact_file_-_What_is_a_fable_-.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fsct File - What's a fable?</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Ant_Grasshopper_COMPLETE_Vocabulary_Lab_vocab_lesson_1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 - Lesson 1 - Vocab lab </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fable_Vocabulary_Fact_File_14_Words.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File - Unit 1 - lesson 1 - vocab </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Unit_1_Lesson_1_Session_2_Fable_Detectives_Professional_PPT_-_part_2.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 (part 2) Vocabulary → Evidence → Expla</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Fable_Detectives_Fact_File_-_Part_2.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File - Unit 1 - lesson 1 (part 2)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Homework_-_unit_1_-_lesson_1y5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework - unit 1 - lesson 1 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Why_Cockerels_Crow_2_Running_Sessions.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Part 1 • A fable from Malawi</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fact_file_-_A_fable_from_Malawi.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File - A fable from Malawi </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/H.w_a_fable_from_Malawi_-_part_1.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>H.W - A fable from Malawi </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/weekly_plan_-_week_4-5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Week 4</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Elephant_Fable_.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Elephant Fable </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Elephant_Fable_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File - Elephant Fable </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Elephant_Fable_Writing_Homework.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Elephant Fable - Homework</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Day1_Monday_Story_Features_1.3_Part1_(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 - lesson 3 - story features - part 1 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Day2_Tuesday_Story_Features_1.3_Part2_(2(.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 - lesson 3 - story features - part 2 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Story_Features_1.3_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact file: Unit 1 - lesson 3 - Story Features</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Unit_1_-_lesson_5_-_Proverbs_Tell_a_Tale_...pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 - lesson 5 - proverbs tell a tale </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fact_file_unit_1_-_lesson_5_🔎_WHAT_IS_A_PROVERB.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact file unit 1 - lesson 5 - WHAT IS A PROVE</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Homework_unit_1_-_lesson_5_-_WRITING_TASK.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework - unit 1 - lesson 5 - writing task </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Unit_1_-Lesson1.6_A_Twist_(2).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 - lesson 6 - A  TWIST </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fact_file_-_unit_1_-_lesson_6_-_What_is_a_Twist.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact file - unit 1 - lesson 6 - What is a Twi</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/H.W_-_unit_1_-_lesson_6.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>H.W - unit 1 - lesson 6</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year5_Fable_Plan_.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1 - Create & Plan a fable </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fable_Fact_File_-_unit_1_lesson_7_-_8.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fable Fact File: unit 1 lesson 7 & 8 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/🏠_HOMEWORK_-_unit_1_-_lesson_7.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>🏠 HOMEWORK - unit 1 - lesson 7 & 8 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fable_Plan_to_Writing_.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 1: From Plan to write (Fable)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fable_Fact_File_From_Plan_to_Writing.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fable Fact File: From Plan to Writing</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/H.w_-_from_plan_to_write.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>H.w - from plan to write</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson_3_-_Plan_to_write_paragraph_3_revised_v6.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: Plan to write paragraph 3 (Fable) </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson_3_-_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File : Plan to write paragraph 3 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Answer_Key_-_Quiz_1.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Answer Key - Quiz 1</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson_3_-_Homework_Sheet.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework: Write your own fable (Write paragra</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Work_sheet_punctuation_y5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Worksheet: Punctuating direct speech </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson_4_-_Paragraph_4_result_and_moral_revised_v12.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: Paragraph 4 (result & moral) & First</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fact_file_-_Paragraph_4_result_-_change_and_moral.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact file - Paragraph 4: result, change and m</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson_4_-_Homework_Sheet.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework - Write your whole fable </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Fable_Feedback_Check,_Share,_Improve.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: Fable feedback </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Second_draft.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>(Fable): Feedback & Second draft </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson_5_Homework_Fable_Draft2_(1).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework: (Fable) second draft </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Unit2_Lesson1_A_Brief_History_of_Space.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 2 - lesson 1 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year_5_Unit_2_Lesson_1_Space_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact file: unit 2 - lesson 1 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Unit_2_Lesson_1_Synonyms_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: Unit 2 -Lesson 1: Synonyms </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Unit2_Lesson2_A_Simple_Start.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 2 - lesson 2 - grammar: Simple & Compoun</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Unit_2_Lesson_2_A_Simple_Start_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: Unit 2 - lesson 2 (Grammar: Simple</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Unit2_Lesson3_Building_Language.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Unit 2 - lesson 3 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year5_Unit2_Lesson3_Building_Language_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: unit 2 - lesson 3 - adverbials </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Year5_Unit2_Lesson3_Building_Language_Fact_File_-_prefixes.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: unit 2 - lesson 3  - prefixes</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson2_Simple_and_Compound_Sentences_Worksheet.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Worksheet: Simple & Compound Sentences</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/English 105/Lesson3_Adverbials_Time_Place_Worksheet.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework sheet: Adverbial place & time </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Arabic 105</span>
+          <span class="file-count">2 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Arabic 105/y5.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>البوكلت</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Ali/Arabic 105/اجابة_اكتوبر.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>اختبارات استرشادية </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="view-Mostafa" class="student-view" style="display: none;">
+    <div class="grid">
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Social Studies 106</span>
+          <span class="file-count">16 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/6_British.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Weekly Plan </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/Powerpoint_6.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Powerpoint 6</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/DOC003_6.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Weekly plan</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/Power_point_6.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Power point 6</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/the_4_week_6.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Weekly plan</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/التحديات_البيئيه_في_وطننا_العربي_6_.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Power point6</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/the_5_week_6..docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Weekly plan5</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/التحديات_للبيئيه_في_الوطن_العربي_6ب.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Powerpoint 5</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/VID-20261011-WA0045.mp4" target="_blank">
+              <span class="badge-ext ext-mp4">MP4</span>
+              <span>Educational video 6</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/مراجعه_الوحده_الاولي_6_.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Revision unit 1 + model answer</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/maps_year_6.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Maps unit 1</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/مراجعه_اكتوبر_٦ب.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Revision unit 1 questions + answers</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/‎⁨كيفيه_الاجابه_علي_السؤال_⁩.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>How to answer?</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/map_2_.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Map 2 </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/شبه_الجزيره_العربيه_قبل_وبعد_الاسلام_٦ب.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Powerpoint 7</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Social Studies 106/f0011e79-0ff4-4926-9658-77a54db615ac.mov" target="_blank">
+              <span class="badge-ext ">MOV</span>
+              <span>Educational video</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Science 106</span>
+          <span class="file-count">8 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/Mixtures.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Mixture Ppt.</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/Y._6-_Circulatory_system.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Heart , Lung circulation Ppt.</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/Measurements_-_Part_1_(2).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Measurements Part 1</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/Measurements_-_Part_2_Final.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Measurement Part 2</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/Physical_and_chemical_change.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Ppt.</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/Y.6_-_Forces.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Force Ppt.</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/Electricity_(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Electricity Ppt.</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Science 106/FORCE_H.W..pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Force H.W.</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Math 106</span>
+          <span class="file-count">10 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/pearson-power-math-6a-Text-book_compress.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Text book A</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/Power_math-year-6A-practice-book.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Practice Book 6A</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/t2-m-1487-prime-factors-powerpoint_ver_1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Prime factor</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/3._Y6_Partition_numbers_to_10,000,000.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Partition number to 10 000 000</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/PowerPoint_-_Multiply_up_to_a_4-Digit_Number_by_a_2-Digit_Number.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Multiply 4 digit by 2 digit</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/au-n-2549011-who-am-i-factor-and-multiples-game_ver_1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Factors</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/T2-M-1630-Multiplying-2-Digit-Numbers-by-1-Digit-Numbers-PowerPoint_ver_2.ppt" target="_blank">
+              <span class="badge-ext ">PPT</span>
+              <span>Multiply 3digit by 1 digit</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/1322243196.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>long division</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/Division-2-Digit-Numbers-Bus-Stop-Method-Powerpoint.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Division-2-Digit-Numbers</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Math 106/T2-M-1335-Formal-Division-of-4-Digit-Numbers-by-2-Digit-Numbers-Long-Division-Method-Powerpoint_ver_2.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>division 4 digit by 2 digit</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Literature 106</span>
+          <span class="file-count">1 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Literature 106/The_Tempest_-_Act_1_-_Scene_1.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>The Tempest - Act 1 - Scene 1</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">ICT 106</span>
+          <span class="file-count">12 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/ICT__Year_6__lesson_1._T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>What is an Algorithm & Errors/Bugs & Repeatin</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/Week1-ICT-Y6-Weekly-Plan.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Weekly plan (Sept 13- Sept 17)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/Week2-ICT-Y6-Weekly-Plan.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Weekly plan (Sept 20- Sept 24)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/ICT__Year_6__lesson_1_part_2_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Introduction to Flowcharts</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/ICT__Year_6__lesson_1_part_3_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Introduction to Flowcharts & Flowchart Symbol</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/ICT__Year_6__lesson_2_Part_1_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Introduction to Programming Constructs Sequen</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/ICT__Year_6__lesson_2_Part_1_T1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Repetition (Loops) Programming Constructs Pra</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/ICT__Year_6__lesson_1_part_3_T1_(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>ICT – Revision  Dear Students, Please study t</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/ICT__Year_6__lesson_2_Part_1_T1_(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>ICT – Quiz  Students will take the ICT Quiz o</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/f882f4b1-1245-417e-a194-d1329adf8f94.jpg" target="_blank">
+              <span class="badge-ext ">JPG</span>
+              <span>Algorithms Worksheet</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/Year_6_ICT_Flowcharts_Classwork.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Flowcharts Worksheet</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/ICT 106/Programming_Constructs_Y6_worksheet.docx" target="_blank">
+              <span class="badge-ext ext-docx">DOCX</span>
+              <span>Programming Constructs Worksheet</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Global Perspectives & Humanities 106</span>
+          <span class="file-count">3 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Global Perspectives & Humanities 106/(SDGs)_Goals_-_GP_introduction.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>(SDGs) Goals - GP introduction</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Global Perspectives & Humanities 106/(SDGs)_Goals_-_SDGs_1-3.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>(SDGs) Goals - SDGs 1-3</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Global Perspectives & Humanities 106/(SDGs)_Goals_-_SDGs_4-6.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>(SDGs) Goals - SDGs 4-6</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">French 106</span>
+          <span class="file-count">8 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/Explore_2_Livre_de_l'eleve.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>explore 2 livre</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/Explore_2_Cahier_d'activites.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>explore 2 cahier d'act.</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/u1_l1_y6_Les_logements_originaux_2026.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>les logements originaux</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/y6_rev_voc.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>revision voc</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/u1_l1_y6_Les_pièces_de_la_maison_2026.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>les pièces de la maison</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/Où_habites-tu.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Où habites-tu ?</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/69370_la_maison.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>les pièces de la maison ppt</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/French 106/Les_pronoms_sujets_presentation(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>les pronoms personnels sujets</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">English 106</span>
+          <span class="file-count">41 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Fiction_vs_Non_Fiction_Checkpoint.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Fiction VS Non Fiction </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Pearson_Edexcel_Unit_2_Nonfiction_Text_Organisation_Features_Two_Sessions_--_just_the_answers.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Common non-fiction features</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Pearson_Edexcel_Unit_2_Skimming_Scanning_FULL_Checkpoint_Level.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Reading - Skim & Scan </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Reading_Detective_35_Slides.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Reading - infer & deduce & interpret </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Unit_2_Language_in_Context_Purpose_Audience_CORRECTED.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Reading: LANGUAGE IN CONTEXT  +  PURPOSE & AU</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Unit_2_Writers_Choices_Structure_Organisation_(1).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Reading: Writer choices - structure & Organiz</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year6_Unit2_Reading_Detective_Two_Sessions.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Navigating a Non-fiction Text</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Relative_Clauses_Detectives_Creative.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Grammar: Relative Clause </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Fact_File_-_Grammar_-_RELATIVE_CLAUSES.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File - Grammar -  RELATIVE CLAUSES</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Homework_-_Relative_Clause.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework - Relative Clause</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Report_Detectives_Year6_-_non_choronological_report_part_1.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Report Detectives - Non - Choronological Repo</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Fact_File_-_Report_Detectives_Non-choronological_report_-_part_1.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: Report_Detectives_Non-Choronologic</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/h.w_-_writing_part_1_Research_an_Endangered_Creature.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>H.W - Research an Endangered Creature</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Research_Detectives_Year6_-_non_choronological_report_-_paer_2.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Research Detectives: Non - chronologial Repor</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Research_Detectives_Session_Fact_File_-_part_2.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: Research_Detectives - Non Choronol</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Research_Detectives_Homework_-_part_2.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework: Research_Detectives - Non choronolo</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/From_Notes_to_Report_Year6_-_non_chronological_report_-_part_3.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: From Notes To Report (Non - Choronol</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Fact_File_From_Notes_to_Report.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: From Notes to Report</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Homework_Sheet_Build_a_Paragraph.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework Sheet: Build a Paragraph </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Report_Architects_Session4.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: Planning the whole report </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Fact_File_–_Planning_the_whole_report.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File – Planning the whole report</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Homework_-_Complete_your_report.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework - Complete your report</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Report_Architects_Session5_FirstDraft_v4_(2).pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: Non - choronological Report – Part 2</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Session_5_-_Fact_File_(4).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: Writing the Report – Part 2: First</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Session_5_-_Homework_(3).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework: Finish and check your first draft</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Session6_Feedback_non_choronological_report.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: Feedback non - choronological Report</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Homework__finish_your_draft.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework: finish your second draft</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Report_Architects_Session7_SecondDraft.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Writing: Feedback & Second draft</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/_Homework_Second_Draft.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Homework: second draft</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Unit8_Lesson1_Fantasy_Reading_....pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Fantasy Reading : working out unfamiliar word</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/reading_fantasy_-_The_City_That_Waited_...pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fantasy reading</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Unit8_Lesson1_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: fantasy reading (1)</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Unit8_Lesson2_Fantasy_Reading.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Fantasy reading: explaining the characters' f</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/The_City_That_Waited_-part_4.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fantasy reading: The city that waited </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Fantasy_Reading_-_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: fantasy reading - Feelings Detecti</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Unit8_Lesson3_Fantasy_Reading.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Fantasy reading: making inferences and predic</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/The_City_That_Waited_part_5.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fantasy Reading: The City That Waited (part 5</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Unit_8_Lesson_3_Fantasy_Reading_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact File: Fantasy reading - making inference</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Unit8_Lesson4_Fantasy_Reading.pptx" target="_blank">
+              <span class="badge-ext ext-pptx">PPTX</span>
+              <span>Fantasy reading: the effect of the writer's l</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/The_City_That_Waited_part_6.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fantasy Reading: The City That Waited (part 6</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/English 106/Year_6_Unit_8_Lesson_4_Fantasy_Reading_Fact_File.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>Fact file: Fantasy reading: the effect of the</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+      <div class="course-card">
+        <div class="course-header">
+          <span class="course-title">Arabic 106</span>
+          <span class="file-count">4 ملف</span>
+        </div>
+        <ul class="file-list">
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Arabic 106/68b7fbd4d14da440161e286d-1758622923038-1758622922517-68d274ca532dc88653cfeb93_(1).pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>كتاب اللغة العربية الوزاري </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Arabic 106/y6.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>بوكيت اللغة العربية </span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Arabic 106/إجابة_بماذج_اكتوبر.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>إجابة نماذج شهر أكتوبر</span>
+            </a>
+          </li>
+          <li class="file-item">
+            <a class="file-link" href="file:///C:/Users/co0ob/Projects/primary-exam-system/resources/coligo/Mostafa/Arabic 106/Arabic_prim6_t1_Assmt.pdf" target="_blank">
+              <span class="badge-ext ext-pdf">PDF</span>
+              <span>التقييمات </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script>
+    function switchStudent(name) {
+      document.getElementById('view-Ali').style.display = name === 'Ali' ? 'block' : 'none';
+      document.getElementById('view-Mostafa').style.display = name === 'Mostafa' ? 'block' : 'none';
+      document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', (name === 'Ali' && idx === 0) || (name === 'Mostafa' && idx === 1));
+      });
+    }
+  </script>
+</body>
+</html>

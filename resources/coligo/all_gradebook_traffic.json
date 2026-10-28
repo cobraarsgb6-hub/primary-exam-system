@@ -1,0 +1,181 @@
+[
+  {
+    "type": "request",
+    "url": "https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://fonts.googleapis.com/icon?family=Material+Icons&display=swap",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://fonts.googleapis.com/css2?family=Titillium+Web:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600;1,700&display=swap",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://fonts.googleapis.com/css?family=Unlock&display=swap",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://api.amplitude.com/",
+    "method": "POST"
+  },
+  {
+    "type": "request",
+    "url": "https://api.amplitude.com/",
+    "method": "POST"
+  },
+  {
+    "type": "request",
+    "url": "https://prod-api.coligolms.com/api/v0/users/68da691317e1492e0ffcd878/gradebook/visibility",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://prod-api.coligolms.com/api/v0/constants",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/feature-flags",
+    "method": "GET"
+  },
+  {
+    "type": "request",
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/messages/settings",
+    "method": "GET"
+  },
+  {
+    "type": "response",
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/messages/settings",
+    "status": 400,
+    "data": {
+      "message": "childId is required",
+      "status": 400
+    }
+  },
+  {
+    "type": "response",
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "status": 200,
+    "data": {
+      "profile": {
+        "fullName": "Ahmed Eisa Eisa",
+        "firstName": "Ahmed",
+        "middleName": "Eisa",
+        "lastName": "Eisa",
+        "email": "Ahmedissaibraheem@gmail.com",
+        "phone": "01097635360",
+        "avatar": "https://coligo.b-cdn.net/users/ahmed.ibrahim144/avatar-1791725622807"
+      },
+      "children": [
+        {
+          "_id": "68da68c843e7498ddb5573ba",
+          "username": "ali.isaa",
+          "profile": {
+            "fullName": "Ali Ahmed Eisa",
+            "firstName": "Ali",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01097635360",
+            "avatar": "https://coligo.b-cdn.net/assets/student-avatar.png"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "31609010113671",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": [
+              "68da691317e1492e0ffcd878"
+            ]
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759144136632,
+          "pushNotificationTokens": [],
+          "__v": 0
+        },
+        {
+          "_id": "68e6ac96b5f1511f61d47eea",
+          "username": "mostafa.eisa",
+          "profile": {
+            "fullName": "Mostafa Ahmed Eisa",
+            "firstName": "Mostafa",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01098987654",
+            "avatar": "https://coligo.b-cdn.net/users/mostafa.eisa/avatar-1780072631244"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "34532198760987",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": []
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759947926146,
+          "pushNotificationTokens": [
+            {
+              "service": "@push-notifications-service/expo",
+              "token": "ExponentPushToken[z_h2_xFlW5C79z2E-mUJe7]"
+            }
+          ],
+          "__v": 0
+        }
+      ],
+      "verification": {
+        "email": false
+      }
+    }
+  },
+  {
+    "type": "response",
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/feature-flags",
+    "status": 200,
+    "data": {
+      "enableAssessmentAutoSave": false,
+      "quizzesEnabled": false,
+      "simplifiedCreateComplaints": true,
+      "strictMessaging": false
+    }
+  },
+  {
+    "type": "response",
+    "url": "https://prod-api.coligolms.com/api/v0/users/68da691317e1492e0ffcd878/gradebook/visibility",
+    "status": 200,
+    "data": []
+  }
+]

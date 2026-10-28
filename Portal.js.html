@@ -1080,7 +1080,8 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       if (subjectSelect) {
         if (isAli) {
           subjectSelect.innerHTML = `
-            <option value="Mathematics" selected>Mathematics (📐 Place Value, Decimals & Fractions)</option>
+            <option value="ALL" selected>🌟 All 5 Subjects (امتحان نهاية الأسبوع الشامل لكافة المواد - الخميس)</option>
+            <option value="Mathematics">Mathematics (📐 Place Value, Decimals & Fractions)</option>
             <option value="Science">Science (🔬 Forces, Earth & Living Things)</option>
             <option value="English Grammar">English Grammar (📖 Adverbials & Punctuation)</option>
             <option value="Arabic Language">Arabic Language (📝 الجملة الاسمية والضمائر)</option>
@@ -1088,7 +1089,8 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
           `;
         } else {
           subjectSelect.innerHTML = `
-            <option value="Mathematics" selected>Mathematics (📐 Prime Factorization, Algebra & Ratios)</option>
+            <option value="ALL" selected>🌟 All 5 Subjects (امتحان نهاية الأسبوع الشامل لكافة المواد - الخميس)</option>
+            <option value="Mathematics">Mathematics (📐 Prime Factorization, Algebra & Ratios)</option>
             <option value="Science">Science (🔬 Circulatory System & Electricity)</option>
             <option value="English Literacy">English Literacy (📖 Fantasy Reading & Report Writing)</option>
             <option value="Arabic Language">Arabic Language (📝 إدارة الوقت والنكرة والمعرفة)</option>
@@ -1146,7 +1148,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
               feedback.innerText = '❌ RPC Error: ' + (err && err.message ? err.message : String(err));
             }
           })
-          .seedCompleteQuestionBank(cachedAdminToken);
+          .seedCompleteQuestionBank((typeof currentAdminToken !== 'undefined' ? currentAdminToken : null));
       } else {
         setTimeout(function() {
           if (btn) {

@@ -1,0 +1,36 @@
+name: Daily Autonomous Coligo Sync
+
+on:
+  schedule:
+    # Runs Sunday through Thursday at 13:00 UTC (15:00 / 3:00 PM Cairo Time)
+    - cron: '0 13 * * 0-4'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Run Cloud Coligo Ingestion
+      env:
+        COLIGO_TOKEN: ${{ secrets.COLIGO_TOKEN }}
+        GAS_WEBHOOK_URL: ${{ secrets.GAS_WEBHOOK_URL }}
+        SYNC_SECRET: ${{ secrets.SYNC_SECRET }}
+      run: |
+        python cloud_coligo_sync.py
+
+    - name: Commit & Push Updated Notifs (Optional)
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git add resources/coligo/all_notifications.json || true
+        git diff-index --quiet HEAD || git commit -m "chore(sync): automated coligo ingestion [skip ci]"
+        git push || true

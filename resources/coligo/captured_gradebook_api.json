@@ -1,0 +1,2104 @@
+[
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/constants",
+    "status": 200,
+    "data": {
+      "DAY_OF_THE_WEEK": {
+        "SATURDAY": "saturday",
+        "SUNDAY": "sunday",
+        "MONDAY": "monday",
+        "TUESDAY": "tuesday",
+        "WEDNESDAY": "wednesday",
+        "THURSDAY": "thursday",
+        "FRIDAY": "friday"
+      },
+      "BASE_ROLES": {
+        "SUPER_ADMIN": "@base-role/super-admin",
+        "ORGANIZATION_ADMIN": "@base-role/org-admin",
+        "SCHOOL_ADMIN": "@base-role/school-admin",
+        "HOD": "@base-role/head-of-department",
+        "PRINCIPAL": "@base-role/principal",
+        "PARENT": "@base-role/parent",
+        "TEACHER": "@base-role/teacher",
+        "STUDENT": "@base-role/student"
+      },
+      "SYSTEM_MODULES": {
+        "ACADEMIC_YEARS_MODULE_NAME": "@module/academic-years",
+        "ANNOUNCEMENTS_MODULE_NAME": "@module/announcements",
+        "AUTH_MODULE_NAME": "@module/authentication",
+        "CLASSES_MODULE_NAME": "@module/classes",
+        "COURSE_GRADEBOOK_POLICIES_MODULE_NAME": "@module/course-gradebook-policies",
+        "COURSES_MODULE_NAME": "@module/courses",
+        "COURSE_TEMPLATES_MODULE_NAME": "@module/course-templates",
+        "GRADEBOOK_SYSTEMS_MODULE_NAME": "@module/gradebook-systems",
+        "GRADE_CATEGORIES_MODULE_NAME": "@module/grade-categories",
+        "MESSAGES_MODULE_NAME": "@module/messages",
+        "NOTIFICATIONS_MODULE_NAME": "@module/notifications",
+        "ORGANIZATIONS_MODULE_NAME": "@module/organizations",
+        "ROLES_MODULE_NAME": "@module/roles",
+        "SCHOOLS_MODULE_NAME": "@module/schools",
+        "SEMESTERS_MODULE_NAME": "@module/semesters",
+        "STAGE_GRADEBOOK_DISPLAY_MODULE_NAME": "@module/stage-gradebook-display",
+        "STAGES_MODULE_NAME": "@module/stages",
+        "SUBJECTS_MODULE_NAME": "@module/subjects",
+        "USERS_MODULE_NAME": "@module/users",
+        "MATERIALS_MODULE_NAME": "@module/materials",
+        "GRADABLE_ITEM_MODULE_NAME": "@module/gradable-item",
+        "ANALYTICS_MODULE_NAME": "@module/analytics",
+        "GRADE_DEFAULT_VIEW_MODULE_NAME": "@module/grade-default-view",
+        "MASTERY_LEVELS_MODULE_NAME": "@module/mastery-levels",
+        "SKILLS_MODULE_NAME": "@module/skills",
+        "SKILL_CATEGORIES_MODULE_NAME": "@module/skill-categories",
+        "COURSE_TEMPLATE_SKILL_MODULE_NAME": "@module/course-template-skills",
+        "GRADABLE_SKILLS_MODULE_NAME": "@module/gradable-skills",
+        "ASSESSMENTS_MODULE_NAME": "@module/assessments",
+        "SUBMISSIONS_MODULE_NAME": "@module/submissions",
+        "QUESTIONS_MODULE_NAME": "@module/questions",
+        "HOMEWORKS_MODULE_NAME": "@module/homeworks",
+        "CLASSWORK_MODULE_NAME": "@module/classwork",
+        "CALENDARS_MODULE_NAME": "@module/calendars",
+        "CLASS_SCHEDULES_MODULE_NAME": "@module/class-schedules",
+        "CERTIFICATES_MODULE_NAME": "@module/certificates",
+        "STUDENT_CERTIFICATE_MODULE_NAME": "@module/student-certificate",
+        "CERTIFICATE_TEMPLATE_MODULE_NAME": "@module/certificate-templates",
+        "PAYMENTS_MODULE_NAME": "@module/payments",
+        "PAYMENT_CATEGORIES_MODULE_NAME": "@module/payment-categories",
+        "INVOICE_MODULE_NAME": "@module/invoices",
+        "PAYMENT_SETTINGS_MODULE_NAME": "@module/payment-settings",
+        "ATTENDANCE_MODULE_NAME": "@module/attendance",
+        "STAGE_ATTENDANCE_SETTINGS_MODULE_NAME": "@module/stage-attendance-settings",
+        "ATTENDANCE_SESSIONS_MODULE_NAME": "@module/attendance-sessions",
+        "COURSE_TEMPLATE_ATTENDANCE_SETTINGS_MODULE_NAME": "@module/course-template-attendance-settings",
+        "COMPLAINTS_MODULE_NAME": "@module/complaints",
+        "COMPLAINT_TYPES_MODULE_NAME": "@module/complaint-types",
+        "DISMISSAL_SETTINGS_MODULE_NAME": "@module/dismissal-settings",
+        "DIGITAL_IDENTITIES_MODULE_NAME": "@module/digital-identities",
+        "DISMISSALS_MODULE_NAME": "@module/dismissals",
+        "SCHOOL_MESSAGE_SETTINGS_MODULE_NAME": "@module/school-message-settings",
+        "SCHOOL_MOMENT_SETTINGS_MODULE_NAME": "@module/school-moment-settings",
+        "SCHOOL_MOMENT_CONSUMPTIONS_MODULE_NAME": "@module/school-moment-consumptions",
+        "STAGE_MOMENT_SETTINGS_MODULE_NAME": "@module/stage-moment-settings",
+        "USER_MOMENT_CONSUMPTIONS_MODULE_NAME": "@module/user-moment-consumptions",
+        "POSTS_MODULE_NAME": "@module/posts",
+        "LOGS_MODULE_NAME": "@module/logs",
+        "LIKES_MODULE_NAME": "@module/likes",
+        "COMMENTS_MODULE_NAME": "@module/comments",
+        "MOMENT_NOTIFICATION_INBOX_MODULE_NAME": "@module/moment-notification-inbox"
+      },
+      "SYSTEM_MODULES_TO_HUMAN_READABLE_NAMES_MAP": {
+        "@module/academic-years": "Academic Years",
+        "@module/announcements": "Announcements",
+        "@module/authentication": "Authentication",
+        "@module/classes": "Classes",
+        "@module/course-gradebook-policies": "Course Gradebook Policies",
+        "@module/courses": "Courses",
+        "@module/course-templates": "Course Templates",
+        "@module/gradebook-systems": "Gradebook Systems",
+        "@module/grade-categories": "Grade Categories",
+        "@module/messages": "Messages",
+        "@module/notifications": "Notifications",
+        "@module/organizations": "Organizations",
+        "@module/roles": "Roles",
+        "@module/schools": "Schools",
+        "@module/semesters": "Semesters",
+        "@module/stage-gradebook-display": "Stage Gradebook Displays",
+        "@module/stages": "Stages",
+        "@module/subjects": "Subjects",
+        "@module/users": "Users",
+        "@module/materials": "Materials",
+        "@module/gradable-item": "Gradable Items",
+        "@module/analytics": "Analytics",
+        "@module/mastery-levels": "Mastery Levels",
+        "@module/skills": "Skills",
+        "@module/skill-categories": "Skill Categories",
+        "@module/course-template-skills": "Course Template Skills",
+        "@module/gradable-skills": "Gradable Skills",
+        "@module/grade-default-view": "Grade Default Views",
+        "@module/assessments": "Assessments",
+        "@module/submissions": "Submissions",
+        "@module/questions": "Questions",
+        "@module/homeworks": "Homeworks",
+        "@module/classwork": "Classwork",
+        "@module/calendars": "Calendars",
+        "@module/class-schedules": "Class Schedules",
+        "@module/certificates": "Certificates",
+        "@module/student-certificate": "Student Certificates",
+        "@module/certificate-templates": "Certificate Templates",
+        "@module/payments": "Payments",
+        "@module/payment-categories": "Payment Categories",
+        "@module/invoices": "Invoices",
+        "@module/payment-settings": "Payment Settings",
+        "@module/attendance": "Attendance",
+        "@module/stage-attendance-settings": "Stage Attendance Settings",
+        "@module/attendance-sessions": "Attendance Sessions",
+        "@module/course-template-attendance-settings": "Course Template Attendance Settings",
+        "@module/complaints": "Complaints",
+        "@module/complaint-types": "Complaint Types",
+        "@module/dismissal-settings": "Dismissal Settings",
+        "@module/digital-identities": "Digital Identities",
+        "@module/dismissals": "Dismissals",
+        "@module/school-message-settings": "School Message Settings",
+        "@module/school-moment-settings": "School Moment Settings",
+        "@module/school-moment-consumptions": "School Moment Consumptions",
+        "@module/stage-moment-settings": "Stage Moment Settings",
+        "@module/user-moment-consumptions": "User Moment Consumptions",
+        "@module/posts": "Posts",
+        "@module/logs": "Logs",
+        "@module/likes": "Likes",
+        "@module/comments": "Comments",
+        "@module/moment-notification-inbox": "Moment Notification Inbox"
+      },
+      "IMPORTS_MICROSERVICE_CONSTANTS": {
+        "ERROR_CODES": {
+          "VALIDATION_ERROR": "@error/validation",
+          "LOGIC_ERROR": "@error/logic",
+          "INTERNAL_ERROR": "@error/internal-error",
+          "ERR_INVALID_NATIONAL_ID": "@error-code/invalid-national-id",
+          "ERR_SCHEMA_VALIDATION": "@error-code/schema-validation",
+          "ERR_DUPLICATE_ROW": "@error-code/duplicate-row",
+          "ERR_CLASS_NOT_FOUND": "@error-code/class-not-found",
+          "ERR_SUBJECT_NOT_FOUND": "@error-code/subject-not-found"
+        },
+        "SCHEMA_SPECIFIC_ERROR_CODES": {
+          "ERR_MISSING_FIELD": "@error-code/missing-field",
+          "ERR_INVALID_FIELD_LENGTH": "@error-code/invalid-field-length",
+          "ERR_INVALID_FIELD_EMAIL": "@error-code/invalid-field-email",
+          "ERR_INVALID_FIELD_REGEX": "@error-code/invalid-field-regex",
+          "ERR_INVALID_FIELD": "@error-code/invalid-field"
+        }
+      },
+      "ANNOUNCEMENTS": {
+        "STATES": {
+          "ANNOUNCEMENT_STATE_DRAFT": "@announcement-state/draft",
+          "ANNOUNCEMENT_STATE_ACTIVE": "@announcement-state/active",
+          "ANNOUNCEMENT_STATE_ARCHIVED": "@announcement-state/archived",
+          "ANNOUNCEMENT_STATE_DELETED": "@announcement-state/deleted"
+        },
+        "TYPES": {
+          "ANNOUNCEMENT_TYPE_GENERAL": "@announcement-type/announcement-type-general",
+          "ANNOUNCEMENT_TYPE_COURSE": "@announcement-type/announcement-type-course"
+        },
+        "AUDIENCE_OPTIONS": {
+          "ANNOUNCEMENT_AUDIENCE_PRINCIPALS": "@announcement-audience/principals",
+          "ANNOUNCEMENT_AUDIENCE_HODS": "@announcement-audience/hods",
+          "ANNOUNCEMENT_AUDIENCE_TEACHERS": "@announcement-audience/teachers",
+          "ANNOUNCEMENT_AUDIENCE_PARENTS": "@announcement-audience/parents",
+          "ANNOUNCEMENT_AUDIENCE_STUDENTS": "@announcement-audience/students"
+        },
+        "RELATION_FILTERS": {
+          "ANNOUNCEMENT_RELATION_FILTER_OWNER": "owner",
+          "ANNOUNCEMENT_RELATION_FILTER_RECEIVER": "receiver"
+        },
+        "COMMENT_STATES": {
+          "ANNOUNCEMENT_COMMENT_STATE_NEW": "@announcement/comment-state/new",
+          "ANNOUNCEMENT_COMMENT_STATE_EDITED": "@announcement/comment-state/edited",
+          "ANNOUNCEMENT_COMMENT_STATE_DELETED": "@announcement/comment-state/deleted"
+        }
+      },
+      "COURSES": {
+        "STATES": {
+          "COURSE_STATE_DRAFT": "@courses/state/draft",
+          "COURSE_STATE_ACTIVE": "@courses/state/active",
+          "COURSE_STATE_LOCKED": "@courses/state/locked",
+          "COURSE_STATE_ARCHIVED": "@courses/state/archived"
+        },
+        "COURSES_SORT_KEYS": {
+          "TITLE": "title",
+          "ELECTIVE": "elective",
+          "SUBJECT": "subject",
+          "STAGE": "stage",
+          "CLASS": "class",
+          "SEMESTER": "semester",
+          "STATE": "state",
+          "CREATED_AT": "createdAt"
+        },
+        "ERROR_CODES": {
+          "COURSE_NOT_FOUND": "error-code/course-not-found",
+          "STUDENT_NOT_IN_THE_PROVIDED_COURSE": "@error-code/student-not-in-the-provided-course",
+          "STUDENT_NOT_REGISTERED_IN_THE_SCHOOL": "@error-code/student-not-registered-in-the-school",
+          "THE_PROVIDED_COURSE_IS_NOT_ELECTIVE": "@error-code/the-provided-course-is-not-elective",
+          "CANNOT_UPDATE_COURSE_IN_THIS_STATE": "@error-code/cannot-update-course-in-this-state",
+          "STUDENT_NOT_ENROLLED_IN_CLASS_IN_THE_SAME_ACADEMIC_YEAR": "@error-code/student-not-enrolled-in-class-in-the-same-academic-year",
+          "COURSE_HAS_NO_POLICY": "@error-code/course-has-no-policy",
+          "COURSES_HAVE_DIFFERENT_COURSE_TEMPLATE": "@error-code/courses-have-different-course-template",
+          "COURSES_HAVE_DIFFERENT_SEMESTER": "@error-code/courses-have-different-semester",
+          "COURSES_HAVE_DIFFERENT_SCHOOL": "@error-code/courses-have-different-school",
+          "COURSES_NOT_ACTIVE": "@error-code/courses-not-active",
+          "GRADE_CATEGORY_NOT_IN_COURSE_POLICY": "@error-code/grade-category-not-in-course-policy",
+          "INVALID_COURSE_STATE": "@error-code/invalid-course-state",
+          "COURSE_ALREADY_EXISTING": "@error-code/course-already-existing"
+        }
+      },
+      "COURSE_TEMPLATES": {
+        "STATES": {
+          "COURSE_TEMPLATE_STATE_ACTIVE": "@course-templates/state/active",
+          "COURSE_TEMPLATE_STATE_ARCHIVED": "@course-templates/state/archived"
+        },
+        "ERROR_CODES": {
+          "HAS_RELATED_COURSES": "@error-code/has-related-courses",
+          "HAS_RELATED_QUESTIONS": "@error-code/has-related-questions",
+          "COURSE_TEMPLATE_NOT_FOUND": "@error-code/course-template-not-found",
+          "COURSE_TEMPLATE_ARCHIVED": "@error-code/course-template-archived"
+        }
+      },
+      "MESSAGES": {
+        "MSG_LABEL_INBOX": "@msg-label/msg-label-inbox",
+        "MSG_LABEL_SENT": "@msg-label/msg-label-sent",
+        "MSG_LABEL_TRASH": "@msg-label/msg-label-trash",
+        "SOCKETS": {
+          "ROOM_TYPES": {
+            "MESSAGES_RT_READ_MESSAGE_COUNT": "@room-types/messages/read-message-count"
+          },
+          "EVENTS": {
+            "MESSAGES_EVENT_UNSEEN_COUNT_UPDATED": "@socket-events/messages/unseen-count-updated"
+          }
+        },
+        "MSG_MAX_NUMBER_OF_SEND_SEPARATELY": 50
+      },
+      "AUTHENTICATIONS": {
+        "SOCKETS": {
+          "ROOM_TYPES": {
+            "AUTH_QR_RT_LOGIN": "@room-types/auth/qr-tokens"
+          },
+          "EVENTS": {
+            "AUTH_EVENT_TOKEN_SCANNED": "@socket-events/auth/token/scanned"
+          }
+        }
+      },
+      "NOTIFICATIONS": {
+        "STATES": {
+          "NOTIFICATION_STATE_NEW": "@notification-state/new",
+          "NOTIFICATION_STATE_SEEN": "@notification-state/seen",
+          "NOTIFICATION_STATE_READ": "@notification-state/read"
+        },
+        "TYPES": {
+          "NOTIFICATION_TYPE_INFO": "@notification-type/info",
+          "NOTIFICATION_TYPE_ALERT": "@notification-type/alert",
+          "NOTIFICATION_TYPE_DANGER": "@notification-type/danger",
+          "MOMENTS_SCHOOL_STORAGE_QUOTA_90_CONSUMPTION": "@notification-type/moments/school-storage-quota-90-consumption",
+          "MOMENTS_PENDING_POST_MODERATION_REMINDER": "@notification-type/@moments/pending-post-moderation-reminder",
+          "MOMENT_PENDING_POST_MODERATION_IMMEDIATE_NOTIFICATION": "@notification-type/@moments/pending-post-moderation-immediate-notification",
+          "MOMENT_NEW_POST_NOTIFICATION": "@notification-type/@moments/new-post-notification",
+          "MOMENT_POST_INTERACTION_NOTIFICATION": "@notification-type/@moments/post-interaction-notification",
+          "MOMENT_COMMENT_INTERACTION_NOTIFICATION": "@notification-type/@moments/comment-interaction-notification",
+          "MOMENT_REPLY_INTERACTION_NOTIFICATION": "@notification-type/@moments/reply-interaction-notification",
+          "MOMENT_POST_DELETED_NOTIFICATION": "@notification-type/@moments/post-deleted-notification",
+          "MOMENT_STORAGE_QUOTA_EXCEEDED_NOTIFICATION": "@notification-type/@moments/storage-quota-exceeded-notification",
+          "MOMENT_POST_AUTO_ARCHIVED_NOTIFICATION": "@notification-type/@moments/post-auto-archived-notification"
+        },
+        "SOCKETS": {
+          "ROOM_TYPES": {
+            "NOTIFICATIONS_RT_READ_NOTIFICATIONS": "@room-types/notifications/read-notifications"
+          },
+          "EVENTS": {
+            "NOTIFICATIONS_EVENT_NEW_NOTIFICATION": "@socket-events/notifications/new-notification"
+          }
+        },
+        "PUSH_NOTIFICATIONS": {
+          "SERVICES": {
+            "PUSH_NOTIFICATION_SERVICE_EXPO": "@push-notifications-service/expo"
+          },
+          "CHANNEL_IDS": {
+            "DEFAULT_CHANNEL": "default-channel",
+            "ACADEMIC_YEARS_MODULE_NAME": "@module/academic-years",
+            "ANNOUNCEMENTS_MODULE_NAME": "@module/announcements",
+            "AUTH_MODULE_NAME": "@module/authentication",
+            "CLASSES_MODULE_NAME": "@module/classes",
+            "COURSE_GRADEBOOK_POLICIES_MODULE_NAME": "@module/course-gradebook-policies",
+            "COURSES_MODULE_NAME": "@module/courses",
+            "COURSE_TEMPLATES_MODULE_NAME": "@module/course-templates",
+            "GRADEBOOK_SYSTEMS_MODULE_NAME": "@module/gradebook-systems",
+            "GRADE_CATEGORIES_MODULE_NAME": "@module/grade-categories",
+            "MESSAGES_MODULE_NAME": "@module/messages",
+            "NOTIFICATIONS_MODULE_NAME": "@module/notifications",
+            "ORGANIZATIONS_MODULE_NAME": "@module/organizations",
+            "ROLES_MODULE_NAME": "@module/roles",
+            "SCHOOLS_MODULE_NAME": "@module/schools",
+            "SEMESTERS_MODULE_NAME": "@module/semesters",
+            "STAGE_GRADEBOOK_DISPLAY_MODULE_NAME": "@module/stage-gradebook-display",
+            "STAGES_MODULE_NAME": "@module/stages",
+            "SUBJECTS_MODULE_NAME": "@module/subjects",
+            "USERS_MODULE_NAME": "@module/users",
+            "MATERIALS_MODULE_NAME": "@module/materials",
+            "GRADABLE_ITEM_MODULE_NAME": "@module/gradable-item",
+            "ANALYTICS_MODULE_NAME": "@module/analytics",
+            "GRADE_DEFAULT_VIEW_MODULE_NAME": "@module/grade-default-view",
+            "MASTERY_LEVELS_MODULE_NAME": "@module/mastery-levels",
+            "SKILLS_MODULE_NAME": "@module/skills",
+            "SKILL_CATEGORIES_MODULE_NAME": "@module/skill-categories",
+            "COURSE_TEMPLATE_SKILL_MODULE_NAME": "@module/course-template-skills",
+            "GRADABLE_SKILLS_MODULE_NAME": "@module/gradable-skills",
+            "ASSESSMENTS_MODULE_NAME": "@module/assessments",
+            "SUBMISSIONS_MODULE_NAME": "@module/submissions",
+            "QUESTIONS_MODULE_NAME": "@module/questions",
+            "HOMEWORKS_MODULE_NAME": "@module/homeworks",
+            "CLASSWORK_MODULE_NAME": "@module/classwork",
+            "CALENDARS_MODULE_NAME": "@module/calendars",
+            "CLASS_SCHEDULES_MODULE_NAME": "@module/class-schedules",
+            "CERTIFICATES_MODULE_NAME": "@module/certificates",
+            "STUDENT_CERTIFICATE_MODULE_NAME": "@module/student-certificate",
+            "CERTIFICATE_TEMPLATE_MODULE_NAME": "@module/certificate-templates",
+            "PAYMENTS_MODULE_NAME": "@module/payments",
+            "PAYMENT_CATEGORIES_MODULE_NAME": "@module/payment-categories",
+            "INVOICE_MODULE_NAME": "@module/invoices",
+            "PAYMENT_SETTINGS_MODULE_NAME": "@module/payment-settings",
+            "ATTENDANCE_MODULE_NAME": "@module/attendance",
+            "STAGE_ATTENDANCE_SETTINGS_MODULE_NAME": "@module/stage-attendance-settings",
+            "ATTENDANCE_SESSIONS_MODULE_NAME": "@module/attendance-sessions",
+            "COURSE_TEMPLATE_ATTENDANCE_SETTINGS_MODULE_NAME": "@module/course-template-attendance-settings",
+            "COMPLAINTS_MODULE_NAME": "@module/complaints",
+            "COMPLAINT_TYPES_MODULE_NAME": "@module/complaint-types",
+            "DISMISSAL_SETTINGS_MODULE_NAME": "@module/dismissal-settings",
+            "DIGITAL_IDENTITIES_MODULE_NAME": "@module/digital-identities",
+            "DISMISSALS_MODULE_NAME": "@module/dismissals",
+            "SCHOOL_MESSAGE_SETTINGS_MODULE_NAME": "@module/school-message-settings",
+            "SCHOOL_MOMENT_SETTINGS_MODULE_NAME": "@module/school-moment-settings",
+            "SCHOOL_MOMENT_CONSUMPTIONS_MODULE_NAME": "@module/school-moment-consumptions",
+            "STAGE_MOMENT_SETTINGS_MODULE_NAME": "@module/stage-moment-settings",
+            "USER_MOMENT_CONSUMPTIONS_MODULE_NAME": "@module/user-moment-consumptions",
+            "POSTS_MODULE_NAME": "@module/posts",
+            "LOGS_MODULE_NAME": "@module/logs",
+            "LIKES_MODULE_NAME": "@module/likes",
+            "COMMENTS_MODULE_NAME": "@module/comments",
+            "MOMENT_NOTIFICATION_INBOX_MODULE_NAME": "@module/moment-notification-inbox"
+          }
+        }
+      },
+      "MATERIALS": {
+        "TYPES": {
+          "MATERIAL_TYPE_FOLDER": "@material-type/folder",
+          "MATERIAL_TYPE_FILE": "@material-type/file",
+          "MATERIAL_TYPE_LINK": "@material-type/link",
+          "MATERIAL_TYPE_NOTE": "@material-type/note"
+        },
+        "CONTENT_TYPES": {
+          "CONTENT_TYPE_VIDEO": "@content-type/video",
+          "CONTENT_TYPE_AUDIO": "@content-type/audio",
+          "CONTENT_TYPE_PDF": "@content-type/PDF",
+          "CONTENT_TYPE_DOCUMENT": "@content-type/document",
+          "CONTENT_TYPE_IMAGE": "@content-type/image",
+          "CONTENT_TYPE_LINK": "@content-type/link",
+          "CONTENT_TYPE_ARCHIVE": "@content-type/archive"
+        },
+        "STATES": {
+          "MATERIAL_STATE_PUBLISHED": "@material/state/published",
+          "MATERIAL_STATE_SCHEDULED": "@material/state/scheduled"
+        }
+      },
+      "GRADABLE_ITEMS": {
+        "GRADABLE_ITEM_STATES": {
+          "GRADABLE_ITEM_STATE_ACTIVE": "@gradable-item-state/active",
+          "GRADABLE_ITEM_STATE_CANCELLED": "@gradable-item-state/cancelled",
+          "GRADABLE_ITEM_STATE_UNPUBLISHED": "@gradable-item-state/unpublished"
+        },
+        "STUDENT_GRADE_STATES": {
+          "STUDENT_GRADE_STATE_NEW": "@student-grade-state/new",
+          "STUDENT_GRADE_STATE_MISSED": "@student-grade-state/missed",
+          "STUDENT_GRADE_STATE_EXCUSED": "@student-grade-state/excused",
+          "STUDENT_GRADE_STATE_GRADED": "@student-grade-state/graded"
+        },
+        "GRADE_VISIBILITY_STATUSES": {
+          "STUDENT_GRADE_VISIBILITY_STATE_VISIBLE": "@student-grade-visibility-state/visible",
+          "STUDENT_GRADE_VISIBILITY_STATE_HIDDEN": "@student-grade-visibility-state/hidden",
+          "STUDENT_GRADE_VISIBILITY_STATE_PARTIALLY_HIDDEN": "@student-grade-visibility-state/partially-hidden"
+        },
+        "SOCKETS": {
+          "ROOM_TYPES": {
+            "GRADABLE_ITEMS_RT_COURSE_GRADES": "@room-types/gradable-items/course-grades"
+          },
+          "EVENTS": {
+            "GRADABLE_ITEMS_EVENT_EDIT_GRADE": "@socket-events/gradable-items/edit-grade",
+            "GRADABLE_ITEMS_EVENT_GRADE_UPDATED": "@socket-events/gradable-items/grade-updated",
+            "GRADABLE_ITEMS_EVENT_GRADES_UPDATED": "@socket-events/gradable-items/grades-updated"
+          }
+        }
+      },
+      "SOCKETS": {
+        "GLOBAL_EVENTS": {
+          "SOCKET_GLOBAL_EVENT_JOIN_ROOM": "@socket-global-event/join-room",
+          "SOCKET_GLOBAL_EVENT_ROOM_JOINED": "@socket-global-event/room-joined",
+          "SOCKET_GLOBAL_EVENT_LEAVE_ROOM": "@socket-global-event/leave-room",
+          "SOCKET_GLOBAL_EVENT_APP_ERROR": "@socket-global-event/app-error"
+        }
+      },
+      "SEMESTERS": {
+        "STATES": {
+          "SEMESTER_STATE_DRAFT": "@semesters/state/draft",
+          "SEMESTER_STATE_ACTIVE": "@semesters/state/active",
+          "SEMESTER_STATE_LOCKED": "@semesters/state/locked",
+          "SEMESTER_STATE_ARCHIVED": "@semesters/state/archived"
+        },
+        "ERROR_CODES": {
+          "SEMESTER_NOT_FOUND": "@error-code/semester-not-found",
+          "TARGET_SEMESTER_NOT_FOUND": "@error-code/target-semester-not-found",
+          "SOURCE_SEMESTER_NOT_FOUND": "@error-code/source-semester-not-found",
+          "SEMESTERS_IN_DIFFERENT_SCHOOL": "@error-code/semesters-in-different-school",
+          "TARGET_SEMESTER_IS_NOT_DRAFT": "@error-code/target-semester-is-not-draft",
+          "SOURCE_SEMESTER_AND_TARGET_SEMESTER_ARE_THE_SAME": "@error-code/source-semester-and-target-semester-are-the-same"
+        }
+      },
+      "ASSESSMENTS": {
+        "QUESTIONS": {
+          "TYPES": {
+            "QUESTION_TYPE_MCQ": "@questions/types/mcq",
+            "QUESTION_TYPE_TF": "@questions/types/tf",
+            "QUESTION_TYPE_FIB": "@questions/types/fib",
+            "QUESTION_TYPE_ESSAY": "@questions/types/essay",
+            "QUESTION_TYPE_ORDERING": "@questions/types/ordering",
+            "QUESTION_TYPE_MATCHING": "@questions/types/matching"
+          },
+          "STATES": {
+            "QUESTION_STATE_DRAFT": "@questions/states/draft",
+            "QUESTION_STATE_IN_REVIEW": "@questions/states/in-review",
+            "QUESTION_STATE_PUBLISHED": "@questions/states/published",
+            "QUESTION_STATE_CANCELED": "@questions/states/canceled"
+          },
+          "SCOPES": {
+            "QUESTION_SCOPE_SCHOOL": "@questions/scopes/school",
+            "QUESTION_SCOPE_GLOBAL": "@questions/scopes/global"
+          }
+        },
+        "ASSESSMENTS": {
+          "TYPES": {
+            "ASSESSMENTS_TYPE_QUIZ": "@assessments/type/quiz",
+            "ASSESSMENTS_TYPE_ASSIGNMENT": "@assessments/type/assignment"
+          },
+          "GRADING": {
+            "ASSESSMENT_GRADING_METHOD_HIGHEST": "@assessment-grading-method/highest",
+            "ASSESSMENT_GRADING_METHOD_AVERAGE": "@assessment-grading-method/average",
+            "ASSESSMENT_GRADING_METHOD_LATEST": "@assessment-grading-method/latest"
+          },
+          "TRIAL_GRADING": {
+            "ASSESSMENT_TRIAL_GRADING_METHOD_HIGHEST": "@assessment-trial-grading-method/highest",
+            "ASSESSMENT_TRIAL_GRADING_METHOD_AVERAGE": "@assessment-trial-grading-method/average",
+            "ASSESSMENT_TRIAL_GRADING_METHOD_LATEST": "@assessment-trial-grading-method/latest"
+          },
+          "STATES": {
+            "ASSESSMENT_STATE_DRAFT": "@assessment/states/draft",
+            "ASSESSMENT_STATE_SUBMITTED": "@assessment/states/submitted",
+            "ASSESSMENT_STATE_STARTED": "@assessment/states/started",
+            "ASSESSMENT_STATE_FINISHED": "@assessment/states/finished",
+            "ASSESSMENT_STATE_CANCELED": "@assessment/states/canceled"
+          },
+          "QUESTIONS": {
+            "GRADING_METHODS": {
+              "ASSESSMENT_QUESTION_GRADING_METHOD_AUTO": "@assessment-question-grading-method/auto",
+              "ASSESSMENT_QUESTION_GRADING_METHOD_MANUAL": "@assessment-question-grading-method/manual",
+              "ASSESSMENT_QUESTION_GRADING_METHOD_MIXED": "@assessment-question-grading-method/mixed"
+            },
+            "AUTO_GRADE_MAX_SCORE_RATIO": 0.5
+          },
+          "SOCKETS": {
+            "ROOM_TYPES": {
+              "ASSESSMENT_RT_DURATION": "@room-types/assessments/duration"
+            },
+            "EVENTS": {
+              "ASSESSMENTS_EVENT_DURATION_UPDATED": "@socket-events/assessments/duration-updated"
+            }
+          }
+        },
+        "SUBMISSIONS": {
+          "STATES": {
+            "SUBMISSION_STATE_DONE": "@submissions/state/done",
+            "SUBMISSION_STATE_IN_PROGRESS": "@submissions/state/in-progress"
+          }
+        }
+      },
+      "GRADE_DEFAULT_VIEWS": {
+        "TYPES": {
+          "COURSE_GRADE_VIEW": "@grade-default-view/course",
+          "SKILL_GRADE_VIEW": "@grade-default-view/skill"
+        },
+        "ERROR_CODES": {
+          "THIS_COURSE_HAS_NO_GRADE_DEFAULT_VIEW": "@error-code/this-course-has-no-grade-default-view",
+          "GRADES_HIDDEN_ON_ROLE_ERROR": "@error-code/grades-hidden-on-role-error"
+        }
+      },
+      "GRADABLE_SKILLS": {
+        "STATES": {
+          "GRADABLE_SKILL_STATE_PUBLISHED": "@gradable-skills/states/published",
+          "GRADABLE_SKILL_STATE_UNPUBLISHED": "@gradable-skills/states/unpublished"
+        },
+        "SOCKETS": {
+          "ROOM_TYPES": {
+            "GRADABLE_SKILLS_RT_COURSE_SKILL_GRADES": "@room-types/gradable-skills/course-skill-grades"
+          },
+          "EVENTS": {
+            "GRADABLE_SKILLS_EVENT_EDIT_GRADE": "@socket-events/gradable-skills/edit-grade",
+            "GRADABLE_SKILLS_EVENT_GRADE_UPDATED": "@socket-events/gradable-skills/grade-updated"
+          }
+        }
+      },
+      "ACADEMIC_YEARS": {
+        "STATES": {
+          "ACADEMIC_YEAR_STATE_DRAFT": "@academic-year/state/draft",
+          "ACADEMIC_YEAR_STATE_ACTIVE": "@academic-year/state/active",
+          "ACADEMIC_YEAR_STATE_ARCHIVED": "@academic-year/state/archived"
+        }
+      },
+      "HOMEWORKS": {
+        "STATES": {
+          "HOMEWORK_STATE_DRAFT": "@homework/states/draft",
+          "HOMEWORK_STATE_SUBMITTED": "@homework/states/submitted",
+          "HOMEWORK_STATE_STARTED": "@homework/states/started",
+          "HOMEWORK_STATE_FINISHED": "@homework/states/finished",
+          "HOMEWORK_STATE_CANCELED": "@homework/states/canceled"
+        },
+        "TYPES": {
+          "HOMEWORK_TYPE_GRADED": "@homework/type/graded",
+          "HOMEWORK_TYPE_UNGRADED": "@homework/type/ungraded"
+        },
+        "GRADE_STATUS": {
+          "HOMEWORK_GRADE_STATUS_NEW": "@homework/grade/status/new",
+          "HOMEWORK_GRADE_STATUS_MISSED": "@homework/grade/status/missed",
+          "HOMEWORK_GRADE_STATUS_COMPLETED": "@homework/grade/status/completed",
+          "HOMEWORK_GRADE_STATUS_HIDDEN": "@homework/grade/status/hidden"
+        }
+      },
+      "CLASSWORK": {
+        "STATES": {
+          "CLASSWORK_STATE_DRAFT": "@classwork/states/draft",
+          "CLASSWORK_STATE_SUBMITTED": "@classwork/states/submitted",
+          "CLASSWORK_STATE_PUBLISHED": "@classwork/states/published",
+          "CLASSWORK_STATE_CANCELLED": "@classwork/states/cancelled"
+        }
+      },
+      "CLASS_SCHEDULES": {
+        "TYPES": {
+          "CLASS_SCHEDULE_WEEKLY": "@class-schedule/type/weekly",
+          "CLASS_SCHEDULE_EXAMS": "@class-schedule/type/exams"
+        }
+      },
+      "USERS": {
+        "TYPES": {
+          "USER_STATE_ACTIVE": "@user/state/active",
+          "USER_STATE_DEACTIVATED": "@user/state/deactivated",
+          "USER_STATE_DELETED": "@user/state/deleted"
+        },
+        "BOT_USER": {
+          "BOT_FIRST_NAME": "System",
+          "BOT_LAST_NAME": "Bot",
+          "BOT_USERNAME": "system-bot"
+        }
+      },
+      "CERTIFICATE_TEMPLATES": {
+        "FIELD_TYPES": {
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_STRING": "@certificate/fields/type/string",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_NUMBER": "@certificate/fields/type/number",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_DATE": "@certificate/fields/type/date",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_IMAGE": "@certificate/fields/type/image",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_CHECKBOX": "@certificate/fields/type/checkbox",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_LIST": "@certificate/fields/type/list",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_RANGE": "@certificate/fields/type/range",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_BADGE": "@certificate/fields/type/badge",
+          "CERTIFICATE_TEMPLATE_FIELD_TYPE_GRADEBOOK_SYSTEM": "@certificate/fields/type/gradebook-system"
+        }
+      },
+      "CERTIFICATES": {
+        "STATES": {
+          "CERTIFICATE_STATE_ACCEPTED": "@certificate/states/accepted",
+          "CERTIFICATE_STATE_DECLINED": "@certificate/states/declined",
+          "CERTIFICATE_STATE_PENDING": "@certificate/states/pending"
+        }
+      },
+      "STUDENT_CERTIFICATES": {
+        "STATES": {
+          "STUDENT_CERTIFICATE_STATE_UNPUBLISHED": "@student-certificate/states/unpublished",
+          "STUDENT_CERTIFICATE_STATE_SCHEDULED": "@student-certificate/states/scheduled",
+          "STUDENT_CERTIFICATE_STATE_PUBLISHED": "@student-certificate/states/published"
+        }
+      },
+      "PAYMENTS": {
+        "PAYMENT_METHODS": {
+          "PAYMENT_METHOD_PAYMOB": "@payment/method/paymob"
+        },
+        "STATES": {
+          "PAYMENT_STATE_SCHEDULED": "@payment/state/scheduled",
+          "PAYMENT_STATE_PUBLISHED": "@payment/state/published",
+          "PAYMENT_STATE_CANCELED": "@payment/state/canceled",
+          "PAYMENT_STATE_EXPIRED": "@payment/state/expired"
+        }
+      },
+      "INVOICES": {
+        "STATES": {
+          "INVOICE_STATE_HIDDEN": "@invoice/state/hidden",
+          "INVOICE_STATE_PENDING": "@invoice/state/pending",
+          "INVOICE_STATE_PAID": "@invoice/state/paid",
+          "INVOICE_STATE_DECLINED": "@invoice/state/declined",
+          "INVOICE_STATE_VOIDED": "@invoice/state/voided",
+          "INVOICE_STATE_REFUNDED": "@invoice/state/refunded",
+          "INVOICE_STATE_MISSED": "@invoice/state/missed"
+        },
+        "TRANSACTIONS": {
+          "STATES": {
+            "TRANSACTION_STATE_DECLINED": "@transaction/state/declined",
+            "TRANSACTION_STATE_REFUNDED": "@transaction/state/refunded",
+            "TRANSACTION_STATE_SUCCESSFUL": "@transaction/state/successful",
+            "TRANSACTION_STATE_VOIDED": "@transaction/state/voided"
+          },
+          "TYPES": {
+            "TRANSACTION_TYPE_PAYMENT": "@transaction/type/payment",
+            "TRANSACTION_TYPE_REFUND": "@transaction/type/refund",
+            "TRANSACTION_TYPE_VOID": "@transaction/type/void"
+          }
+        }
+      },
+      "STAGE_ATTENDANCE_SETTINGS": {
+        "MODES": {
+          "STAGE_ATTENDANCE_MODE_SESSION": "@stage-attendance-settings/mode/session",
+          "STAGE_ATTENDANCE_MODE_DAY": "@stage-attendance-settings/mode/day"
+        }
+      },
+      "ATTENDANCE_SESSIONS": {
+        "STATES": {
+          "ATTENDANCE_SESSION_STATE_STARTED": "@attendance-sessions/state/started",
+          "ATTENDANCE_SESSION_STATE_LOCKED": "@attendance-sessions/state/locked",
+          "ATTENDANCE_SESSION_STATE_SUBMITTED": "@attendance-sessions/state/submitted",
+          "ATTENDANCE_SESSION_STATE_UNLOCKED": "@attendance-sessions/state/unlocked"
+        }
+      },
+      "ATTENDANCE": {
+        "STATES": {
+          "ATTENDANCE_STATE_ATTENDED": "@attendance/state/attended",
+          "ATTENDANCE_STATE_LATE": "@attendance/state/late",
+          "ATTENDANCE_STATE_EXCUSED": "@attendance/state/excused",
+          "ATTENDANCE_STATE_ABSENT": "@attendance/state/absent"
+        },
+        "ATTENDANCE_REPORT_SORT_KEYS": {
+          "STUDENT_NAME": "studentName",
+          "CLASS_NAME": "className",
+          "STAGE_NAME": "stageName"
+        }
+      },
+      "USER_DEVICES": {
+        "TYPES": {
+          "USER_DEVICE_WEB": "@user-device/web",
+          "USER_DEVICE_MOBILE": "@user-device/mobile"
+        }
+      },
+      "COMPLAINT_CATEGORIES": {
+        "CATEGORIES": {
+          "COMPLAINT_CATEGORY_ACADEMIC": "@complaint/category/academic",
+          "COMPLAINT_CATEGORY_STAGE": "@complaint/category/stage",
+          "COMPLAINT_CATEGORY_SCHOOL_MANAGEMENT": "@complaint/category/school-management"
+        }
+      },
+      "COMPLAINTS": {
+        "EVENT_TYPES": [
+          "@event/complaint/comment",
+          "@event/complaint/assignees-modified",
+          "@event/complaint/contributors-modified",
+          "@event/complaint/viewers-modified",
+          "@event/complaint/state-modified",
+          "@event/complaint/label-modified",
+          "@event/complaint/tags-modified",
+          "@event/complaint/complaint-type-modified"
+        ],
+        "STATES": {
+          "COMPLAINT_STATE_OPEN": "@complaint/states/open",
+          "COMPLAINT_STATE_IN_PROGRESS": "@complaint/states/in-progress",
+          "COMPLAINT_STATE_RESOLVED": "@complaint/states/resolved",
+          "COMPLAINT_STATE_CLOSED": "@complaint/states/closed"
+        },
+        "LABELS": {
+          "COMPLAINT_LABEL_NEW": "@label/complaint/new",
+          "COMPLAINT_LABEL_OVERDUE": "@label/complaint/overdue",
+          "COMPLAINT_LABEL_AWAITING_REPLY": "@label/complaint/awaiting-reply"
+        }
+      },
+      "TAGS": {
+        "RELATED_TO": {
+          "TAG_RELATED_TO_QUESTIONS": "@tags/module/questions",
+          "TAG_RELATED_TO_COMPLAINTS": "@tags/module/complaints"
+        }
+      },
+      "DISMISSSALS": {
+        "SOCKETS": {
+          "ROOM_TYPES": {
+            "DISMISSAL_RT_CLASS": "@room-types/dismissals/class"
+          }
+        },
+        "EVENTS": {
+          "DISMISSALS_EVENT_STUDENT_CALLED": "@socket-events/dismissals/student-called",
+          "DISMISSALS_EVENT_STUDENT_DISMISSED": "@socket-events/dismissals/student-dismissed"
+        },
+        "STATES": {
+          "DISMISSALS_STATE_CALLED": "@dismissals/state/called",
+          "DISMISSALS_STATE_DISMISSED": "@dismissals/state/dismissed"
+        },
+        "CALLER_TYPES": {
+          "DISMISSALS_CALLER_PARENT_TYPE": "@dismissals/caller/parent-type",
+          "DISMISSALS_CALLER_GATER_TYPE": "@dismissals/caller/gater-type"
+        },
+        "CALL_STATES": {
+          "CALL_STATE_NOT_CALLED": "@call/state/not-called",
+          "CALL_STATE_HAVE_DISMISSAL": "@call/state/have-dismissal",
+          "CALL_STATE_ABSENT": "@call/state/absent",
+          "CALL_STATE_DEACTIVATED": "@call/state/deactivated"
+        }
+      },
+      "PERFORMANCE_FAVORITES": {
+        "STATES": [
+          "@performance-favorite/state/published",
+          "@performance-favorite/state/scheduled",
+          "@performance-favorite/state/canceled",
+          "@performance-favorite/state/draft"
+        ],
+        "TYPES": [
+          "@performance-favorite/type/quiz",
+          "@performance-favorite/type/assignment",
+          "@performance-favorite/type/homework",
+          "@performance-favorite/type/materials",
+          "@performance-favorite/type/classwork",
+          "@performance-favorite/type/gradableItems"
+        ]
+      },
+      "FILE_EXTENSIONS": {
+        "IMAGE_EXTENSIONS": [
+          ".jpg",
+          ".jpeg",
+          ".png",
+          ".gif",
+          ".wepb",
+          ".tif",
+          ".bmp",
+          ".heic",
+          ".svg"
+        ],
+        "AUDIO_EXTENSIONS": [
+          ".ogg",
+          ".wav",
+          ".mp3",
+          ".webm"
+        ],
+        "VIDEO_EXTENSIONS": [
+          ".mp4",
+          ".mov",
+          ".avi",
+          ".wmv",
+          ".flv",
+          ".avchd",
+          ".mkv",
+          ".m4v",
+          ".f4v"
+        ],
+        "PDF_EXTENSION": ".pdf",
+        "PROTECTED_FILE_EXTENSIONS": [
+          ".pdf",
+          ".mp4",
+          ".mov",
+          ".avi",
+          ".wmv",
+          ".flv",
+          ".avchd",
+          ".mkv",
+          ".m4v",
+          ".f4v",
+          ".jpg",
+          ".jpeg",
+          ".png",
+          ".gif",
+          ".wepb",
+          ".tif",
+          ".bmp",
+          ".heic",
+          ".svg"
+        ],
+        "RESTRICTED_FILE_EXTENSIONS": [
+          ".pdf",
+          ".mp4",
+          ".mov",
+          ".avi",
+          ".wmv",
+          ".flv",
+          ".avchd",
+          ".mkv",
+          ".m4v",
+          ".f4v",
+          ".jpg",
+          ".jpeg",
+          ".png",
+          ".gif",
+          ".wepb",
+          ".tif",
+          ".bmp",
+          ".heic",
+          ".svg"
+        ],
+        "ANNOTATION_FILE_EXTENSIONS": [
+          ".json",
+          ".xfdf"
+        ]
+      },
+      "TIMEZONES": {
+        "SUPPORTED_TIMEZONES": [
+          "Africa/Cairo",
+          "Asia/Riyadh"
+        ],
+        "DEFAULT_TIMEZONE": "Africa/Cairo"
+      },
+      "AI_AGENT": {
+        "SUPPORTED_LANGUAGES": [
+          "Arabic",
+          "English",
+          "French",
+          "German"
+        ]
+      },
+      "ENROLL_STUDENTS_INTO_ELECTIVES": {
+        "ERRORS": {
+          "ERR_STUDENT_NOT_FOUND": "@error-code/student-not-found",
+          "ERR_COURSE_NOT_FOUND": "@error-code/course-not-found",
+          "ERR_COURSE_NOT_UNIQUE": "@error-code/course-not-unique",
+          "ERR_SCHEMA_VALIDATION": "@error-code/schema-validation"
+        }
+      },
+      "MOMENTS": {
+        "POSTS": {
+          "STATES": {
+            "MOMENT_POST_STATE_APPROVED": "@moment/post-state/approved",
+            "MOMENT_POST_STATE_ARCHIVED": "@moment/post-state/archived",
+            "MOMENT_POST_STATE_PENDING": "@moment/post-state/pending"
+          },
+          "MEDIA_LIMITS": {
+            "ATTACHMENT_NUMBER": 30,
+            "VIDEO_DURATION_SECONDS": 90
+          },
+          "ACTIONS": {
+            "MOMENT_POST_ACTION_APPROVE": "@moment/post-action/approve",
+            "MOMENT_POST_ACTION_DECLINE": "@moment/post-action/decline"
+          }
+        },
+        "STAGE_MOMENT_SETTINGS": {
+          "COMMENT_MODES": {
+            "MOMENT_COMMENT_MODE_PUBLIC": "@moment/comment-mode/public",
+            "MOMENT_COMMENT_MODE_PRIVATE": "@moment/comment-mode/private"
+          }
+        },
+        "USER_MOMENT_CONSUMPTIONS": {
+          "SORT_KEYS": {
+            "MONTH_CONSUMPTION": "monthConsumption"
+          }
+        },
+        "LOGS": {
+          "TYPES": {
+            "MOMENT_LOG_TYPE_EDITED": "@moment/log-type/edited",
+            "MOMENT_LOG_TYPE_APPROVED": "@moment/log-type/approved",
+            "MOMENT_LOG_TYPE_DECLINED": "@moment/log-type/declined",
+            "MOMENT_LOG_TYPE_ARCHIVED": "@moment/log-type/archived"
+          }
+        }
+      },
+      "STAGES": {
+        "ERROR_CODES": {
+          "STAGE_NOT_FOUND": "@error-code/stage-not-found",
+          "NO_CLASSES_IN_STAGE": "@error-code/no-classes-in-stage"
+        }
+      }
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/messages/settings",
+    "status": 400,
+    "data": {
+      "message": "childId is required",
+      "status": 400
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "status": 200,
+    "data": {
+      "profile": {
+        "fullName": "Ahmed Eisa Eisa",
+        "firstName": "Ahmed",
+        "middleName": "Eisa",
+        "lastName": "Eisa",
+        "email": "Ahmedissaibraheem@gmail.com",
+        "phone": "01097635360",
+        "avatar": "https://coligo.b-cdn.net/users/ahmed.ibrahim144/avatar-1791725622807"
+      },
+      "children": [
+        {
+          "_id": "68da68c843e7498ddb5573ba",
+          "username": "ali.isaa",
+          "profile": {
+            "fullName": "Ali Ahmed Eisa",
+            "firstName": "Ali",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01097635360",
+            "avatar": "https://coligo.b-cdn.net/assets/student-avatar.png"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "31609010113671",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": [
+              "68da691317e1492e0ffcd878"
+            ]
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759144136632,
+          "pushNotificationTokens": [],
+          "__v": 0
+        },
+        {
+          "_id": "68e6ac96b5f1511f61d47eea",
+          "username": "mostafa.eisa",
+          "profile": {
+            "fullName": "Mostafa Ahmed Eisa",
+            "firstName": "Mostafa",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01098987654",
+            "avatar": "https://coligo.b-cdn.net/users/mostafa.eisa/avatar-1780072631244"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "34532198760987",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": []
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759947926146,
+          "pushNotificationTokens": [
+            {
+              "service": "@push-notifications-service/expo",
+              "token": "ExponentPushToken[z_h2_xFlW5C79z2E-mUJe7]"
+            }
+          ],
+          "__v": 0
+        }
+      ],
+      "verification": {
+        "email": false
+      }
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/68da691317e1492e0ffcd878/gradebook/visibility",
+    "status": 200,
+    "data": []
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/feature-flags",
+    "status": 200,
+    "data": {
+      "enableAssessmentAutoSave": false,
+      "quizzesEnabled": false,
+      "simplifiedCreateComplaints": true,
+      "strictMessaging": false
+    }
+  },
+  {
+    "url": "https://o1080639.ingest.sentry.io/api/6086702/envelope/?sentry_version=7&sentry_key=5b9e86a6e59d46ab85cd1575556df3b3&sentry_client=sentry.javascript.react%2F8.42.0",
+    "status": 429,
+    "data": {
+      "detail": "Sentry dropped data due to a quota or internal rate limit being reached. This will not affect your application. See https://docs.sentry.io/product/accounts/quotas/ for more information."
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "status": 200,
+    "data": {
+      "profile": {
+        "fullName": "Ahmed Eisa Eisa",
+        "firstName": "Ahmed",
+        "middleName": "Eisa",
+        "lastName": "Eisa",
+        "email": "Ahmedissaibraheem@gmail.com",
+        "phone": "01097635360",
+        "avatar": "https://coligo.b-cdn.net/users/ahmed.ibrahim144/avatar-1791725622807"
+      },
+      "children": [
+        {
+          "_id": "68da68c843e7498ddb5573ba",
+          "username": "ali.isaa",
+          "profile": {
+            "fullName": "Ali Ahmed Eisa",
+            "firstName": "Ali",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01097635360",
+            "avatar": "https://coligo.b-cdn.net/assets/student-avatar.png"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "31609010113671",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": [
+              "68da691317e1492e0ffcd878"
+            ]
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759144136632,
+          "pushNotificationTokens": [],
+          "__v": 0
+        },
+        {
+          "_id": "68e6ac96b5f1511f61d47eea",
+          "username": "mostafa.eisa",
+          "profile": {
+            "fullName": "Mostafa Ahmed Eisa",
+            "firstName": "Mostafa",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01098987654",
+            "avatar": "https://coligo.b-cdn.net/users/mostafa.eisa/avatar-1780072631244"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "34532198760987",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": []
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759947926146,
+          "pushNotificationTokens": [
+            {
+              "service": "@push-notifications-service/expo",
+              "token": "ExponentPushToken[z_h2_xFlW5C79z2E-mUJe7]"
+            }
+          ],
+          "__v": 0
+        }
+      ],
+      "verification": {
+        "email": false
+      }
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/notifications/unseen-count",
+    "status": 200,
+    "data": {
+      "count": 0
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/notifications/unread-count?module=@module/class-schedules",
+    "status": 200,
+    "data": {
+      "count": 0
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/linked-accounts",
+    "status": 200,
+    "data": []
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/notifications/unread-count?module=@module/calendars",
+    "status": 200,
+    "data": {
+      "count": 0
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/schools/68ac9f380396de90850769ce",
+    "status": 200,
+    "data": {
+      "school": {
+        "_id": "68ac9f380396de90850769ce",
+        "organizationId": "68ac9ea683aff519da779e03",
+        "name": "Manaret El-Eman British International School",
+        "phone": "",
+        "logoUrl": "https://coligo.b-cdn.net/Manarat_El_Eman%2FManaret_El-Eman_International_School%2Flogo-1756143415645.jpg",
+        "schoolSystemId": "5d6ff19b1c07b61fd23e4fa9",
+        "principal": {
+          "name": "null",
+          "phone": "null"
+        },
+        "active": true,
+        "hodsAssignTeachers": true,
+        "principalsAssignTeachers": false,
+        "stages": [
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9a",
+            "name": "Year 1",
+            "sequence": 4,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9b",
+            "name": "Year 2",
+            "sequence": 5,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9c",
+            "name": "Year 3",
+            "sequence": 6,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9d",
+            "name": "Year 4",
+            "sequence": 7,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9e",
+            "name": "Year 5",
+            "sequence": 8,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9f",
+            "name": "Year 6",
+            "sequence": 9,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa0",
+            "name": "Year 7",
+            "sequence": 10,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa1",
+            "name": "Year 8",
+            "sequence": 11,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa2",
+            "name": "Year 9",
+            "sequence": 12,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa3",
+            "name": "Year 10",
+            "sequence": 13,
+            "active": false
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa4",
+            "name": "Year 11",
+            "sequence": 14,
+            "active": false
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa5",
+            "name": "Year 12",
+            "sequence": 15,
+            "active": false
+          },
+          {
+            "_id": "6145f911f38fd233e6d4aeb3",
+            "name": "Pre-KG",
+            "sequence": 1,
+            "active": false
+          },
+          {
+            "_id": "6145f911f38fd233e6d4aeb4",
+            "name": "KG 1",
+            "sequence": 2,
+            "active": true
+          },
+          {
+            "_id": "6145f911f38fd233e6d4aeb5",
+            "name": "KG 2",
+            "sequence": 3,
+            "active": true
+          }
+        ],
+        "academicYears": [
+          {
+            "_id": "68b6c422f5f856330cf9a8ee",
+            "name": "Sep 2025 - Aug 2026",
+            "state": "@academic-year/state/archived"
+          },
+          {
+            "_id": "6aa6b7d7382ba9a416a8478b",
+            "name": "Sep 2026 - Jul 2027",
+            "state": "@academic-year/state/active"
+          }
+        ],
+        "createdAt": 1756143416465,
+        "__v": 0,
+        "timezone": "Africa/Cairo",
+        "admins": [
+          {
+            "_id": "68aca2d083aff519da77a5bf",
+            "username": "mai.sabry",
+            "profile": {
+              "fullName": "Mai Ahmed Sabry",
+              "firstName": "Mai",
+              "middleName": "Ahmed",
+              "lastName": "Sabry",
+              "email": "mai.sabry@meis-eg.com",
+              "phone": "",
+              "avatar": "https://coligo.b-cdn.net/users%2Fmai.sabry%2Favatar-1756749549560.jpg"
+            },
+            "roleId": "5d6ff19a1c07b61fd23e4f5c",
+            "baseRole": {
+              "_id": "5d6ff19a1c07b61fd23e4f5c",
+              "name": "@base-role/school-admin"
+            },
+            "schoolId": "68ac9f380396de90850769ce",
+            "state": "@user/state/active",
+            "verification": {
+              "email": false
+            },
+            "linkingDetails": {
+              "primaryAccountIds": [],
+              "secondaryAccountIds": [
+                "68c2d3efca12c050a0cbbb2c",
+                "68d4fb59d9a3ae07befd62c5",
+                "68e54eaf2dedc9d25161694b",
+                "68e6366215ac52ad2ee18511",
+                "68e636cba67ba3e420b91969",
+                "68b7fbd4d14da440161e2827",
+                "68b7fbd4d14da440161e283b",
+                "68b7fbd4d14da440161e2843",
+                "68b7fbd4d14da440161e286c",
+                "68b7fbd4d14da440161e2869",
+                "68dbaebfe28943089c75ae4d",
+                "68b7fbd4d14da440161e286b",
+                "68b7fbd4d14da440161e2871",
+                "68b7fbd4d14da440161e282b",
+                "68d27997532dc88653d1332f",
+                "693127318b3354ae195a5b87",
+                "68b7fbd4d14da440161e2868",
+                "68b7fbd4d14da440161e2864",
+                "68d4f9a884db49d0dd783a13",
+                "695f8c60414c9df630d32244",
+                "6ab17a8691372b3d8eb6efbb",
+                "6aca8a939572cabac68e638d"
+              ]
+            },
+            "createdAt": 1756144336700,
+            "pushNotificationTokens": [],
+            "__v": 0
+          },
+          {
+            "_id": "68d311afc02735078d8cbe72",
+            "username": "mohamed.br",
+            "profile": {
+              "fullName": "Mohammed Khaled British",
+              "firstName": "Mohammed",
+              "middleName": "Khaled",
+              "lastName": "British",
+              "email": "",
+              "phone": "01020778544",
+              "avatar": "https://coligo.b-cdn.net/assets/school-admin-avatar.png"
+            },
+            "roleId": "5d6ff19a1c07b61fd23e4f5c",
+            "baseRole": {
+              "_id": "5d6ff19a1c07b61fd23e4f5c",
+              "name": "@base-role/school-admin"
+            },
+            "schoolId": "68ac9f380396de90850769ce",
+            "state": "@user/state/active",
+            "verification": {
+              "email": false
+            },
+            "linkingDetails": {
+              "primaryAccountIds": [],
+              "secondaryAccountIds": [
+                "68d31169d9702815427809ec",
+                "68d4fb59d9a3ae07befd62c5"
+              ]
+            },
+            "createdAt": 1758663087608,
+            "pushNotificationTokens": [
+              {
+                "service": "@push-notifications-service/expo",
+                "token": "ExponentPushToken[wDVBTmK17kRjekCX5xoseQ]"
+              }
+            ],
+            "__v": 0
+          }
+        ],
+        "subjects": [
+          {
+            "_id": "68ac9f380396de90850769d3",
+            "name": "Arabic",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f64",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416493,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d4",
+            "name": "Math",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f65",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416493,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d5",
+            "name": "Science",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f66",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416493,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d6",
+            "name": "Social Studies",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f67",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d7",
+            "name": "German",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f68",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d8",
+            "name": "French",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f69",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769da",
+            "name": "English",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769db",
+            "name": "Physics",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6c",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769dc",
+            "name": "Biology",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6d",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769dd",
+            "name": "Chemistry",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6e",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416495,
+            "__v": 0
+          },
+          {
+            "_id": "68b7f5e4f5f856330cff503f",
+            "name": "ICT",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756886500238,
+            "__v": 0
+          },
+          {
+            "_id": "68bc8c47ca12c050a082dace",
+            "name": "Islamic Religion",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1757187143031,
+            "__v": 0
+          },
+          {
+            "_id": "6ab78c439ea89e8f8fd366c8",
+            "name": "Attendance",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1790413891611,
+            "__v": 0
+          },
+          {
+            "_id": "6ab97bc65e77ff0d681bfe2d",
+            "name": "Literature",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1790540742914,
+            "__v": 0
+          },
+          {
+            "_id": "6ab97f885e77ff0d681cc3c2",
+            "name": "Global Perspectives & Humanities",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1790541704610,
+            "__v": 0
+          }
+        ]
+      }
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/messages/settings?childId=68da68c843e7498ddb5573ba",
+    "status": 200,
+    "data": {
+      "userMessageSettings": {
+        "importCSV": false,
+        "viewAs": false,
+        "autoSend": false,
+        "autoIncludeParents": false
+      }
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/68da68c843e7498ddb5573ba/gradebook/visibility",
+    "status": 200,
+    "data": [
+      {
+        "semesterId": "68b6c422f5f856330cf9a8f3",
+        "gradesVisibility": [
+          {
+            "stageId": "5d6ff19b1c07b61fd23e4f9d",
+            "hidden": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "locked": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "isOverallGradeVisible": true
+          }
+        ]
+      },
+      {
+        "semesterId": "68b6c422f5f856330cf9a8f4",
+        "gradesVisibility": [
+          {
+            "stageId": "5d6ff19b1c07b61fd23e4f9d",
+            "hidden": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "locked": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "isOverallGradeVisible": true
+          }
+        ]
+      },
+      {
+        "semesterId": "68b6c422f5f856330cf9a8f5",
+        "gradesVisibility": [
+          {
+            "stageId": "5d6ff19b1c07b61fd23e4f9d",
+            "hidden": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "locked": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "isOverallGradeVisible": true
+          }
+        ]
+      },
+      {
+        "semesterId": "6aa6b7d7382ba9a416a84790",
+        "gradesVisibility": [
+          {
+            "stageId": "5d6ff19b1c07b61fd23e4f9e",
+            "hidden": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "locked": {
+              "gradableItems": false,
+              "gradableSkills": false
+            },
+            "isOverallGradeVisible": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me",
+    "status": 200,
+    "data": {
+      "profile": {
+        "fullName": "Ahmed Eisa Eisa",
+        "firstName": "Ahmed",
+        "middleName": "Eisa",
+        "lastName": "Eisa",
+        "email": "Ahmedissaibraheem@gmail.com",
+        "phone": "01097635360",
+        "avatar": "https://coligo.b-cdn.net/users/ahmed.ibrahim144/avatar-1791725622807"
+      },
+      "children": [
+        {
+          "_id": "68da68c843e7498ddb5573ba",
+          "username": "ali.isaa",
+          "profile": {
+            "fullName": "Ali Ahmed Eisa",
+            "firstName": "Ali",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01097635360",
+            "avatar": "https://coligo.b-cdn.net/assets/student-avatar.png"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "31609010113671",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": [
+              "68da691317e1492e0ffcd878"
+            ]
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759144136632,
+          "pushNotificationTokens": [],
+          "__v": 0
+        },
+        {
+          "_id": "68e6ac96b5f1511f61d47eea",
+          "username": "mostafa.eisa",
+          "profile": {
+            "fullName": "Mostafa Ahmed Eisa",
+            "firstName": "Mostafa",
+            "middleName": "Ahmed",
+            "lastName": "Eisa",
+            "email": "",
+            "phone": "01098987654",
+            "avatar": "https://coligo.b-cdn.net/users/mostafa.eisa/avatar-1780072631244"
+          },
+          "roleId": "5d6ff19a1c07b61fd23e4f61",
+          "baseRole": {
+            "_id": "5d6ff19a1c07b61fd23e4f61",
+            "name": "@base-role/student"
+          },
+          "schoolId": "68ac9f380396de90850769ce",
+          "nationalId": "34532198760987",
+          "state": "@user/state/active",
+          "verification": {
+            "email": false
+          },
+          "linkingDetails": {
+            "primaryAccountIds": [],
+            "secondaryAccountIds": []
+          },
+          "studentInfo": {
+            "performanceComment": ""
+          },
+          "creditCards": [],
+          "createdAt": 1759947926146,
+          "pushNotificationTokens": [
+            {
+              "service": "@push-notifications-service/expo",
+              "token": "ExponentPushToken[z_h2_xFlW5C79z2E-mUJe7]"
+            }
+          ],
+          "__v": 0
+        }
+      ],
+      "verification": {
+        "email": false
+      }
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/me/messages/unread-count",
+    "status": 200,
+    "data": {
+      "count": 0
+    }
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/users/students/68da68c843e7498ddb5573ba/semesters",
+    "status": 200,
+    "data": [
+      {
+        "_id": "68b6c422f5f856330cf9a8f3",
+        "name": "Semester 1",
+        "startDate": 1757840929787,
+        "endDate": 1766657329787,
+        "state": "@semesters/state/locked",
+        "schoolId": "68ac9f380396de90850769ce",
+        "createdAt": 1756808226273,
+        "__v": 0,
+        "academicYear": {
+          "_id": "68b6c422f5f856330cf9a8ee",
+          "name": "Sep 2025 - Aug 2026",
+          "schoolId": "68ac9f380396de90850769ce",
+          "state": "@academic-year/state/archived",
+          "createdAt": 1756808226251,
+          "__v": 0
+        }
+      },
+      {
+        "_id": "68b6c422f5f856330cf9a8f4",
+        "name": "Semester 2",
+        "startDate": 1768126129791,
+        "endDate": 1777108129791,
+        "state": "@semesters/state/locked",
+        "schoolId": "68ac9f380396de90850769ce",
+        "createdAt": 1756808226274,
+        "__v": 0,
+        "academicYear": {
+          "_id": "68b6c422f5f856330cf9a8ee",
+          "name": "Sep 2025 - Aug 2026",
+          "schoolId": "68ac9f380396de90850769ce",
+          "state": "@academic-year/state/archived",
+          "createdAt": 1756808226251,
+          "__v": 0
+        }
+      },
+      {
+        "_id": "68b6c422f5f856330cf9a8f5",
+        "name": "Semester 3",
+        "startDate": 1777194529793,
+        "endDate": 1781168929793,
+        "state": "@semesters/state/locked",
+        "schoolId": "68ac9f380396de90850769ce",
+        "createdAt": 1756808226274,
+        "__v": 0,
+        "academicYear": {
+          "_id": "68b6c422f5f856330cf9a8ee",
+          "name": "Sep 2025 - Aug 2026",
+          "schoolId": "68ac9f380396de90850769ce",
+          "state": "@academic-year/state/archived",
+          "createdAt": 1756808226251,
+          "__v": 0
+        }
+      },
+      {
+        "_id": "6aa6b7d7382ba9a416a84790",
+        "name": "Trimester 1",
+        "startDate": 1789310866694,
+        "endDate": 1797522466694,
+        "state": "@semesters/state/active",
+        "schoolId": "68ac9f380396de90850769ce",
+        "createdAt": 1789310935745,
+        "__v": 0,
+        "academicYear": {
+          "_id": "6aa6b7d7382ba9a416a8478b",
+          "name": "Sep 2026 - Jul 2027",
+          "schoolId": "68ac9f380396de90850769ce",
+          "state": "@academic-year/state/active",
+          "createdAt": 1789310935720,
+          "__v": 0
+        }
+      }
+    ]
+  },
+  {
+    "url": "https://prod-api.coligolms.com/api/v0/schools/68ac9f380396de90850769ce",
+    "status": 200,
+    "data": {
+      "school": {
+        "_id": "68ac9f380396de90850769ce",
+        "organizationId": "68ac9ea683aff519da779e03",
+        "name": "Manaret El-Eman British International School",
+        "phone": "",
+        "logoUrl": "https://coligo.b-cdn.net/Manarat_El_Eman%2FManaret_El-Eman_International_School%2Flogo-1756143415645.jpg",
+        "schoolSystemId": "5d6ff19b1c07b61fd23e4fa9",
+        "principal": {
+          "name": "null",
+          "phone": "null"
+        },
+        "active": true,
+        "hodsAssignTeachers": true,
+        "principalsAssignTeachers": false,
+        "stages": [
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9a",
+            "name": "Year 1",
+            "sequence": 4,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9b",
+            "name": "Year 2",
+            "sequence": 5,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9c",
+            "name": "Year 3",
+            "sequence": 6,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9d",
+            "name": "Year 4",
+            "sequence": 7,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9e",
+            "name": "Year 5",
+            "sequence": 8,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4f9f",
+            "name": "Year 6",
+            "sequence": 9,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa0",
+            "name": "Year 7",
+            "sequence": 10,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa1",
+            "name": "Year 8",
+            "sequence": 11,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa2",
+            "name": "Year 9",
+            "sequence": 12,
+            "active": true
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa3",
+            "name": "Year 10",
+            "sequence": 13,
+            "active": false
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa4",
+            "name": "Year 11",
+            "sequence": 14,
+            "active": false
+          },
+          {
+            "_id": "5d6ff19b1c07b61fd23e4fa5",
+            "name": "Year 12",
+            "sequence": 15,
+            "active": false
+          },
+          {
+            "_id": "6145f911f38fd233e6d4aeb3",
+            "name": "Pre-KG",
+            "sequence": 1,
+            "active": false
+          },
+          {
+            "_id": "6145f911f38fd233e6d4aeb4",
+            "name": "KG 1",
+            "sequence": 2,
+            "active": true
+          },
+          {
+            "_id": "6145f911f38fd233e6d4aeb5",
+            "name": "KG 2",
+            "sequence": 3,
+            "active": true
+          }
+        ],
+        "academicYears": [
+          {
+            "_id": "68b6c422f5f856330cf9a8ee",
+            "name": "Sep 2025 - Aug 2026",
+            "state": "@academic-year/state/archived"
+          },
+          {
+            "_id": "6aa6b7d7382ba9a416a8478b",
+            "name": "Sep 2026 - Jul 2027",
+            "state": "@academic-year/state/active"
+          }
+        ],
+        "createdAt": 1756143416465,
+        "__v": 0,
+        "timezone": "Africa/Cairo",
+        "admins": [
+          {
+            "_id": "68aca2d083aff519da77a5bf",
+            "username": "mai.sabry",
+            "profile": {
+              "fullName": "Mai Ahmed Sabry",
+              "firstName": "Mai",
+              "middleName": "Ahmed",
+              "lastName": "Sabry",
+              "email": "mai.sabry@meis-eg.com",
+              "phone": "",
+              "avatar": "https://coligo.b-cdn.net/users%2Fmai.sabry%2Favatar-1756749549560.jpg"
+            },
+            "roleId": "5d6ff19a1c07b61fd23e4f5c",
+            "baseRole": {
+              "_id": "5d6ff19a1c07b61fd23e4f5c",
+              "name": "@base-role/school-admin"
+            },
+            "schoolId": "68ac9f380396de90850769ce",
+            "state": "@user/state/active",
+            "verification": {
+              "email": false
+            },
+            "linkingDetails": {
+              "primaryAccountIds": [],
+              "secondaryAccountIds": [
+                "68c2d3efca12c050a0cbbb2c",
+                "68d4fb59d9a3ae07befd62c5",
+                "68e54eaf2dedc9d25161694b",
+                "68e6366215ac52ad2ee18511",
+                "68e636cba67ba3e420b91969",
+                "68b7fbd4d14da440161e2827",
+                "68b7fbd4d14da440161e283b",
+                "68b7fbd4d14da440161e2843",
+                "68b7fbd4d14da440161e286c",
+                "68b7fbd4d14da440161e2869",
+                "68dbaebfe28943089c75ae4d",
+                "68b7fbd4d14da440161e286b",
+                "68b7fbd4d14da440161e2871",
+                "68b7fbd4d14da440161e282b",
+                "68d27997532dc88653d1332f",
+                "693127318b3354ae195a5b87",
+                "68b7fbd4d14da440161e2868",
+                "68b7fbd4d14da440161e2864",
+                "68d4f9a884db49d0dd783a13",
+                "695f8c60414c9df630d32244",
+                "6ab17a8691372b3d8eb6efbb",
+                "6aca8a939572cabac68e638d"
+              ]
+            },
+            "createdAt": 1756144336700,
+            "pushNotificationTokens": [],
+            "__v": 0
+          },
+          {
+            "_id": "68d311afc02735078d8cbe72",
+            "username": "mohamed.br",
+            "profile": {
+              "fullName": "Mohammed Khaled British",
+              "firstName": "Mohammed",
+              "middleName": "Khaled",
+              "lastName": "British",
+              "email": "",
+              "phone": "01020778544",
+              "avatar": "https://coligo.b-cdn.net/assets/school-admin-avatar.png"
+            },
+            "roleId": "5d6ff19a1c07b61fd23e4f5c",
+            "baseRole": {
+              "_id": "5d6ff19a1c07b61fd23e4f5c",
+              "name": "@base-role/school-admin"
+            },
+            "schoolId": "68ac9f380396de90850769ce",
+            "state": "@user/state/active",
+            "verification": {
+              "email": false
+            },
+            "linkingDetails": {
+              "primaryAccountIds": [],
+              "secondaryAccountIds": [
+                "68d31169d9702815427809ec",
+                "68d4fb59d9a3ae07befd62c5"
+              ]
+            },
+            "createdAt": 1758663087608,
+            "pushNotificationTokens": [
+              {
+                "service": "@push-notifications-service/expo",
+                "token": "ExponentPushToken[wDVBTmK17kRjekCX5xoseQ]"
+              }
+            ],
+            "__v": 0
+          }
+        ],
+        "subjects": [
+          {
+            "_id": "68ac9f380396de90850769d3",
+            "name": "Arabic",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f64",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416493,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d4",
+            "name": "Math",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f65",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416493,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d5",
+            "name": "Science",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f66",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416493,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d6",
+            "name": "Social Studies",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f67",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d7",
+            "name": "German",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f68",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769d8",
+            "name": "French",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f69",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769da",
+            "name": "English",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769db",
+            "name": "Physics",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6c",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769dc",
+            "name": "Biology",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6d",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416494,
+            "__v": 0
+          },
+          {
+            "_id": "68ac9f380396de90850769dd",
+            "name": "Chemistry",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f6e",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756143416495,
+            "__v": 0
+          },
+          {
+            "_id": "68b7f5e4f5f856330cff503f",
+            "name": "ICT",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1756886500238,
+            "__v": 0
+          },
+          {
+            "_id": "68bc8c47ca12c050a082dace",
+            "name": "Islamic Religion",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1757187143031,
+            "__v": 0
+          },
+          {
+            "_id": "6ab78c439ea89e8f8fd366c8",
+            "name": "Attendance",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1790413891611,
+            "__v": 0
+          },
+          {
+            "_id": "6ab97bc65e77ff0d681bfe2d",
+            "name": "Literature",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1790540742914,
+            "__v": 0
+          },
+          {
+            "_id": "6ab97f885e77ff0d681cc3c2",
+            "name": "Global Perspectives & Humanities",
+            "baseSubjectId": "5d6ff19b1c07b61fd23e4f7b",
+            "schoolId": "68ac9f380396de90850769ce",
+            "createdAt": 1790541704610,
+            "__v": 0
+          }
+        ]
+      }
+    }
+  }
+]

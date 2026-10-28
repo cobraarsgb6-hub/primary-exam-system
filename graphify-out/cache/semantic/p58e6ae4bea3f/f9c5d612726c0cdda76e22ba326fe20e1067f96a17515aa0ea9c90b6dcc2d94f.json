@@ -1,0 +1,1 @@
+{"nodes": [{"id": "explorer_survey_backend_handoff", "label": "Backend Forensic Survey", "file_type": "document", "source_file": ".agents/teamwork/explorer_survey_backend/handoff.md", "rationale": "Identifies curriculum gaps and Unicode NFKC non-conformance in Code.gs.", "_origin": "semantic"}], "edges": [], "hyperedges": []}
