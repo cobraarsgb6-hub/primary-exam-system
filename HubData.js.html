@@ -877,6 +877,10 @@ window.DRIVE_VIDEOS = {};
 
     let currentVideoId = null;
 
+    function replayCurrentLessonVideo() {
+      setVideoPlayerMode('cloud');
+    }
+
     function setVideoPlayerMode(mode) {
       const nativePlayer = document.getElementById('native-video-player');
       const iframe = document.getElementById('video-iframe');
@@ -921,27 +925,37 @@ window.DRIVE_VIDEOS = {};
         if (btnCloud) { btnCloud.style.background = '#fff'; btnCloud.style.color = '#334155'; }
         if (statusText) statusText.innerHTML = '⚡ <b>Local Stream (Offline Only)</b>';
       } else {
-        // DEFAULT: Cloud YouTube Stream
+        // DEFAULT: Cloud YouTube Stream (Strictly In-Platform & Zero Distractions)
         if (nativePlayer) {
           nativePlayer.pause();
           nativePlayer.src = '';
           nativePlayer.style.display = 'none';
         }
         if (iframe) {
-          // Robust YouTube embed URL with allowfullscreen & secure origin
-          let embedUrl = '';
-          if (currentVideoId.startsWith('http')) {
-            embedUrl = currentVideoId;
-          } else {
-            embedUrl = 'https://www.youtube-nocookie.com/embed/' + currentVideoId + '?autoplay=1&rel=0&modestbranding=1';
+          let cleanId = currentVideoId || 'XGbOiYhHY2c';
+          if (cleanId.indexOf('youtu.be/') !== -1) {
+            cleanId = cleanId.split('youtu.be/')[1].split('?')[0];
+          } else if (cleanId.indexOf('watch?v=') !== -1) {
+            cleanId = cleanId.split('watch?v=')[1].split('&')[0];
           }
+
+          // Strict In-Platform Policy:
+          // 1. rel=0: No outside recommended videos
+          // 2. loop=1 & playlist=cleanId: Loops only the same lesson video
+          // 3. modestbranding=1: No prominent YouTube branding
+          // 4. iv_load_policy=3: Turn off clickable cards/annotations
+          // 5. playsinline=1: Force in-app playback on tablets/phones
+          // 6. controls=1: Video scrubbing & volume controls
+          const embedUrl = 'https://www.youtube.com/embed/' + cleanId +
+            '?autoplay=1&rel=0&loop=1&playlist=' + cleanId +
+            '&modestbranding=1&iv_load_policy=3&playsinline=1&controls=1';
           iframe.src = embedUrl;
           iframe.style.display = 'block';
         }
         if (placeholder) placeholder.style.display = 'none';
         if (btnCloud) { btnCloud.style.background = '#2563eb'; btnCloud.style.color = '#fff'; }
         if (btnNative) { btnNative.style.background = '#fff'; btnNative.style.color = '#334155'; }
-        if (statusText) statusText.innerHTML = '🌐 <b>Online YouTube Stream</b> (High Speed & Zero Ads)';
+        if (statusText) statusText.innerHTML = '🔒 <b>Dedicated Lesson Stream</b> (Zero Ads & In-Platform Lock)';
       }
     }
 

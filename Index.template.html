@@ -1129,12 +1129,10 @@
       </div>
 
       <div style="display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; padding: 6px 12px; border-radius: 8px; margin-bottom: 10px; font-size: 0.8rem; flex-wrap: wrap; gap: 8px;">
-        <span id="video-mode-status" style="color: #334155; font-weight: 700;">🌐 Online YouTube Stream (Ad-Free High Speed)</span>
+        <span id="video-mode-status" style="color: #334155; font-weight: 700;">🔒 Lesson-Only Stream &bull; Zero External Distractions</span>
         <div style="display: flex; gap: 6px; align-items: center;">
-          <a id="btn-yt-direct" href="https://www.youtube.com" target="_blank" style="padding: 4px 10px; font-size: 0.75rem; border-radius: 4px; background: #dc2626; color: #fff; text-decoration: none; font-weight: 800; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(220,38,38,0.3);">
-            ▶️ Watch on YouTube ↗
-          </a>
-          <button type="button" id="btn-mode-cloud" onclick="setVideoPlayerMode('cloud')" style="padding: 3px 10px; font-size: 0.75rem; border-radius: 4px; border: 1px solid #cbd5e1; background: #2563eb; color: #fff; cursor: pointer; font-weight: 700;">🌐 YouTube Stream</button>
+          <button type="button" id="btn-replay-video" onclick="replayCurrentLessonVideo()" style="padding: 4px 12px; font-size: 0.76rem; border-radius: 6px; background: #0284c7; color: #fff; border: none; cursor: pointer; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">🔁 Replay Lesson</button>
+          <button type="button" id="btn-mode-cloud" onclick="setVideoPlayerMode('cloud')" style="padding: 3px 10px; font-size: 0.75rem; border-radius: 4px; border: 1px solid #cbd5e1; background: #2563eb; color: #fff; cursor: pointer; font-weight: 700;">🌐 Dedicated Player</button>
           <button type="button" id="btn-mode-native" onclick="setVideoPlayerMode('native')" style="padding: 3px 10px; font-size: 0.75rem; border-radius: 4px; border: 1px solid #cbd5e1; background: #fff; color: #334155; cursor: pointer; font-weight: 700;">⚡ Local Stream</button>
         </div>
       </div>

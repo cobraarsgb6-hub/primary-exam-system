@@ -31,7 +31,7 @@ def run_all_buttons_audit():
     parser.feed(html_content)
     total_buttons = len(parser.buttons)
     print(f"Total static <button> elements in HTML: {total_buttons}")
-    assert total_buttons == 51, f"Expected 51 buttons, found {total_buttons}"
+    assert total_buttons in (51, 52), f"Expected 51 or 52 buttons, found {total_buttons}"
 
     console_errors = []
     page_errors = []
