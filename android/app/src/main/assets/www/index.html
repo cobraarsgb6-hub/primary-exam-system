@@ -3469,6 +3469,76 @@
 
   <script>
     // =========================================================================
+    // 🛡️ ZERO-CRASH STORAGE POLYFILL (Google Apps Script Sandboxed Iframe Guard)
+    // Completely neutralizes SecurityError / DOMException when third-party
+    // cookies or partitioned storage are blocked by browser privacy shields.
+    // =========================================================================
+    const safeStorage = (function () {
+      const memoryStore = {};
+      let isNativeOk = false;
+      try {
+        if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage !== null) {
+          const testKey = '__probe_' + Math.random();
+          window.localStorage.setItem(testKey, '1');
+          window.localStorage.removeItem(testKey);
+          isNativeOk = true;
+        }
+      } catch (e) {
+        isNativeOk = false;
+      }
+
+      const shim = {
+        getItem: function (key) {
+          if (isNativeOk) {
+            try { return window.localStorage.getItem(key); } catch (e) {}
+          }
+          return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
+        },
+        setItem: function (key, value) {
+          if (isNativeOk) {
+            try { window.localStorage.setItem(key, String(value)); return; } catch (e) {}
+          }
+          memoryStore[key] = String(value);
+        },
+        removeItem: function (key) {
+          if (isNativeOk) {
+            try { window.localStorage.removeItem(key); return; } catch (e) {}
+          }
+          delete memoryStore[key];
+        },
+        clear: function () {
+          if (isNativeOk) {
+            try { window.localStorage.clear(); return; } catch (e) {}
+          }
+          for (const k in memoryStore) delete memoryStore[k];
+        },
+        key: function (i) {
+          return Object.keys(memoryStore)[i] || null;
+        },
+        get length() {
+          return Object.keys(memoryStore).length;
+        }
+      };
+
+      // Also try to patch window.localStorage globally so any raw access is safe
+      if (!isNativeOk && typeof window !== 'undefined') {
+        try {
+          Object.defineProperty(window, 'localStorage', {
+            value: shim,
+            configurable: true,
+            enumerable: true,
+            writable: true
+          });
+        } catch (err) {
+          try { window.localStorage = shim; } catch (e) {}
+        }
+      }
+
+      if (typeof window !== 'undefined') window.safeStorage = shim;
+      return shim;
+    })();
+
+    // =========================================================================
     // PRIMARY_STANDALONE_AUTONOMOUS_ENGINE
     // Provides 100% standalone offline evaluation without requiring external servers
     // =========================================================================
@@ -4508,7 +4578,7 @@ window.DRIVE_VIDEOS = {};
       }
       currentVideoId = extractedId;
       if (currentActiveSubject) {
-        localStorage.setItem('custom_vid_' + currentActiveSubject.id, extractedId);
+        safeStorage.setItem('custom_vid_' + currentActiveSubject.id, extractedId);
       }
       setVideoPlayerMode('cloud');
       alert('Video updated successfully!');
@@ -4517,7 +4587,7 @@ window.DRIVE_VIDEOS = {};
     function openVideoModal(videoId, title) {
       // Check if user saved a custom video for this subject
       if (currentActiveSubject) {
-        const savedCustom = localStorage.getItem('custom_vid_' + currentActiveSubject.id);
+        const savedCustom = safeStorage.getItem('custom_vid_' + currentActiveSubject.id);
         if (savedCustom) videoId = savedCustom;
       }
       currentVideoId = videoId || 'XGbOiYhHY2c';
@@ -5022,81 +5092,7 @@ let currentStudentKey = 'ali';
      * Resilient safeStorage wrapper for Google Apps Script iframe sandbox & strict storage policies.
      * Automatically falls back to an in-memory store if localStorage throws SecurityError or QuotaExceededError.
      */
-    const safeStorage = (function () {
-      const memoryStore = {};
-
-      function getStorage() {
-        try {
-          if (typeof window !== 'undefined' && 'localStorage' in window && window.localStorage !== null) {
-            const testKey = '__storage_probe__';
-            window.localStorage.setItem(testKey, '1');
-            window.localStorage.removeItem(testKey);
-            return window.localStorage;
-          }
-        } catch (e) {
-          // localStorage inaccessible (GAS iframe sandbox SecurityError / disabled third-party cookies)
-        }
-        return null;
-      }
-
-      let storageInstance = undefined;
-      function storage() {
-        if (storageInstance === undefined) {
-          storageInstance = getStorage();
-        }
-        return storageInstance;
-      }
-
-      return {
-        getItem: function (key) {
-          try {
-            const s = storage();
-            if (s) {
-              const val = s.getItem(key);
-              if (val !== null) return val;
-            }
-          } catch (e) { /* fallback to memory */ }
-          return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
-        },
-        setItem: function (key, value) {
-          const strVal = String(value);
-          try {
-            const s = storage();
-            if (s) {
-              s.setItem(key, strVal);
-            }
-          } catch (e) { /* ignore quota/sandbox errors */ }
-          memoryStore[key] = strVal;
-        },
-        removeItem: function (key) {
-          try {
-            const s = storage();
-            if (s) {
-              s.removeItem(key);
-            }
-          } catch (e) { /* ignore */ }
-          delete memoryStore[key];
-        },
-        keys: function () {
-          const keySet = new Set();
-          try {
-            const s = storage();
-            if (s) {
-              for (let i = 0; i < s.length; i++) {
-                const k = s.key(i);
-                if (k) keySet.add(k);
-              }
-            }
-          } catch (e) { /* ignore */ }
-          Object.keys(memoryStore).forEach(k => keySet.add(k));
-          return Array.from(keySet);
-        },
-        // Convenience method aliases
-        get: function (key) { return this.getItem(key); },
-        set: function (key, val) { return this.setItem(key, val); },
-        remove: function (key) { return this.removeItem(key); }
-      };
-    })();
+    // (safeStorage moved to top of script)
 
     function progressKey() {
       const student = STUDENT_DATA[currentStudentKey];
@@ -6006,8 +6002,8 @@ container.innerHTML = `
             
             // Unique key for tracking status across student & day
             const hwKey = st + '_' + day + '_hw_' + idx;
-            const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
-            const isReviewed = localStorage.getItem('hw_reviewed_' + hwKey) === 'true';
+            const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
+            const isReviewed = safeStorage.getItem('hw_reviewed_' + hwKey) === 'true';
 
             let statusBadge = '';
             if (isDone && isReviewed) {
@@ -6228,7 +6224,7 @@ container.innerHTML = `
       currentStudentKey = studentKey;
       const sbName = document.getElementById('sidebar-student-name');
       if (sbName) sbName.textContent = studentKey === 'mostafa' ? 'Mostafa' : 'Ali';
-      localStorage.setItem('coligo_active_student', studentKey);
+      safeStorage.setItem('coligo_active_student', studentKey);
       renderColigoGradebook();
 
       // Reset Exam Filters to ALL on portal open
@@ -7692,7 +7688,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
     // Adaptive Difficulty Controller
     function setAdaptiveDifficulty(level) {
-      localStorage.setItem('coligo_target_difficulty', level);
+      safeStorage.setItem('coligo_target_difficulty', level);
       [1, 2, 3].forEach(l => {
         const p = document.getElementById('diff-pill-' + l);
         if (p) p.classList.toggle('active', l === level);
@@ -7704,15 +7700,15 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
     // Interactive Homework Done & Reviewed Controller
     function toggleHomeworkDone(hwKey) {
       const doneKey = 'hw_done_' + hwKey;
-      const current = localStorage.getItem(doneKey) === 'true';
-      localStorage.setItem(doneKey, (!current).toString());
+      const current = safeStorage.getItem(doneKey) === 'true';
+      safeStorage.setItem(doneKey, (!current).toString());
       renderDailyHub(currentStudentKey, currentSchoolDay);
     }
 
     function toggleHomeworkReviewed(hwKey) {
       const revKey = 'hw_reviewed_' + hwKey;
-      const current = localStorage.getItem(revKey) === 'true';
-      localStorage.setItem(revKey, (!current).toString());
+      const current = safeStorage.getItem(revKey) === 'true';
+      safeStorage.setItem(revKey, (!current).toString());
       renderDailyHub(currentStudentKey, currentSchoolDay);
     }
 
@@ -7721,7 +7717,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       // If NOT running under automated Playwright (navigator.webdriver === false)
       // and no explicit ?gateway=1 is specified in URL:
       if (!navigator.webdriver && !location.search.includes('gateway=1')) {
-        const savedStudent = localStorage.getItem('coligo_active_student') || 'mostafa';
+        const savedStudent = safeStorage.getItem('coligo_active_student') || 'mostafa';
         if (typeof openStudentPortal === 'function') {
           openStudentPortal(savedStudent);
         }
@@ -8148,7 +8144,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
       container.innerHTML = list.map(s => {
         const hwKey = st + '_' + s.id + '_hw';
-        const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
+        const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
         const hwBadge = isDone 
           ? '<span style="font-size:0.75rem; font-weight:800; background:#dcfce7; color:#15803d; padding:3px 9px; border-radius:20px;">🟢 Completed</span>'
           : '<span style="font-size:0.75rem; font-weight:800; background:#fee2e2; color:#b91c1c; padding:3px 9px; border-radius:20px;">🔴 Pending</span>';
@@ -8193,7 +8189,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
       // 1. Homework Section
       const hwKey = st + '_' + s.id + '_hw';
-      const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
+      const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
       updateSubjectHomeworkUI(s, isDone);
 
       // 2. Briefing Section
@@ -8269,8 +8265,8 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       if (!currentActiveSubject) return;
       const st = (currentStudentKey || 'mostafa').toLowerCase();
       const hwKey = st + '_' + currentActiveSubject.id + '_hw';
-      const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
-      localStorage.setItem('hw_done_' + hwKey, (!isDone).toString());
+      const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
+      safeStorage.setItem('hw_done_' + hwKey, (!isDone).toString());
       updateSubjectHomeworkUI(currentActiveSubject, !isDone);
 
       // Record to Google Sheets if connected

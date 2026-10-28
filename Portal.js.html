@@ -126,8 +126,8 @@
             
             // Unique key for tracking status across student & day
             const hwKey = st + '_' + day + '_hw_' + idx;
-            const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
-            const isReviewed = localStorage.getItem('hw_reviewed_' + hwKey) === 'true';
+            const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
+            const isReviewed = safeStorage.getItem('hw_reviewed_' + hwKey) === 'true';
 
             let statusBadge = '';
             if (isDone && isReviewed) {
@@ -348,7 +348,7 @@
       currentStudentKey = studentKey;
       const sbName = document.getElementById('sidebar-student-name');
       if (sbName) sbName.textContent = studentKey === 'mostafa' ? 'Mostafa' : 'Ali';
-      localStorage.setItem('coligo_active_student', studentKey);
+      safeStorage.setItem('coligo_active_student', studentKey);
       renderColigoGradebook();
 
       // Reset Exam Filters to ALL on portal open
@@ -1812,7 +1812,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
     // Adaptive Difficulty Controller
     function setAdaptiveDifficulty(level) {
-      localStorage.setItem('coligo_target_difficulty', level);
+      safeStorage.setItem('coligo_target_difficulty', level);
       [1, 2, 3].forEach(l => {
         const p = document.getElementById('diff-pill-' + l);
         if (p) p.classList.toggle('active', l === level);
@@ -1824,15 +1824,15 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
     // Interactive Homework Done & Reviewed Controller
     function toggleHomeworkDone(hwKey) {
       const doneKey = 'hw_done_' + hwKey;
-      const current = localStorage.getItem(doneKey) === 'true';
-      localStorage.setItem(doneKey, (!current).toString());
+      const current = safeStorage.getItem(doneKey) === 'true';
+      safeStorage.setItem(doneKey, (!current).toString());
       renderDailyHub(currentStudentKey, currentSchoolDay);
     }
 
     function toggleHomeworkReviewed(hwKey) {
       const revKey = 'hw_reviewed_' + hwKey;
-      const current = localStorage.getItem(revKey) === 'true';
-      localStorage.setItem(revKey, (!current).toString());
+      const current = safeStorage.getItem(revKey) === 'true';
+      safeStorage.setItem(revKey, (!current).toString());
       renderDailyHub(currentStudentKey, currentSchoolDay);
     }
 
@@ -1841,7 +1841,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       // If NOT running under automated Playwright (navigator.webdriver === false)
       // and no explicit ?gateway=1 is specified in URL:
       if (!navigator.webdriver && !location.search.includes('gateway=1')) {
-        const savedStudent = localStorage.getItem('coligo_active_student') || 'mostafa';
+        const savedStudent = safeStorage.getItem('coligo_active_student') || 'mostafa';
         if (typeof openStudentPortal === 'function') {
           openStudentPortal(savedStudent);
         }
@@ -2268,7 +2268,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
       container.innerHTML = list.map(s => {
         const hwKey = st + '_' + s.id + '_hw';
-        const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
+        const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
         const hwBadge = isDone 
           ? '<span style="font-size:0.75rem; font-weight:800; background:#dcfce7; color:#15803d; padding:3px 9px; border-radius:20px;">🟢 Completed</span>'
           : '<span style="font-size:0.75rem; font-weight:800; background:#fee2e2; color:#b91c1c; padding:3px 9px; border-radius:20px;">🔴 Pending</span>';
@@ -2313,7 +2313,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
       // 1. Homework Section
       const hwKey = st + '_' + s.id + '_hw';
-      const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
+      const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
       updateSubjectHomeworkUI(s, isDone);
 
       // 2. Briefing Section
@@ -2389,8 +2389,8 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       if (!currentActiveSubject) return;
       const st = (currentStudentKey || 'mostafa').toLowerCase();
       const hwKey = st + '_' + currentActiveSubject.id + '_hw';
-      const isDone = localStorage.getItem('hw_done_' + hwKey) === 'true';
-      localStorage.setItem('hw_done_' + hwKey, (!isDone).toString());
+      const isDone = safeStorage.getItem('hw_done_' + hwKey) === 'true';
+      safeStorage.setItem('hw_done_' + hwKey, (!isDone).toString());
       updateSubjectHomeworkUI(currentActiveSubject, !isDone);
 
       // Record to Google Sheets if connected
