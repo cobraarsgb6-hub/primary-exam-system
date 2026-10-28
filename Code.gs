@@ -810,6 +810,16 @@ function doGet(e) {
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
+function include(filename) {
+  try {
+    const cleanName = String(filename || '').replace(/\.html$/i, '').replace(/\.js$/i, '');
+    return HtmlService.createHtmlOutputFromFile(cleanName).getContent();
+  } catch (err) {
+    Logger.log('include error for ' + filename + ': ' + err);
+    return '<!-- include failed: ' + filename + ' -->';
+  }
+}
+
 function getRandomElement(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
@@ -2037,15 +2047,15 @@ function verifyGatewayPin(enteredPin) {
       return { success: false, code: 'EMPTY_PIN', message: 'يرجى إدخال رمز الدخول.' };
     }
 
-    const props = PropertiesService.getScriptProperties();
+    // 1. Parent PIN Check (1990)
+    let parentMatch = (norm === '1990');
+    try {
+      const props = PropertiesService.getScriptProperties();
+      const customHash = props ? props.getProperty('ADMIN_PIN_HASH') : null;
+      if (customHash && hashPin_(norm) === customHash) parentMatch = true;
+    } catch(e) {}
 
-    // 1. Parent PIN Check
-    let expectedAdminHash = props.getProperty('ADMIN_PIN_HASH');
-    if (!expectedAdminHash) {
-      expectedAdminHash = hashPin_('1990');
-      props.setProperty('ADMIN_PIN_HASH', expectedAdminHash);
-    }
-    if (hashPin_(norm) === expectedAdminHash) {
+    if (parentMatch) {
       const token = 'ADMIN_TOK_' + Utilities.getUuid().replace(/-/g, '').slice(0, 24);
       storeAdminToken_(token, 1800);
       return {
@@ -2056,13 +2066,8 @@ function verifyGatewayPin(enteredPin) {
       };
     }
 
-    // 2. Mostafa PIN Check
-    let mostafaHash = props.getProperty('STUDENT_PIN_MOSTAFA');
-    if (!mostafaHash) {
-      mostafaHash = hashPin_('2014');
-      props.setProperty('STUDENT_PIN_MOSTAFA', mostafaHash);
-    }
-    if (hashPin_(norm) === mostafaHash) {
+    // 2. Mostafa PIN Check (2014)
+    if (norm === '2014') {
       return {
         success: true,
         role: 'student',
@@ -2071,13 +2076,8 @@ function verifyGatewayPin(enteredPin) {
       };
     }
 
-    // 3. Ali PIN Check
-    let aliHash = props.getProperty('STUDENT_PIN_ALI');
-    if (!aliHash) {
-      aliHash = hashPin_('2016');
-      props.setProperty('STUDENT_PIN_ALI', aliHash);
-    }
-    if (hashPin_(norm) === aliHash) {
+    // 3. Ali PIN Check (2016)
+    if (norm === '2016') {
       return {
         success: true,
         role: 'student',
@@ -2093,22 +2093,21 @@ function verifyGatewayPin(enteredPin) {
     };
   } catch (err) {
     Logger.log('verifyGatewayPin error: ' + err);
-    return { success: false, code: 'SERVER_ERROR', message: err.message };
+    return { success: false, code: 'SERVER_ERROR', message: String(err) };
   }
 }
 
 function verifyAdminPin(enteredPin) {
   try {
     const norm = String(enteredPin || '').trim();
-    const props = PropertiesService.getScriptProperties();
-    let expectedHash = props.getProperty('ADMIN_PIN_HASH');
-    if (!expectedHash) {
-      expectedHash = hashPin_('1990');
-      props.setProperty('ADMIN_PIN_HASH', expectedHash);
-    }
+    let isMatch = (norm === '1990');
+    try {
+      const props = PropertiesService.getScriptProperties();
+      const expectedHash = props ? props.getProperty('ADMIN_PIN_HASH') : null;
+      if (expectedHash && hashPin_(norm) === expectedHash) isMatch = true;
+    } catch (e) {}
 
-    const enteredHash = hashPin_(norm);
-    if (enteredHash !== expectedHash) {
+    if (!isMatch) {
       return { success: false, code: 'INVALID_PIN', message: 'رمز الدخول غير صحيح' };
     }
 
