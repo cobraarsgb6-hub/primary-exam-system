@@ -22,7 +22,7 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Run Cloud Coligo Ingestion
+    - name: Run Full Cloud Coligo Ingestion
       env:
         COLIGO_TOKEN: ${{ secrets.COLIGO_TOKEN }}
         GAS_WEBHOOK_URL: ${{ secrets.GAS_WEBHOOK_URL }}
@@ -30,10 +30,10 @@ jobs:
       run: |
         python cloud_coligo_sync.py
 
-    - name: Commit & Push Updated Notifs (Optional)
+    - name: Commit & Push New Worksheets, Booklets & Catalogs
       run: |
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add resources/coligo/all_notifications.json || true
-        git diff-index --quiet HEAD || git commit -m "chore(sync): automated coligo ingestion [skip ci]"
+        git add resources/coligo/
+        git diff-index --quiet HEAD || git commit -m "chore(sync): automated cloud coligo ingestion [skip ci]"
         git push || true
