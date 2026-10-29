@@ -9,8 +9,10 @@
   SECURITY MODEL:
   - Credentials live ONLY in runner secrets (Coligo login via /v3/authenticate
     with COLIGO_USERNAME/COLIGO_PASSWORD, refreshed every run; never in files).
-  - Captured-traffic JSON files are never regenerated; only published-safe data
-    is written locally: materials, catalog, and assets (PDF/ZIP unzipped).
+  - Captured-traffic JSON files are never regenerated; the Pages catalog and
+    student material folders are public and must not contain credentials,
+    signed source URLs, or gradebook records. (source_url values are the
+    UNSIGNED public coligo.b-cdn.net links students already receive in-app.)
   - ZIP attachments are extracted and their inner HTML web-path references are
     rewritten to relative URLs so nothing 404s on GitHub Pages.
 ================================================================================
@@ -323,7 +325,16 @@ def safe_download_file(url, target_folder, preferred_name, force_download=False)
     except Exception:
         pass
 
-    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    url = urllib.parse.urljoin(API_BASE + "/", str(url or ""))
+    parsed_url = urllib.parse.urlparse(url)
+    if parsed_url.scheme != "https" or not parsed_url.hostname:
+        print(f"      [Download Warning] {preferred_name}: invalid HTTPS URL.")
+        return [], False
+    request_headers = {"User-Agent": UA}
+    # Send the bearer only to Coligo's authenticated API host, never to an external CDN.
+    if parsed_url.hostname.lower() == urllib.parse.urlparse(API_BASE).hostname.lower():
+        request_headers.update(api_headers())
+    req = urllib.request.Request(url, headers=request_headers)
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             data = resp.read()
@@ -389,7 +400,10 @@ def run_sync():
         no_rec_notifications = notifs if isinstance(notifs, list) else []
         print(f"✅ Synced {len(notifs)} notifications (count only; raw capture files are not persisted).")
         for n in notifs:
-            msg = n.get("message", "")
+            if not isinstance(n, dict):
+                continue
+            raw_message = n.get("message", "")
+            msg = raw_message if isinstance(raw_message, str) else json.dumps(raw_message, ensure_ascii=False)
             if any(k in msg.lower() for k in ["homework", "واجب", "quiz", "announcement", "created in", "material"]):
                 homework_items.append({
                     "id": n.get("_id"),
@@ -480,7 +494,7 @@ def run_sync():
                 f_title = f_item.get("title") or "Material"
                 f_url = f_item.get("url")
                 material_id = f_item.get("_id") or f_item.get("id")
-                source_updated_at = f_item.get("updatedAt") or f_item.get("modifiedAt") or f_item.get("createdAt")
+                source_updated_at = f_item.get("updatedAt") or f_item.get("modifiedAt")
                 previous = previous_file_versions.get(str(material_id)) if material_id else None
                 cached_names = []
                 if previous and source_updated_at and previous.get("source_updated_at") == source_updated_at:
@@ -506,7 +520,6 @@ def run_sync():
                         "web_path": web_quote(rel_web),
                         "source_url": f_url,
                         "source_updated_at": source_updated_at,
-                        "assigned_at": f_item.get("assignedAt") or f_item.get("createdAt"),
                     })
 
             if download_errors:
@@ -525,7 +538,6 @@ def run_sync():
                     youtube_videos[s_name].append({"title": l_title, "youtube_id": yt_id, "course": c_title})
 
             master_catalog["students"][s_name]["courses"].append({
-                "id": c_id,
                 "title": c_title,
                 "total_items": len(materials),
                 "downloaded_files": files_log,

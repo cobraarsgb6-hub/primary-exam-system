@@ -3662,13 +3662,57 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
-    const expectedSecret = (PropertiesService.getScriptProperties().getProperty('SYNC_SECRET') || '');
-    if (!expectedSecret || String(body.secret || '') !== expectedSecret) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'unauthorized' }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
     if (action === 'sync_coligo_feed') {
+      const expectedSecret = PropertiesService.getScriptProperties().getProperty('SYNC_SECRET') || '';
+      if (!expectedSecret || String(body.secret || '') !== expectedSecret) {
+        return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'unauthorized' }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+      const ss = getSpreadsheet_();
+      let syncSheet = ss.getSheetByName('Coligo_Sync_Log');
+      if (!syncSheet) {
+        syncSheet = ss.insertSheet('Coligo_Sync_Log');
+        syncSheet.getRange(1, 1, 1, 6).setValues([['Timestamp', 'Materials', 'New Downloads', 'Homework Signals', 'Notifications', 'Status']]);
+        formatHeaderRow(syncSheet, '#0f766e');
+      }
+      syncSheet.appendRow([
+        new Date(), Number(body.materialsCount || 0), Number(body.newDownloads || 0),
+        Number(body.homeworkQueued || 0), Number(body.notificationsCount || 0), 'Completed'
+      ]);
+      const homework = Array.isArray(body.homework) ? body.homework.slice(0, 100) : [];
+      let homeworkSheet = ss.getSheetByName('Coligo_Homework');
+      if (!homeworkSheet) {
+        homeworkSheet = ss.insertSheet('Coligo_Homework');
+        homeworkSheet.getRange(1, 1, 1, 5).setValues([['Coligo ID', 'Date', 'Message', 'Type', 'Read']]);
+        formatHeaderRow(homeworkSheet, '#b45309');
+      }
+      const existingHomework = homeworkSheet.getLastRow() > 1
+        ? homeworkSheet.getRange(2, 1, homeworkSheet.getLastRow() - 1, 1).getValues().flat()
+        : [];
+      const homeworkRows = new Map(existingHomework.map((id, index) => [String(id), index + 2]));
+      const safeCellText = (value, max) => {
+        let text = String(value == null ? '' : value).slice(0, max);
+        if (/^[=+@-]/.test(text)) text = "'" + text;
+        return text;
+      };
+      homework.forEach(item => {
+        if (!item || typeof item !== 'object') return;
+        const id = safeCellText(item.id, 160);
+        if (!id) return;
+        const row = [
+          id,
+          safeCellText(item.date, 80),
+          safeCellText(item.message, 1200),
+          safeCellText(item.type, 100),
+          item.read ? 'TRUE' : 'FALSE'
+        ];
+        const existingRow = homeworkRows.get(id);
+        if (existingRow) homeworkSheet.getRange(existingRow, 1, 1, row.length).setValues([row]);
+        else {
+          homeworkSheet.appendRow(row);
+          homeworkRows.set(id, homeworkSheet.getLastRow());
+        }
+      });
       return ContentService.createTextOutput(JSON.stringify({
         success: true,
         action: 'sync_coligo_feed',
@@ -3676,38 +3720,58 @@ function doPost(e) {
         notificationsCount: Number(body.notificationsCount || 0),
         materialsCount: Number(body.materialsCount || 0),
         newDownloads: Number(body.newDownloads || 0),
-        homeworkQueued: Array.isArray(body.homework) ? body.homework.length : 0
+        homeworkQueued: Number(body.homeworkQueued || 0)
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
     if (action === 'record_external_result') {
+      // GitHub Pages is public: never trust a browser-supplied shared secret or student name.
+      // Verify a student PIN for each browser session and derive identity from server-side claims.
+      const auth = verifyGatewayPin(body.pin);
+      const requestedKey = String(body.studentKey || '').toLowerCase();
+      if (!auth.success || auth.role !== 'student' || auth.studentKey !== requestedKey) {
+        return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'unauthorized' }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
+
+      const score = Number(body.score);
+      const total = Number(body.total);
+      if (!Number.isFinite(score) || !Number.isFinite(total) || total < 1 || total > 100 || score < 0 || score > total) {
+        return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'invalid result' }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
       const ss = getSpreadsheet_();
-      let subSheet = ss.getSheetByName('Submissions');
+      let subSheet = ss.getSheetByName('External_Practice_Results');
       if (!subSheet) {
-        subSheet = ss.insertSheet('Submissions');
-        subSheet.getRange(1, 1, 1, 11).setValues([['Timestamp', 'Student Name', 'School Grade', 'Exam Code', 'Score', 'Total', 'Percentage', 'Rating', 'Duration', 'Summary', 'Detailed Review JSON']]);
+        subSheet = ss.insertSheet('External_Practice_Results');
+        subSheet.getRange(1, 1, 1, 9).setValues([['Timestamp', 'Student', 'Grade', 'Exam Code', 'Score', 'Total', 'Percentage', 'Duration (sec)', 'Review JSON']]);
         formatHeaderRow(subSheet, '#1e3a8a');
       }
 
-      const score = Number(body.score || 0);
-      const total = Number(body.total || 0);
-      const pct = Number(body.pct || (total > 0 ? Math.round((score / total) * 100) : 0));
-      const rating = pct >= 90 ? 'ممتاز ممتازة' : (pct >= 75 ? 'جيد جداً' : (pct >= 50 ? 'جيد' : 'يحتاج مراجعة'));
-      const durationSec = Math.round(Number(body.durationMs || 0) / 1000);
-      const review = Array.isArray(body.review) ? body.review : [];
+      const pct = Math.round((score / total) * 100);
+      const durationMs = Number(body.durationMs || 0);
+      const durationSec = Number.isFinite(durationMs)
+        ? Math.max(0, Math.min(4 * 60 * 60, Math.round(durationMs / 1000)))
+        : 0;
+      const review = (Array.isArray(body.review) ? body.review : []).slice(0, 100).map(item => ({
+        n: Number(item && item.n) || 0,
+        ok: !!(item && item.ok),
+        pick: String((item && item.pick) || '').slice(0, 300),
+        ans: String((item && item.ans) || '').slice(0, 300)
+      }));
+      const studentName = auth.studentKey === 'ali' ? 'Ali Ahmed' : 'Mostafa Ahmed';
+      const grade = auth.studentKey === 'ali' ? 'Year 5 (G5)' : 'Grade 6 (G6)';
 
       const row = [
         new Date(),
-        String(body.student || 'Unknown'),
-        String(body.schoolGrade || ''),
-        String(body.examCode || ''),
+        studentName,
+        grade,
+        String(body.examCode || '').slice(0, 80),
         score,
         total,
         pct,
-        rating,
         durationSec,
-        String(body.examTitle || ''),
-        JSON.stringify({ submittedAt: body.submittedAt || new Date().toISOString(), review: review })
+        JSON.stringify({ practiceOnly: true, examTitle: String(body.examTitle || '').slice(0, 200), review: review })
       ];
 
       subSheet.appendRow(row);
@@ -3718,7 +3782,8 @@ function doPost(e) {
     return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'unknown action' }))
       .setMimeType(ContentService.MimeType.JSON);
   } catch (postError) {
-    return ContentService.createTextOutput(JSON.stringify({ success: false, message: String(postError) }))
+    Logger.log('doPost failed: ' + (postError && postError.name ? postError.name : 'unknown error'));
+    return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'request failed' }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }

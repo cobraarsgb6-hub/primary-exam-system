@@ -27,22 +27,34 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Prepare Clean Pages Build (_stage)
+        env:
+          GAS_WEBHOOK_URL: ${{ secrets.GAS_WEBHOOK_URL }}
         run: |
           # Build a curated publish tree: the portal + materials + live catalog.
-          # Raw session/gradebook captures never reach GitHub Pages.
+          # Only the live catalog and course asset folders are copied; raw API captures stay out of the Pages artifact.
           mkdir -p _stage/resources/coligo
           cp -f index.html _stage/index.html
-          rsync -a resources/coligo/ _stage/resources/coligo/ \
-            --exclude "local_storage.json" \
-            --exclude "captured_gradebook_api.json" \
-            --exclude "all_gradebook_traffic.json" \
-            --exclude "all_notifications.json" \
-            --exclude "live_grades_and_announcements.json" \
-            --exclude "all_curriculum_materials.json" \
-            --exclude "all_links_and_notes.json" \
-            --exclude "courses_dump.html" \
-            --exclude "courses_rendered.png" \
-            --exclude "api_resp_*.json"
+          mkdir -p _stage/resources/coligo/Ali _stage/resources/coligo/Mostafa
+          rsync -a --exclude='*.json' resources/coligo/Ali/ _stage/resources/coligo/Ali/
+          rsync -a --exclude='*.json' resources/coligo/Mostafa/ _stage/resources/coligo/Mostafa/
+          if [ -f resources/coligo/coligo_catalog.json ]; then
+            cp resources/coligo/coligo_catalog.json _stage/resources/coligo/coligo_catalog.json
+          else
+            echo 'Missing required live catalog: resources/coligo/coligo_catalog.json' >&2
+            exit 1
+          fi
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          url = os.environ.get('GAS_WEBHOOK_URL', '').strip()
+          if not url.startswith('https://script.google.com/macros/s/') or not url.endswith('/exec'):
+              raise SystemExit('GAS_WEBHOOK_URL secret must be the deployed Apps Script /exec URL')
+          page = Path('_stage/index.html')
+          html = page.read_text(encoding='utf-8')
+          if '__GAS_WEBHOOK_URL__' not in html:
+              raise SystemExit('Apps Script URL placeholder not found in public index.html')
+          page.write_text(html.replace('__GAS_WEBHOOK_URL__', url), encoding='utf-8')
+          PY
           touch _stage/.nojekyll
 
       - name: Setup GitHub Pages

@@ -435,6 +435,7 @@
           <div class="text-4xl" id="runner-result-emoji">🎉</div>
           <h4 class="text-xl font-black text-slate-900" id="runner-result-score">النتيجة: 5 / 5 (100%)</h4>
           <p class="text-xs text-slate-500" id="runner-result-msg">أداء استثنائي! تم إتقان معايير كامبريدج في هذا الاختبار بنجاح.</p>
+          <p class="text-xs text-slate-500" id="runner-result-sync-status" role="status" aria-live="polite"></p>
         </div>
         <div class="text-center">
           <button onclick="closeExamRunner()" class="tactile-btn px-6 py-3 rounded-xl bg-slate-900 text-white font-bold text-sm">
@@ -467,8 +468,6 @@
     const COLIGO_CATALOG_URL = 'resources/coligo/coligo_catalog.json';
     const SUBJECT_FALLBACK_ICON = '📚';
     const COLIGO_LIVE_TAG = '[حية] ';
-    const STUDENT_SHEET_LABEL = { ali: 'Ali', mostafa: 'Mostafa' };
-    const STUDENT_GRADE_LABEL = { ali: 'Year 5A', mostafa: 'Year 6A' };
 
     function subjectIdSlug(title) {
       return 'coligo-' + (String(title || 'course').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 34));
@@ -504,14 +503,14 @@
           const t = title.toLowerCase();
 
           const kw =
+            (t.includes('literature') && 'literature') ||
             (t.includes('science') && 'science') ||
             (t.includes('math') && 'math') ||
             (t.includes('english') && 'english') ||
             (t.includes('arab') && 'arabic') ||
             (t.includes('social') && 'social') ||
             (t.includes('french') && 'french') ||
-            ((t.includes('ict') || t.includes('comput')) && 'ict') ||
-            (t.includes('litera') && 'literacy') || '';
+            ((t.includes('ict') || t.includes('comput')) && 'ict') || '';
 
           let subject = kw ? subjects.find(s =>
             (String(s.id) + ' ' + String(s.name) + ' ' + String(s.code)).toLowerCase().includes(kw)) : null;
@@ -572,6 +571,8 @@
         });
         CURRICULUM[studentKey].__syncedAt = catalog.synced_at || '';
       });
+      const countLabel = document.getElementById('subject-count-label');
+      if (countLabel) countLabel.innerText = `${(CURRICULUM[currentStudent] || []).length} مواد دراسية`;
       if (typeof renderSubjects === 'function') renderSubjects();
       if (typeof renderExams === 'function') renderExams();
       return CURRICULUM;
@@ -669,12 +670,11 @@
       if (studentKey === 'mostafa') {
         document.getElementById('hero-badge').innerText = 'Cambridge Primary Stage 6 • Fully Ingested';
         document.getElementById('subjects-heading').innerText = 'المواد الدراسية المقررة لمصطفى أحمد (Grade 6A)';
-        document.getElementById('subject-count-label').innerText = '6 مواد دراسية معتمدة';
       } else {
         document.getElementById('hero-badge').innerText = 'Cambridge Primary Year 5 • Fully Ingested';
         document.getElementById('subjects-heading').innerText = 'المواد الدراسية المقررة لعلي أحمد (Year 5A)';
-        document.getElementById('subject-count-label').innerText = '6 مواد دراسية معتمدة';
       }
+      document.getElementById('subject-count-label').innerText = `${(CURRICULUM[studentKey] || []).length} مواد دراسية`;
 
       renderSubjects();
       renderExams();
@@ -1135,9 +1135,8 @@
       }));
       sendExamResultToSheet({
         action: 'record_external_result',
-        secret: getSyncSecret(),
-        student: STUDENT_SHEET_LABEL[currentStudent] || currentStudent,
-        schoolGrade: STUDENT_GRADE_LABEL[currentStudent] || '',
+        pin: getStudentResultPin(currentStudent),
+        studentKey: currentStudent,
         examCode: activeExam.code || '',
         examTitle: activeExam.title || '',
         score: score,
@@ -1157,29 +1156,41 @@
     }
 
     // --- ☁️ Cloud Result Logging Helpers ---
-    const GAS_WEBAPP_LOCALSTORAGE_KEY = 'gasWebappUrl';
+    const GAS_WEBAPP_URL = '__GAS_WEBAPP_URL__';
+    const STUDENT_RESULT_PINS = Object.create(null);
     function getGasWebappUrl() {
-      try { return localStorage.getItem(GAS_WEBAPP_LOCALSTORAGE_KEY) || ''; } catch (e) { return ''; }
+      return GAS_WEBAPP_URL.startsWith('https://script.google.com/macros/s/') ? GAS_WEBAPP_URL : '';
     }
-    function getSyncSecret() {
-      try { return localStorage.getItem('syncSecret') || 'manaret_eleman_secure_sync'; } catch (e) { return 'manaret_eleman_secure_sync'; }
+    function getStudentResultPin(studentKey) {
+      if (STUDENT_RESULT_PINS[studentKey]) return STUDENT_RESULT_PINS[studentKey];
+      const pin = window.prompt('لإرسال نتيجة التدريب بأمان، أدخل رمز دخول هذا الطالب. سيبقى في ذاكرة الصفحة الحالية فقط.');
+      if (!pin) return '';
+      STUDENT_RESULT_PINS[studentKey] = pin;
+      return pin;
     }
-    // Set once from the browser console (admin): setGasWebhook('<Apps Script Web App URL>')
-    window.setGasWebhook = function (url) {
-      try { localStorage.setItem(GAS_WEBAPP_LOCALSTORAGE_KEY, String(url || '')); } catch (e) {}
-      return getGasWebappUrl();
-    };
     function sendExamResultToSheet(payload) {
       const url = getGasWebappUrl();
-      if (!url) { console.warn('[Sheet Sync] GAS Web App URL غير مضبوط — نفّذ setGasWebhook("...") مرة واحدة.'); return; }
+      const status = document.getElementById('runner-result-sync-status');
+      if (!url || !payload.pin) {
+        if (status) status.textContent = 'لم تُسجل النتيجة: يلزم إعداد اتصال Apps Script وإدخال رمز الطالب.';
+        console.warn('[Sheet Sync] لم يُضبط عنوان Apps Script أو لم يُدخل رمز الطالب.');
+        return;
+      }
+      if (status) status.textContent = 'جارٍ إرسال نتيجة التدريب إلى Google Sheets…';
       try {
         fetch(url, {
           method: 'POST',
           mode: 'no-cors', // Apps Script: simple request without preflight
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
-        }).catch(err => console.warn('[Sheet Sync] فشل الإرسال:', err));
+        }).then(() => {
+          if (status) status.textContent = 'أُرسل طلب التسجيل. تأكد من ظهوره في ورقة External_Practice_Results.';
+        }).catch(err => {
+          if (status) status.textContent = 'تعذر إرسال النتيجة؛ تحقق من الاتصال وحاول مرة أخرى.';
+          console.warn('[Sheet Sync] فشل الإرسال:', err);
+        });
       } catch (err) {
+        if (status) status.textContent = 'تعذر إرسال النتيجة؛ تحقق من الاتصال وحاول مرة أخرى.';
         console.warn('[Sheet Sync] فشل الإرسال:', err);
       }
     }
