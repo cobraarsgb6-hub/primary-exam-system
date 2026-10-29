@@ -75,36 +75,99 @@ def http_json(url, payload=None, headers=None, timeout=25):
         return json.loads(body) if body.strip() else {}
 
 
-def authenticate_coligo():
-    """Mint a fresh Coligo JWT on every run from GitHub username/password secrets."""
-    user = os.environ.get("COLIGO_USERNAME", "").strip()
-    pwd = os.environ.get("COLIGO_PASSWORD", "").strip()
-    if not user or not pwd:
-        raise RuntimeError("COLIGO_USERNAME and COLIGO_PASSWORD GitHub secrets are required.")
+def _try_refresh_token_auth(exp_txt):
+    """Passwordless path: POST /v3/generate-jwt with the rotating refresh token.
+    Returns (token, mode) on success, otherwise (None, None)."""
+    rt = os.environ.get("COLIGO_REFRESH_TOKEN", "").strip()
+    rt_user = os.environ.get("COLIGO_USERNAME", "").strip() or \
+              os.environ.get("COLIGO_REFRESH_USER", "").strip()
+    if not rt:
+        return None, None
+    if not rt_user:
+        print("[AUTH] COLIGO_REFRESH_TOKEN set but username missing (need COLIGO_USERNAME too).")
+        return None, None
     try:
         resp = http_json(
-            f"{API_V3}/authenticate",
-            payload={"username": user, "password": pwd},
+            f"{API_V3}/generate-jwt",
+            payload={
+                "username": rt_user,
+                "refreshToken": rt,
+                "refreshTokenId": os.environ.get("COLIGO_REFRESH_TOKEN_ID", "").strip() or None,
+            },
             timeout=30)
     except urllib.error.HTTPError as exc:
-        raise RuntimeError(f"Coligo login rejected (HTTP {exc.code}).") from exc
+        print(f"[AUTH] Refresh rejected (HTTP {exc.code}); token rotated? Update the secret.")
+        return None, None
     except Exception as exc:
-        raise RuntimeError(f"Coligo login failed ({type(exc).__name__}).") from exc
+        print(f"[AUTH] Refresh attempt failed ({type(exc).__name__}).")
+        return None, None
+    data = resp.get("data", resp) if isinstance(resp, dict) else resp
+    token = None
+    if isinstance(data, dict):
+        inner = data.get("token")
+        token = (inner.get("token") or inner.get("jwt")) if isinstance(inner, dict) else \
+                (inner or data.get("newJwt") or data.get("jwt"))
+    if token:
+        print(f"[AUTH] Renewed JWT via refresh token (passwordless); expiry {exp_txt(token)} UTC.")
+        return token, "refresh-token"
+    keys = list(data.keys())[:8] if isinstance(data, dict) else type(data).__name__
+    print(f"[AUTH] /v3/generate-jwt answered without a token. Keys: {keys}")
+    return None, None
 
-    data = resp.get("data", resp) if isinstance(resp, dict) else {}
-    if not isinstance(data, dict):
-        data = {}
-    token = (data.get("token") or data.get("jwt")
-             or (data.get("auth") or {}).get("token")
-             or (resp.get("token") if isinstance(resp, dict) else None))
+
+def _try_static_token_auth(exp_txt):
+    """Last-resort path: reuse the long-lived COLIGO_TOKEN secret when not expired."""
+    token = os.environ.get("COLIGO_TOKEN", "").strip()
     if not token:
-        raise RuntimeError("Coligo authentication response did not contain a JWT.")
+        return None, None
     exp = jwt_expiry(token)
     if exp and exp <= time.time():
-        raise RuntimeError("Coligo authentication returned an expired JWT.")
-    exp_txt = time.strftime("%Y-%m-%d %H:%M", time.gmtime(exp)) if exp else "unknown"
-    print(f"[AUTH] Fresh Coligo JWT acquired; expiry {exp_txt} UTC.")
-    return token, "credentials"
+        print("[AUTH] COLIGO_TOKEN is expired; refresh/credentials required.")
+        return None, None
+    print(f"[AUTH] Using COLIGO_TOKEN secret; expiry {exp_txt(token)} UTC.")
+    return token, "static-token"
+
+
+def authenticate_coligo():
+    """Mint a fresh Coligo JWT on every run, trying secrets in durability order:
+       1) username/password  2) rotating refresh token (passwordless)
+       3) long-lived static JWT."""
+    exp_txt = lambda token: (time.strftime("%Y-%m-%d %H:%M", time.gmtime(jwt_expiry(token)))
+                             if jwt_expiry(token) else "unknown")
+    user = os.environ.get("COLIGO_USERNAME", "").strip()
+    pwd = os.environ.get("COLIGO_PASSWORD", "").strip()
+
+    if user and pwd:
+        try:
+            resp = http_json(
+                f"{API_V3}/authenticate",
+                payload={"username": user, "password": pwd},
+                timeout=30)
+            data = resp.get("data", resp) if isinstance(resp, dict) else {}
+            if not isinstance(data, dict):
+                data = {}
+            token = (data.get("token") or data.get("jwt")
+                     or (data.get("auth") or {}).get("token")
+                     or (resp.get("token") if isinstance(resp, dict) else None))
+            if token:
+                exp = jwt_expiry(token)
+                if exp and exp <= time.time():
+                    raise RuntimeError("Coligo authentication returned an expired JWT.")
+                print(f"[AUTH] Fresh Coligo JWT acquired; expiry {time.strftime('%Y-%m-%d %H:%M', time.gmtime(exp)) if exp else 'unknown'} UTC.")
+                return token, "credentials"
+            print(f"[AUTH] /v3/authenticate answered but no JWT. Keys: {list(data.keys())[:8]}")
+        except urllib.error.HTTPError as exc:
+            print(f"[AUTH] Login rejected (HTTP {exc.code}); falling back to refresh/static paths.")
+        except Exception:
+            print("[AUTH] Login attempt failed; falling back to refresh/static paths.")
+
+    token, mode = _try_refresh_token_auth(exp_txt)
+    if token:
+        return token, mode
+    token, mode = _try_static_token_auth(exp_txt)
+    if token:
+        return token, mode
+    raise RuntimeError("No usable Coligo auth path: rotate refresh token or set username/password.")
 
 
 STUDENT_REQUEST_TOKEN = {"token": None}
@@ -231,7 +294,7 @@ def patch_rtl_unzip_extracted(target_folder):
     return results
 
 
-def safe_download_file(url, target_folder, preferred_name):
+def safe_download_file(url, target_folder, preferred_name, force_download=False):
     """Downloads one material. Unzips archives, patches inner paths, returns
     (list_of_saved_relative_names, is_new)."""
     os.makedirs(target_folder, exist_ok=True)
@@ -239,6 +302,8 @@ def safe_download_file(url, target_folder, preferred_name):
 
     # Skip re-download when a valid artifact for this title already exists
     try:
+        if force_download:
+            raise StopIteration
         for existing in os.listdir(target_folder):
             if existing.startswith(clean_base) or clean_base.startswith(os.path.splitext(existing)[0]):
                 existing_path = os.path.join(target_folder, existing)
@@ -253,6 +318,8 @@ def safe_download_file(url, target_folder, preferred_name):
                         return cached_files, False
                 if os.path.isfile(existing_path) and os.path.getsize(existing_path) > 100:
                     return [existing], False
+    except StopIteration:
+        pass
     except Exception:
         pass
 
@@ -341,6 +408,22 @@ def run_sync():
         "semester_id": SEMESTER_ID,
         "students": {}
     }
+    previous_file_versions = {}
+    try:
+        with open(os.path.join(OUTPUT_DIR, "coligo_catalog.json"), "r", encoding="utf-8") as previous_file:
+            previous_catalog = json.load(previous_file)
+        for old_student in (previous_catalog.get("students") or {}).values():
+            for old_course in old_student.get("courses", []):
+                for old_file in old_course.get("downloaded_files", []):
+                    material_id = old_file.get("material_id")
+                    if material_id:
+                        entry = previous_file_versions.setdefault(str(material_id), {
+                            "source_updated_at": old_file.get("source_updated_at"), "filenames": []
+                        })
+                        if old_file.get("filename"):
+                            entry["filenames"].append(str(old_file["filename"]))
+    except (OSError, ValueError, TypeError):
+        pass
     total_new_downloads = 0
     total_materials_indexed = 0
     youtube_videos = {"Ali": [], "Mostafa": []}
@@ -396,7 +479,18 @@ def run_sync():
             for f_item in file_items:
                 f_title = f_item.get("title") or "Material"
                 f_url = f_item.get("url")
-                saved_names, is_new = safe_download_file(f_url, course_dir, f_title)
+                material_id = f_item.get("_id") or f_item.get("id")
+                source_updated_at = f_item.get("updatedAt") or f_item.get("modifiedAt") or f_item.get("createdAt")
+                previous = previous_file_versions.get(str(material_id)) if material_id else None
+                cached_names = []
+                if previous and source_updated_at and previous.get("source_updated_at") == source_updated_at:
+                    cached = previous.get("filenames", [])
+                    if cached and all(os.path.isfile(os.path.join(course_dir, *name.replace("\\", "/").split("/"))) for name in cached):
+                        cached_names = cached
+                if cached_names:
+                    saved_names, is_new = cached_names, False
+                else:
+                    saved_names, is_new = safe_download_file(f_url, course_dir, f_title, force_download=True)
                 if not saved_names:
                     download_errors.append(f_title)
                     continue
@@ -406,9 +500,12 @@ def run_sync():
                 for saved in saved_names:
                     rel_web = f"resources/coligo/{s_name}/{safe_course}/{saved}".replace("\\", "/")
                     files_log.append({
+                        "material_id": material_id,
                         "title": f_title,
                         "filename": saved,
                         "web_path": web_quote(rel_web),
+                        "source_url": f_url,
+                        "source_updated_at": source_updated_at,
                         "assigned_at": f_item.get("assignedAt") or f_item.get("createdAt"),
                     })
 
