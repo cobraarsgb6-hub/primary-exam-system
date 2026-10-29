@@ -602,7 +602,14 @@ def run_sync():
                 raise RuntimeError("Apps Script rejected the Coligo sync summary.")
             print("✅ Sync summary recorded in Google Sheets.")
     except Exception as e:
-        raise RuntimeError(f"Could not record sync summary in Google Sheets ({type(e).__name__}).") from e
+        # The materials catalog is the primary deliverable and is already
+        # persisted; a webhook outage must not abort the hourly commit.
+        # URL shape hint (public by design — it is embedded in the portal):
+        print(f"⚠️ Sheets digest failed ({type(e).__name__}) — check that GAS_WEBHOOK_URL secret")
+        print(f"   points at the deployed Web App: {WEBHOOK_URL[:52]}...{WEBHOOK_URL[-8:]} (len {len(WEBHOOK_URL)})")
+        if "404" in str(getattr(e, "code", "")) or (isinstance(e, urllib.error.HTTPError) and e.code == 404):
+            print("   HTTP 404 = wrong macro id or the Web App is not deployed as 'Anyone'.")
+        print("   Continuing: catalog & manifest committed regardless.")
 
     elapsed = time.time() - t0
     print(f"\n🎉 100% Autonomous Cloud Sync v2 Completed in {elapsed:.2f}s! (auth={auth_mode})")
