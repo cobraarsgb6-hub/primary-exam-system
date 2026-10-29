@@ -359,6 +359,7 @@ def run_sync():
                         "title": f_title,
                         "filename": saved,
                         "web_path": web_quote(rel_web),
+                        "source_url": f_url,
                         "assigned_at": f_item.get("assignedAt") or f_item.get("createdAt"),
                     })
 

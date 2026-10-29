@@ -538,6 +538,7 @@
             subject.coligoLiveFiles.push({
               name: (file.title || file.filename || 'Material'),
               path: rel,
+              source: String(file.source_url || file.url || ''),
               type: fileExtType(file.filename)
             });
           });
@@ -757,20 +758,25 @@
       // Coligo Files List
       const filesList = document.getElementById('studio-files-list');
       if (l.coligoFiles && l.coligoFiles.length) {
-        filesList.innerHTML = l.coligoFiles.map(f => `
+        filesList.innerHTML = l.coligoFiles.map(f => {
+          // Served-on-Pages .html labs open inline; heavy media & docs open
+          // straight from Coligo's public CDN so the repo stays lightweight.
+          const isHtmlLab = String(f.path || '').toLowerCase().endsWith('.html');
+          const href = (f.source && !isHtmlLab) ? f.source : f.path;
+          return `
           <div class="p-4 rounded-xl bg-slate-50 flex items-center justify-between">
             <div class="flex items-center gap-3 truncate">
               <span class="text-2xl">${f.type === 'PPTX' || f.type === 'PPT' ? '📊' : '📄'}</span>
               <div class="truncate">
                 <div class="text-xs font-bold text-slate-900 truncate">${f.name}</div>
-                <div class="text-[10px] text-slate-400 font-mono">${f.type} File &bull; Coligo LMS</div>
+                <div class="text-[10px] text-slate-400 font-mono">${f.type} File &bull; ${isHtmlLab ? 'معمل تفاعلي داخلي' : 'Coligo LMS'}</div>
               </div>
             </div>
-            <a href="${f.path}" target="_blank" download class="tactile-btn text-xs font-bold text-indigo-700 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg shrink-0">
+            <a href="${href}" target="_blank" ${isHtmlLab ? '' : 'download'} class="tactile-btn text-xs font-bold text-indigo-700 bg-white border border-indigo-200 px-3 py-1.5 rounded-lg shrink-0">
               تحميل &darr;
             </a>
-          </div>
-        `).join('');
+          </div>`;
+        }).join('');
       } else {
         filesList.innerHTML = '<p class="text-xs text-slate-500">الملفات الأصلية متاحة عبر المزامنة السحابية.</p>';
       }

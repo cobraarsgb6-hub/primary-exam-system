@@ -12,3 +12,9 @@ scratch/
 *.pdf
 *.mp4
 videos/
+# Coligo credentials and student-specific snapshots/exports
+resources/coligo/*.json
+# Only lightweight publication-safe assets override global rules; heavy
+# media stays on Coligo's public CDN and is linked from coligo_catalog.json
+!resources/coligo/**/*.png
+!resources/coligo/**/*.jpg
