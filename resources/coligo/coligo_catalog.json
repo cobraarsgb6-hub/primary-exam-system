@@ -1,5 +1,5 @@
 {
-  "synced_at": "2026-10-28 17:37:46",
+  "synced_at": "2026-10-29 17:22:48",
   "semester_id": "6aa6b7d7382ba9a416a84790",
   "school": "Manaret El-Eman British International School",
   "students": {
@@ -380,7 +380,7 @@
         {
           "id": "6ab98233fed75719cdeceb98",
           "title": "Global Perspectives & Humanities 105",
-          "total_items": 4,
+          "total_items": 5,
           "downloaded_files": [
             {
               "title": "(SDGs) Goals - GP introduction",
@@ -399,6 +399,12 @@
               "filename": "(SDGs)_Goals_-_SDGs_4-6.pptx",
               "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Ali\\Global Perspectives & Humanities 105\\(SDGs)_Goals_-_SDGs_4-6.pptx",
               "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/global-perspectives-humanities-105/materials/2026/sep/week-5/now-1790683435205/(SDGs)_Goals_-_SDGs_4-6.pptx.zip"
+            },
+            {
+              "title": "(SDGs) Goals - SDGs 7-9",
+              "filename": "(SDGs)_Goals_-_SDGs_7-9.pptx",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Ali\\Global Perspectives & Humanities 105\\(SDGs)_Goals_-_SDGs_7-9.pptx",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/global-perspectives-humanities-105/materials/2026/oct/week-5/now-1793259130941/(SDGs)_Goals_-_SDGs_7-9.pptx.zip"
             }
           ],
           "links": []
@@ -450,7 +456,7 @@
         {
           "id": "6aa6b93c106ddeec80ba6ce3",
           "title": "English 105",
-          "total_items": 59,
+          "total_items": 61,
           "downloaded_files": [
             {
               "title": "Unit 1 - lesson 1 ",
@@ -763,6 +769,18 @@
               "filename": "Fact_File_Astronaut_Samantha_Cristoforetti.docx",
               "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Ali\\English 105\\Fact_File_Astronaut_Samantha_Cristoforetti.docx",
               "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-105/materials/2026/oct/week-4/now-1793101097163/Fact_File_Astronaut_Samantha_Cristoforetti.docx.zip"
+            },
+            {
+              "title": "Unit 2 - biorgraphy - part 2 ",
+              "filename": "Unit2_Lesson2.8_Part2_Another_Biography.pptx",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Ali\\English 105\\Unit2_Lesson2.8_Part2_Another_Biography.pptx",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-105/materials/2026/oct/week-5/now-1793259300467/Unit2_Lesson2.8_Part2_Another_Biography.pptx.zip"
+            },
+            {
+              "title": "Fact file - plan a  biography",
+              "filename": "fact_file_-_plan_a_biography.pdf",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Ali\\English 105\\fact_file_-_plan_a_biography.pdf",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-105/materials/2026/oct/week-5/now-1793259371135/fact_file_-_plan_a_biography.pdf.zip"
             }
           ],
           "links": []
@@ -1150,7 +1168,7 @@
         {
           "id": "6ab98258fed75719cdecf31a",
           "title": "Global Perspectives & Humanities 106",
-          "total_items": 4,
+          "total_items": 5,
           "downloaded_files": [
             {
               "title": "(SDGs) Goals - GP introduction",
@@ -1169,6 +1187,12 @@
               "filename": "(SDGs)_Goals_-_SDGs_4-6.pptx",
               "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\Global Perspectives & Humanities 106\\(SDGs)_Goals_-_SDGs_4-6.pptx",
               "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/global-perspectives-humanities-106/materials/2026/sep/week-5/now-1790683018879/(SDGs)_Goals_-_SDGs_4-6.pptx.zip"
+            },
+            {
+              "title": "(SDGs) Goals - SDGs 7-9",
+              "filename": "(SDGs)_Goals_-_SDGs_7-9.pptx",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\Global Perspectives & Humanities 106\\(SDGs)_Goals_-_SDGs_7-9.pptx",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/global-perspectives-humanities-106/materials/2026/oct/week-5/now-1793259083728/(SDGs)_Goals_-_SDGs_7-9.pptx.zip"
             }
           ],
           "links": []
@@ -1238,7 +1262,7 @@
         {
           "id": "6aa6b93c106ddeec80ba6ce9",
           "title": "English 106",
-          "total_items": 50,
+          "total_items": 55,
           "downloaded_files": [
             {
               "title": "Fiction VS Non Fiction ",
@@ -1509,6 +1533,36 @@
               "filename": "Year_6_Unit_8_Petronas_Lesson_B_Fact_File.docx",
               "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\English 106\\Year_6_Unit_8_Petronas_Lesson_B_Fact_File.docx",
               "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-106/materials/2026/oct/week-4/now-1793101359650/Year_6_Unit_8_Petronas_Lesson_B_Fact_File.docx.zip"
+            },
+            {
+              "title": "Petronas: vocabulary ",
+              "filename": "Year_6_Tricky_Words_Adventure_(1).png",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\English 106\\Year_6_Tricky_Words_Adventure_(1).png",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-106/materials/2026/oct/week-5/now-1793258993768/Year_6_Tricky_Words_Adventure_(1).png.zip"
+            },
+            {
+              "title": "Fact file: Petronas - vocabulary ",
+              "filename": "Year_6_Petronas_Tricky_Words_Fact_File.pdf",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\English 106\\Year_6_Petronas_Tricky_Words_Fact_File.pdf",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-106/materials/2026/oct/week-5/now-1793259074595/Year_6_Petronas_Tricky_Words_Fact_File.pdf.zip"
+            },
+            {
+              "title": "Grammar: Adjectives, adverbials and prepositional phrases",
+              "filename": "Unit8_Grammar2_Describe_It.pptx",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\English 106\\Unit8_Grammar2_Describe_It.pptx",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-106/materials/2026/oct/week-5/now-1793259144242/Unit8_Grammar2_Describe_It.pptx.zip"
+            },
+            {
+              "title": "Grammar: Noun phrases, adverbials and prepositional phrases",
+              "filename": "Unit8_Grammar2_Describe_It_v3.pptx",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\English 106\\Unit8_Grammar2_Describe_It_v3.pptx",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-106/materials/2026/oct/week-5/now-1793259183486/Unit8_Grammar2_Describe_It_v3.pptx.zip"
+            },
+            {
+              "title": "Fact file: grammar - Noun phrases, adverbials and prepositional phrases",
+              "filename": "Year_6_Unit_8_Grammar_Describe_It_Fact_File.pdf",
+              "local_path": "C:\\Users\\co0ob\\Projects\\primary-exam-system\\resources\\coligo\\Mostafa\\English 106\\Year_6_Unit_8_Grammar_Describe_It_Fact_File.pdf",
+              "url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/english-106/materials/2026/oct/week-5/now-1793259248282/Year_6_Unit_8_Grammar_Describe_It_Fact_File.pdf.zip"
             }
           ],
           "links": []
