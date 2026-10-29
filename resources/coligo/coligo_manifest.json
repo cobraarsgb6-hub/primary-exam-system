@@ -1,17 +1,7 @@
 {
-  "scanned_at": "2026-10-25 16:18:50",
-  "students": {
-    "Ali": {
-      "grade": "Year 5A",
-      "courses": [],
-      "announcements": [],
-      "downloaded_files": []
-    },
-    "Mostafa": {
-      "grade": "Year 6A",
-      "courses": [],
-      "announcements": [],
-      "downloaded_files": []
-    }
-  }
+  "synced_at": "2026-10-29 19:50:05",
+  "student_count": 2,
+  "indexed_materials": 333,
+  "new_downloads": 230,
+  "homework_signals": 25
 }
