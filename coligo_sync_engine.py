@@ -83,7 +83,9 @@ def safe_download_file(url, target_folder, preferred_name):
 
     req = urllib.request.Request(url, headers={"User-Agent": HEADERS["User-Agent"]})
     try:
-        with urllib.request.urlopen(req, timeout=25) as resp:
+        import ssl
+        ctx = ssl._create_unverified_context()
+        with urllib.request.urlopen(req, timeout=25, context=ctx) as resp:
             data = resp.read()
             if data[:4] == b'PK\x03\x04':  # ZIP archive
                 try:
