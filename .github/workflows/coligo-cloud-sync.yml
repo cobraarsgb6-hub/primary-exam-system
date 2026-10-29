@@ -29,8 +29,11 @@ jobs:
 
     - name: Run Full Cloud Coligo Ingestion
       env:
+        COLIGO_TOKEN: ${{ secrets.COLIGO_TOKEN }}
         COLIGO_USERNAME: ${{ secrets.COLIGO_USERNAME }}
         COLIGO_PASSWORD: ${{ secrets.COLIGO_PASSWORD }}
+        COLIGO_REFRESH_TOKEN: ${{ secrets.COLIGO_REFRESH_TOKEN }}
+        COLIGO_REFRESH_TOKEN_ID: ${{ secrets.COLIGO_REFRESH_TOKEN_ID }}
         GAS_WEBHOOK_URL: ${{ secrets.GAS_WEBHOOK_URL }}
         SYNC_SECRET: ${{ secrets.SYNC_SECRET }}
       run: |

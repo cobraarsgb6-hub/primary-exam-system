@@ -51,9 +51,9 @@ jobs:
               raise SystemExit('GAS_WEBHOOK_URL secret must be the deployed Apps Script /exec URL')
           page = Path('_stage/index.html')
           html = page.read_text(encoding='utf-8')
-          if '__GAS_WEBHOOK_URL__' not in html:
+          if '__GAS_WEBAPP_URL__' not in html:
               raise SystemExit('Apps Script URL placeholder not found in public index.html')
-          page.write_text(html.replace('__GAS_WEBHOOK_URL__', url), encoding='utf-8')
+          page.write_text(html.replace('__GAS_WEBAPP_URL__', url), encoding='utf-8')
           PY
           touch _stage/.nojekyll
 
