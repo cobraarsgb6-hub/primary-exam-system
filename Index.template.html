@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
   <base target="_top">
   <meta charset="UTF-8">
 
@@ -41,7 +44,21 @@
         <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 16px;">
           Choose the student below to access their dedicated, grade-isolated assessment environment.
         </p>
-        <!-- VISIBLE GATEWAY CARDS: DIRECT 1-CLICK ACCESS (NO PIN REQUIRED) -->
+        <!-- PROMINENT CAMBRIDGE STAGE 6 ELECTRICITY BANNER -->
+      <div style="margin: 0 auto 24px auto; max-width: 680px; background: linear-gradient(135deg, #fef3c7, #fde68a); border: 2px solid #f59e0b; border-radius: 16px; padding: 18px 24px; text-align: center; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);">
+        <div style="font-size: 1.15rem; font-weight: 800; color: #78350f; margin-bottom: 6px;">
+          ⚡ Cambridge Stage 6 Electricity &amp; Circuits Complete Mastery Guide
+        </div>
+        <p style="font-size: 0.88rem; color: #92400e; margin-bottom: 14px; line-height: 1.5;">
+          الدليل المتكامل لوحدة الكهرباء لمصطفى (شرح الـ 36 شريحة كاملة + معمل الدوائر التفاعلي + المحاكاة الذرية + فخاخ امتحانات كامبريدج)
+        </p>
+        <a href="resources/coligo/Mostafa/Science 106/Electricity_Mastery_Guide_Stage6.html" style="display: inline-flex; align-items: center; gap: 8px; background: #0f172a; color: #ffffff; font-weight: 800; font-size: 0.95rem; padding: 12px 26px; border-radius: 12px; text-decoration: none; box-shadow: 0 4px 10px rgba(0,0,0,0.25);">
+          <span>⚡ فتح معمل وشرح الكهرباء مباشرة (دخول مجاني بدون كلمة سر)</span>
+          <span>➔</span>
+        </a>
+      </div>
+
+      <!-- VISIBLE GATEWAY CARDS: DIRECT 1-CLICK ACCESS (NO PIN REQUIRED) -->
         <div class="gateway-grid" id="gateway-test-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 24px;">
           <!-- Ali Ahmed Gateway -->
           <button type="button" id="btn-gateway-ali" class="gateway-card" onclick="openStudentPortal('ali')">
@@ -434,7 +451,7 @@
           <!-- SUBTAB SWITCHER: Official Coligo Grades vs AI Practice Exams -->
           <div class="gradebook-subnav-row">
             <div role="button" tabindex="0" class="gradebook-subtab-btn" id="subtab-coligo-grades" onclick="switchGradebookSubview('coligo')">
-              <span>🏫</span> Official Coligo School Grades (<span id="btn-coligo-overall-score">59.88%</span>)
+              <span>🏫</span> Official Coligo School Grades (<span id="btn-coligo-overall-score">—</span>)
             </div>
             <div role="button" tabindex="0" class="gradebook-subtab-btn active" id="subtab-ai-exams" onclick="switchGradebookSubview('ai-exams')">
               <span>📝</span> Autonomous AI Practice Exams
@@ -447,7 +464,7 @@
             <div class="coligo-overall-banner">
               <div class="coligo-overall-header">
                 <span>Overall Grade</span>
-                <span style="color: #00b074; font-size: 1.4rem;" id="coligo-overall-pct">59.88%</span>
+                <span style="color: #00b074; font-size: 1.4rem;" id="coligo-overall-pct">—</span>
                 <span style="font-size: 0.8rem; background: #e0f2fe; color: #0284c7; padding: 2px 8px; border-radius: 6px; font-weight: 700; margin-left: auto;">Trimester 1 &bull; Academic Year 2026/2027</span>
               </div>
               <div class="coligo-scores-rail" id="coligo-scores-rail">

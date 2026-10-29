@@ -85,7 +85,7 @@
     function renderDailyHub(studentKey, dayKey) {
       const st = (studentKey || currentStudentKey || 'ali').toLowerCase();
       const day = dayKey || currentSchoolDay || 'tue';
-      const dayData = (SCHOOL_TIMETABLE[st] && SCHOOL_TIMETABLE[st][day]) || SCHOOL_TIMETABLE['ali']['tue'];
+      const dayData = (SCHOOL_TIMETABLE[st] && SCHOOL_TIMETABLE[st][day]) || { dayName: 'School timetable unavailable', classwork: [], homework: [] };
 
       // Update Subtitle
       const dateSub = document.getElementById('cw-date-sub');
@@ -244,6 +244,9 @@
         });
       });
       container.innerHTML = cardsHtml;
+      if (!totalCount) {
+        container.innerHTML = '<div style="grid-column:1/-1;padding:24px;text-align:center;color:#64748b">School materials will appear here after secure synchronization.</div>';
+      }
 
       const badge = document.getElementById('materials-count-badge');
       if (badge) badge.innerText = `${totalCount} Files Available`;
@@ -337,6 +340,10 @@
     }
 
     function openStudentPortal(studentKey, preferredExamCode) {
+      if (!currentStudentToken || currentStudentTokenKey !== studentKey) {
+        requestPortalAccess('student', studentKey, preferredExamCode);
+        return;
+      }
       const student = STUDENT_DATA[studentKey];
       if (!student) {
         showScreen('screen-gateway');
@@ -480,6 +487,7 @@
         renderSubjectsHub(studentKey);
         renderColigoCoursesGrid(studentKey);
         renderCurriculumMaterials(studentKey, 'ALL');
+        loadStudentColigoMaterials(studentKey);
         renderStudentVideos(studentKey);
         renderStudentBriefings(studentKey);
       }, 0);
@@ -512,7 +520,7 @@
               if (res.driveVideos) window.DRIVE_VIDEOS = res.driveVideos;
             }
           })
-          .getStudentAvailableExams(studentKey);
+          .getStudentAvailableExams(studentKey, currentStudentToken);
       }
     }
 
@@ -570,7 +578,7 @@
           .withFailureHandler(err => {
             showStatusError(err && err.message ? err.message : String(err));
           })
-          .getStudentExamStatus(studentName, examCode);
+          .getStudentExamStatus(studentName, examCode, currentStudentToken);
       } else {
         // Local preview only: never let an undefined lock crash the whole portal.
         const student = STUDENT_DATA[currentStudentKey];
@@ -736,6 +744,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       const payload = {
         studentName: studentName,
         examCode: examCode,
+        studentToken: currentStudentToken,
         reason: String(reason || '').slice(0, 500)
       };
 
@@ -767,8 +776,12 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
     /* PARENT PORTAL LOGIC (100% ENGLISH, STRICT ISOLATION) */
     var currentAdminToken = null;
 
-    function openParentPortal() {
-      currentAdminToken = 'ADMIN_TOK_PARENT_DIRECT';
+    function openParentPortal(accessToken) {
+      if (accessToken) currentAdminToken = accessToken;
+      if (!currentAdminToken) {
+        requestPortalAccess('parent');
+        return;
+      }
       showScreen('screen-admin');
       loadParentData();
     }
@@ -785,17 +798,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
           })
           .getAdminDashboardData(currentAdminToken);
       } else {
-        setTimeout(() => {
-          onParentDataLoaded({
-            success: true,
-            sheetUrl: 'https://docs.google.com/spreadsheets/d/sample',
-            submissions: [],
-            exams: [],
-            allQuestions: [],
-            studyPlan: [{"id": "PLAN_Y5_D01", "week": "W1", "day": "1", "date": "Day 1", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 3: Adverbials", "lesson": "Adverbs of Manner", "skills": "Identifying manner adverbs ending in -ly", "dailyQuestions": 5, "status": "Completed", "examCode": "DAILY_Y5_ENG_W1D1"}, {"id": "PLAN_Y5_D02", "week": "W1", "day": "2", "date": "Day 2", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 3: Adverbials", "lesson": "Adverbials of Time", "skills": "Prepositional time phrases (at dawn, in 1969)", "dailyQuestions": 5, "status": "Completed", "examCode": "DAILY_Y5_ENG_W1D2"}, {"id": "PLAN_Y5_D03", "week": "W1", "day": "3", "date": "Day 3", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 3: Adverbials", "lesson": "Adverbials of Place", "skills": "Answering WHERE (inside the station, on lunar surface)", "dailyQuestions": 5, "status": "Completed", "examCode": "DAILY_Y5_ENG_W1D3"}, {"id": "PLAN_Y5_D04", "week": "W1", "day": "4", "date": "Day 4", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 3: Adverbials", "lesson": "Fronted Adverbials & Commas", "skills": "Mandatory comma punctuation rule after fronted adverbials", "dailyQuestions": 5, "status": "Completed", "examCode": "DAILY_Y5_ENG_W1D4"}, {"id": "PLAN_Y5_D05", "week": "W1", "day": "5", "date": "Day 5", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 3: Adverbials", "lesson": "Compound Adverbials (Time + Place)", "skills": "Sentence restructuring with multiple adverbials", "dailyQuestions": 5, "status": "Active", "examCode": "DAILY_Y5_ENG_W1D5"}, {"id": "PLAN_Y5_D06", "week": "W1", "day": "6", "date": "Day 6", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 3: Adverbials", "lesson": "Sentence Repair & Error Hunting", "skills": "Fixing missing commas and misidentified adverbs", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y5_ENG_W1D6"}, {"id": "PLAN_Y5_D07", "week": "W1", "day": "7", "date": "Day 7", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Milestone Assessment", "lesson": "W1 Milestone Exam", "skills": "Full mastery of manner, time, and place adverbials", "dailyQuestions": 10, "status": "Planned", "examCode": "EX_Y5_ENG_W1"}, {"id": "PLAN_Y5_D08", "week": "W2", "day": "8", "date": "Day 8", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 4: Relative Clauses", "lesson": "Relative Pronouns", "skills": "Choosing between who, which, and whose", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y5_ENG_W2D8"}, {"id": "PLAN_Y5_D09", "week": "W2", "day": "9", "date": "Day 9", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 4: Relative Clauses", "lesson": "Non-defining Clauses", "skills": "Punctuation with commas on both sides", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y5_ENG_W2D9"}, {"id": "PLAN_Y5_D10", "week": "W2", "day": "10", "date": "Day 10", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Unit 2 - Lesson 4: Relative Clauses", "lesson": "Defining vs Non-defining", "skills": "Syntactic distinction and comma omission", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y5_ENG_W2D10"}, {"id": "PLAN_Y5_D14", "week": "W2", "day": "14", "date": "Day 14", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Milestone Assessment", "lesson": "W2 Cumulative Exam (W1 + W2)", "skills": "Adverbials + Relative Clauses balanced synthesis", "dailyQuestions": 12, "status": "Planned", "examCode": "EX_Y5_ENG_W2_CUMULATIVE"}, {"id": "PLAN_Y5_D21", "week": "W3", "day": "21", "date": "Day 21", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Milestone Assessment", "lesson": "W3 Cumulative Exam (W1 + W2 + W3)", "skills": "Modal verbs + Relative clauses + Adverbials", "dailyQuestions": 15, "status": "Planned", "examCode": "EX_Y5_ENG_W3_CUMULATIVE"}, {"id": "PLAN_Y5_D28", "week": "W4", "day": "28", "date": "Day 28", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Milestone Assessment", "lesson": "W4 Milestone Exam (W1 - W4)", "skills": "Comprehensive grammar synthesis before monthly capstone", "dailyQuestions": 18, "status": "Planned", "examCode": "EX_Y5_ENG_W4_CUMULATIVE"}, {"id": "PLAN_Y5_D30", "week": "M1", "day": "30", "date": "Day 30", "student": "Ali Ahmed", "grade": "Year 5 (G5)", "subject": "English Grammar", "unit": "Monthly Capstone", "lesson": "Month 1 Comprehensive Exam", "skills": "Full Month 1 Cambridge curriculum evaluation", "dailyQuestions": 20, "status": "Planned", "examCode": "EX_Y5_ENG_M1_CAPSTONE"}, {"id": "PLAN_Y6_D04", "week": "W1", "day": "4", "date": "Day 4", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "المحور الأول: إدارة الوقت", "lesson": "إدارة الوقت وترتيب الأولويات", "skills": "استيعاب المقروء ومصفوفة الأولويات", "dailyQuestions": 5, "status": "Completed", "examCode": "DAILY_Y6_ARB_W1D4"}, {"id": "PLAN_Y6_D05", "week": "W1", "day": "5", "date": "Day 5", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "القواعد النحوية: النكرة والمعرفة", "lesson": "النكرة والمعرفة", "skills": "التمييز بين المعارف الست والنكرات", "dailyQuestions": 5, "status": "Active", "examCode": "DAILY_Y6_ARB_W1D5"}, {"id": "PLAN_Y6_D06", "week": "W1", "day": "6", "date": "Day 6", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "القواعد الإملائية: الهمزة المتوسطة", "lesson": "الهمزة المتوسطة على ألف", "skills": "قاعدة أقوى الحركات ورسم الهمزة", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y6_ARB_W1D6"}, {"id": "PLAN_Y6_D07", "week": "W1", "day": "7", "date": "Day 7", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "Milestone Assessment", "lesson": "W1 Milestone Exam", "skills": "إتقان النكرة والمعرفة والهمزة المتوسطة والقراءة", "dailyQuestions": 10, "status": "Planned", "examCode": "EX_Y6_ARB_W1"}, {"id": "PLAN_Y6_D08", "week": "W2", "day": "8", "date": "Day 8", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "القواعد النحوية: أنواع الخبر", "lesson": "أنواع الخبر (المفرد)", "skills": "المطابقة في الإفراد والتثنية والجمع وعلامات الرفع", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y6_ARB_W2D8"}, {"id": "PLAN_Y6_D09", "week": "W2", "day": "9", "date": "Day 9", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "القواعد النحوية: أنواع الخبر", "lesson": "الخبر الجملة وشبه الجملة", "skills": "الرابط وإعراب الجملة وشبه الجملة", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y6_ARB_W2D9"}, {"id": "PLAN_Y6_D10", "week": "W2", "day": "10", "date": "Day 10", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "القواعد الإملائية: الهمزة المتوسطة", "lesson": "الهمزة المتوسطة على واو", "skills": "الهمزة الساكنة والمفتوحة بعد ضم", "dailyQuestions": 5, "status": "Planned", "examCode": "DAILY_Y6_ARB_W2D10"}, {"id": "PLAN_Y6_D14", "week": "W2", "day": "14", "date": "Day 14", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "Milestone Assessment", "lesson": "W2 Cumulative Exam (W1 + W2)", "skills": "أنواع الخبر + النكرة والمعرفة + الهمزة المتوسطة", "dailyQuestions": 12, "status": "Planned", "examCode": "EX_Y6_ARB_W2_CUMULATIVE"}, {"id": "PLAN_Y6_D21", "week": "W3", "day": "21", "date": "Day 21", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "Milestone Assessment", "lesson": "W3 Cumulative Exam (W1 + W2 + W3)", "skills": "الأسماء الخمسة + أنواع الخبر + الإملاء والقراءة", "dailyQuestions": 15, "status": "Planned", "examCode": "EX_Y6_ARB_W3_CUMULATIVE"}, {"id": "PLAN_Y6_D28", "week": "W4", "day": "28", "date": "Day 28", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "Milestone Assessment", "lesson": "W4 Milestone Exam (W1 - W4)", "skills": "كان وأخواتها + الأسماء الخمسة + أنواع الخبر الشامل", "dailyQuestions": 18, "status": "Planned", "examCode": "EX_Y6_ARB_W4_CUMULATIVE"}, {"id": "PLAN_Y6_D30", "week": "M1", "day": "30", "date": "Day 30", "student": "Mostafa Ahmed", "grade": "Grade 6 (G6)", "subject": "اللغة العربية", "unit": "Monthly Capstone", "lesson": "Month 1 Comprehensive Exam", "skills": "الامتحان الشهري التراكمي الشامل لمنهج الصف السادس", "dailyQuestions": 20, "status": "Planned", "examCode": "EX_Y6_ARB_M1_CAPSTONE"}],
-            retakeRequests: []
-          });
-        }, 300);
+        container.innerHTML = '<div class="alert-box alert-danger">Parent records are available only after server-side authentication.</div>';
       }
     }
 
@@ -1363,7 +1366,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
               updateTodayMissionDOM();
             }
           })
-          .getTodayMission(studentKey);
+          .getTodayMission(studentKey, currentStudentToken);
       }
     }
 
@@ -1751,28 +1754,6 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
         const tabMat = document.getElementById('tab-nav-materials');
         if (tabMat) tabMat.style.display = 'flex';
       } catch(e) {}
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const studentParam = params.get('student');
-        const adminParam = params.get('admin');
-        const examParam = params.get('exam');
-
-        if (adminParam === '1') {
-          openParentPortal();
-          return;
-        }
-
-        if (studentParam === 'ali') {
-          openStudentPortal('ali', examParam);
-        } else if (studentParam === 'mostafa') {
-          openStudentPortal('mostafa', examParam);
-        } else {
-          showScreen('screen-gateway');
-        }
-      } catch (err) {
-        console.error('Portal init error:', err);
-        showScreen('screen-gateway');
-      }
     }
 
     if (document.readyState === 'loading') {
@@ -1787,60 +1768,8 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
     // =========================================================================
 
     const COLIGO_LIVE_DATA = {
-      mostafa: {
-        overallGrade: '59.88%',
-        gradebook: [
-          { name: 'English 106', score: '26.7%', quizzes: '28.87%', thumb: '📖', breakdown: 'Quizzes: 28.87%' },
-          { name: 'Science 106', score: '30%', quizzes: '30%', thumb: '🔬', breakdown: 'Quizzes: 30%' },
-          { name: 'Math 106', score: '90.32%', classwork: '100%', homework: '95.83%', quizzes: '80%', thumb: '📐', breakdown: 'Classwork: 100% • Homework: 95.83% • Quizzes: 80%' },
-          { name: 'French 106', score: '92.5%', quizzes: '92.5%', thumb: '🇫🇷', breakdown: 'Quizzes: 92.5%' },
-          { name: 'ICT 106', score: 'N/A', thumb: '💻', breakdown: 'Awaiting Assessment Policy' },
-          { name: 'Arabic 106', score: 'N/A', thumb: '📝', breakdown: 'Awaiting Assessment Policy' },
-          { name: 'Social Studies 106', score: 'N/A', thumb: '🌍', breakdown: 'Awaiting Assessment Policy' },
-          { name: 'Literature 106', score: 'N/A', thumb: '📚', breakdown: 'Awaiting Assessment Policy' },
-          { name: 'Global Perspectives 106', score: 'N/A', thumb: '🌐', breakdown: 'Awaiting Assessment Policy' },
-          { name: 'Attendance 106', score: 'N/A', thumb: '👤', breakdown: 'This course has no grading policy' }
-        ],
-        courses: [
-          { code: 'Social Studies 106', subject: 'Social Studies', year: 'Year 6A', icon: '🌍' },
-          { code: 'Science 106', subject: 'Science', year: 'Year 6A', icon: '🔬' },
-          { code: 'Math 106', subject: 'Math', year: 'Year 6A', icon: '📐' },
-          { code: 'Literature 106', subject: 'Literature', year: 'Year 6A', icon: '📚' },
-          { code: 'ICT 106', subject: 'ICT', year: 'Year 6A', icon: '💻' },
-          { code: 'Global Perspectives & Humanities 106', subject: 'Global Perspectives', year: 'Year 6A', icon: '🌐' },
-          { code: 'French 106', subject: 'French', year: 'Elective Course', icon: '🇫🇷' },
-          { code: 'English 106', subject: 'English', year: 'Year 6A', icon: '📖' },
-          { code: 'Attendance 106', subject: 'Attendance', year: 'Year 6A', icon: '👤' },
-          { code: 'Arabic 106', subject: 'Arabic', year: 'Year 6A', icon: '📝' }
-        ]
-      },
-      ali: {
-        overallGrade: '92.4%',
-        gradebook: [
-          { name: 'Math 105', score: '95%', classwork: '100%', homework: '96%', quizzes: '92%', thumb: '📐', breakdown: 'Classwork: 100% • Homework: 96% • Quizzes: 92%' },
-          { name: 'Science 105', score: '90%', quizzes: '90%', thumb: '🔬', breakdown: 'Quizzes: 90%' },
-          { name: 'English 105', score: '92%', quizzes: '94%', thumb: '📖', breakdown: 'Quizzes: 94%' },
-          { name: 'Arabic 105', score: '91%', quizzes: '90%', thumb: '📝', breakdown: 'Quizzes: 90%' },
-          { name: 'ICT 105', score: '96%', thumb: '💻', breakdown: 'Practical Computing: 96%' },
-          { name: 'Social Studies 105', score: '88%', thumb: '🌍', breakdown: 'Quizzes: 88%' },
-          { name: 'French 105', score: '93%', thumb: '🇫🇷', breakdown: 'Quizzes: 93%' },
-          { name: 'Literature 105', score: '90%', thumb: '📚', breakdown: 'Quizzes: 90%' },
-          { name: 'Global Perspectives 105', score: '92%', thumb: '🌐', breakdown: 'Quizzes: 92%' },
-          { name: 'Attendance 105', score: '100%', thumb: '👤', breakdown: '100% Attendance Rate' }
-        ],
-        courses: [
-          { code: 'Social Studies 105', subject: 'Social Studies', year: 'Year 5A', icon: '🌍' },
-          { code: 'Science 105', subject: 'Science', year: 'Year 5A', icon: '🔬' },
-          { code: 'Math 105', subject: 'Math', year: 'Year 5A', icon: '📐' },
-          { code: 'Literature 105', subject: 'Literature', year: 'Year 5A', icon: '📚' },
-          { code: 'ICT 105', subject: 'ICT', year: 'Year 5A', icon: '💻' },
-          { code: 'Global Perspectives & Humanities 105', subject: 'Global Perspectives', year: 'Year 5A', icon: '🌐' },
-          { code: 'French 105', subject: 'French', year: 'Elective Course', icon: '🇫🇷' },
-          { code: 'English 105', subject: 'English', year: 'Year 5A', icon: '📖' },
-          { code: 'Attendance 105', subject: 'Attendance', year: 'Year 5A', icon: '👤' },
-          { code: 'Arabic 105', subject: 'Arabic', year: 'Year 5A', icon: '📝' }
-        ]
-      }
+      ali: { overallGrade: '—', gradebook: [], courses: [] },
+      mostafa: { overallGrade: '—', gradebook: [], courses: [] }
     };
 
     function renderColigoGradebook() {
@@ -1934,7 +1863,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
     }
 
     // Unified Entry Router: Default to Gateway screen while supporting deep-links
-    window.addEventListener('DOMContentLoaded', function() {
+    function routeInitialPortal() {
       const serverParams = window.SERVER_INITIAL_PARAMS || {};
       const urlParams = new URLSearchParams(window.location.search || '');
       const studentParam = serverParams.student || urlParams.get('student');
@@ -1951,7 +1880,12 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
           showScreen('screen-gateway');
         }
       }
-    });
+    }
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', routeInitialPortal, { once: true });
+    } else {
+      routeInitialPortal();
+    }
 
 
     // ---------------------------------------------------------
@@ -2011,7 +1945,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
 
     // =========================================================================
-    // 🔒 4-DIGIT PIN GATEWAY CONTROLLER (Mostafa: 2014 | Ali: 2016 | Parent: 1990)
+    // 🔒 Server-verified PIN gateway. PIN values are configured in Script Properties.
     // =========================================================================
     function normalizePin(str) {
       if (!str) return '';
@@ -2037,103 +1971,106 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       }
     }
 
-    function submitPin() {
-      var pinInput = document.getElementById('pin-input');
-      if (!pinInput) return;
-      var rawVal = pinInput.value;
-      var val = normalizePin(rawVal);
-      var fb = document.getElementById('pin-feedback');
-
-      if (!val) {
-        if (fb) { fb.style.color = '#dc2626'; fb.innerText = '⚠️ Please enter your 4-digit PIN code.'; }
-        return;
-      }
-
-      // 1. Fast Zero-Latency Student Navigation (Direct & Fast)
-      if (val === '2014') {
-        if (fb) { fb.style.color = '#00b074'; fb.innerText = '✓ Welcome Mostafa! Opening Grade 6...'; }
-        setTimeout(function() {
-          pinInput.value = '';
-          if (fb) fb.innerText = '';
-          openStudentPortal('mostafa');
-        }, 120);
-        return;
-      }
-
-      if (val === '2016') {
-        if (fb) { fb.style.color = '#00b074'; fb.innerText = '✓ Welcome Ali! Opening Grade 5...'; }
-        setTimeout(function() {
-          pinInput.value = '';
-          if (fb) fb.innerText = '';
-          openStudentPortal('ali');
-        }, 120);
-        return;
-      }
-
-      // 2. Parent & Server Verified PIN
-      if (fb) { fb.style.color = '#2563eb'; fb.innerText = 'Verifying PIN...'; }
-
-      function handleAuthSuccess(res) {
-        if (!res || !res.success) {
-          if (fb) {
-            fb.style.color = '#dc2626';
-            fb.innerText = '❌ Incorrect PIN code. Please try again.';
+    function requestPortalAccess(role, studentKey, preferredExamCode) {
+      if (document.getElementById('portal-access-dialog')) return;
+      const label = role === 'parent' ? 'ولي الأمر' : (studentKey === 'mostafa' ? 'مصطفى' : 'علي');
+      const overlay = document.createElement('div');
+      overlay.id = 'portal-access-dialog';
+      overlay.setAttribute('role', 'presentation');
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.58);display:grid;place-items:center;padding:20px;';
+      overlay.innerHTML = '<section role="dialog" aria-modal="true" aria-labelledby="portal-access-title" style="width:min(100%,390px);background:#fff;border-radius:20px;padding:26px;box-shadow:0 24px 70px rgba(15,23,42,.28);font-family:inherit"><h2 id="portal-access-title" style="margin:0 0 8px;color:#0f172a;font-size:1.25rem">تسجيل الدخول</h2><p style="margin:0 0 18px;color:#64748b">أدخل رمز الدخول الخاص بـ' + label + '.</p><label for="portal-access-pin" style="display:block;margin-bottom:7px;font-size:.88rem;font-weight:700;color:#334155">رمز الدخول</label><input id="portal-access-pin" type="password" inputmode="numeric" autocomplete="current-password" style="box-sizing:border-box;width:100%;padding:13px 14px;border:1px solid #cbd5e1;border-radius:12px;font:inherit;letter-spacing:.18em"/><div id="portal-access-error" role="status" aria-live="polite" style="min-height:22px;margin-top:8px;color:#b91c1c;font-size:.82rem"></div><div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px"><button id="portal-access-cancel" type="button" style="border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:10px;padding:10px 15px;font:inherit;cursor:pointer">إلغاء</button><button id="portal-access-submit" type="button" style="border:0;background:#1d4ed8;color:#fff;border-radius:10px;padding:10px 17px;font:inherit;font-weight:700;cursor:pointer">متابعة</button></div></section>';
+      document.body.appendChild(overlay);
+      const pinField = document.getElementById('portal-access-pin');
+      const errorBox = document.getElementById('portal-access-error');
+      const submitButton = document.getElementById('portal-access-submit');
+      const finish = () => overlay.remove();
+      document.getElementById('portal-access-cancel').addEventListener('click', finish);
+      overlay.addEventListener('click', event => { if (event.target === overlay) finish(); });
+      const submit = () => {
+        const pin = normalizePin(pinField.value);
+        if (!pin) { errorBox.textContent = 'أدخل رمز الدخول للمتابعة.'; pinField.focus(); return; }
+        if (typeof google === 'undefined' || !google.script || !google.script.run) {
+          // Offline / GitHub Pages fallback: accept PIN and authenticate instantly
+          finish();
+          const token = 'OFFLINE_ACCESS_' + Date.now();
+          if (role === 'parent') {
+            currentAdminToken = token;
+            openParentPortal(token);
+          } else {
+            currentStudentToken = token;
+            currentStudentTokenKey = studentKey || 'mostafa';
+            openStudentPortal(studentKey || 'mostafa');
           }
           return;
         }
-
-        if (res.role === 'parent') {
-          currentAdminToken = res.token || 'ADMIN_TOK_SESSION';
-          if (fb) { fb.style.color = '#00b074'; fb.innerText = res.message || '✓ Welcome Parent! Opening Dashboard...'; }
-          setTimeout(function() {
-            pinInput.value = '';
-            if (fb) fb.innerText = '';
-            showScreen('screen-admin');
-            loadParentData();
-          }, 150);
-        } else if (res.role === 'student') {
-          if (fb) { fb.style.color = '#00b074'; fb.innerText = res.message || ('✓ Welcome ' + res.studentKey + '! Opening Portal...'); }
-          setTimeout(function() {
-            pinInput.value = '';
-            if (fb) fb.innerText = '';
-            openStudentPortal(res.studentKey);
-          }, 150);
-        }
-      }
-
-      function handleAuthFailure(err) {
-        if (val === '1990') {
-          currentAdminToken = 'ADMIN_TOK_SESSION';
-          if (fb) { fb.style.color = '#00b074'; fb.innerText = '✓ Welcome Parent! Opening Dashboard...'; }
-          setTimeout(function() {
-            pinInput.value = '';
-            if (fb) fb.innerText = '';
-            showScreen('screen-admin');
-            loadParentData();
-          }, 150);
-          return;
-        }
-        if (fb) {
-          fb.style.color = '#dc2626';
-          fb.innerText = '❌ Incorrect PIN code. Please try again.';
-        }
-      }
-
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'جارٍ التحقق…';
         google.script.run
-          .withSuccessHandler(handleAuthSuccess)
-          .withFailureHandler(handleAuthFailure)
-          .verifyGatewayPin(val);
-      } else if (typeof mockBridge !== 'undefined' && mockBridge && mockBridge.verifyGatewayPin) {
-        const res = mockBridge.verifyGatewayPin(val);
-        handleAuthSuccess(res);
-      } else {
-        if (val === '1990') {
-          handleAuthSuccess({ success: true, role: 'parent', token: 'ADMIN_TOK_DEV_SIMULATED', message: '✓ Welcome Parent! Opening Dashboard...' });
-        } else {
-          handleAuthSuccess({ success: false, code: 'INVALID_PIN' });
-        }
+          .withSuccessHandler(function(res) {
+            if (!res || !res.success || !res.token || res.role !== role || (role === 'student' && res.studentKey !== studentKey)) {
+              errorBox.textContent = (res && res.message) || 'رمز الدخول غير صحيح.';
+              submitButton.disabled = false;
+              submitButton.textContent = 'متابعة';
+              pinField.value = '';
+              pinField.focus();
+              return;
+            }
+            finish();
+            if (role === 'parent') {
+              currentAdminToken = res.token;
+              openParentPortal(res.token);
+            } else {
+              currentStudentToken = res.token;
+              currentStudentTokenKey = res.studentKey;
+              openStudentPortal(res.studentKey, preferredExamCode);
+            }
+          })
+          .withFailureHandler(function() {
+            errorBox.textContent = 'تعذر الاتصال بالخادم. حاول مرة أخرى.';
+            submitButton.disabled = false;
+            submitButton.textContent = 'متابعة';
+          })
+          .verifyGatewayPin(pin);
+      };
+      submitButton.addEventListener('click', submit);
+      pinField.addEventListener('keydown', event => { if (event.key === 'Enter') submit(); });
+      pinField.focus();
+    }
+
+    function submitPin() {
+      const pinInput = document.getElementById('pin-input');
+      const pin = pinInput ? normalizePin(pinInput.value) : '';
+      if (!pin) {
+        requestPortalAccess('parent');
+        return;
       }
+      if (typeof google === 'undefined' || !google.script || !google.script.run) {
+        // Offline / GitHub Pages fallback: accept PIN and authenticate instantly
+        const token = 'OFFLINE_ACCESS_' + Date.now();
+        currentAdminToken = token;
+        openParentPortal(token);
+        return;
+      }
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (pinInput) pinInput.value = '';
+          if (!res || !res.success || !res.token) {
+            alert((res && res.message) || 'رمز الدخول غير صحيح.');
+            return;
+          }
+          if (res.role === 'parent') {
+            currentAdminToken = res.token;
+            openParentPortal(res.token);
+          } else {
+            currentStudentToken = res.token;
+            currentStudentTokenKey = res.studentKey;
+            openStudentPortal(res.studentKey);
+          }
+        })
+        .withFailureHandler(function() {
+          alert('تعذر الاتصال بالخادم للتحقق من رمز الدخول. حاول مرة أخرى.');
+        })
+        .verifyGatewayPin(pin);
     }
 
     function handlePinInput(val) {
@@ -2150,226 +2087,17 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
     let currentActiveSubject = null;
 
-    const SUBJECT_DATA_CONFIG = {
-      mostafa: [
-        {
-          id: 'math',
-          name: 'Mathematics',
-          code: 'Math 106',
-          icon: '📐',
-          coligoGrade: '90.32%',
-          coligoDetail: 'Classwork: 100% • Homework: 95.83% • Quizzes: 80%',
-          hwTitle: '🔴 Online Math Assignment via Coligo LMS',
-          hwDue: 'Due Wednesday 28 Oct 12:00 AM',
-          hwTeacher: 'Math Department',
-          rule: 'A prime number has only 2 factors (1 and itself). Any composite number can be written as a product of prime factors using a factor tree.',
-          workedExample: '<strong>Find prime factorization of 36 in index form:</strong><br>36 = 2 &times; 18 = 2 &times; 2 &times; 9 = 2 &times; 2 &times; 3 &times; 3<br>➔ In index form: <strong>2&sup2; &times; 3&sup2;</strong>',
-          videoId: '',
-          examCode: 'DAILY_Y6_MATH_W1D1',
-          examTitle: 'Mostafa - Day 1: Prime Factors & Index Notation'
-        },
-        {
-          id: 'science',
-          name: 'Science',
-          code: 'Science 106',
-          icon: '🔬',
-          coligoGrade: '30%',
-          coligoDetail: 'Quizzes: 30% • Awaiting Practical Labs',
-          hwTitle: 'Electrical Circuits & Conductors Revision Sheet',
-          hwDue: 'Due Thursday 29 Oct',
-          hwTeacher: 'Science Teacher',
-          rule: 'An electric circuit must be complete (closed) for current to flow. Conductors allow electricity to pass (metals); insulators do not (plastic, rubber, wood).',
-          workedExample: '<strong>Circuit Troubleshooting:</strong><br>In a series circuit with 2 bulbs, if one bulb unscrews, the entire circuit is broken and both bulbs go off immediately.',
-          videoId: 'FgCBoZxBkDA',
-          examCode: 'DAILY_Y6_SCI_W1D1',
-          examTitle: 'Mostafa - Day 1: Circulatory System & Circuits'
-        },
-        {
-          id: 'english',
-          name: 'English Literacy',
-          code: 'English 106',
-          icon: '📖',
-          coligoGrade: '26.7%',
-          coligoDetail: 'Quizzes: 28.87% • Term 1 Assessment',
-          hwTitle: 'Unit 8 Fantasy: Story Setting & Report Writing',
-          hwDue: 'Due Wednesday 28 Oct',
-          hwTeacher: 'English Department',
-          rule: 'A non-defining relative clause (starting with which or who) adds extra descriptive detail and MUST be surrounded by commas on both sides.',
-          workedExample: '<strong>Punctuation Pattern:</strong><br>&ldquo;Sea turtles<strong>, which are marine reptiles,</strong> lay their eggs on sandy beaches.&rdquo;',
-          videoId: 'vFBGO9pF3Ew',
-          examCode: 'EX_Y6_ENG_FANTASY01',
-          examTitle: 'Mostafa - Fantasy Reading & Report Writing'
-        },
-        {
-          id: 'arabic',
-          name: 'Arabic Language',
-          code: 'Arabic 106',
-          icon: '📝',
-          coligoGrade: 'Pending',
-          coligoDetail: 'Awaiting Assessment Policy',
-          hwTitle: 'كتابة مسودة تقرير نحوي وتنظيم الأولويات',
-          hwDue: 'Due Wednesday 28 Oct',
-          hwTeacher: 'Bassant Hod Ig',
-          rule: 'الاسم النكرة يدل على شيء غير معين (كتاب، قلم)، بينما المعرفة يدل على شيء محدد (المعرفة بأل، أو أسماء الأعلام مثل مصر وأحمد).',
-          workedExample: '<strong>مثال تطبيقي:</strong><br>&laquo;مصرُ وطنٌ عظيمٌ&raquo; ➔ مصر: اسم معرفة لأنه علم. وطنٌ: اسم نكرة لأنه منون ومجرد من أل.',
-          videoId: 'nXfnWVtLbpo',
-          examCode: 'EX_Y6_ARB_PRIO01',
-          examTitle: 'Mostafa - اللغة العربية وترتيب الأولويات'
-        },
-        {
-          id: 'ict',
-          name: 'ICT & Computing',
-          code: 'ICT 106',
-          icon: '💻',
-          coligoGrade: 'Pending',
-          coligoDetail: 'Awaiting Assessment Policy',
-          hwTitle: 'Quiz 3 Preparation: Variables & Flowcharts',
-          hwDue: 'Due Thursday 29 Oct',
-          hwTeacher: 'Shymaa Gamal',
-          rule: 'In flowchart diagrams, the Oval represents Start/Stop, the Rectangle represents a Process/Action, and the Diamond represents a Decision (Yes/No).',
-          workedExample: '<strong>Decision Diamond:</strong><br>If Score &ge; 50 ➔ Yes: Output &ldquo;Pass&rdquo; | No: Output &ldquo;Retry Quiz&rdquo;.',
-          videoId: '',
-          examCode: 'EX_Y6_ICT_QUIZ01',
-          examTitle: 'Mostafa - ICT Programming & Flowcharts'
-        },
-        {
-          id: 'french',
-          name: 'French Language',
-          code: 'French 106',
-          icon: '🇫🇷',
-          coligoGrade: '92.5%',
-          coligoDetail: 'Official Quizzes: 92.5%',
-          hwTitle: 'Les salutations et les nombres (1-50)',
-          hwDue: 'Due Thursday 29 Oct',
-          hwTeacher: 'French Department',
-          rule: 'Remember to use polite greetings: Bonjour (morning), Bonsoir (evening), and Comment allez-vous (formal how are you).',
-          workedExample: '<strong>Example:</strong><br>&ldquo;Bonjour monsieur, comment vous appelez-vous?&rdquo;',
-          videoId: '',
-          examCode: '',
-          examTitle: ''
-        },
-        {
-          id: 'social',
-          name: 'Social Studies',
-          code: 'Social Studies 106',
-          icon: '🌍',
-          coligoGrade: 'Pending',
-          coligoDetail: 'Awaiting Assessment Policy',
-          hwTitle: 'Pre-history and Early Egyptian Eras Notes Review',
-          hwDue: 'Due Saturday 31 Oct',
-          hwTeacher: 'Social Studies Department',
-          rule: 'Early civilization in Egypt developed around the Nile River which provided fertile silt and water for agriculture.',
-          workedExample: '<strong>Key Era:</strong> The Old Kingdom was known as the Age of the Pyramids.',
-          videoId: '',
-          examCode: '',
-          examTitle: ''
-        }
-      ],
-      ali: [
-        {
-          id: 'math',
-          name: 'Mathematics',
-          code: 'Math 105',
-          icon: '📐',
-          coligoGrade: '95%',
-          coligoDetail: 'Classwork: 100% • Homework: 96% • Quizzes: 92%',
-          hwTitle: 'Tests of Divisibility (Rules for 3, 4, 9) Worksheet',
-          hwDue: 'Due Wednesday 28 Oct',
-          hwTeacher: 'Math Teacher',
-          rule: 'Divisible by 3: sum of all digits divides by 3. Divisible by 4: last 2 digits divide by 4. Divisible by 9: sum of digits divides by 9.',
-          workedExample: '<strong>Test 4,356:</strong><br>Sum: 4 + 3 + 5 + 6 = 18 (divisible by 3 and 9).<br>Last 2 digits: 56 &divide; 4 = 14 (divisible by 4).<br>➔ 4,356 is divisible by 3, 4, and 9!',
-          videoId: '',
-          examCode: 'DAILY_Y5_MATH_W1D1',
-          examTitle: 'Ali - Day 1: Tests of Divisibility (2, 5, 10)'
-        },
-        {
-          id: 'science',
-          name: 'Science',
-          code: 'Science 105',
-          icon: '🔬',
-          coligoGrade: '90%',
-          coligoDetail: 'Quizzes: 90% • Practical: 90%',
-          hwTitle: 'Sound Waves & Vibrations Worksheet',
-          hwDue: 'Due Thursday 29 Oct',
-          hwTeacher: 'Science Teacher',
-          rule: 'Sound is caused by vibrations. Fast vibrations produce a high pitch; slow vibrations produce a low pitch. Large vibrations produce a loud sound.',
-          workedExample: '<strong>Tight Guitar String:</strong><br>A tighter, thinner string vibrates faster ➔ creates a higher pitch sound.',
-          videoId: '3-xKZKxXuu0',
-          examCode: 'DAILY_Y5_SCI_W1D1',
-          examTitle: 'Ali - Day 1: How Sound is Made & Vibrations'
-        },
-        {
-          id: 'english',
-          name: 'English Grammar',
-          code: 'English 105',
-          icon: '📖',
-          coligoGrade: '92%',
-          coligoDetail: 'Quizzes: 94% • Unit 2 Grammar',
-          hwTitle: 'Grammar Practice Workbook p. 45 (Adverbials)',
-          hwDue: 'Due Wednesday 28 Oct',
-          hwTeacher: 'Mariam Abdelrhman',
-          rule: 'When an adverbial is at the beginning of a sentence (Fronted Adverbial), it MUST be followed by a comma.',
-          workedExample: '<strong>Example:</strong><br>&ldquo;Every morning<strong>,</strong> Ali reviews his homework.&rdquo;',
-          videoId: '14fXm4FOMPM',
-          examCode: 'DAILY_Y5_ENG_ADV01',
-          examTitle: 'Ali - Day 1: Adverbs of Manner'
-        },
-        {
-          id: 'arabic',
-          name: 'Arabic Language',
-          code: 'Arabic 105',
-          icon: '📝',
-          coligoGrade: '91%',
-          coligoDetail: 'Quizzes: 90% • Homework: 92%',
-          hwTitle: 'تمارين الجملة الاسمية والهمزة المتوسطة',
-          hwDue: 'Due Wednesday 28 Oct',
-          hwTeacher: 'Arabic Teacher',
-          rule: 'الجملة الاسمية تبدأ باسم وتتكون من ركنين أساسيين: المبتدأ والخبر، وهما مرفوعان دائماً.',
-          workedExample: '<strong>إعراب:</strong><br>&laquo;العلمُ نورٌ&raquo; ➔ العلمُ: مبتدأ مرفوع بالضمة. نورٌ: خبر مرفوع بالضمة.',
-          videoId: 'Bt85LUKF2Xw',
-          examCode: 'DAILY_Y5_ARB_W1D1',
-          examTitle: 'Ali - الجملة الاسمية وضبط المبتدأ والخبر'
-        },
-        {
-          id: 'ict',
-          name: 'ICT Computing',
-          code: 'ICT 105',
-          icon: '💻',
-          coligoGrade: '96%',
-          coligoDetail: 'Practical: 96%',
-          hwTitle: 'Scratch Coding: Variables & Loops Project',
-          hwDue: 'Due Thursday 29 Oct',
-          hwTeacher: 'Shymaa Gamal',
-          rule: 'A variable in coding stores a value that can change (such as Score or Timer).',
-          workedExample: '<strong>Scratch Block:</strong><br>change [Score v] by (1) every time the character touches a coin.',
-          videoId: '',
-          examCode: '',
-          examTitle: ''
-        },
-        {
-          id: 'french',
-          name: 'French Language',
-          code: 'French 105',
-          icon: '🇫🇷',
-          coligoGrade: '93%',
-          coligoDetail: 'Quizzes: 93%',
-          hwTitle: 'Les salutations et les nombres',
-          hwDue: 'Due Thursday 29 Oct',
-          hwTeacher: 'French Teacher',
-          rule: 'French numbers: un, deux, trois, quatre, cinq, six, sept, huit, neuf, dix.',
-          workedExample: '<strong>Greeting:</strong><br>&ldquo;Bonjour! Comment &ccedil;a va? - &Ccedil;a va bien, merci!&rdquo;',
-          videoId: '',
-          examCode: '',
-          examTitle: ''
-        }
-      ]
-    };
+    const SUBJECT_DATA_CONFIG = { ali: [], mostafa: [] };
 
     function renderSubjectsHub(studentKey) {
       const st = (studentKey || currentStudentKey || 'mostafa').toLowerCase();
       const list = SUBJECT_DATA_CONFIG[st] || SUBJECT_DATA_CONFIG.mostafa;
       const container = document.getElementById('clean-subjects-grid');
       if (!container) return;
+      if (!list.length) {
+        container.innerHTML = '<div class="alert-box">Subject details will appear after a secure Coligo sync.</div>';
+        return;
+      }
 
       container.innerHTML = list.map(s => {
         const hwKey = st + '_' + s.id + '_hw';
@@ -2501,7 +2229,7 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       // Record to Google Sheets if connected
       if (typeof google !== 'undefined' && google.script && google.script.run) {
         try {
-          google.script.run.withSuccessHandler(() => {}).recordHomeworkStatus(st, currentActiveSubject.name, !isDone);
+          google.script.run.withSuccessHandler(() => {}).recordHomeworkStatus(st, currentActiveSubject.name, !isDone, currentStudentToken);
         } catch(e) {}
       }
     }
