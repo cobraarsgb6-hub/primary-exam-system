@@ -1,11 +1,9 @@
-name: Daily Autonomous Coligo Sync
+name: Autonomous Cloud Coligo Ingestion
 
 on:
   schedule:
-    # Runs every single day (including weekends & holidays):
-    # Every hour starting at 4:00 PM Cairo time until 12:00 Midnight Cairo time:
-    # 4:00 PM, 5:00 PM, 6:00 PM, 7:00 PM, 8:00 PM, 9:00 PM, 10:00 PM, 11:00 PM, 12:00 Midnight Cairo Time (UTC 14:00 to 22:00)
-    - cron: '0 14-22 * * *'
+    # Runs EVERY HOUR 24/7 (School days, weekends & holidays):
+    - cron: '0 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -37,5 +35,5 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add resources/coligo/
-        git diff-index --quiet HEAD || git commit -m "chore(sync): automated cloud coligo ingestion [skip ci]"
+        git diff-index --quiet HEAD || git commit -m "chore(sync): automated hourly cloud coligo ingestion [skip ci]"
         git push || true

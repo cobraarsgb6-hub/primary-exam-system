@@ -20,19 +20,14 @@ import urllib.error
 # Base paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, "resources", "coligo")
-LS_FILE = os.path.join(OUTPUT_DIR, "local_storage.json")
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-if not os.path.exists(LS_FILE):
-    print(f"[ERROR] Session file not found at: {LS_FILE}")
+TOKEN = os.environ.get("COLIGO_TOKEN")
+if not TOKEN:
+    print("[ERROR] Configure COLIGO_TOKEN in the environment; local credential files are not read.")
     sys.exit(1)
-
-with open(LS_FILE, "r", encoding="utf-8") as f:
-    ls = json.load(f)
-
-TOKEN = ls.get("token")
-USER = json.loads(ls.get("user", "{}"))
+USER = {}
 SEMESTER_ID = "6aa6b7d7382ba9a416a84790"  # Trimester 1 (Sep 2026 - Jul 2027)
 
 STUDENTS = [
@@ -83,9 +78,7 @@ def safe_download_file(url, target_folder, preferred_name):
 
     req = urllib.request.Request(url, headers={"User-Agent": HEADERS["User-Agent"]})
     try:
-        import ssl
-        ctx = ssl._create_unverified_context()
-        with urllib.request.urlopen(req, timeout=25, context=ctx) as resp:
+        with urllib.request.urlopen(req, timeout=25) as resp:
             data = resp.read()
             if data[:4] == b'PK\x03\x04':  # ZIP archive
                 try:

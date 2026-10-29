@@ -17,23 +17,15 @@ import urllib.request
 import urllib.error
 import zipfile
 import io
-import ssl
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, "resources", "coligo")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# 1. Resolve Auth Token from Environment or local file
+# Read credentials only from the runner's secret environment.
 TOKEN = os.environ.get("COLIGO_TOKEN")
 if not TOKEN:
-    ls_file = os.path.join(OUTPUT_DIR, "local_storage.json")
-    if os.path.exists(ls_file):
-        with open(ls_file, "r", encoding="utf-8") as f:
-            ls = json.load(f)
-            TOKEN = ls.get("token")
-
-if not TOKEN:
-    print("[ERROR] No Coligo token found in environment (COLIGO_TOKEN) or local_storage.json")
+    print("[ERROR] Configure COLIGO_TOKEN as an environment secret.")
     sys.exit(1)
 
 WEBHOOK_URL = os.environ.get("GAS_WEBHOOK_URL")
@@ -50,7 +42,6 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 }
 
-SSL_CTX = ssl._create_unverified_context()
 
 def clean_filename(name):
     if not name:
@@ -75,7 +66,7 @@ def safe_download_file(url, target_folder, preferred_name):
 
     req = urllib.request.Request(url, headers={"User-Agent": HEADERS["User-Agent"]})
     try:
-        with urllib.request.urlopen(req, timeout=30, context=SSL_CTX) as resp:
+        with urllib.request.urlopen(req, timeout=30) as resp:
             data = resp.read()
             if data[:4] == b'PK\x03\x04':  # ZIP archive
                 try:
@@ -112,7 +103,7 @@ def run_sync():
     req_n = urllib.request.Request(notif_url, headers=HEADERS)
     notifs = []
     try:
-        with urllib.request.urlopen(req_n, timeout=20, context=SSL_CTX) as resp:
+        with urllib.request.urlopen(req_n, timeout=20) as resp:
             notifs = json.loads(resp.read().decode("utf-8"))
             with open(os.path.join(OUTPUT_DIR, "all_notifications.json"), "w", encoding="utf-8") as f:
                 json.dump(notifs, f, ensure_ascii=False, indent=2)
@@ -156,7 +147,7 @@ def run_sync():
         req_c = urllib.request.Request(courses_url, headers=HEADERS)
         courses = []
         try:
-            with urllib.request.urlopen(req_c, timeout=20, context=SSL_CTX) as resp_c:
+            with urllib.request.urlopen(req_c, timeout=20) as resp_c:
                 c_resp = json.loads(resp_c.read().decode("utf-8"))
                 courses = c_resp.get("data", c_resp) if isinstance(c_resp, dict) else c_resp
         except Exception as e:
@@ -175,7 +166,7 @@ def run_sync():
             req_m = urllib.request.Request(mat_url, headers=HEADERS)
             materials = []
             try:
-                with urllib.request.urlopen(req_m, timeout=20, context=SSL_CTX) as resp_m:
+                with urllib.request.urlopen(req_m, timeout=20) as resp_m:
                     materials = json.loads(resp_m.read().decode("utf-8"))
             except Exception as e:
                 print(f"  [!] Failed materials for {c_title}: {e}")
@@ -236,7 +227,7 @@ def run_sync():
         }).encode("utf-8")
         req_w = urllib.request.Request(WEBHOOK_URL, data=payload, headers={"Content-Type": "application/json"})
         try:
-            with urllib.request.urlopen(req_w, timeout=25, context=SSL_CTX) as resp_w:
+            with urllib.request.urlopen(req_w, timeout=25) as resp_w:
                 res = resp_w.read().decode("utf-8")
                 print("✅ Successfully pushed to Google Sheets Cloud Database:", res)
         except Exception as e:
