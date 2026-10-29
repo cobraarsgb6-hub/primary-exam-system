@@ -25,6 +25,8 @@ jobs:
     - name: Run Full Cloud Coligo Ingestion
       env:
         COLIGO_TOKEN: ${{ secrets.COLIGO_TOKEN }}
+        COLIGO_USERNAME: ${{ secrets.COLIGO_USERNAME }}
+        COLIGO_PASSWORD: ${{ secrets.COLIGO_PASSWORD }}
         GAS_WEBHOOK_URL: ${{ secrets.GAS_WEBHOOK_URL }}
         SYNC_SECRET: ${{ secrets.SYNC_SECRET }}
       run: |
@@ -35,5 +37,18 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add resources/coligo/
-        git diff-index --quiet HEAD || git commit -m "chore(sync): automated hourly cloud coligo ingestion [skip ci]"
+        # Never publish raw captured sessions or gradebook traffic (they can hold
+        # tokens & family data). Publication-safe outputs are catalog + manifest
+        # + material files (PDF/DOCX/extracted assets) only.
+        git reset -- \
+          "resources/coligo/local_storage.json" \
+          "resources/coligo/captured_gradebook_api.json" \
+          "resources/coligo/all_gradebook_traffic.json" \
+          "resources/coligo/all_notifications.json" \
+          "resources/coligo/live_grades_and_announcements.json" \
+          "resources/coligo/all_curriculum_materials.json" \
+          "resources/coligo/all_links_and_notes.json" \
+          "resources/coligo/courses_dump.html" \
+          "resources/coligo/api_resp_"*".json"
+        git diff-index --quiet HEAD || git commit -m "chore(sync): automated hourly cloud coligo ingestion"
         git push || true

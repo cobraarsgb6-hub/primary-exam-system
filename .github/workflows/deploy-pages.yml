@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   deploy:
-    if: ${{ false }} # Paused at the user's request; re-enable after review.
+    if: ${{ true }} # Re-enabled; the portal (index.html) is the 24/7 student hub.
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -26,14 +26,24 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Prepare Files for GitHub Pages
+      - name: Prepare Clean Pages Build (_stage)
         run: |
-          # Ensure lowercase index.html is present
-          if [ -f "Index.html" ] && [ ! -f "index.html" ]; then
-            cp Index.html index.html
-          fi
-          # Ensure no-jekyll so folders like .coligo_session or resources are served properly
-          touch .nojekyll
+          # Build a curated publish tree: the portal + materials + live catalog.
+          # Raw session/gradebook captures never reach GitHub Pages.
+          mkdir -p _stage/resources/coligo
+          cp -f index.html _stage/index.html
+          rsync -a resources/coligo/ _stage/resources/coligo/ \
+            --exclude "local_storage.json" \
+            --exclude "captured_gradebook_api.json" \
+            --exclude "all_gradebook_traffic.json" \
+            --exclude "all_notifications.json" \
+            --exclude "live_grades_and_announcements.json" \
+            --exclude "all_curriculum_materials.json" \
+            --exclude "all_links_and_notes.json" \
+            --exclude "courses_dump.html" \
+            --exclude "courses_rendered.png" \
+            --exclude "api_resp_*.json"
+          touch _stage/.nojekyll
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
@@ -41,7 +51,7 @@ jobs:
       - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_stage'
 
       - name: Deploy to GitHub Pages
         id: deployment

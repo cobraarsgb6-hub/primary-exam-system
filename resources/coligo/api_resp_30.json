@@ -1,6 +1,0 @@
-{
-  "url": "https://o1080639.ingest.sentry.io/api/6086702/envelope/?sentry_version=7&sentry_key=5b9e86a6e59d46ab85cd1575556df3b3&sentry_client=sentry.javascript.react%2F8.42.0",
-  "data": {
-    "detail": "Sentry dropped data due to a quota or internal rate limit being reached. This will not affect your application. See https://docs.sentry.io/product/accounts/quotas/ for more information."
-  }
-}

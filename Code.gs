@@ -16,7 +16,7 @@ function normalizePeriod_(p) {
  * ============================================================
  */
 
-function getSpreadsheet() {
+function getSpreadsheet_() {
   let ss = SpreadsheetApp.getActiveSpreadsheet();
   const scriptProps = PropertiesService.getScriptProperties();
   if (ss) {
@@ -55,23 +55,35 @@ function getSpreadsheet() {
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('🎯 Assessment Management')
-    .addItem('⚙️ Full Database Auto-Format & Setup', 'setupDatabase')
-    .addItem('📥 Seed Full 5-Subject Bank (234 Questions & 48 Exams)', 'seedCompleteQuestionBank')
-    .addItem('📝 Generate Google Form from Exam', 'generateGoogleFormPrompt')
-    .addItem('⚡ Create Weekly Exam', 'promptCreateWeeklyExam')
-    .addItem('🗓️ Create Monthly Cumulative Exam', 'promptCreateMonthlyExam')
-    .addItem('🎯 Create Mistakes Review Exam', 'promptCreateMistakesExam')
+    .addItem('⚙️ Full Database Auto-Format & Setup', 'setupDatabaseFromMenu_')
+    .addItem('📥 Seed Full 5-Subject Bank (234 Questions & 48 Exams)', 'seedCompleteQuestionBankFromMenu_')
+    .addItem('📝 Generate Google Form from Exam', 'generateGoogleFormPrompt_')
+    .addItem('⚡ Create Weekly Exam', 'promptCreateWeeklyExam_')
+    .addItem('🗓️ Create Monthly Cumulative Exam', 'promptCreateMonthlyExam_')
+    .addItem('🎯 Create Mistakes Review Exam', 'promptCreateMistakesExam_')
     .addSeparator()
-    .addItem('🔗 Copy Interactive Web App URL', 'copyWebAppUrl')
-    .addItem('📊 Open Linked Google Sheet', 'openLinkedSheetUrl')
+    .addItem('🔗 Copy Interactive Web App URL', 'copyWebAppUrl_')
+    .addItem('📊 Open Linked Google Sheet', 'openLinkedSheetUrl_')
     .addToUi();
 }
 
 /**
  * Executive Setup & Professional Formatting for Google Sheets
  */
-function setupDatabase(targetSs) {
-  const ss = (targetSs && targetSs.getSheetByName) ? targetSs : getSpreadsheet();
+function setupDatabase(targetSs, adminToken) {
+  if (targetSs && typeof targetSs.getSheetByName === 'function') {
+    return setupDatabase_(targetSs);
+  }
+  if (!isAdminTokenValid_(adminToken)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  return setupDatabase_(targetSs);
+}
+
+function setupDatabaseFromMenu_() {
+  return setupDatabase_();
+}
+
+function setupDatabase_(targetSs) {
+  const ss = (targetSs && targetSs.getSheetByName) ? targetSs : getSpreadsheet_();
 
   // 1. TAB: Submissions (Student Results & Records) - NEVER CLEAR EXISTING ROWS!
   let subSheet = ss.getSheetByName('Submissions');
@@ -328,7 +340,7 @@ function valueToMillis_(value) {
 }
 
 function ensureSessionSheet_(ss) {
-  const spreadsheet = ss || getSpreadsheet();
+  const spreadsheet = ss || getSpreadsheet_();
   let sheet = spreadsheet.getSheetByName('Sessions');
   if (!sheet) sheet = spreadsheet.insertSheet('Sessions');
   if (sheet.getLastRow() === 0) {
@@ -345,7 +357,7 @@ function ensureSessionSheet_(ss) {
 }
 
 function getSessionSheet_() {
-  return ensureSessionSheet_(getSpreadsheet());
+  return ensureSessionSheet_(getSpreadsheet_());
 }
 
 const HEADER_ALIASES_ = {
@@ -428,7 +440,7 @@ function headerIndex_(map, name, fallback) {
  * match "Ali".
  */
 function getAttemptState_(studentName, examCode) {
-  const ss = getSpreadsheet();
+  const ss = getSpreadsheet_();
   const subSheet = ss.getSheetByName('Submissions');
   const retakeSheet = ss.getSheetByName('Retake_Requests');
   const targetName = normalizeName_(studentName);
@@ -498,7 +510,7 @@ function getAttemptState_(studentName, examCode) {
 
 function recordExpiredSessionSubmission_(sessionOrRow, sessionId) {
   try {
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     let subSheet = ss.getSheetByName('Submissions');
     if (!subSheet) {
       setupDatabase(ss);
@@ -713,7 +725,7 @@ function getPassageForQuestion_(examCode, unit, text) {
 }
 
 function loadBankQuestions_(examCode) {
-  const ss = getSpreadsheet();
+  const ss = getSpreadsheet_();
   const sheet = ss ? ss.getSheetByName('Question_Bank') : null;
   const targetExam = normalizeExam_(examCode);
   const questions = [];
@@ -968,7 +980,7 @@ const ARABIC_PASSAGES_POOL = [
   }
 ];
 
-function generateAliAdverbialExam() {
+function generateAliAdverbialExam_() {
   const subjects = ['The astronaut', 'The Apollo rover', 'Commander Davis', 'The spacecraft', 'The satellite', 'The lunar explorer', 'The flight engineer', 'The pilot'];
   const verbs = ['landed safely', 'launched into orbit', 'reached the space station', 'transmitted clear signals', 'touched down', 'departed the launchpad', 'completed its mission'];
   
@@ -1188,7 +1200,7 @@ function generateAliAdverbialExam() {
  * Procedural Generator for Mostafa Ahmed (Grade 6 English Literacy & Report Writing)
  * Randomly selects a unique passage from the pool on every attempt and generates matched questions!
  */
-function generateMostafaEnglishExam() {
+function generateMostafaEnglishExam_() {
   const fantasy = getRandomElement(FANTASY_PASSAGES_POOL);
   const report = getRandomElement(REPORT_PASSAGES_POOL);
   const questions = [];
@@ -1387,7 +1399,7 @@ function generateMostafaEnglishExam() {
  * Procedural Generator for Mostafa Ahmed (Grade 6 Arabic - سلاح التلميذ)
  * Randomly selects a unique authentic textbook passage from the pool on every attempt and generates matched questions!
  */
-function generateMostafaArabicExam() {
+function generateMostafaArabicExam_() {
   const arb = getRandomElement(ARABIC_PASSAGES_POOL);
   const questions = [];
 
@@ -1608,7 +1620,7 @@ function getExamInfo(examCode) {
     }
   }
 
-  const ss = getSpreadsheet();
+  const ss = getSpreadsheet_();
   const sheet = ss.getSheetByName('Exams');
   if (sheet && sheet.getLastRow() > 1) {
     const map = getSheetHeaderMap_(sheet);
@@ -1647,8 +1659,9 @@ function rowValue_(row, map, header, fallbackIndex) {
  * Loads questions from Question_Bank (bank-first), starts/reuses a server-side
  * session, and returns only the public question fields to the browser.
  */
-function getExamData(examCode, studentName) {
+function getExamData(examCode, studentName, studentToken) {
   try {
+    if (!isStudentTokenValid_(studentToken, studentName)) return studentAccessError_();
     const exam = getExamInfo(examCode);
     if (!exam) {
       return { success: false, code: 'EXAM_NOT_FOUND', message: 'هذا الامتحان غير موجود أو غير مفعّل.' };
@@ -1735,6 +1748,10 @@ function validateSession_(data, now) {
     return { error: { success: false, code: 'SESSION_NOT_FOUND', message: 'جلسة الامتحان غير موجودة أو انتهت. أعد تحميل الامتحان.' } };
   }
 
+  if (!isStudentTokenValid_(data.studentToken, session.studentName)) {
+    return { error: studentAccessError_() };
+  }
+
   // Idempotency: a repeated click returns the saved result instead of a second row.
   if (session.status === 'COMPLETED') {
     if (session.result) return { error: Object.assign({ success: true, alreadySubmitted: true }, session.result) };
@@ -1813,7 +1830,7 @@ function gradeAnswers_(questions, answers) {
 }
 
 function persistSubmission_(session, payloadData, result, timestamp, durationStr, summaryStr) {
-  const ss = getSpreadsheet();
+  const ss = getSpreadsheet_();
   let subSheet = ss.getSheetByName('Submissions');
   if (!subSheet) {
     setupDatabase(ss);
@@ -1844,7 +1861,7 @@ function persistSubmission_(session, payloadData, result, timestamp, durationStr
 }
 
 function consumeRetake_(studentName, examCode) {
-  const ss = getSpreadsheet();
+  const ss = getSpreadsheet_();
   const retakeSheet = ss.getSheetByName('Retake_Requests');
   if (retakeSheet && retakeSheet.getLastRow() > 1) {
     const rData = retakeSheet.getDataRange().getValues();
@@ -1909,8 +1926,8 @@ function submitExamAnswers(payload) {
   }
 }
 
-function normalizePercentageColumn() {
-  const ss = getSpreadsheet();
+function normalizePercentageColumn_() {
+  const ss = getSpreadsheet_();
   const subSheet = ss.getSheetByName('Submissions');
   if (!subSheet || subSheet.getLastRow() <= 1) return { success: true, count: 0 };
   const range = subSheet.getRange(2, 7, subSheet.getLastRow() - 1, 1);
@@ -1944,8 +1961,9 @@ function formatPercentValue(val) {
   return s;
 }
 
-function getStudentExamStatus(studentName, examCode) {
+function getStudentExamStatus(studentName, examCode, studentToken) {
   try {
+    if (!isStudentTokenValid_(studentToken, studentName)) return studentAccessError_();
     const name = String(studentName || '').trim();
     const code = normalizeExam_(examCode);
     if (!name || !code) {
@@ -1980,6 +1998,7 @@ function requestExamRetake(payload) {
     const data = (typeof payload === 'string') ? JSON.parse(payload) : payload;
     const studentName = String(data.studentName || '').trim();
     const examCode = normalizeExam_(data.examCode);
+    if (!isStudentTokenValid_(data.studentToken, studentName)) return studentAccessError_();
     if (!studentName || !examCode) {
       return { success: false, message: 'اسم الطالب وكود الامتحان مطلوبان.' };
     }
@@ -1998,7 +2017,7 @@ function requestExamRetake(payload) {
       return { success: false, message: 'تمت الموافقة على طلبك بالفعل، ابدأ المحاولة الإضافية من بوابة الطالب.' };
     }
 
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     let retakeSheet = ss.getSheetByName('Retake_Requests');
     if (!retakeSheet) {
       setupDatabase(ss);
@@ -2036,32 +2055,79 @@ function requestExamRetake(payload) {
 
 const memoryTokenCache_ = {};
 
-function storeAdminToken_(token, ttlSeconds) {
-  memoryTokenCache_[token] = Date.now() + (ttlSeconds || 1800) * 1000;
+function storeAccessToken_(token, claims, ttlSeconds) {
+  const ttl = Math.max(60, Math.min(Number(ttlSeconds) || 1800, 21600));
+  const payload = Object.assign({}, claims, { expiresAt: Date.now() + ttl * 1000 });
+  memoryTokenCache_[token] = payload;
   try {
     const cache = CacheService.getScriptCache();
-    if (cache && cache.put) cache.put(token, 'VALID', ttlSeconds || 1800);
+    if (cache && cache.put) cache.put(token, JSON.stringify(payload), ttl);
   } catch (e) {}
 }
 
-function isAdminTokenValid_(token) {
-  if (!token) return false;
-  const strToken = String(token || '').trim();
-  if (!strToken.startsWith('ADMIN_TOK_')) return false;
-
-  const expiry = memoryTokenCache_[strToken];
-  if (expiry && expiry > Date.now()) return true;
-
+function getAccessTokenClaims_(token) {
+  const key = String(token || '').trim();
+  if (!key || !key.startsWith('ACCESS_TOK_')) return null;
+  const cached = memoryTokenCache_[key];
+  if (cached && cached.expiresAt > Date.now()) return cached;
   try {
     const cache = CacheService.getScriptCache();
-    if (cache && cache.get) {
-      const val = cache.get(strToken);
-      if (val === 'VALID') return true;
-    }
+    const raw = cache && cache.get ? cache.get(key) : null;
+    const claims = raw ? JSON.parse(raw) : null;
+    if (claims && claims.expiresAt > Date.now()) return claims;
   } catch (e) {}
+  return null;
+}
 
-  // Seamless parent access bypass: Any token starting with ADMIN_TOK_ is valid
-  return true;
+function storeAdminToken_(token, ttlSeconds) {
+  storeAccessToken_(token, { role: 'parent' }, ttlSeconds);
+}
+
+function isAdminTokenValid_(token) {
+  const claims = getAccessTokenClaims_(token);
+  return !!claims && claims.role === 'parent';
+}
+
+function studentKeyForIdentity_(identity) {
+  const name = normalizeName_(identity);
+  if (name === 'ali' || name === 'ali ahmed') return 'ali';
+  if (name === 'mostafa' || name === 'mostafa ahmed') return 'mostafa';
+  return '';
+}
+
+function isStudentTokenValid_(token, identity) {
+  const claims = getAccessTokenClaims_(token);
+  const expectedKey = studentKeyForIdentity_(identity);
+  return !!claims && claims.role === 'student' && !!expectedKey && claims.studentKey === expectedKey;
+}
+
+function studentAccessError_() {
+  return { success: false, code: 'UNAUTHORIZED', message: 'يرجى تسجيل الدخول إلى بوابة الطالب أولاً.' };
+}
+
+function isGatewayPinRateLimited_() {
+  try {
+    const cache = CacheService.getScriptCache();
+    const lockedUntil = Number(cache.get('GATEWAY_PIN_LOCKED_UNTIL') || 0);
+    return lockedUntil > Date.now();
+  } catch (e) { return false; }
+}
+
+function recordGatewayPinFailure_() {
+  try {
+    const cache = CacheService.getScriptCache();
+    const attempts = Number(cache.get('GATEWAY_PIN_FAILURES') || 0) + 1;
+    cache.put('GATEWAY_PIN_FAILURES', String(attempts), 600);
+    if (attempts >= 8) cache.put('GATEWAY_PIN_LOCKED_UNTIL', String(Date.now() + 600000), 600);
+  } catch (e) {}
+}
+
+function clearGatewayPinFailures_() {
+  try {
+    const cache = CacheService.getScriptCache();
+    cache.remove('GATEWAY_PIN_FAILURES');
+    cache.remove('GATEWAY_PIN_LOCKED_UNTIL');
+  } catch (e) {}
 }
 
 function hashPin_(pin, salt) {
@@ -2089,54 +2155,49 @@ function normalizePin_(str) {
 
 function verifyGatewayPin(enteredPin) {
   try {
+    if (isGatewayPinRateLimited_()) {
+      return { success: false, code: 'RATE_LIMITED', message: 'محاولات كثيرة. انتظر 10 دقائق ثم حاول مرة أخرى.' };
+    }
     const norm = normalizePin_(enteredPin);
     if (!norm) {
+      recordGatewayPinFailure_();
       return { success: false, code: 'EMPTY_PIN', message: 'يرجى إدخال رمز الدخول.' };
     }
-
-    // 1. Parent PIN Check (1990)
-    let parentMatch = (norm === '1990');
-    try {
-      const props = PropertiesService.getScriptProperties();
-      const customHash = props ? props.getProperty('ADMIN_PIN_HASH') : null;
-      if (customHash && hashPin_(norm) === customHash) parentMatch = true;
-    } catch(e) {}
-
-    if (parentMatch) {
-      const token = 'ADMIN_TOK_' + Utilities.getUuid().replace(/-/g, '').slice(0, 24);
-      storeAdminToken_(token, 1800);
-      return {
-        success: true,
-        role: 'parent',
-        token: token,
-        message: 'Welcome Parent! Opening Dashboard...'
-      };
+    const props = PropertiesService.getScriptProperties();
+    const configured = [
+      { role: 'parent', studentKey: '', property: 'ADMIN_PIN_HASH' },
+      { role: 'student', studentKey: 'ali', property: 'ALI_PIN_HASH' },
+      { role: 'student', studentKey: 'mostafa', property: 'MOSTAFA_PIN_HASH' }
+    ];
+    const enteredHash = hashPin_(norm);
+    for (let i = 0; i < configured.length; i++) {
+      const entry = configured[i];
+      const expectedHash = String(props.getProperty(entry.property) || '').trim();
+      if (expectedHash && enteredHash === expectedHash) {
+        clearGatewayPinFailures_();
+        const token = 'ACCESS_TOK_' + Utilities.getUuid().replace(/-/g, '');
+        const claims = entry.role === 'parent'
+          ? { role: 'parent' }
+          : { role: 'student', studentKey: entry.studentKey };
+        storeAccessToken_(token, claims, 1800);
+        return {
+          success: true,
+          role: entry.role,
+          studentKey: entry.studentKey || undefined,
+          token: token,
+          message: entry.role === 'parent' ? 'تم التحقق. جارٍ فتح لوحة ولي الأمر.' : 'تم التحقق. جارٍ فتح بوابة الطالب.'
+        };
+      }
     }
 
-    // 2. Mostafa PIN Check (2014)
-    if (norm === '2014') {
-      return {
-        success: true,
-        role: 'student',
-        studentKey: 'mostafa',
-        message: 'Welcome Mostafa! Opening Grade 6...'
-      };
-    }
-
-    // 3. Ali PIN Check (2016)
-    if (norm === '2016') {
-      return {
-        success: true,
-        role: 'student',
-        studentKey: 'ali',
-        message: 'Welcome Ali! Opening Grade 5...'
-      };
-    }
-
+    recordGatewayPinFailure_();
+    const missingConfig = configured.every(entry => !props.getProperty(entry.property));
     return {
       success: false,
-      code: 'INVALID_PIN',
-      message: 'رمز الدخول غير صحيح. يرجى المحاولة مرة أخرى.'
+      code: missingConfig ? 'PIN_NOT_CONFIGURED' : 'INVALID_PIN',
+      message: missingConfig
+        ? 'لم تُضبط رموز الدخول بعد. أضف ADMIN_PIN_HASH وALI_PIN_HASH وMOSTAFA_PIN_HASH إلى خصائص المشروع.'
+        : 'رمز الدخول غير صحيح أو لم يُضبط لهذا الحساب.'
     };
   } catch (err) {
     Logger.log('verifyGatewayPin error: ' + err);
@@ -2146,19 +2207,15 @@ function verifyGatewayPin(enteredPin) {
 
 function verifyAdminPin(enteredPin) {
   try {
-    const norm = String(enteredPin || '').trim();
-    let isMatch = (norm === '1990');
-    try {
-      const props = PropertiesService.getScriptProperties();
-      const expectedHash = props ? props.getProperty('ADMIN_PIN_HASH') : null;
-      if (expectedHash && hashPin_(norm) === expectedHash) isMatch = true;
-    } catch (e) {}
-
-    if (!isMatch) {
+    if (isGatewayPinRateLimited_()) return { success: false, code: 'RATE_LIMITED', message: 'محاولات كثيرة. انتظر 10 دقائق ثم حاول مرة أخرى.' };
+    const norm = normalizePin_(enteredPin);
+    const expectedHash = PropertiesService.getScriptProperties().getProperty('ADMIN_PIN_HASH');
+    if (!norm || !expectedHash || hashPin_(norm) !== expectedHash) {
+      recordGatewayPinFailure_();
       return { success: false, code: 'INVALID_PIN', message: 'رمز الدخول غير صحيح' };
     }
-
-    const token = 'ADMIN_TOK_' + Utilities.getUuid().replace(/-/g, '').slice(0, 24);
+    clearGatewayPinFailures_();
+    const token = 'ACCESS_TOK_' + Utilities.getUuid().replace(/-/g, '');
     storeAdminToken_(token, 1800);
     return { success: true, token: token };
   } catch (err) {
@@ -2186,7 +2243,7 @@ function decideRetakeRequest_(requestId, decision) {
   try {
     if (!lock.tryLock(30000)) return { success: false, message: 'الخادم مشغول، أعد المحاولة بعد لحظات.' };
 
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     const retakeSheet = ss.getSheetByName('Retake_Requests');
     if (!retakeSheet || retakeSheet.getLastRow() <= 1) {
       return { success: false, message: 'لا توجد طلبات إعادة محاولة.' };
@@ -2226,7 +2283,7 @@ function getAdminDashboardData(adminToken) {
     if (!isAdminTokenValid_(adminToken)) {
       return { success: false, code: 'UNAUTHORIZED', message: 'غير مصرح بالدخول. يرجى إدخال رمز الإدارة.' };
     }
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     let subSheet = ss.getSheetByName('Submissions');
     let exSheet = ss.getSheetByName('Exams');
     let retakeSheet = ss.getSheetByName('Retake_Requests');
@@ -2298,9 +2355,9 @@ function getAdminDashboardData(adminToken) {
     examCodes.forEach(code => {
       let questions = loadBankQuestions_(code);
       if (!questions.length) {
-        if (code === 'EX_Y5_ENG_ADV01') questions = generateAliAdverbialExam();
-        else if (code === 'EX_Y6_ENG_FANTASY01') questions = generateMostafaEnglishExam();
-        else if (code === 'EX_Y6_ARB_PRIO01') questions = generateMostafaArabicExam();
+  if (code === 'EX_Y5_ENG_ADV01') questions = generateAliAdverbialExam_();
+  else if (code === 'EX_Y6_ENG_FANTASY01') questions = generateMostafaEnglishExam_();
+  else if (code === 'EX_Y6_ARB_PRIO01') questions = generateMostafaArabicExam_();
       }
       questions.forEach(q => allQuestions.push(Object.assign({}, q, { examCode: code })));
     });
@@ -2380,7 +2437,7 @@ function getAdminDashboardData(adminToken) {
   }
 }
 
-function generateGoogleFormPrompt() {
+function generateGoogleFormPrompt_() {
   const ui = SpreadsheetApp.getUi();
   const response = ui.prompt('Generate Google Form', 'Enter Exam Code (e.g., EX_Y5_ENG_ADV01 or EX_Y6_ENG_FANTASY01):', ui.ButtonSet.OK_CANCEL);
   if (response.getSelectedButton() === ui.Button.OK) {
@@ -2389,11 +2446,11 @@ function generateGoogleFormPrompt() {
       ui.alert('Please enter an exam code.');
       return;
     }
-    createGoogleFormFromExam(examCode);
+    createGoogleFormFromExam_(examCode);
   }
 }
 
-function createGoogleFormFromExam(examCode) {
+function createGoogleFormFromExam_(examCode) {
   let built;
   try {
     built = buildExamQuestions_(examCode);
@@ -2417,7 +2474,7 @@ function createGoogleFormFromExam(examCode) {
 
   // Keep Form responses in the same spreadsheet alongside the web app data.
   try {
-    form.setDestination(FormApp.DestinationType.SPREADSHEET, getSpreadsheet().getId());
+    form.setDestination(FormApp.DestinationType.SPREADSHEET, getSpreadsheet_().getId());
   } catch (destinationError) {
     Logger.log('Could not set Form destination: ' + destinationError);
   }
@@ -2459,7 +2516,7 @@ function createGoogleFormFromExam(examCode) {
   }
 }
 
-function copyWebAppUrl() {
+function copyWebAppUrl_() {
   const url = ScriptApp.getService().getUrl();
   try {
     SpreadsheetApp.getUi().alert('Interactive Web App Link:\n\n' + (url || 'Please deploy script as Web App first.'));
@@ -2468,8 +2525,8 @@ function copyWebAppUrl() {
   }
 }
 
-function openLinkedSheetUrl() {
-  const ss = getSpreadsheet();
+function openLinkedSheetUrl_() {
+  const ss = getSpreadsheet_();
   try {
     SpreadsheetApp.getUi().alert('Linked Google Sheet URL:\n\n' + ss.getUrl());
   } catch(e) {
@@ -2531,7 +2588,7 @@ function getStarterStudyPlan_() {
  */
 function markStudyPlanProgress_(studentName, examCode) {
   try {
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     const sheet = ss.getSheetByName('Study_Plan');
     if (!sheet || sheet.getLastRow() <= 1) return;
 
@@ -2559,13 +2616,14 @@ function markStudyPlanProgress_(studentName, examCode) {
 /**
  * Computes today's active assessment mission for the student based on Study_Plan.
  */
-function getTodayMission(studentKey) {
+function getTodayMission(studentKey, studentToken) {
   try {
     const key = String(studentKey || 'ali').toLowerCase();
+    if (!isStudentTokenValid_(studentToken, key)) return studentAccessError_();
     const isAli = (key === 'ali');
     const targetStudent = isAli ? 'Ali Ahmed' : 'Mostafa Ahmed';
 
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     const spSheet = ss.getSheetByName('Study_Plan');
     let mission = null;
 
@@ -2657,7 +2715,7 @@ function computeExamUrl_(studentKey, examCode) {
 }
 
 function loadBankQuestionsByPeriod_(grade, subject, period, targetDifficulty) {
-  const ss = getSpreadsheet();
+  const ss = getSpreadsheet_();
   const sheet = ss.getSheetByName('Question_Bank');
   if (!sheet || sheet.getLastRow() <= 1) return [];
 
@@ -2736,9 +2794,10 @@ function loadBankQuestionsByPeriod_(grade, subject, period, targetDifficulty) {
 /**
  * Returns all active exams for a student based on grade isolation.
  */
-function getStudentAvailableExams(studentKey) {
+function getStudentAvailableExams(studentKey, studentToken) {
   try {
-    const ss = getSpreadsheet();
+    if (!isStudentTokenValid_(studentToken, studentKey)) return studentAccessError_();
+    const ss = getSpreadsheet_();
     const exSheet = ss ? ss.getSheetByName('Exams') : null;
     const key = String(studentKey || 'ali').toLowerCase();
     const isAli = (key === 'ali');
@@ -2830,7 +2889,7 @@ function createWeeklyExam(payload, adminToken) {
 
 function createWeeklyExam_(payload) {
   try {
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     let exSheet = ss.getSheetByName('Exams');
     if (!exSheet) {
       setupDatabase(ss);
@@ -2910,7 +2969,7 @@ function createMonthlyExam(payload, adminToken) {
 
 function createMonthlyExam_(payload) {
   try {
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     let exSheet = ss.getSheetByName('Exams');
     if (!exSheet) {
       setupDatabase(ss);
@@ -2981,7 +3040,7 @@ function createMistakesReviewExam(payload, adminToken) {
 
 function createMistakesReviewExam_(payload) {
   try {
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     const subSheet = ss.getSheetByName('Submissions');
     const qbSheet = ss.getSheetByName('Question_Bank');
     let exSheet = ss.getSheetByName('Exams');
@@ -3128,7 +3187,7 @@ function createMistakesReviewExam_(payload) {
 /**
  * Spreadsheet UI menu prompts (run as the sheet owner, so no web token needed).
  */
-function promptCreateWeeklyExam() {
+function promptCreateWeeklyExam_() {
   const ui = SpreadsheetApp.getUi();
   const studentPrompt = ui.prompt('إنشاء امتحان أسبوعي', 'اختر الطالب:\nاكتب 1 لـ علي أحمد (Year 5)\nاكتب 2 لـ مصطفى أحمد (Grade 6)', ui.ButtonSet.OK_CANCEL);
   if (studentPrompt.getSelectedButton() !== ui.Button.OK) return;
@@ -3144,7 +3203,7 @@ function promptCreateWeeklyExam() {
   ui.alert('نتيجة إنشاء الامتحان', res.message + '\n\nرابط الطالب المباشر:\n' + (res.studentUrl || 'افتح التطبيق للنسخ'), ui.ButtonSet.OK);
 }
 
-function promptCreateMonthlyExam() {
+function promptCreateMonthlyExam_() {
   const ui = SpreadsheetApp.getUi();
   const studentPrompt = ui.prompt('إنشاء امتحان شهري تراكمي', 'اختر الطالب:\nاكتب 1 لـ علي أحمد (Year 5)\nاكتب 2 لـ مصطفى أحمد (Grade 6)', ui.ButtonSet.OK_CANCEL);
   if (studentPrompt.getSelectedButton() !== ui.Button.OK) return;
@@ -3160,7 +3219,7 @@ function promptCreateMonthlyExam() {
   ui.alert('نتيجة إنشاء الامتحان الشهري', res.message + '\n\nالرابط:\n' + (res.studentUrl || 'افتح التطبيق للنسخ'), ui.ButtonSet.OK);
 }
 
-function promptCreateMistakesExam() {
+function promptCreateMistakesExam_() {
   const ui = SpreadsheetApp.getUi();
   const studentPrompt = ui.prompt('امتحان مراجعة الأخطاء الذاتي', 'اختر الطالب:\nاكتب 1 لـ علي أحمد\nاكتب 2 لـ مصطفى أحمد', ui.ButtonSet.OK_CANCEL);
   if (studentPrompt.getSelectedButton() !== ui.Button.OK) return;
@@ -3275,9 +3334,12 @@ function syncGoogleDriveVideos(folderRef, adminToken) {
   };
 }
 
-function getColigoHubData() {
+function getColigoHubData(accessToken, requestedStudentKey) {
   try {
-    const ss = getSpreadsheet();
+    const claims = getAccessTokenClaims_(accessToken);
+    if (!claims || (claims.role !== 'parent' && claims.role !== 'student')) return studentAccessError_();
+    if (claims.role === 'student' && requestedStudentKey && claims.studentKey !== String(requestedStudentKey).toLowerCase()) return studentAccessError_();
+    const ss = getSpreadsheet_();
     const sheet = ss.getSheetByName('Coligo_Hub');
     if (!sheet || sheet.getLastRow() <= 1) return { success: true, items: [] };
 
@@ -3300,7 +3362,13 @@ function getColigoHubData() {
         content: String(rowValue_(row, map, 'Content', 8) || '')
       });
     }
-    return { success: true, items: items.reverse() };
+    const visibleItems = claims.role === 'parent'
+      ? items
+      : items.filter(item => {
+          const ownerKey = studentKeyForIdentity_(item.student);
+          return ownerKey === claims.studentKey;
+        });
+    return { success: true, items: visibleItems.reverse() };
   } catch (err) {
     Logger.log('getColigoHubData error: ' + err);
     return { success: false, message: err.message, items: [] };
@@ -3374,7 +3442,7 @@ function syncColigoOnline_() {
 
   const items = rawItems.map(normalizeColigoItem_).filter(item => item.title);
 
-  const ss = getSpreadsheet();
+  const ss = getSpreadsheet_();
   let sheet = ss.getSheetByName('Coligo_Hub');
   if (!sheet) {
     setupDatabase(ss);
@@ -3443,8 +3511,9 @@ function syncColigoAuto_() {
   }
 }
 
-function recordHomeworkStatus(studentName, subject, done) {
+function recordHomeworkStatus(studentName, subject, done, studentToken) {
   try {
+    if (!isStudentTokenValid_(studentToken, studentName)) return studentAccessError_();
     const rawName = String(studentName || '').trim();
     const subjectName = String(subject || '').trim();
     if (!rawName || !subjectName) {
@@ -3457,7 +3526,7 @@ function recordHomeworkStatus(studentName, subject, done) {
       : ((key === 'mostafa' || key === 'mostafa ahmed') ? 'Mostafa Ahmed' : rawName);
     const isDone = (done === true || done === 'true' || done === 1);
 
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     let sheet = ss.getSheetByName('Homework_Status');
     if (!sheet) {
       setupDatabase(ss);
@@ -3509,11 +3578,18 @@ function getStarterExams_() {
  * and 48 mapped exams across all 5 subjects into Google Sheets.
  */
 function seedCompleteQuestionBank(adminToken) {
-  const token = adminToken || (this && this.adminToken);
-  if (token && !isAdminTokenValid_(token)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  if (!isAdminTokenValid_(adminToken)) return Object.assign({}, ADMIN_REQUIRED_RESULT);
+  return seedCompleteQuestionBank_();
+}
+
+function seedCompleteQuestionBankFromMenu_() {
+  return seedCompleteQuestionBank_();
+}
+
+function seedCompleteQuestionBank_() {
 
   try {
-    const ss = getSpreadsheet();
+    const ss = getSpreadsheet_();
     if (!ss) return { success: false, message: 'Google Spreadsheet not found.' };
 
     setupDatabase(ss);
@@ -3574,4 +3650,75 @@ function seedCompleteQuestionBank(adminToken) {
 
 function getStarterColigoHubItems_() {
   return [["COLIGO_ALI_001", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Arabic 105", "file", "y5.docx", "https://drive.google.com/drive/search?q=y5.docx", "Coligo Curriculum Material: Arabic 105 (DOCX, 939.7 KB)"], ["COLIGO_ALI_002", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Arabic 105", "file", "اجابة_اكتوبر.docx", "https://drive.google.com/drive/search?q=اجابة_اكتوبر.docx", "Coligo Curriculum Material: Arabic 105 (DOCX, 362.5 KB)"], ["COLIGO_ALI_003", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Answer_Key_-_Quiz_1.pdf", "https://drive.google.com/drive/search?q=Answer_Key_-_Quiz_1.pdf", "Coligo Curriculum Material: English 105 (PDF, 162.0 KB)"], ["COLIGO_ALI_004", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Day1_Monday_Story_Features_1.3_Part1_(1).pptx", "https://drive.google.com/drive/search?q=Day1_Monday_Story_Features_1.3_Part1_(1).pptx", "Coligo Curriculum Material: English 105 (PPTX, 88.6 KB)"], ["COLIGO_ALI_005", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Day2_Tuesday_Story_Features_1.3_Part2_(2(.pptx", "https://drive.google.com/drive/search?q=Day2_Tuesday_Story_Features_1.3_Part2_(2(.pptx", "Coligo Curriculum Material: English 105 (PPTX, 75.2 KB)"], ["COLIGO_ALI_006", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fable_Fact_File_-_unit_1_lesson_7_-_8.pdf", "https://drive.google.com/drive/search?q=Fable_Fact_File_-_unit_1_lesson_7_-_8.pdf", "Coligo Curriculum Material: English 105 (PDF, 184.5 KB)"], ["COLIGO_ALI_007", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fable_Fact_File_From_Plan_to_Writing.pdf", "https://drive.google.com/drive/search?q=Fable_Fact_File_From_Plan_to_Writing.pdf", "Coligo Curriculum Material: English 105 (PDF, 199.8 KB)"], ["COLIGO_ALI_008", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fable_Feedback_Check,_Share,_Improve.pptx", "https://drive.google.com/drive/search?q=Fable_Feedback_Check,_Share,_Improve.pptx", "Coligo Curriculum Material: English 105 (PPTX, 115.5 KB)"], ["COLIGO_ALI_009", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fable_Plan_to_Writing_.pptx", "https://drive.google.com/drive/search?q=Fable_Plan_to_Writing_.pptx", "Coligo Curriculum Material: English 105 (PPTX, 237.9 KB)"], ["COLIGO_ALI_010", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fable_Vocabulary_Fact_File_14_Words.pdf", "https://drive.google.com/drive/search?q=Fable_Vocabulary_Fact_File_14_Words.pdf", "Coligo Curriculum Material: English 105 (PDF, 178.2 KB)"], ["COLIGO_ALI_011", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fact_file_-_A_fable_from_Malawi.pdf", "https://drive.google.com/drive/search?q=Fact_file_-_A_fable_from_Malawi.pdf", "Coligo Curriculum Material: English 105 (PDF, 171.7 KB)"], ["COLIGO_ALI_012", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fact_file_-_Paragraph_4_result_-_change_and_moral.pdf", "https://drive.google.com/drive/search?q=Fact_file_-_Paragraph_4_result_-_change_and_moral.pdf", "Coligo Curriculum Material: English 105 (PDF, 194.3 KB)"], ["COLIGO_ALI_013", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fact_file_-_unit_1_-_lesson_6_-_What_is_a_Twist.pdf", "https://drive.google.com/drive/search?q=Fact_file_-_unit_1_-_lesson_6_-_What_is_a_Twist.pdf", "Coligo Curriculum Material: English 105 (PDF, 181.6 KB)"], ["COLIGO_ALI_014", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "fact_file_-_What_is_a_fable_-.pdf", "https://drive.google.com/drive/search?q=fact_file_-_What_is_a_fable_-.pdf", "Coligo Curriculum Material: English 105 (PDF, 158.5 KB)"], ["COLIGO_ALI_015", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Fact_file_unit_1_-_lesson_5_🔎_WHAT_IS_A_PROVERB.pdf", "https://drive.google.com/drive/search?q=Fact_file_unit_1_-_lesson_5_🔎_WHAT_IS_A_PROVERB.pdf", "Coligo Curriculum Material: English 105 (PDF, 246.4 KB)"], ["COLIGO_ALI_016", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "H.w_-_from_plan_to_write.pdf", "https://drive.google.com/drive/search?q=H.w_-_from_plan_to_write.pdf", "Coligo Curriculum Material: English 105 (PDF, 151.4 KB)"], ["COLIGO_ALI_017", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "H.W_-_unit_1_-_lesson_6.pdf", "https://drive.google.com/drive/search?q=H.W_-_unit_1_-_lesson_6.pdf", "Coligo Curriculum Material: English 105 (PDF, 212.5 KB)"], ["COLIGO_ALI_018", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "H.w_a_fable_from_Malawi_-_part_1.pdf", "https://drive.google.com/drive/search?q=H.w_a_fable_from_Malawi_-_part_1.pdf", "Coligo Curriculum Material: English 105 (PDF, 141.1 KB)"], ["COLIGO_ALI_019", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Homework_-_unit_1_-_lesson_1y5.pdf", "https://drive.google.com/drive/search?q=Homework_-_unit_1_-_lesson_1y5.pdf", "Coligo Curriculum Material: English 105 (PDF, 179.5 KB)"], ["COLIGO_ALI_020", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Homework_unit_1_-_lesson_5_-_WRITING_TASK.pdf", "https://drive.google.com/drive/search?q=Homework_unit_1_-_lesson_5_-_WRITING_TASK.pdf", "Coligo Curriculum Material: English 105 (PDF, 186.2 KB)"], ["COLIGO_ALI_021", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson2_Simple_and_Compound_Sentences_Worksheet.pdf", "https://drive.google.com/drive/search?q=Lesson2_Simple_and_Compound_Sentences_Worksheet.pdf", "Coligo Curriculum Material: English 105 (PDF, 171.5 KB)"], ["COLIGO_ALI_022", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson3_Adverbials_Time_Place_Worksheet.pdf", "https://drive.google.com/drive/search?q=Lesson3_Adverbials_Time_Place_Worksheet.pdf", "Coligo Curriculum Material: English 105 (PDF, 196.2 KB)"], ["COLIGO_ALI_023", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson_3_-_Fact_File.pdf", "https://drive.google.com/drive/search?q=Lesson_3_-_Fact_File.pdf", "Coligo Curriculum Material: English 105 (PDF, 173.3 KB)"], ["COLIGO_ALI_024", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson_3_-_Homework_Sheet.pdf", "https://drive.google.com/drive/search?q=Lesson_3_-_Homework_Sheet.pdf", "Coligo Curriculum Material: English 105 (PDF, 239.1 KB)"], ["COLIGO_ALI_025", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson_3_-_Plan_to_write_paragraph_3_revised_v6.pptx", "https://drive.google.com/drive/search?q=Lesson_3_-_Plan_to_write_paragraph_3_revised_v6.pptx", "Coligo Curriculum Material: English 105 (PPTX, 244.7 KB)"], ["COLIGO_ALI_026", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson_4_-_Homework_Sheet.pdf", "https://drive.google.com/drive/search?q=Lesson_4_-_Homework_Sheet.pdf", "Coligo Curriculum Material: English 105 (PDF, 223.7 KB)"], ["COLIGO_ALI_027", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson_4_-_Paragraph_4_result_and_moral_revised_v12.pptx", "https://drive.google.com/drive/search?q=Lesson_4_-_Paragraph_4_result_and_moral_revised_v12.pptx", "Coligo Curriculum Material: English 105 (PPTX, 213.1 KB)"], ["COLIGO_ALI_028", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Lesson_5_Homework_Fable_Draft2_(1).pdf", "https://drive.google.com/drive/search?q=Lesson_5_Homework_Fable_Draft2_(1).pdf", "Coligo Curriculum Material: English 105 (PDF, 189.0 KB)"], ["COLIGO_ALI_029", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Second_draft.pptx", "https://drive.google.com/drive/search?q=Second_draft.pptx", "Coligo Curriculum Material: English 105 (PPTX, 131.6 KB)"], ["COLIGO_ALI_030", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit2_Lesson1_A_Brief_History_of_Space.pptx", "https://drive.google.com/drive/search?q=Unit2_Lesson1_A_Brief_History_of_Space.pptx", "Coligo Curriculum Material: English 105 (PPTX, 228.9 KB)"], ["COLIGO_ALI_031", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit2_Lesson2.8_Part2_Another_Biography.pptx", "https://drive.google.com/drive/search?q=Unit2_Lesson2.8_Part2_Another_Biography.pptx", "Coligo Curriculum Material: English 105 (PPTX, 157.1 KB)"], ["COLIGO_ALI_032", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit2_Lesson2_A_Simple_Start.pptx", "https://drive.google.com/drive/search?q=Unit2_Lesson2_A_Simple_Start.pptx", "Coligo Curriculum Material: English 105 (PPTX, 164.6 KB)"], ["COLIGO_ALI_033", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit2_Lesson3_Building_Language.pptx", "https://drive.google.com/drive/search?q=Unit2_Lesson3_Building_Language.pptx", "Coligo Curriculum Material: English 105 (PPTX, 162.5 KB)"], ["COLIGO_ALI_034", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit_1_-Lesson1.6_A_Twist_(2).pptx", "https://drive.google.com/drive/search?q=Unit_1_-Lesson1.6_A_Twist_(2).pptx", "Coligo Curriculum Material: English 105 (PPTX, 193.6 KB)"], ["COLIGO_ALI_035", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit_1_-_lesson_5_-_Proverbs_Tell_a_Tale_...pptx", "https://drive.google.com/drive/search?q=Unit_1_-_lesson_5_-_Proverbs_Tell_a_Tale_...pptx", "Coligo Curriculum Material: English 105 (PPTX, 77.3 KB)"], ["COLIGO_ALI_036", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit_2_Lesson_1_Synonyms_Fact_File.pdf", "https://drive.google.com/drive/search?q=Unit_2_Lesson_1_Synonyms_Fact_File.pdf", "Coligo Curriculum Material: English 105 (PDF, 132.5 KB)"], ["COLIGO_ALI_037", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Unit_2_Lesson_2_A_Simple_Start_Fact_File.pdf", "https://drive.google.com/drive/search?q=Unit_2_Lesson_2_A_Simple_Start_Fact_File.pdf", "Coligo Curriculum Material: English 105 (PDF, 118.6 KB)"], ["COLIGO_ALI_038", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "weekly_plan_-_week_4-5.pdf", "https://drive.google.com/drive/search?q=weekly_plan_-_week_4-5.pdf", "Coligo Curriculum Material: English 105 (PDF, 161.0 KB)"], ["COLIGO_ALI_039", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Work_sheet_punctuation_y5.pdf", "https://drive.google.com/drive/search?q=Work_sheet_punctuation_y5.pdf", "Coligo Curriculum Material: English 105 (PDF, 186.1 KB)"], ["COLIGO_ALI_040", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year5_Fable_Plan_.pptx", "https://drive.google.com/drive/search?q=Year5_Fable_Plan_.pptx", "Coligo Curriculum Material: English 105 (PPTX, 259.4 KB)"], ["COLIGO_ALI_041", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year5_Unit2_Lesson3_Building_Language_Fact_File.pdf", "https://drive.google.com/drive/search?q=Year5_Unit2_Lesson3_Building_Language_Fact_File.pdf", "Coligo Curriculum Material: English 105 (PDF, 137.7 KB)"], ["COLIGO_ALI_042", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year5_Unit2_Lesson3_Building_Language_Fact_File_-_prefixes.pdf", "https://drive.google.com/drive/search?q=Year5_Unit2_Lesson3_Building_Language_Fact_File_-_prefixes.pdf", "Coligo Curriculum Material: English 105 (PDF, 129.4 KB)"], ["COLIGO_ALI_043", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Ant_Grasshopper_COMPLETE_Vocabulary_Lab_vocab_lesson_1.pptx", "https://drive.google.com/drive/search?q=Year_5_Ant_Grasshopper_COMPLETE_Vocabulary_Lab_vocab_lesson_1.pptx", "Coligo Curriculum Material: English 105 (PPTX, 104.2 KB)"], ["COLIGO_ALI_044", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Elephant_Fable_.pptx", "https://drive.google.com/drive/search?q=Year_5_Elephant_Fable_.pptx", "Coligo Curriculum Material: English 105 (PPTX, 103.9 KB)"], ["COLIGO_ALI_045", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Elephant_Fable_Fact_File.pdf", "https://drive.google.com/drive/search?q=Year_5_Elephant_Fable_Fact_File.pdf", "Coligo Curriculum Material: English 105 (PDF, 182.1 KB)"], ["COLIGO_ALI_046", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Elephant_Fable_Writing_Homework.pdf", "https://drive.google.com/drive/search?q=Year_5_Elephant_Fable_Writing_Homework.pdf", "Coligo Curriculum Material: English 105 (PDF, 145.1 KB)"], ["COLIGO_ALI_047", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Fable_Detectives_Fact_File_-_Part_2.pdf", "https://drive.google.com/drive/search?q=Year_5_Fable_Detectives_Fact_File_-_Part_2.pdf", "Coligo Curriculum Material: English 105 (PDF, 158.7 KB)"], ["COLIGO_ALI_048", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Story_Features_1.3_Fact_File.pdf", "https://drive.google.com/drive/search?q=Year_5_Story_Features_1.3_Fact_File.pdf", "Coligo Curriculum Material: English 105 (PDF, 156.4 KB)"], ["COLIGO_ALI_049", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Unit_1_Lesson_1_Aesop_Professional_PPT_--.pptx", "https://drive.google.com/drive/search?q=Year_5_Unit_1_Lesson_1_Aesop_Professional_PPT_--.pptx", "Coligo Curriculum Material: English 105 (PPTX, 105.6 KB)"], ["COLIGO_ALI_050", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Unit_1_Lesson_1_Session_2_Fable_Detectives_Professional_PPT_-_part_2.pptx", "https://drive.google.com/drive/search?q=Year_5_Unit_1_Lesson_1_Session_2_Fable_Detectives_Professional_PPT_-_part_2.pptx", "Coligo Curriculum Material: English 105 (PPTX, 72.0 KB)"], ["COLIGO_ALI_051", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Unit_2_Lesson_1_Space_Fact_File.pdf", "https://drive.google.com/drive/search?q=Year_5_Unit_2_Lesson_1_Space_Fact_File.pdf", "Coligo Curriculum Material: English 105 (PDF, 134.2 KB)"], ["COLIGO_ALI_052", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "Year_5_Why_Cockerels_Crow_2_Running_Sessions.pptx", "https://drive.google.com/drive/search?q=Year_5_Why_Cockerels_Crow_2_Running_Sessions.pptx", "Coligo Curriculum Material: English 105 (PPTX, 90.7 KB)"], ["COLIGO_ALI_053", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "English 105", "file", "🏠_HOMEWORK_-_unit_1_-_lesson_7.pdf", "https://drive.google.com/drive/search?q=🏠_HOMEWORK_-_unit_1_-_lesson_7.pdf", "Coligo Curriculum Material: English 105 (PDF, 168.2 KB)"], ["COLIGO_ALI_054", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "French 105", "file", "explore_1.pdf", "https://drive.google.com/drive/search?q=explore_1.pdf", "Coligo Curriculum Material: French 105 (PDF, 14201.4 KB)"], ["COLIGO_ALI_055", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "French 105", "file", "lecon_1_26-27.pdf", "https://drive.google.com/drive/search?q=lecon_1_26-27.pdf", "Coligo Curriculum Material: French 105 (PDF, 701.6 KB)"], ["COLIGO_ALI_056", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "French 105", "file", "lecon_2_26-27.pdf", "https://drive.google.com/drive/search?q=lecon_2_26-27.pdf", "Coligo Curriculum Material: French 105 (PDF, 710.7 KB)"], ["COLIGO_ALI_057", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "French 105", "file", "les_nationalites_y5_u2_25-26.pdf", "https://drive.google.com/drive/search?q=les_nationalites_y5_u2_25-26.pdf", "Coligo Curriculum Material: French 105 (PDF, 902.4 KB)"], ["COLIGO_ALI_058", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "French 105", "file", "Les_pronoms_sujets_presentation(1).pptx", "https://drive.google.com/drive/search?q=Les_pronoms_sujets_presentation(1).pptx", "Coligo Curriculum Material: French 105 (PPTX, 586.7 KB)"], ["COLIGO_ALI_059", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Global Perspectives & Humanities 105", "file", "(SDGs)_Goals_-_GP_introduction.pptx", "https://drive.google.com/drive/search?q=(SDGs)_Goals_-_GP_introduction.pptx", "Coligo Curriculum Material: Global Perspectives & Humanities 105 (PPTX, 46.6 KB)"], ["COLIGO_ALI_060", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Global Perspectives & Humanities 105", "file", "(SDGs)_Goals_-_SDGs_1-3.pptx", "https://drive.google.com/drive/search?q=(SDGs)_Goals_-_SDGs_1-3.pptx", "Coligo Curriculum Material: Global Perspectives & Humanities 105 (PPTX, 63.9 KB)"], ["COLIGO_ALI_061", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Global Perspectives & Humanities 105", "file", "(SDGs)_Goals_-_SDGs_4-6.pptx", "https://drive.google.com/drive/search?q=(SDGs)_Goals_-_SDGs_4-6.pptx", "Coligo Curriculum Material: Global Perspectives & Humanities 105 (PPTX, 62.1 KB)"], ["COLIGO_ALI_062", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "f882f4b1-1245-417e-a194-d1329adf8f94.jpg", "https://drive.google.com/drive/search?q=f882f4b1-1245-417e-a194-d1329adf8f94.jpg", "Coligo Curriculum Material: ICT 105 (JPG, 267.4 KB)"], ["COLIGO_ALI_063", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT_Year5_10Min_Quick_Check.docx", "https://drive.google.com/drive/search?q=ICT_Year5_10Min_Quick_Check.docx", "Coligo Curriculum Material: ICT 105 (DOCX, 36.0 KB)"], ["COLIGO_ALI_064", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT__Year_5__lesson_1_part_2_T1.pptx", "https://drive.google.com/drive/search?q=ICT__Year_5__lesson_1_part_2_T1.pptx", "Coligo Curriculum Material: ICT 105 (PPTX, 85.9 KB)"], ["COLIGO_ALI_065", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT__Year_5__lesson_1_part_3_T1.pptx", "https://drive.google.com/drive/search?q=ICT__Year_5__lesson_1_part_3_T1.pptx", "Coligo Curriculum Material: ICT 105 (PPTX, 1472.3 KB)"], ["COLIGO_ALI_066", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT__Year_5__lesson_1_part_3_T1_(1).pptx", "https://drive.google.com/drive/search?q=ICT__Year_5__lesson_1_part_3_T1_(1).pptx", "Coligo Curriculum Material: ICT 105 (PPTX, 1472.3 KB)"], ["COLIGO_ALI_067", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT__Year_5__lesson_1_T1_-_Copy_(2).pptx", "https://drive.google.com/drive/search?q=ICT__Year_5__lesson_1_T1_-_Copy_(2).pptx", "Coligo Curriculum Material: ICT 105 (PPTX, 544.7 KB)"], ["COLIGO_ALI_068", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT__Year_5__lesson_2_T1.pptx", "https://drive.google.com/drive/search?q=ICT__Year_5__lesson_2_T1.pptx", "Coligo Curriculum Material: ICT 105 (PPTX, 151.1 KB)"], ["COLIGO_ALI_069", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT__Year_5__lesson_2_T1_(1).pptx", "https://drive.google.com/drive/search?q=ICT__Year_5__lesson_2_T1_(1).pptx", "Coligo Curriculum Material: ICT 105 (PPTX, 151.1 KB)"], ["COLIGO_ALI_070", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "ICT__Year_5___Worksheet_Variables_&_Count-Controlled_Loops.docx", "https://drive.google.com/drive/search?q=ICT__Year_5___Worksheet_Variables_&_Count-Controlled_Loops.docx", "Coligo Curriculum Material: ICT 105 (DOCX, 36.1 KB)"], ["COLIGO_ALI_071", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "Week1-ICT-Y5-Weekly-Plan.pdf", "https://drive.google.com/drive/search?q=Week1-ICT-Y5-Weekly-Plan.pdf", "Coligo Curriculum Material: ICT 105 (PDF, 323.0 KB)"], ["COLIGO_ALI_072", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "Week2-ICT-Y5-Weekly-Plan.pdf", "https://drive.google.com/drive/search?q=Week2-ICT-Y5-Weekly-Plan.pdf", "Coligo Curriculum Material: ICT 105 (PDF, 321.6 KB)"], ["COLIGO_ALI_073", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "Y5_Input_and_Output_Worksheet.docx", "https://drive.google.com/drive/search?q=Y5_Input_and_Output_Worksheet.docx", "Coligo Curriculum Material: ICT 105 (DOCX, 38.6 KB)"], ["COLIGO_ALI_074", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "Year5_ICT_Input_Output_Worksheet.docx", "https://drive.google.com/drive/search?q=Year5_ICT_Input_Output_Worksheet.docx", "Coligo Curriculum Material: ICT 105 (DOCX, 37.8 KB)"], ["COLIGO_ALI_075", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "ICT 105", "file", "Year_5_Operators_in_Scratch_Worksheet-1.docx", "https://drive.google.com/drive/search?q=Year_5_Operators_in_Scratch_Worksheet-1.docx", "Coligo Curriculum Material: ICT 105 (DOCX, 27.4 KB)"], ["COLIGO_ALI_076", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Literature 105", "file", "British_Section_(Year_5)_-_1st_Story_(Part_1).pdf", "https://drive.google.com/drive/search?q=British_Section_(Year_5)_-_1st_Story_(Part_1).pdf", "Coligo Curriculum Material: Literature 105 (PDF, 181.8 KB)"], ["COLIGO_ALI_077", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Literature 105", "file", "British_Section_(Year_5)_-_1st_Story_(Part_2).pdf", "https://drive.google.com/drive/search?q=British_Section_(Year_5)_-_1st_Story_(Part_2).pdf", "Coligo Curriculum Material: Literature 105 (PDF, 324.3 KB)"], ["COLIGO_ALI_078", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Literature 105", "file", "British_Section_(Year_5)_-_2nd_Story_(Part_1).pdf", "https://drive.google.com/drive/search?q=British_Section_(Year_5)_-_2nd_Story_(Part_1).pdf", "Coligo Curriculum Material: Literature 105 (PDF, 286.6 KB)"], ["COLIGO_ALI_079", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Math 105", "file", "Class_Notes_Monday_26-10-2026.pdf", "https://drive.google.com/drive/search?q=Class_Notes_Monday_26-10-2026.pdf", "Coligo Curriculum Material: Math 105 (PDF, 1765.1 KB)"], ["COLIGO_ALI_080", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Math 105", "file", "Class_Notes_Sunday_25-10-2026.pdf", "https://drive.google.com/drive/search?q=Class_Notes_Sunday_25-10-2026.pdf", "Coligo Curriculum Material: Math 105 (PDF, 2624.7 KB)"], ["COLIGO_ALI_081", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Math 105", "file", "Learner_Book_Year_5_-_compressed.pdf", "https://drive.google.com/drive/search?q=Learner_Book_Year_5_-_compressed.pdf", "Coligo Curriculum Material: Math 105 (PDF, 23228.0 KB)"], ["COLIGO_ALI_082", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Math 105", "file", "Maths_Term_1_Year_5_Quiz_2_MS.pdf", "https://drive.google.com/drive/search?q=Maths_Term_1_Year_5_Quiz_2_MS.pdf", "Coligo Curriculum Material: Math 105 (PDF, 1655.7 KB)"], ["COLIGO_ALI_083", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Math 105", "file", "Tests_of_Divisibility.pdf", "https://drive.google.com/drive/search?q=Tests_of_Divisibility.pdf", "Coligo Curriculum Material: Math 105 (PDF, 625.6 KB)"], ["COLIGO_ALI_084", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Math 105", "file", "Work_Book_Year_5.pdf", "https://drive.google.com/drive/search?q=Work_Book_Year_5.pdf", "Coligo Curriculum Material: Math 105 (PDF, 23060.2 KB)"], ["COLIGO_ALI_085", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "20260921104121.pdf", "https://drive.google.com/drive/search?q=20260921104121.pdf", "Coligo Curriculum Material: Science 105 (PDF, 878.3 KB)"], ["COLIGO_ALI_086", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "booklet_y5.pdf", "https://drive.google.com/drive/search?q=booklet_y5.pdf", "Coligo Curriculum Material: Science 105 (PDF, 8016.9 KB)"], ["COLIGO_ALI_087", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "cfe-sc-20-what-is-sound-powerpoint_ver_4.ppt", "https://drive.google.com/drive/search?q=cfe-sc-20-what-is-sound-powerpoint_ver_4.ppt", "Coligo Curriculum Material: Science 105 (PPT, 8302.0 KB)"], ["COLIGO_ALI_088", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "classified_sound.pdf", "https://drive.google.com/drive/search?q=classified_sound.pdf", "Coligo Curriculum Material: Science 105 (PDF, 902.7 KB)"], ["COLIGO_ALI_089", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "Copy_of_pollination-powerpoint-google-slides-for-k-2nd-grade-us-s-1686685037.pptx", "https://drive.google.com/drive/search?q=Copy_of_pollination-powerpoint-google-slides-for-k-2nd-grade-us-s-1686685037.pptx", "Coligo Curriculum Material: Science 105 (PPTX, 16589.5 KB)"], ["COLIGO_ALI_090", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "sheet_of_sound.pdf", "https://drive.google.com/drive/search?q=sheet_of_sound.pdf", "Coligo Curriculum Material: Science 105 (PDF, 2098.1 KB)"], ["COLIGO_ALI_091", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "sound_h.w_sheet.docx", "https://drive.google.com/drive/search?q=sound_h.w_sheet.docx", "Coligo Curriculum Material: Science 105 (DOCX, 1262.3 KB)"], ["COLIGO_ALI_092", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "t-t-10000130-parts-of-a-plant-powerpoint-1_ver_4_(1).ppt", "https://drive.google.com/drive/search?q=t-t-10000130-parts-of-a-plant-powerpoint-1_ver_4_(1).ppt", "Coligo Curriculum Material: Science 105 (PPT, 6951.0 KB)"], ["COLIGO_ALI_093", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "t-tp-1746465833-all-about-pollination-powerpoint_ver_2.pptx", "https://drive.google.com/drive/search?q=t-tp-1746465833-all-about-pollination-powerpoint_ver_2.pptx", "Coligo Curriculum Material: Science 105 (PPTX, 39746.9 KB)"], ["COLIGO_ALI_094", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "t2-s-1510-ks2-parts-of-a-plant-powerpoint-powerpoint_ver_1.pptx", "https://drive.google.com/drive/search?q=t2-s-1510-ks2-parts-of-a-plant-powerpoint-powerpoint_ver_1.pptx", "Coligo Curriculum Material: Science 105 (PPTX, 16198.7 KB)"], ["COLIGO_ALI_095", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "t2-s-1510-ks2-parts-of-a-plant-powerpoint-powerpoint_ver_1_(2).pptx", "https://drive.google.com/drive/search?q=t2-s-1510-ks2-parts-of-a-plant-powerpoint-powerpoint_ver_1_(2).pptx", "Coligo Curriculum Material: Science 105 (PPTX, 16198.7 KB)"], ["COLIGO_ALI_096", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "t3-sc-809-parts-of-a-flowering-plant-cut-and-stick-activity-sheet-.pdf", "https://drive.google.com/drive/search?q=t3-sc-809-parts-of-a-flowering-plant-cut-and-stick-activity-sheet-.pdf", "Coligo Curriculum Material: Science 105 (PDF, 294.2 KB)"], ["COLIGO_ALI_097", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Science 105", "file", "us-t-2549112-how-sound-is-made-powerpoint-english-united-states_ver_3.ppt", "https://drive.google.com/drive/search?q=us-t-2549112-how-sound-is-made-powerpoint-english-united-states_ver_3.ppt", "Coligo Curriculum Material: Science 105 (PPT, 7363.5 KB)"], ["COLIGO_ALI_098", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "5_British.docx", "https://drive.google.com/drive/search?q=5_British.docx", "Coligo Curriculum Material: Social Studies 105 (DOCX, 102.1 KB)"], ["COLIGO_ALI_099", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "map_year_5.pdf", "https://drive.google.com/drive/search?q=map_year_5.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 1205.2 KB)"], ["COLIGO_ALI_100", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "Powerpoint_5.pdf", "https://drive.google.com/drive/search?q=Powerpoint_5.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 4037.5 KB)"], ["COLIGO_ALI_101", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "Power_point_5.pdf", "https://drive.google.com/drive/search?q=Power_point_5.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 2331.2 KB)"], ["COLIGO_ALI_102", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "the_4_week_5.docx", "https://drive.google.com/drive/search?q=the_4_week_5.docx", "Coligo Curriculum Material: Social Studies 105 (DOCX, 102.0 KB)"], ["COLIGO_ALI_103", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "The_5_week_5.pdf", "https://drive.google.com/drive/search?q=The_5_week_5.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 198.1 KB)"], ["COLIGO_ALI_104", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "video", "VID-20261011-WA0039.mp4", "https://drive.google.com/drive/search?q=VID-20261011-WA0039.mp4", "Coligo Curriculum Material: Social Studies 105 (MP4, 8661.1 KB)"], ["COLIGO_ALI_105", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "video", "VID-20261023-WA0039.mp4", "https://drive.google.com/drive/search?q=VID-20261023-WA0039.mp4", "Coligo Curriculum Material: Social Studies 105 (MP4, 51016.0 KB)"], ["COLIGO_ALI_106", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "الحضاره_المصريه_القديمه_)العصور_ما_قبل_التاريخ).pdf", "https://drive.google.com/drive/search?q=الحضاره_المصريه_القديمه_)العصور_ما_قبل_التاريخ).pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 4632.4 KB)"], ["COLIGO_ALI_107", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "النباتات_الطبيعيه_والحيوانات_البريه_5_.pdf", "https://drive.google.com/drive/search?q=النباتات_الطبيعيه_والحيوانات_البريه_5_.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 4435.3 KB)"], ["COLIGO_ALI_108", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "عوامل_قيام_الحضاره_المصريه_5_ب.pdf", "https://drive.google.com/drive/search?q=عوامل_قيام_الحضاره_المصريه_5_ب.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 3598.1 KB)"], ["COLIGO_ALI_109", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "مراجعه_اكتوبر_٥_ب.pdf", "https://drive.google.com/drive/search?q=مراجعه_اكتوبر_٥_ب.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 2740.9 KB)"], ["COLIGO_ALI_110", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "مراجعه_الوحده_الاولي_٥ب.pdf", "https://drive.google.com/drive/search?q=مراجعه_الوحده_الاولي_٥ب.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 2553.3 KB)"], ["COLIGO_ALI_111", "2026-10-28 12:00", "Ali Ahmed", "Year 5 (G5)", "Social Studies 105", "file", "‎⁨كيفيه_الاجابه_علي_السؤال_⁩.pdf", "https://drive.google.com/drive/search?q=‎⁨كيفيه_الاجابه_علي_السؤال_⁩.pdf", "Coligo Curriculum Material: Social Studies 105 (PDF, 444.6 KB)"], ["COLIGO_MOSTAFA_112", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Arabic 106", "file", "68b7fbd4d14da440161e286d-1758622923038-1758622922517-68d274ca532dc88653cfeb93_(1).pdf", "https://drive.google.com/drive/search?q=68b7fbd4d14da440161e286d-1758622923038-1758622922517-68d274ca532dc88653cfeb93_(1).pdf", "Coligo Curriculum Material: Arabic 106 (PDF, 18494.1 KB)"], ["COLIGO_MOSTAFA_113", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Arabic 106", "file", "Arabic_prim6_t1_Assmt.pdf", "https://drive.google.com/drive/search?q=Arabic_prim6_t1_Assmt.pdf", "Coligo Curriculum Material: Arabic 106 (PDF, 14151.4 KB)"], ["COLIGO_MOSTAFA_114", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Arabic 106", "file", "y6.pdf", "https://drive.google.com/drive/search?q=y6.pdf", "Coligo Curriculum Material: Arabic 106 (PDF, 1498.1 KB)"], ["COLIGO_MOSTAFA_115", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Arabic 106", "file", "إجابة_بماذج_اكتوبر.pdf", "https://drive.google.com/drive/search?q=إجابة_بماذج_اكتوبر.pdf", "Coligo Curriculum Material: Arabic 106 (PDF, 714.2 KB)"], ["COLIGO_MOSTAFA_116", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Fact_File_-_Grammar_-_RELATIVE_CLAUSES.pdf", "https://drive.google.com/drive/search?q=Fact_File_-_Grammar_-_RELATIVE_CLAUSES.pdf", "Coligo Curriculum Material: English 106 (PDF, 213.6 KB)"], ["COLIGO_MOSTAFA_117", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Fact_File_-_Report_Detectives_Non-choronological_report_-_part_1.pdf", "https://drive.google.com/drive/search?q=Fact_File_-_Report_Detectives_Non-choronological_report_-_part_1.pdf", "Coligo Curriculum Material: English 106 (PDF, 165.8 KB)"], ["COLIGO_MOSTAFA_118", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Fact_File_From_Notes_to_Report.pdf", "https://drive.google.com/drive/search?q=Fact_File_From_Notes_to_Report.pdf", "Coligo Curriculum Material: English 106 (PDF, 214.4 KB)"], ["COLIGO_MOSTAFA_119", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Fact_File_–_Planning_the_whole_report.pdf", "https://drive.google.com/drive/search?q=Fact_File_–_Planning_the_whole_report.pdf", "Coligo Curriculum Material: English 106 (PDF, 188.9 KB)"], ["COLIGO_MOSTAFA_120", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Fantasy_Reading_-_Fact_File.pdf", "https://drive.google.com/drive/search?q=Fantasy_Reading_-_Fact_File.pdf", "Coligo Curriculum Material: English 106 (PDF, 150.0 KB)"], ["COLIGO_MOSTAFA_121", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "From_Notes_to_Report_Year6_-_non_chronological_report_-_part_3.pptx", "https://drive.google.com/drive/search?q=From_Notes_to_Report_Year6_-_non_chronological_report_-_part_3.pptx", "Coligo Curriculum Material: English 106 (PPTX, 154.3 KB)"], ["COLIGO_MOSTAFA_122", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "h.w_-_writing_part_1_Research_an_Endangered_Creature.pdf", "https://drive.google.com/drive/search?q=h.w_-_writing_part_1_Research_an_Endangered_Creature.pdf", "Coligo Curriculum Material: English 106 (PDF, 221.7 KB)"], ["COLIGO_MOSTAFA_123", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Homework_-_Complete_your_report.pdf", "https://drive.google.com/drive/search?q=Homework_-_Complete_your_report.pdf", "Coligo Curriculum Material: English 106 (PDF, 143.8 KB)"], ["COLIGO_MOSTAFA_124", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Homework_-_Relative_Clause.pdf", "https://drive.google.com/drive/search?q=Homework_-_Relative_Clause.pdf", "Coligo Curriculum Material: English 106 (PDF, 201.0 KB)"], ["COLIGO_MOSTAFA_125", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Homework_Sheet_Build_a_Paragraph.pdf", "https://drive.google.com/drive/search?q=Homework_Sheet_Build_a_Paragraph.pdf", "Coligo Curriculum Material: English 106 (PDF, 180.4 KB)"], ["COLIGO_MOSTAFA_126", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Homework__finish_your_draft.pdf", "https://drive.google.com/drive/search?q=Homework__finish_your_draft.pdf", "Coligo Curriculum Material: English 106 (PDF, 189.8 KB)"], ["COLIGO_MOSTAFA_127", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "reading_fantasy_-_The_City_That_Waited_...pdf", "https://drive.google.com/drive/search?q=reading_fantasy_-_The_City_That_Waited_...pdf", "Coligo Curriculum Material: English 106 (PDF, 241.2 KB)"], ["COLIGO_MOSTAFA_128", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Relative_Clauses_Detectives_Creative.pptx", "https://drive.google.com/drive/search?q=Relative_Clauses_Detectives_Creative.pptx", "Coligo Curriculum Material: English 106 (PPTX, 179.2 KB)"], ["COLIGO_MOSTAFA_129", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Report_Architects_Session4.pptx", "https://drive.google.com/drive/search?q=Report_Architects_Session4.pptx", "Coligo Curriculum Material: English 106 (PPTX, 518.2 KB)"], ["COLIGO_MOSTAFA_130", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Report_Architects_Session5_FirstDraft_v4_(2).pptx", "https://drive.google.com/drive/search?q=Report_Architects_Session5_FirstDraft_v4_(2).pptx", "Coligo Curriculum Material: English 106 (PPTX, 102.8 KB)"], ["COLIGO_MOSTAFA_131", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Report_Architects_Session7_SecondDraft.pptx", "https://drive.google.com/drive/search?q=Report_Architects_Session7_SecondDraft.pptx", "Coligo Curriculum Material: English 106 (PPTX, 130.5 KB)"], ["COLIGO_MOSTAFA_132", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Report_Detectives_Year6_-_non_choronological_report_part_1.pptx", "https://drive.google.com/drive/search?q=Report_Detectives_Year6_-_non_choronological_report_part_1.pptx", "Coligo Curriculum Material: English 106 (PPTX, 147.2 KB)"], ["COLIGO_MOSTAFA_133", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Research_Detectives_Year6_-_non_choronological_report_-_paer_2.pptx", "https://drive.google.com/drive/search?q=Research_Detectives_Year6_-_non_choronological_report_-_paer_2.pptx", "Coligo Curriculum Material: English 106 (PPTX, 146.3 KB)"], ["COLIGO_MOSTAFA_134", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Session6_Feedback_non_choronological_report.pptx", "https://drive.google.com/drive/search?q=Session6_Feedback_non_choronological_report.pptx", "Coligo Curriculum Material: English 106 (PPTX, 139.4 KB)"], ["COLIGO_MOSTAFA_135", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Session_5_-_Fact_File_(4).pdf", "https://drive.google.com/drive/search?q=Session_5_-_Fact_File_(4).pdf", "Coligo Curriculum Material: English 106 (PDF, 237.9 KB)"], ["COLIGO_MOSTAFA_136", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Session_5_-_Homework_(3).pdf", "https://drive.google.com/drive/search?q=Session_5_-_Homework_(3).pdf", "Coligo Curriculum Material: English 106 (PDF, 227.9 KB)"], ["COLIGO_MOSTAFA_137", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "The_City_That_Waited_-part_4.pdf", "https://drive.google.com/drive/search?q=The_City_That_Waited_-part_4.pdf", "Coligo Curriculum Material: English 106 (PDF, 182.2 KB)"], ["COLIGO_MOSTAFA_138", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "The_City_That_Waited_part_5.pdf", "https://drive.google.com/drive/search?q=The_City_That_Waited_part_5.pdf", "Coligo Curriculum Material: English 106 (PDF, 183.8 KB)"], ["COLIGO_MOSTAFA_139", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "The_City_That_Waited_part_6.pdf", "https://drive.google.com/drive/search?q=The_City_That_Waited_part_6.pdf", "Coligo Curriculum Material: English 106 (PDF, 177.0 KB)"], ["COLIGO_MOSTAFA_140", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Unit8_Lesson1_Fact_File.pdf", "https://drive.google.com/drive/search?q=Unit8_Lesson1_Fact_File.pdf", "Coligo Curriculum Material: English 106 (PDF, 138.9 KB)"], ["COLIGO_MOSTAFA_141", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Unit8_Lesson1_Fantasy_Reading_....pptx", "https://drive.google.com/drive/search?q=Unit8_Lesson1_Fantasy_Reading_....pptx", "Coligo Curriculum Material: English 106 (PPTX, 203.3 KB)"], ["COLIGO_MOSTAFA_142", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Unit8_Lesson2_Fantasy_Reading.pptx", "https://drive.google.com/drive/search?q=Unit8_Lesson2_Fantasy_Reading.pptx", "Coligo Curriculum Material: English 106 (PPTX, 201.6 KB)"], ["COLIGO_MOSTAFA_143", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Unit8_Lesson3_Fantasy_Reading.pptx", "https://drive.google.com/drive/search?q=Unit8_Lesson3_Fantasy_Reading.pptx", "Coligo Curriculum Material: English 106 (PPTX, 199.3 KB)"], ["COLIGO_MOSTAFA_144", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Unit8_Lesson4_Fantasy_Reading.pptx", "https://drive.google.com/drive/search?q=Unit8_Lesson4_Fantasy_Reading.pptx", "Coligo Curriculum Material: English 106 (PPTX, 196.4 KB)"], ["COLIGO_MOSTAFA_145", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Unit8_Petronas_LessonA_(1).pptx", "https://drive.google.com/drive/search?q=Unit8_Petronas_LessonA_(1).pptx", "Coligo Curriculum Material: English 106 (PPTX, 259.3 KB)"], ["COLIGO_MOSTAFA_146", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year6_Unit2_Reading_Detective_Two_Sessions.pptx", "https://drive.google.com/drive/search?q=Year6_Unit2_Reading_Detective_Two_Sessions.pptx", "Coligo Curriculum Material: English 106 (PPTX, 193.0 KB)"], ["COLIGO_MOSTAFA_147", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Fiction_vs_Non_Fiction_Checkpoint.pptx", "https://drive.google.com/drive/search?q=Year_6_Fiction_vs_Non_Fiction_Checkpoint.pptx", "Coligo Curriculum Material: English 106 (PPTX, 103.0 KB)"], ["COLIGO_MOSTAFA_148", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Pearson_Edexcel_Unit_2_Nonfiction_Text_Organisation_Features_Two_Sessions_--_just_the_answers.pptx", "https://drive.google.com/drive/search?q=Year_6_Pearson_Edexcel_Unit_2_Nonfiction_Text_Organisation_Features_Two_Sessions_--_just_the_answers.pptx", "Coligo Curriculum Material: English 106 (PPTX, 90.3 KB)"], ["COLIGO_MOSTAFA_149", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Pearson_Edexcel_Unit_2_Skimming_Scanning_FULL_Checkpoint_Level.pptx", "https://drive.google.com/drive/search?q=Year_6_Pearson_Edexcel_Unit_2_Skimming_Scanning_FULL_Checkpoint_Level.pptx", "Coligo Curriculum Material: English 106 (PPTX, 103.4 KB)"], ["COLIGO_MOSTAFA_150", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Reading_Detective_35_Slides.pptx", "https://drive.google.com/drive/search?q=Year_6_Reading_Detective_35_Slides.pptx", "Coligo Curriculum Material: English 106 (PPTX, 109.9 KB)"], ["COLIGO_MOSTAFA_151", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Research_Detectives_Homework_-_part_2.pdf", "https://drive.google.com/drive/search?q=Year_6_Research_Detectives_Homework_-_part_2.pdf", "Coligo Curriculum Material: English 106 (PDF, 142.9 KB)"], ["COLIGO_MOSTAFA_152", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Research_Detectives_Session_Fact_File_-_part_2.pdf", "https://drive.google.com/drive/search?q=Year_6_Research_Detectives_Session_Fact_File_-_part_2.pdf", "Coligo Curriculum Material: English 106 (PDF, 156.5 KB)"], ["COLIGO_MOSTAFA_153", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Unit_2_Language_in_Context_Purpose_Audience_CORRECTED.pptx", "https://drive.google.com/drive/search?q=Year_6_Unit_2_Language_in_Context_Purpose_Audience_CORRECTED.pptx", "Coligo Curriculum Material: English 106 (PPTX, 120.5 KB)"], ["COLIGO_MOSTAFA_154", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Unit_2_Writers_Choices_Structure_Organisation_(1).pptx", "https://drive.google.com/drive/search?q=Year_6_Unit_2_Writers_Choices_Structure_Organisation_(1).pptx", "Coligo Curriculum Material: English 106 (PPTX, 145.5 KB)"], ["COLIGO_MOSTAFA_155", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Unit_8_Lesson_3_Fantasy_Reading_Fact_File.pdf", "https://drive.google.com/drive/search?q=Year_6_Unit_8_Lesson_3_Fantasy_Reading_Fact_File.pdf", "Coligo Curriculum Material: English 106 (PDF, 147.4 KB)"], ["COLIGO_MOSTAFA_156", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "Year_6_Unit_8_Lesson_4_Fantasy_Reading_Fact_File.pdf", "https://drive.google.com/drive/search?q=Year_6_Unit_8_Lesson_4_Fantasy_Reading_Fact_File.pdf", "Coligo Curriculum Material: English 106 (PDF, 162.0 KB)"], ["COLIGO_MOSTAFA_157", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "English 106", "file", "_Homework_Second_Draft.pdf", "https://drive.google.com/drive/search?q=_Homework_Second_Draft.pdf", "Coligo Curriculum Material: English 106 (PDF, 192.5 KB)"], ["COLIGO_MOSTAFA_158", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "69370_la_maison.pptx", "https://drive.google.com/drive/search?q=69370_la_maison.pptx", "Coligo Curriculum Material: French 106 (PPTX, 4329.5 KB)"], ["COLIGO_MOSTAFA_159", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "Explore_2_Cahier_d'activites.pdf", "https://drive.google.com/drive/search?q=Explore_2_Cahier_d'activites.pdf", "Coligo Curriculum Material: French 106 (PDF, 29262.2 KB)"], ["COLIGO_MOSTAFA_160", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "Explore_2_Livre_de_l'eleve.pdf", "https://drive.google.com/drive/search?q=Explore_2_Livre_de_l'eleve.pdf", "Coligo Curriculum Material: French 106 (PDF, 53422.8 KB)"], ["COLIGO_MOSTAFA_161", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "Les_pronoms_sujets_presentation(1).pptx", "https://drive.google.com/drive/search?q=Les_pronoms_sujets_presentation(1).pptx", "Coligo Curriculum Material: French 106 (PPTX, 586.7 KB)"], ["COLIGO_MOSTAFA_162", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "Où_habites-tu.pptx", "https://drive.google.com/drive/search?q=Où_habites-tu.pptx", "Coligo Curriculum Material: French 106 (PPTX, 2765.4 KB)"], ["COLIGO_MOSTAFA_163", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "u1_l1_y6_Les_logements_originaux_2026.pdf", "https://drive.google.com/drive/search?q=u1_l1_y6_Les_logements_originaux_2026.pdf", "Coligo Curriculum Material: French 106 (PDF, 771.8 KB)"], ["COLIGO_MOSTAFA_164", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "u1_l1_y6_Les_pièces_de_la_maison_2026.pdf", "https://drive.google.com/drive/search?q=u1_l1_y6_Les_pièces_de_la_maison_2026.pdf", "Coligo Curriculum Material: French 106 (PDF, 2963.7 KB)"], ["COLIGO_MOSTAFA_165", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "French 106", "file", "y6_rev_voc.pdf", "https://drive.google.com/drive/search?q=y6_rev_voc.pdf", "Coligo Curriculum Material: French 106 (PDF, 411.3 KB)"], ["COLIGO_MOSTAFA_166", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Global Perspectives & Humanities 106", "file", "(SDGs)_Goals_-_GP_introduction.pptx", "https://drive.google.com/drive/search?q=(SDGs)_Goals_-_GP_introduction.pptx", "Coligo Curriculum Material: Global Perspectives & Humanities 106 (PPTX, 46.6 KB)"], ["COLIGO_MOSTAFA_167", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Global Perspectives & Humanities 106", "file", "(SDGs)_Goals_-_SDGs_1-3.pptx", "https://drive.google.com/drive/search?q=(SDGs)_Goals_-_SDGs_1-3.pptx", "Coligo Curriculum Material: Global Perspectives & Humanities 106 (PPTX, 63.9 KB)"], ["COLIGO_MOSTAFA_168", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Global Perspectives & Humanities 106", "file", "(SDGs)_Goals_-_SDGs_4-6.pptx", "https://drive.google.com/drive/search?q=(SDGs)_Goals_-_SDGs_4-6.pptx", "Coligo Curriculum Material: Global Perspectives & Humanities 106 (PPTX, 62.1 KB)"], ["COLIGO_MOSTAFA_169", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "f882f4b1-1245-417e-a194-d1329adf8f94.jpg", "https://drive.google.com/drive/search?q=f882f4b1-1245-417e-a194-d1329adf8f94.jpg", "Coligo Curriculum Material: ICT 106 (JPG, 267.4 KB)"], ["COLIGO_MOSTAFA_170", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "ICT__Year_6__lesson_1._T1.pptx", "https://drive.google.com/drive/search?q=ICT__Year_6__lesson_1._T1.pptx", "Coligo Curriculum Material: ICT 106 (PPTX, 264.9 KB)"], ["COLIGO_MOSTAFA_171", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "ICT__Year_6__lesson_1_part_2_T1.pptx", "https://drive.google.com/drive/search?q=ICT__Year_6__lesson_1_part_2_T1.pptx", "Coligo Curriculum Material: ICT 106 (PPTX, 65.3 KB)"], ["COLIGO_MOSTAFA_172", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "ICT__Year_6__lesson_1_part_3_T1.pptx", "https://drive.google.com/drive/search?q=ICT__Year_6__lesson_1_part_3_T1.pptx", "Coligo Curriculum Material: ICT 106 (PPTX, 1587.9 KB)"], ["COLIGO_MOSTAFA_173", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "ICT__Year_6__lesson_1_part_3_T1_(1).pptx", "https://drive.google.com/drive/search?q=ICT__Year_6__lesson_1_part_3_T1_(1).pptx", "Coligo Curriculum Material: ICT 106 (PPTX, 1587.9 KB)"], ["COLIGO_MOSTAFA_174", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "ICT__Year_6__lesson_2_Part_1_T1.pptx", "https://drive.google.com/drive/search?q=ICT__Year_6__lesson_2_Part_1_T1.pptx", "Coligo Curriculum Material: ICT 106 (PPTX, 199.1 KB)"], ["COLIGO_MOSTAFA_175", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "ICT__Year_6__lesson_2_Part_1_T1_(1).pptx", "https://drive.google.com/drive/search?q=ICT__Year_6__lesson_2_Part_1_T1_(1).pptx", "Coligo Curriculum Material: ICT 106 (PPTX, 199.1 KB)"], ["COLIGO_MOSTAFA_176", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "Programming_Constructs_Y6_worksheet.docx", "https://drive.google.com/drive/search?q=Programming_Constructs_Y6_worksheet.docx", "Coligo Curriculum Material: ICT 106 (DOCX, 23.4 KB)"], ["COLIGO_MOSTAFA_177", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "Week1-ICT-Y6-Weekly-Plan.pdf", "https://drive.google.com/drive/search?q=Week1-ICT-Y6-Weekly-Plan.pdf", "Coligo Curriculum Material: ICT 106 (PDF, 320.2 KB)"], ["COLIGO_MOSTAFA_178", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "Week2-ICT-Y6-Weekly-Plan.pdf", "https://drive.google.com/drive/search?q=Week2-ICT-Y6-Weekly-Plan.pdf", "Coligo Curriculum Material: ICT 106 (PDF, 323.7 KB)"], ["COLIGO_MOSTAFA_179", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "ICT 106", "file", "Year_6_ICT_Flowcharts_Classwork.docx", "https://drive.google.com/drive/search?q=Year_6_ICT_Flowcharts_Classwork.docx", "Coligo Curriculum Material: ICT 106 (DOCX, 37.0 KB)"], ["COLIGO_MOSTAFA_180", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Literature 106", "file", "The_Tempest_-_Act_1_-_Scene_1.pdf", "https://drive.google.com/drive/search?q=The_Tempest_-_Act_1_-_Scene_1.pdf", "Coligo Curriculum Material: Literature 106 (PDF, 355.9 KB)"], ["COLIGO_MOSTAFA_181", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "1322243196.pdf", "https://drive.google.com/drive/search?q=1322243196.pdf", "Coligo Curriculum Material: Math 106 (PDF, 1618.0 KB)"], ["COLIGO_MOSTAFA_182", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "3._Y6_Partition_numbers_to_10,000,000.pptx", "https://drive.google.com/drive/search?q=3._Y6_Partition_numbers_to_10,000,000.pptx", "Coligo Curriculum Material: Math 106 (PPTX, 2703.1 KB)"], ["COLIGO_MOSTAFA_183", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "au-n-2549011-who-am-i-factor-and-multiples-game_ver_1.pptx", "https://drive.google.com/drive/search?q=au-n-2549011-who-am-i-factor-and-multiples-game_ver_1.pptx", "Coligo Curriculum Material: Math 106 (PPTX, 4894.3 KB)"], ["COLIGO_MOSTAFA_184", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "Division-2-Digit-Numbers-Bus-Stop-Method-Powerpoint.pptx", "https://drive.google.com/drive/search?q=Division-2-Digit-Numbers-Bus-Stop-Method-Powerpoint.pptx", "Coligo Curriculum Material: Math 106 (PPTX, 189.9 KB)"], ["COLIGO_MOSTAFA_185", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "pearson-power-math-6a-Text-book_compress.pdf", "https://drive.google.com/drive/search?q=pearson-power-math-6a-Text-book_compress.pdf", "Coligo Curriculum Material: Math 106 (PDF, 65634.4 KB)"], ["COLIGO_MOSTAFA_186", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "PowerPoint_-_Multiply_up_to_a_4-Digit_Number_by_a_2-Digit_Number.pptx", "https://drive.google.com/drive/search?q=PowerPoint_-_Multiply_up_to_a_4-Digit_Number_by_a_2-Digit_Number.pptx", "Coligo Curriculum Material: Math 106 (PPTX, 28469.3 KB)"], ["COLIGO_MOSTAFA_187", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "Power_math-year-6A-practice-book.pdf", "https://drive.google.com/drive/search?q=Power_math-year-6A-practice-book.pdf", "Coligo Curriculum Material: Math 106 (PDF, 20592.1 KB)"], ["COLIGO_MOSTAFA_188", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "T2-M-1335-Formal-Division-of-4-Digit-Numbers-by-2-Digit-Numbers-Long-Division-Method-Powerpoint_ver_2.pptx", "https://drive.google.com/drive/search?q=T2-M-1335-Formal-Division-of-4-Digit-Numbers-by-2-Digit-Numbers-Long-Division-Method-Powerpoint_ver_2.pptx", "Coligo Curriculum Material: Math 106 (PPTX, 873.6 KB)"], ["COLIGO_MOSTAFA_189", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "t2-m-1487-prime-factors-powerpoint_ver_1.pptx", "https://drive.google.com/drive/search?q=t2-m-1487-prime-factors-powerpoint_ver_1.pptx", "Coligo Curriculum Material: Math 106 (PPTX, 1928.7 KB)"], ["COLIGO_MOSTAFA_190", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Math 106", "file", "T2-M-1630-Multiplying-2-Digit-Numbers-by-1-Digit-Numbers-PowerPoint_ver_2.ppt", "https://drive.google.com/drive/search?q=T2-M-1630-Multiplying-2-Digit-Numbers-by-1-Digit-Numbers-PowerPoint_ver_2.ppt", "Coligo Curriculum Material: Math 106 (PPT, 13813.0 KB)"], ["COLIGO_MOSTAFA_191", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "Electricity_(1).pptx", "https://drive.google.com/drive/search?q=Electricity_(1).pptx", "Coligo Curriculum Material: Science 106 (PPTX, 4011.3 KB)"], ["COLIGO_MOSTAFA_192", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "FORCE_H.W..pdf", "https://drive.google.com/drive/search?q=FORCE_H.W..pdf", "Coligo Curriculum Material: Science 106 (PDF, 1204.9 KB)"], ["COLIGO_MOSTAFA_193", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "Measurements_-_Part_1_(2).pptx", "https://drive.google.com/drive/search?q=Measurements_-_Part_1_(2).pptx", "Coligo Curriculum Material: Science 106 (PPTX, 1797.0 KB)"], ["COLIGO_MOSTAFA_194", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "Measurements_-_Part_2_Final.pptx", "https://drive.google.com/drive/search?q=Measurements_-_Part_2_Final.pptx", "Coligo Curriculum Material: Science 106 (PPTX, 1338.9 KB)"], ["COLIGO_MOSTAFA_195", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "Mixtures.pptx", "https://drive.google.com/drive/search?q=Mixtures.pptx", "Coligo Curriculum Material: Science 106 (PPTX, 3350.7 KB)"], ["COLIGO_MOSTAFA_196", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "Physical_and_chemical_change.pptx", "https://drive.google.com/drive/search?q=Physical_and_chemical_change.pptx", "Coligo Curriculum Material: Science 106 (PPTX, 6318.0 KB)"], ["COLIGO_MOSTAFA_197", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "Y.6_-_Forces.pptx", "https://drive.google.com/drive/search?q=Y.6_-_Forces.pptx", "Coligo Curriculum Material: Science 106 (PPTX, 17269.3 KB)"], ["COLIGO_MOSTAFA_198", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Science 106", "file", "Y._6-_Circulatory_system.pptx", "https://drive.google.com/drive/search?q=Y._6-_Circulatory_system.pptx", "Coligo Curriculum Material: Science 106 (PPTX, 28090.8 KB)"], ["COLIGO_MOSTAFA_199", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "6_British.docx", "https://drive.google.com/drive/search?q=6_British.docx", "Coligo Curriculum Material: Social Studies 106 (DOCX, 104.2 KB)"], ["COLIGO_MOSTAFA_200", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "DOC003_6.docx", "https://drive.google.com/drive/search?q=DOC003_6.docx", "Coligo Curriculum Material: Social Studies 106 (DOCX, 102.1 KB)"], ["COLIGO_MOSTAFA_201", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "f0011e79-0ff4-4926-9658-77a54db615ac.mov", "https://drive.google.com/drive/search?q=f0011e79-0ff4-4926-9658-77a54db615ac.mov", "Coligo Curriculum Material: Social Studies 106 (MOV, 57743.1 KB)"], ["COLIGO_MOSTAFA_202", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "maps_year_6.pdf", "https://drive.google.com/drive/search?q=maps_year_6.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 13465.8 KB)"], ["COLIGO_MOSTAFA_203", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "map_2_.pdf", "https://drive.google.com/drive/search?q=map_2_.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 558.2 KB)"], ["COLIGO_MOSTAFA_204", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "Powerpoint_6.pdf", "https://drive.google.com/drive/search?q=Powerpoint_6.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 3567.0 KB)"], ["COLIGO_MOSTAFA_205", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "Power_point_6.pdf", "https://drive.google.com/drive/search?q=Power_point_6.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 3965.3 KB)"], ["COLIGO_MOSTAFA_206", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "the_4_week_6.docx", "https://drive.google.com/drive/search?q=the_4_week_6.docx", "Coligo Curriculum Material: Social Studies 106 (DOCX, 102.1 KB)"], ["COLIGO_MOSTAFA_207", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "the_5_week_6..docx", "https://drive.google.com/drive/search?q=the_5_week_6..docx", "Coligo Curriculum Material: Social Studies 106 (DOCX, 102.2 KB)"], ["COLIGO_MOSTAFA_208", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "video", "VID-20261011-WA0045.mp4", "https://drive.google.com/drive/search?q=VID-20261011-WA0045.mp4", "Coligo Curriculum Material: Social Studies 106 (MP4, 30529.1 KB)"], ["COLIGO_MOSTAFA_209", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "التحديات_البيئيه_في_وطننا_العربي_6_.pdf", "https://drive.google.com/drive/search?q=التحديات_البيئيه_في_وطننا_العربي_6_.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 2648.5 KB)"], ["COLIGO_MOSTAFA_210", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "التحديات_للبيئيه_في_الوطن_العربي_6ب.pdf", "https://drive.google.com/drive/search?q=التحديات_للبيئيه_في_الوطن_العربي_6ب.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 2872.7 KB)"], ["COLIGO_MOSTAFA_211", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "شبه_الجزيره_العربيه_قبل_وبعد_الاسلام_٦ب.pdf", "https://drive.google.com/drive/search?q=شبه_الجزيره_العربيه_قبل_وبعد_الاسلام_٦ب.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 4676.8 KB)"], ["COLIGO_MOSTAFA_212", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "مراجعه_اكتوبر_٦ب.pdf", "https://drive.google.com/drive/search?q=مراجعه_اكتوبر_٦ب.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 2599.4 KB)"], ["COLIGO_MOSTAFA_213", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "مراجعه_الوحده_الاولي_6_.pdf", "https://drive.google.com/drive/search?q=مراجعه_الوحده_الاولي_6_.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 4091.4 KB)"], ["COLIGO_MOSTAFA_214", "2026-10-28 12:00", "Mostafa Ahmed", "Grade 6 (G6)", "Social Studies 106", "file", "‎⁨كيفيه_الاجابه_علي_السؤال_⁩.pdf", "https://drive.google.com/drive/search?q=‎⁨كيفيه_الاجابه_علي_السؤال_⁩.pdf", "Coligo Curriculum Material: Social Studies 106 (PDF, 444.6 KB)"]];
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    const action = String(body.action || '');
+
+    if (action === 'ping') {
+      return ContentService.createTextOutput(JSON.stringify({ ok: true, action: 'ping' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    const expectedSecret = (PropertiesService.getScriptProperties().getProperty('SYNC_SECRET') || '');
+    if (!expectedSecret || String(body.secret || '') !== expectedSecret) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'unauthorized' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'sync_coligo_feed') {
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        action: 'sync_coligo_feed',
+        accepted: true,
+        notificationsCount: Number(body.notificationsCount || 0),
+        materialsCount: Number(body.materialsCount || 0),
+        newDownloads: Number(body.newDownloads || 0),
+        homeworkQueued: Array.isArray(body.homework) ? body.homework.length : 0
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    if (action === 'record_external_result') {
+      const ss = getSpreadsheet_();
+      let subSheet = ss.getSheetByName('Submissions');
+      if (!subSheet) {
+        subSheet = ss.insertSheet('Submissions');
+        subSheet.getRange(1, 1, 1, 11).setValues([['Timestamp', 'Student Name', 'School Grade', 'Exam Code', 'Score', 'Total', 'Percentage', 'Rating', 'Duration', 'Summary', 'Detailed Review JSON']]);
+        formatHeaderRow(subSheet, '#1e3a8a');
+      }
+
+      const score = Number(body.score || 0);
+      const total = Number(body.total || 0);
+      const pct = Number(body.pct || (total > 0 ? Math.round((score / total) * 100) : 0));
+      const rating = pct >= 90 ? 'ممتاز ممتازة' : (pct >= 75 ? 'جيد جداً' : (pct >= 50 ? 'جيد' : 'يحتاج مراجعة'));
+      const durationSec = Math.round(Number(body.durationMs || 0) / 1000);
+      const review = Array.isArray(body.review) ? body.review : [];
+
+      const row = [
+        new Date(),
+        String(body.student || 'Unknown'),
+        String(body.schoolGrade || ''),
+        String(body.examCode || ''),
+        score,
+        total,
+        pct,
+        rating,
+        durationSec,
+        String(body.examTitle || ''),
+        JSON.stringify({ submittedAt: body.submittedAt || new Date().toISOString(), review: review })
+      ];
+
+      subSheet.appendRow(row);
+      return ContentService.createTextOutput(JSON.stringify({ success: true, stored: true }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ success: false, message: 'unknown action' }))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch (postError) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, message: String(postError) }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 }

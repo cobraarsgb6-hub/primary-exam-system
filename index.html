@@ -463,6 +463,124 @@
     let examTimerInterval = null;
     let timeRemaining = 600;
 
+    // --- 🌐 LIVE COLIGO CATALOG BINDING (updates subjects & files after every hourly sync) ---
+    const COLIGO_CATALOG_URL = 'resources/coligo/coligo_catalog.json';
+    const SUBJECT_FALLBACK_ICON = '📚';
+    const COLIGO_LIVE_TAG = '[حية] ';
+    const STUDENT_SHEET_LABEL = { ali: 'Ali', mostafa: 'Mostafa' };
+    const STUDENT_GRADE_LABEL = { ali: 'Year 5A', mostafa: 'Year 6A' };
+
+    function subjectIdSlug(title) {
+      return 'coligo-' + (String(title || 'course').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 34));
+    }
+    function fileExtType(name) {
+      const ext = String(name || '').split('.').pop().toUpperCase();
+      return ['PDF', 'PPTX', 'PPT', 'DOCX', 'DOC', 'XLSX', 'HTML'].includes(ext) ? ext : 'FILE';
+    }
+
+    // Normalize any catalog entry into a repo-relative Pages URL:
+    // v2 catalog has web_path; legacy catalogs carry absolute local_path —
+    // slice from "resources/coligo" and normalize separators.
+    function toWebPath(raw, studentName, courseTitle, filename) {
+      let p = String(raw || '').replace(/\\/g, '/');
+      const anchor = p.toLowerCase().indexOf('resources/coligo/');
+      if (anchor >= 0) p = p.slice(anchor);
+      else if (p && !p.includes('/')) p = `resources/coligo/${studentName}/${courseTitle}/${filename}`;
+      else return '';
+      return encodeURI(p);
+    }
+    const YT_ID_RE = /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/;
+
+    function mergeColigoCatalog(catalog) {
+      if (!catalog || !catalog.students) return CURRICULUM;
+      Object.keys(catalog.students).forEach(rawName => {
+        const studentKey = rawName.toLowerCase();
+        if (!CURRICULUM[studentKey]) CURRICULUM[studentKey] = [];
+        const subjects = CURRICULUM[studentKey];
+        const courses = catalog.students[rawName].courses || [];
+
+        courses.forEach(course => {
+          const title = course.title || 'Course';
+          const t = title.toLowerCase();
+
+          const kw =
+            (t.includes('science') && 'science') ||
+            (t.includes('math') && 'math') ||
+            (t.includes('english') && 'english') ||
+            (t.includes('arab') && 'arabic') ||
+            (t.includes('social') && 'social') ||
+            (t.includes('french') && 'french') ||
+            ((t.includes('ict') || t.includes('comput')) && 'ict') ||
+            (t.includes('litera') && 'literacy') || '';
+
+          let subject = kw ? subjects.find(s =>
+            (String(s.id) + ' ' + String(s.name) + ' ' + String(s.code)).toLowerCase().includes(kw)) : null;
+
+          if (!subject) {
+            subject = {
+              id: subjectIdSlug(title),
+              name: title,
+              code: (title.slice(0, 14).trim() || 'Course'),
+              icon: SUBJECT_FALLBACK_ICON,
+              grade: '—',
+              gradeDetail: 'Live synced course from Coligo',
+              status: '🟢 Live',
+              lessons: [],
+              coligoLiveFiles: []
+            };
+            subjects.push(subject);
+          }
+
+          subject.coligoLiveFiles = subject.coligoLiveFiles || [];
+          (course.downloaded_files || []).forEach(file => {
+            const rel = toWebPath(file.web_path || file.local_path, rawName, title, file.filename || '');
+            if (!rel || subject.coligoLiveFiles.some(x => x.path === rel)) return;
+            subject.coligoLiveFiles.push({
+              name: (file.title || file.filename || 'Material'),
+              path: rel,
+              type: fileExtType(file.filename)
+            });
+          });
+
+          (course.links || []).forEach(link => {
+            const ytId = link.youtube_id || ((YT_ID_RE.exec(String(link.url || '')) || [])[1] || '');
+            if (ytId) {
+              const lessonId = 'vid-' + ytId;
+              if (subject.lessons.some(l => l.id === lessonId)) return;
+              subject.lessons.push({
+                id: lessonId,
+                title: (link.title || 'Lesson Video').slice(0, 70),
+                badge: '📺 فيديو الدرس (مشغل آمن)',
+                widgetType: 'video',
+                youtubeId: ytId,
+                desc: 'درس فيديو مصدره Coligo، يُشغّل داخل مشغل محمي بلا اقتراحات أو روابط خارجية.',
+                rule: 'ابدأ من الفيديو ثم أنجز أسئلة الدرس في نهايته.',
+                workedExample: '',
+                quizQuestions: [],
+                coligoFiles: []
+              });
+            }
+          });
+
+          // Attach collected live files to first lesson only once
+          if (subject.coligoLiveFiles.length && subject.lessons.length && !subject.__liveAttached) {
+            subject.__liveAttached = true;
+            subject.lessons[0].coligoFiles = (subject.lessons[0].coligoFiles || [])
+              .concat(subject.coligoLiveFiles.map(f => ({ ...f, name: (COLIGO_LIVE_TAG + f.name).trim() })));
+          }
+        });
+        CURRICULUM[studentKey].__syncedAt = catalog.synced_at || '';
+      });
+      if (typeof renderSubjects === 'function') renderSubjects();
+      if (typeof renderExams === 'function') renderExams();
+      return CURRICULUM;
+    }
+
+    fetch(COLIGO_CATALOG_URL, { cache: 'no-store' })
+      .then(r => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then(mergeColigoCatalog)
+      .catch(err => console.warn('[Coligo Live] catalog not reachable (offline/fallback used):', err));
+
     // --- Dynamic Question Generator Engine ---
     function generateDynamicQuestion(template) {
       const text = template.text || template.q || '';
@@ -729,6 +847,33 @@
           </div>
         `;
         setTimeout(runPrimeFactorCheck, 50);
+      } else if (lesson.widgetType === 'video') {
+        const rawId = lesson.youtubeId || '';
+        if (!/^[A-Za-z0-9_-]{11}$/.test(rawId)) {
+          container.innerHTML = `
+            <div class="p-8 text-center space-y-3 bg-slate-50 rounded-2xl border border-slate-200">
+              <span class="text-4xl">📺</span>
+              <h4 class="text-base font-black text-slate-900">${lesson.title}</h4>
+              <p class="text-xs text-slate-500 max-w-md mx-auto">معرّف الفيديو غير صالح من الكتالوج الحي — جارٍ التعبير عن محتوى بديل قريبًا.</p>
+            </div>
+          `;
+        } else {
+          const n = rawId.replace(/[^A-Za-z0-9_-]/g, '');
+          container.innerHTML = `
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-700">فيديو الدرس (مشغل محمي &mdash; بلا اقتراحات أو خروج لليوتيوب):</span>
+                <button onclick="restartSecureVideo('${n}')" class="tactile-btn text-xs text-indigo-700 font-bold hover:underline">إعادة التشغيل &larr;</button>
+              </div>
+              <div class="w-full h-[500px] rounded-2xl overflow-hidden bg-slate-950 border border-slate-800">
+                <iframe id="secure-video-frame"
+                  src="https://www.youtube-nocookie.com/embed/${n}?rel=0&modestbranding=1&playsinline=1&showinfo=0&iv_load_policy=3&color=white"
+                  class="w-full h-full border-0" title="فيديو الدرس (آمن)"
+                  allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            </div>
+          `;
+        }
       } else {
         container.innerHTML = `
           <div class="p-8 text-center space-y-3 bg-slate-50 rounded-2xl border border-slate-200">
@@ -738,6 +883,16 @@
           </div>
         `;
       }
+    }
+
+    function restartSecureVideo(rawId) {
+      const id = String(rawId || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 30);
+      if (!/^[A-Za-z0-9_-]{11}$/.test(id)) return;
+      const frame = document.getElementById('secure-video-frame');
+      if (!frame) return;
+      // Internal replay: reload the protected iframe rather than leaving the portal.
+      const base = `https://www.youtube-nocookie.com/embed/${id}?rel=0&modestbranding=1&playsinline=1&showinfo=0&iv_load_policy=3&color=white&autoplay=1`;
+      frame.src = base + '&__r=' + Date.now();
     }
 
     function runDivisibilityCheck() {
@@ -878,6 +1033,7 @@
       currentQIndex = 0;
       userAnswers = {};
       timeRemaining = activeExam.duration * 60;
+      activeExam.startedAt = Date.now();
 
       document.getElementById('runner-badge').innerText = activeExam.category;
       document.getElementById('runner-title').innerText = activeExam.title;
@@ -963,6 +1119,28 @@
       document.getElementById('runner-result-score').innerText = `النتيجة النهائية: ${score} من ${total} (${pct}%)`;
       document.getElementById('runner-result-emoji').innerText = pct >= 80 ? '🌟' : (pct >= 50 ? '👍' : '📚');
       document.getElementById('runner-result-pane').classList.remove('hidden');
+
+      // ☁️ Background result logging to Google Sheets (via Apps Script Web App)
+      const review = activeExam.questions.map((q, idx) => ({
+        n: idx + 1,
+        ok: userAnswers[idx] === q.answer,
+        pick: userAnswers[idx] || '__',
+        ans: q.answer || ''
+      }));
+      sendExamResultToSheet({
+        action: 'record_external_result',
+        secret: getSyncSecret(),
+        student: STUDENT_SHEET_LABEL[currentStudent] || currentStudent,
+        schoolGrade: STUDENT_GRADE_LABEL[currentStudent] || '',
+        examCode: activeExam.code || '',
+        examTitle: activeExam.title || '',
+        score: score,
+        total: total,
+        pct: pct,
+        durationMs: Math.max(0, Date.now() - (activeExam.startedAt || Date.now())),
+        review: review,
+        submittedAt: new Date().toISOString()
+      });
     }
 
     function closeExamRunner() {
@@ -970,6 +1148,34 @@
       const modal = document.getElementById('exam-runner-modal');
       modal.classList.add('hidden');
       modal.classList.remove('flex');
+    }
+
+    // --- ☁️ Cloud Result Logging Helpers ---
+    const GAS_WEBAPP_LOCALSTORAGE_KEY = 'gasWebappUrl';
+    function getGasWebappUrl() {
+      try { return localStorage.getItem(GAS_WEBAPP_LOCALSTORAGE_KEY) || ''; } catch (e) { return ''; }
+    }
+    function getSyncSecret() {
+      try { return localStorage.getItem('syncSecret') || 'manaret_eleman_secure_sync'; } catch (e) { return 'manaret_eleman_secure_sync'; }
+    }
+    // Set once from the browser console (admin): setGasWebhook('<Apps Script Web App URL>')
+    window.setGasWebhook = function (url) {
+      try { localStorage.setItem(GAS_WEBAPP_LOCALSTORAGE_KEY, String(url || '')); } catch (e) {}
+      return getGasWebappUrl();
+    };
+    function sendExamResultToSheet(payload) {
+      const url = getGasWebappUrl();
+      if (!url) { console.warn('[Sheet Sync] GAS Web App URL غير مضبوط — نفّذ setGasWebhook("...") مرة واحدة.'); return; }
+      try {
+        fetch(url, {
+          method: 'POST',
+          mode: 'no-cors', // Apps Script: simple request without preflight
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(err => console.warn('[Sheet Sync] فشل الإرسال:', err));
+      } catch (err) {
+        console.warn('[Sheet Sync] فشل الإرسال:', err);
+      }
     }
 
     function escapeJs(str) {
