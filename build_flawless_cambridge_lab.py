@@ -1210,7 +1210,7 @@ html_content = '''<!DOCTYPE html>
 target_paths = [
     r"C:\Users\co0ob\Projects\primary-exam-system\resources\coligo\Mostafa\Science 106\Electricity_Mastery_Guide_Stage6.html",
     r"C:\Users\co0ob\.gemini\antigravity\brain\54d05bb7-093a-4520-bc55-e8fbc272480c\Electricity_Mastery_Guide_Stage6.html",
-    r"C:\Users\co0ob\Projects\primary-exam-system\build_precision_phet_lab.py"
+    # build_precision_phet_lab.py removed
 ]
 
 for p in target_paths:

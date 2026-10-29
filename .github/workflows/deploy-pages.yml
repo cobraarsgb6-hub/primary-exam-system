@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ false }} # Paused at the user's request; re-enable after review.
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
