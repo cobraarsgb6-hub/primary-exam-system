@@ -2245,6 +2245,90 @@
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
 
+    /* ==========================================================================
+       Phase 10: Isolated Video Player & YouTube Escape Prevention
+       ========================================================================== */
+    .isolated-player-container {
+      position: relative;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #0b1120;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      border: 1px solid #1e293b;
+    }
+    .isolated-video-viewport {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      background: #000;
+    }
+    .video-pointer-shield {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      cursor: pointer;
+      background: transparent;
+      transition: background 0.2s ease;
+    }
+    .video-pointer-shield:hover {
+      background: rgba(0, 0, 0, 0.02);
+    }
+    .video-celebration-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #ffffff;
+      padding: 24px;
+      text-align: center;
+      animation: fadeInCelebration 0.3s ease-out;
+    }
+    @keyframes fadeInCelebration {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .isolated-controls-bar {
+      background: #0b1120;
+      border-top: 1px solid #1e293b;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      user-select: none;
+    }
+    .vctrl-btn {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+    .vctrl-btn:hover {
+      background: #334155;
+      color: #38bdf8;
+      border-color: #475569;
+    }
+    .vctrl-btn:active {
+      transform: scale(0.96);
+    }
+    .vctrl-slider {
+      accent-color: #38bdf8;
+      cursor: pointer;
+    }
+
   </style>
 
 </head>
@@ -3480,14 +3564,70 @@
         <div role="button" tabindex="0" onclick="applyCustomVideoUrl()" style="background: #0284c7; color: #fff; padding: 4px 10px; font-size: 0.76rem; font-weight: 700; border-radius: 6px; cursor: pointer; white-space: nowrap;">Load URL</div>
       </div>
 
-      <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; background: #000; box-shadow: 0 4px 14px rgba(0,0,0,0.2);">
-        <video id="native-video-player" controls playsinline controlslist="nodownload" preload="metadata" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; display: none; background: #000;"></video>
-        <iframe id="video-iframe" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; display: none;" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <div id="video-placeholder" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; color: #f8fafc; padding: 24px; text-align: center;">
-          <div style="font-size: 2.4rem; margin-bottom: 8px;">🎬</div>
-          <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 6px;">Curriculum Video in Production</div>
-          <p style="font-size: 0.84rem; color: #94a3b8; max-width: 440px; margin-bottom: 14px; line-height: 1.5;">The teacher is recording the classroom video for this unit. In the meantime, review the worked examples and rules.</p>
-          <div role="button" tabindex="0" onclick="switchVideoModalView('summary')" style="background: #2563eb; color: #fff; padding: 8px 18px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer;">📖 Read Lesson Summary Now</div>
+      <!-- ISOLATED VIDEO PLAYER COMPONENT (P10) -->
+      <div id="isolated-video-player-container" class="isolated-player-container">
+        <!-- Video Viewport (16:9) -->
+        <div class="isolated-video-viewport">
+          <video id="native-video-player" playsinline controlslist="nodownload" preload="metadata" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; display: none; background: #000;"></video>
+          <iframe id="video-iframe" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; border: 0; display: none;" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+          
+          <!-- Transparent Pointer Shield: Prevents clicking YouTube header/logo/external links -->
+          <div id="video-pointer-shield" class="video-pointer-shield" onclick="handleVideoShieldClick(event)" title="انقر للتشغيل أو الإيقاف المؤقت داخل المنصة"></div>
+
+          <!-- Celebration End Screen (Replaces YouTube End-Screen Recommendations) -->
+          <div id="video-celebration-screen" class="video-celebration-screen">
+            <div style="font-size: 2.4rem; margin-bottom: 8px;">🎉</div>
+            <h4 style="font-size: 1.2rem; font-weight: 800; color: #38bdf8; margin: 0 0 6px 0;">أحسنت يا بطل! أتممت مشاهدة الدرس بنجاح 🚀</h4>
+            <p style="font-size: 0.86rem; color: #cbd5e1; max-width: 480px; margin: 0 0 16px 0; line-height: 1.5;">تم إيقاف الفيديو قبل المقترحات لحماية تركيزك. انتقل الآن إلى المعمل التفاعلي أو ابدأ تدريب الأسئلة مباشرة!</p>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+              <button type="button" id="btn-vcel-lab" class="portal-btn" style="background: #f59e0b; color: #000; font-weight: 800; padding: 9px 16px; border-radius: 8px; border: none; cursor: pointer;" onclick="onVideoEndAction('lab')">🔬 فتح المعمل التفاعلي</button>
+              <button type="button" id="btn-vcel-practice" class="portal-btn" style="background: #10b981; color: #fff; font-weight: 800; padding: 9px 16px; border-radius: 8px; border: none; cursor: pointer;" onclick="onVideoEndAction('practice')">📝 بدء تدريب الأسئلة</button>
+              <button type="button" id="btn-vcel-replay" class="portal-btn" style="background: #334155; color: #e2e8f0; font-weight: 700; padding: 9px 16px; border-radius: 8px; border: 1px solid #475569; cursor: pointer;" onclick="replayIsolatedVideo()">🔄 إعادة مشاهدة الشرح</button>
+            </div>
+          </div>
+
+          <!-- In-Production Clean Empty State (No Dummy Videos) -->
+          <div id="video-placeholder" style="position: absolute; top:0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; background: #0f172a; color: #f8fafc; padding: 24px; text-align: center;">
+            <div style="font-size: 2.4rem; margin-bottom: 8px;">🎬</div>
+            <div style="font-weight: 800; font-size: 1.1rem; margin-bottom: 6px; color: #f8fafc;">الفيديو التعليمي قيد الإعداد والمراجعة من المعلم</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 8px;">Curriculum Video in Production & Quality Review</div>
+            <p style="font-size: 0.84rem; color: #cbd5e1; max-width: 460px; margin-bottom: 14px; line-height: 1.5;">يقوم المعلم بتسجيل ومراجعة الشرح الخاص بهذا الدرس. في هذه الأثناء، يمكنك الاطلاع على ملخص القواعد والأمثلة المحلولة أو البدء بحل الأسئلة.</p>
+            <div style="display: flex; gap: 8px; justify-content: center;">
+              <button type="button" class="portal-btn" onclick="switchVideoModalView('summary')" style="background: #2563eb; color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.82rem; cursor: pointer; border: none;">📖 قراءة ملخص الدرس والأمثلة</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- In-Platform Custom Controls Bar (Pure In-Platform Playback) -->
+        <div id="isolated-controls-bar" class="isolated-controls-bar">
+          <!-- Progress Bar Row -->
+          <div style="display: flex; align-items: center; gap: 10px; width: 100%;">
+            <span id="vctrl-time-current" style="font-family: monospace; font-size: 0.78rem; color: #38bdf8; font-weight: 700; min-width: 42px;">00:00</span>
+            <input type="range" id="vctrl-seek" class="vctrl-slider" min="0" max="100" value="0" style="flex: 1; height: 5px;" oninput="onVideoSeekInput(this.value)" onchange="onVideoSeekChange(this.value)">
+            <span id="vctrl-time-total" style="font-family: monospace; font-size: 0.78rem; color: #94a3b8; font-weight: 700; min-width: 42px;">00:00</span>
+          </div>
+
+          <!-- Action Buttons Row -->
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button type="button" id="btn-vctrl-play" class="vctrl-btn" onclick="toggleIsolatedPlay()">▶️ تشغيل</button>
+              <button type="button" class="vctrl-btn" onclick="seekIsolatedRelative(-10)">⏪ 10ث</button>
+              <button type="button" class="vctrl-btn" onclick="seekIsolatedRelative(10)">⏩ 10ث</button>
+            </div>
+
+            <div style="display: flex; align-items: center;">
+              <span style="font-size: 0.74rem; color: #10b981; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; background: rgba(16, 185, 129, 0.12); padding: 3px 9px; border-radius: 6px; border: 1px solid rgba(16, 185, 129, 0.25);">
+                🔒 مشغل معزول آمن • خروج محظور
+              </span>
+            </div>
+
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <button type="button" id="btn-vctrl-mute" class="vctrl-btn" onclick="toggleIsolatedMute()">🔊</button>
+              <input type="range" id="vctrl-volume" class="vctrl-slider" min="0" max="100" value="100" style="width: 55px; height: 4px;" oninput="onIsolatedVolumeChange(this.value)">
+              <button type="button" class="vctrl-btn" onclick="replayIsolatedVideo()">🔄 إعادة</button>
+              <button type="button" id="btn-vctrl-fs" class="vctrl-btn" onclick="toggleIsolatedFullscreen()">⛶ شاشة كاملة</button>
+            </div>
+          </div>
         </div>
       </div>
       <div style="margin-top: 14px; display: flex; justify-content: space-between; align-items: center;">
@@ -4562,7 +4702,286 @@ window.DRIVE_VIDEOS = {};
       { id: 'LZBUyzfCcTo', title: 'كتابة نص معلوماتي (التعبير الكتابي المنهج الحديث)', category: 'التعبير الكتابي', channel: 'قناة بناء التعليمية', duration: '12 mins' }
     ];
 
+    /* ==========================================================================
+     * PHASE 10: ISOLATED VIDEO PLAYER & YOUTUBE ESCAPE PREVENTION ENGINE
+     * ========================================================================== */
     let currentVideoId = null;
+
+    var isolatedPlayerState = {
+      isPlaying: false,
+      isMuted: false,
+      duration: 0,
+      currentTime: 0,
+      volume: 100,
+      endIntercepted: false,
+      currentVideoId: '',
+      currentTitle: ''
+    };
+
+    function postYtCommand(func, args) {
+      var iframe = document.getElementById('video-iframe');
+      if (!iframe || !iframe.contentWindow) return;
+      var msg = JSON.stringify({
+        event: 'command',
+        func: func,
+        args: args || []
+      });
+      iframe.contentWindow.postMessage(msg, '*');
+    }
+
+    function handleVideoShieldClick(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      toggleIsolatedPlay();
+    }
+
+    function toggleIsolatedPlay() {
+      var btn = document.getElementById('btn-vctrl-play');
+      var nativePlayer = document.getElementById('native-video-player');
+      
+      if (nativePlayer && nativePlayer.style.display !== 'none' && nativePlayer.src) {
+        if (nativePlayer.paused) {
+          nativePlayer.play();
+          if (btn) btn.innerHTML = '⏸️ إيقاف';
+          isolatedPlayerState.isPlaying = true;
+        } else {
+          nativePlayer.pause();
+          if (btn) btn.innerHTML = '▶️ تشغيل';
+          isolatedPlayerState.isPlaying = false;
+        }
+        return;
+      }
+
+      if (isolatedPlayerState.isPlaying) {
+        postYtCommand('pauseVideo');
+        isolatedPlayerState.isPlaying = false;
+        if (btn) btn.innerHTML = '▶️ تشغيل';
+      } else {
+        postYtCommand('playVideo');
+        isolatedPlayerState.isPlaying = true;
+        if (btn) btn.innerHTML = '⏸️ إيقاف';
+      }
+    }
+
+    function seekIsolatedRelative(delta) {
+      var target = Math.max(0, isolatedPlayerState.currentTime + delta);
+      if (isolatedPlayerState.duration > 0) {
+        target = Math.min(target, isolatedPlayerState.duration - 2);
+      }
+      var nativePlayer = document.getElementById('native-video-player');
+      if (nativePlayer && nativePlayer.style.display !== 'none' && nativePlayer.src) {
+        nativePlayer.currentTime = target;
+        return;
+      }
+      postYtCommand('seekTo', [target, true]);
+    }
+
+    function onVideoSeekInput(val) {
+      if (isolatedPlayerState.duration > 0) {
+        var cur = (val / 100) * isolatedPlayerState.duration;
+        var curEl = document.getElementById('vctrl-time-current');
+        if (curEl) curEl.textContent = formatVideoTime(cur);
+      }
+    }
+
+    function onVideoSeekChange(val) {
+      if (isolatedPlayerState.duration > 0) {
+        var target = (val / 100) * isolatedPlayerState.duration;
+        var nativePlayer = document.getElementById('native-video-player');
+        if (nativePlayer && nativePlayer.style.display !== 'none' && nativePlayer.src) {
+          nativePlayer.currentTime = target;
+        } else {
+          postYtCommand('seekTo', [target, true]);
+        }
+      }
+    }
+
+    function toggleIsolatedMute() {
+      var btn = document.getElementById('btn-vctrl-mute');
+      isolatedPlayerState.isMuted = !isolatedPlayerState.isMuted;
+      var nativePlayer = document.getElementById('native-video-player');
+      if (nativePlayer && nativePlayer.style.display !== 'none' && nativePlayer.src) {
+        nativePlayer.muted = isolatedPlayerState.isMuted;
+      } else {
+        if (isolatedPlayerState.isMuted) {
+          postYtCommand('mute');
+        } else {
+          postYtCommand('unMute');
+        }
+      }
+      if (btn) btn.textContent = isolatedPlayerState.isMuted ? '🔇' : '🔊';
+    }
+
+    function onIsolatedVolumeChange(val) {
+      var nativePlayer = document.getElementById('native-video-player');
+      isolatedPlayerState.volume = parseInt(val, 10);
+      if (nativePlayer && nativePlayer.style.display !== 'none' && nativePlayer.src) {
+        nativePlayer.volume = isolatedPlayerState.volume / 100;
+      } else {
+        postYtCommand('setVolume', [isolatedPlayerState.volume]);
+        if (isolatedPlayerState.isMuted && isolatedPlayerState.volume > 0) {
+          isolatedPlayerState.isMuted = false;
+          var btn = document.getElementById('btn-vctrl-mute');
+          if (btn) btn.textContent = '🔊';
+          postYtCommand('unMute');
+        }
+      }
+    }
+
+    function toggleIsolatedFullscreen() {
+      var container = document.getElementById('isolated-video-player-container');
+      if (!container) return;
+      if (!document.fullscreenElement) {
+        if (container.requestFullscreen) {
+          container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+          container.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function formatVideoTime(sec) {
+      sec = Math.max(0, Math.floor(sec || 0));
+      var m = Math.floor(sec / 60);
+      var s = sec % 60;
+      return (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+    }
+
+    function triggerCelebrationScreen() {
+      if (isolatedPlayerState.endIntercepted) return;
+      isolatedPlayerState.endIntercepted = true;
+      isolatedPlayerState.isPlaying = false;
+
+      /* Pause & Hide iframe */
+      postYtCommand('pauseVideo');
+      var iframe = document.getElementById('video-iframe');
+      if (iframe) iframe.style.display = 'none';
+
+      var nativePlayer = document.getElementById('native-video-player');
+      if (nativePlayer) {
+        nativePlayer.pause();
+        nativePlayer.style.display = 'none';
+      }
+
+      /* Hide pointer shield so celebration action buttons are clickable */
+      var shield = document.getElementById('video-pointer-shield');
+      if (shield) shield.style.display = 'none';
+
+      /* Show celebration screen */
+      var cel = document.getElementById('video-celebration-screen');
+      if (cel) cel.style.display = 'flex';
+
+      var btnPlay = document.getElementById('btn-vctrl-play');
+      if (btnPlay) btnPlay.innerHTML = '▶️ تشغيل';
+
+      var statusText = document.getElementById('video-mode-status');
+      if (statusText) statusText.innerHTML = '🎉 <b>اكتمل الدرس بنجاح!</b> انتقل للمعمل أو التدريب';
+    }
+
+    function replayIsolatedVideo() {
+      isolatedPlayerState.endIntercepted = false;
+      var cel = document.getElementById('video-celebration-screen');
+      if (cel) cel.style.display = 'none';
+
+      var shield = document.getElementById('video-pointer-shield');
+      if (shield) shield.style.display = 'block';
+
+      var iframe = document.getElementById('video-iframe');
+      if (iframe) {
+        iframe.style.display = 'block';
+        postYtCommand('seekTo', [0, true]);
+        postYtCommand('playVideo');
+      }
+
+      var nativePlayer = document.getElementById('native-video-player');
+      if (nativePlayer && nativePlayer.src && window.DRIVE_VIDEOS && window.DRIVE_VIDEOS[currentVideoId]) {
+        nativePlayer.style.display = 'block';
+        nativePlayer.currentTime = 0;
+        nativePlayer.play();
+      }
+
+      isolatedPlayerState.isPlaying = true;
+      var btnPlay = document.getElementById('btn-vctrl-play');
+      if (btnPlay) btnPlay.innerHTML = '⏸️ إيقاف';
+    }
+
+    function onVideoEndAction(action) {
+      closeVideoModal();
+      if (action === 'lab') {
+        /* Open interactive lab */
+        if (typeof openSubjectModal === 'function' && currentActiveSubject) {
+          openSubjectModal(currentActiveSubject.id);
+        } else if (typeof switchStudentTab === 'function') {
+          switchStudentTab('exams');
+        }
+      } else if (action === 'practice') {
+        /* Start quiz for this subject/lesson */
+        if (currentActiveSubject && currentActiveSubject.examCode && typeof loadAndStartQuiz === 'function') {
+          loadAndStartQuiz(currentActiveSubject.examCode);
+        } else if (typeof switchStudentTab === 'function') {
+          switchStudentTab('exams');
+        }
+      }
+    }
+
+    /* Window message listener for YouTube postMessage API */
+    window.addEventListener('message', function(event) {
+      if (!event || !event.data) return;
+      var data = event.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+        } catch (e) {
+          return;
+        }
+      }
+      if (!data) return;
+
+      /* Intercept time updates and state changes */
+      if (data.event === 'infoDelivery' && data.info) {
+        var info = data.info;
+        if (typeof info.duration === 'number' && info.duration > 0) {
+          isolatedPlayerState.duration = info.duration;
+          var durEl = document.getElementById('vctrl-time-total');
+          if (durEl) durEl.textContent = formatVideoTime(info.duration);
+        }
+        if (typeof info.currentTime === 'number') {
+          isolatedPlayerState.currentTime = info.currentTime;
+          var curEl = document.getElementById('vctrl-time-current');
+          if (curEl) curEl.textContent = formatVideoTime(info.currentTime);
+
+          if (isolatedPlayerState.duration > 0) {
+            var seek = document.getElementById('vctrl-seek');
+            if (seek) seek.value = (info.currentTime / isolatedPlayerState.duration) * 100;
+
+            /* STRICT INVARIANT: 2-second early interception to block end-screen suggestions */
+            if (info.currentTime >= isolatedPlayerState.duration - 2 && isolatedPlayerState.duration > 5) {
+              triggerCelebrationScreen();
+            }
+          }
+        }
+        if (typeof info.playerState === 'number') {
+          /* playerState 0 = ended, 1 = playing, 2 = paused */
+          if (info.playerState === 0) {
+            triggerCelebrationScreen();
+          } else if (info.playerState === 1) {
+            isolatedPlayerState.isPlaying = true;
+            var btnPlay = document.getElementById('btn-vctrl-play');
+            if (btnPlay) btnPlay.innerHTML = '⏸️ إيقاف';
+          } else if (info.playerState === 2) {
+            isolatedPlayerState.isPlaying = false;
+            var btnPlay = document.getElementById('btn-vctrl-play');
+            if (btnPlay) btnPlay.innerHTML = '▶️ تشغيل';
+          }
+        }
+      }
+    });
 
     function replayCurrentLessonVideo() {
       setVideoPlayerMode('cloud');
@@ -4572,19 +4991,16 @@ window.DRIVE_VIDEOS = {};
       const nativePlayer = document.getElementById('native-video-player');
       const iframe = document.getElementById('video-iframe');
       const placeholder = document.getElementById('video-placeholder');
+      const shield = document.getElementById('video-pointer-shield');
+      const controlsBar = document.getElementById('isolated-controls-bar');
+      const celebration = document.getElementById('video-celebration-screen');
       const btnNative = document.getElementById('btn-mode-native');
       const btnCloud = document.getElementById('btn-mode-cloud');
       const statusText = document.getElementById('video-mode-status');
-      const directYtBtn = document.getElementById('btn-yt-direct');
 
-      // Update Direct YouTube Link
-      if (directYtBtn && currentVideoId) {
-        if (currentVideoId.startsWith('http')) {
-          directYtBtn.href = currentVideoId;
-        } else {
-          directYtBtn.href = 'https:\/\/www.youtube.com/watch?v=' + currentVideoId;
-        }
-      }
+      /* Reset celebration state */
+      if (celebration) celebration.style.display = 'none';
+      isolatedPlayerState.endIntercepted = false;
 
       // Check if video is registered in Google Drive
       const driveMeta = (window.DRIVE_VIDEOS && window.DRIVE_VIDEOS[currentVideoId]);
@@ -4592,6 +5008,8 @@ window.DRIVE_VIDEOS = {};
       if (mode === 'drive' && driveMeta) {
         if (nativePlayer) { nativePlayer.pause(); nativePlayer.src = ''; nativePlayer.style.display = 'none'; }
         if (placeholder) placeholder.style.display = 'none';
+        if (shield) shield.style.display = 'block';
+        if (controlsBar) controlsBar.style.display = 'flex';
         if (iframe) {
           iframe.src = driveMeta.previewUrl;
           iframe.style.display = 'block';
@@ -4602,9 +5020,11 @@ window.DRIVE_VIDEOS = {};
       } else if (mode === 'native') {
         if (iframe) { iframe.src = ''; iframe.style.display = 'none'; }
         if (placeholder) placeholder.style.display = 'none';
+        if (shield) shield.style.display = 'none';
+        if (controlsBar) controlsBar.style.display = 'flex';
         if (nativePlayer) {
           var serverHost = window.LOCAL_VIDEO_HOST || '192.168.1.96:8085';
-          nativePlayer.src = 'http:\/\/' + serverHost + '/stream/' + currentVideoId + '.mp4';
+          nativePlayer.src = 'http:\/\/' + serverHost + '\/stream\/' + currentVideoId + '.mp4';
           nativePlayer.style.display = 'block';
           nativePlayer.play().catch(function(e) { console.log('Autoplay deferred:', e); });
         }
@@ -4620,10 +5040,12 @@ window.DRIVE_VIDEOS = {};
         }
         if (!currentVideoId || !currentVideoId.trim()) {
           if (iframe) { iframe.src = ''; iframe.style.display = 'none'; }
+          if (shield) shield.style.display = 'none';
+          if (controlsBar) controlsBar.style.display = 'none';
           if (placeholder) placeholder.style.display = 'flex';
           if (btnCloud) { btnCloud.style.background = '#fff'; btnCloud.style.color = '#334155'; }
           if (btnNative) { btnNative.style.background = '#fff'; btnNative.style.color = '#334155'; }
-          if (statusText) statusText.innerHTML = '🎬 <b>Lesson Video in Production</b> &bull; Review Summary & Worked Examples Below';
+          if (statusText) statusText.innerHTML = '🎬 <b>الفيديو قيد الإعداد والمراجعة من المعلم</b>';
           return;
         }
 
@@ -4635,23 +5057,29 @@ window.DRIVE_VIDEOS = {};
         }
 
         if (iframe) {
-          // Strict In-Platform Policy:
-          // 1. rel=0: No outside recommended videos
-          // 2. loop=1 & playlist=cleanId: Loops only the same lesson video
-          // 3. modestbranding=1: No prominent YouTube branding
-          // 4. iv_load_policy=3: Turn off clickable cards/annotations
-          // 5. playsinline=1: Force in-app playback on tablets/phones
-          // 6. controls=1: Video scrubbing & volume controls
-          const embedUrl = 'https:\/\/www.youtube.com/embed/' + cleanId +
-            '?autoplay=1&rel=0&loop=1&playlist=' + cleanId +
-            '&modestbranding=1&iv_load_policy=3&playsinline=1&controls=1';
+          /* STRICT IN-PLATFORM ISOLATION:
+           * 1. youtube-nocookie.com: Privacy-enhanced mode
+           * 2. enablejsapi=1: Enables programmatic time monitoring
+           * 3. rel=0: No outside recommended videos
+           * 4. modestbranding=1: Eliminates YouTube logo from control bar
+           * 5. controls=0: Disables default YouTube controls in favor of in-platform custom controls
+           * 6. disablekb=1: Disables YouTube keyboard shortcuts to prevent external popups
+           * 7. fs=0: Disables YouTube iframe fullscreen (handled in-platform)
+           * 8. iv_load_policy=3: Eliminates interactive video annotations and channel links
+           * 9. playsinline=1: Forces in-app playback on mobile / tablet
+           */
+          const embedUrl = 'https:\/\/www.youtube-nocookie.com\/embed\/' + cleanId +
+            '?enablejsapi=1&rel=0&modestbranding=1&controls=0&disablekb=1&fs=0&playsinline=1&iv_load_policy=3&origin=' +
+            encodeURIComponent(window.location.origin || 'https:\/\/script.google.com');
           iframe.src = embedUrl;
           iframe.style.display = 'block';
         }
         if (placeholder) placeholder.style.display = 'none';
+        if (shield) shield.style.display = 'block';
+        if (controlsBar) controlsBar.style.display = 'flex';
         if (btnCloud) { btnCloud.style.background = '#2563eb'; btnCloud.style.color = '#fff'; }
         if (btnNative) { btnNative.style.background = '#fff'; btnNative.style.color = '#334155'; }
-        if (statusText) statusText.innerHTML = '🔒 <b>Dedicated Lesson Stream</b> (Zero Ads & In-Platform Lock)';
+        if (statusText) statusText.innerHTML = '🔒 <b>مشغل معزول آمن</b> (ممنوع الخروج ليوتيوب)';
       }
     }
 
@@ -4666,6 +5094,7 @@ window.DRIVE_VIDEOS = {};
       if (mode === 'summary') {
         const nativePlayer = document.getElementById('native-video-player');
         if (nativePlayer) nativePlayer.pause();
+        postYtCommand('pauseVideo');
 
         if (playerWrap) playerWrap.style.display = 'none';
         if (statusRow) statusRow.style.display = 'none';
@@ -4757,7 +5186,7 @@ window.DRIVE_VIDEOS = {};
 
       // Populate custom input if exists
       const customInp = document.getElementById('custom-video-input');
-      if (customInp) customInp.value = currentVideoId ? (currentVideoId.startsWith('http') ? currentVideoId : 'https:\/\/www.youtube.com/watch?v=' + currentVideoId) : '';
+      if (customInp) customInp.value = currentVideoId ? (currentVideoId.startsWith('http') ? currentVideoId : 'https:\/\/www.youtube.com\/watch?v=' + currentVideoId) : '';
 
       // Default directly to Cloud (YouTube) on HTTPS or web apps
       if (window.DRIVE_VIDEOS && window.DRIVE_VIDEOS[currentVideoId]) {
@@ -4811,14 +5240,42 @@ window.DRIVE_VIDEOS = {};
       const modal = document.getElementById('video-modal');
       const nativePlayer = document.getElementById('native-video-player');
       const iframe = document.getElementById('video-iframe');
+      const celebration = document.getElementById('video-celebration-screen');
+      const shield = document.getElementById('video-pointer-shield');
+      const btnPlay = document.getElementById('btn-vctrl-play');
+
       if (nativePlayer) { nativePlayer.pause(); nativePlayer.src = ''; }
       if (iframe) iframe.src = '';
+      if (celebration) celebration.style.display = 'none';
+      if (shield) shield.style.display = 'block';
+      if (btnPlay) btnPlay.innerHTML = '▶️ تشغيل';
+
+      isolatedPlayerState.isPlaying = false;
+      isolatedPlayerState.endIntercepted = false;
+
       if (modal) modal.classList.remove('active');
     }
 
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeVideoModal();
     });
+
+    /* Global Exports for window */
+    if (typeof window !== 'undefined') {
+      window.toggleIsolatedPlay = toggleIsolatedPlay;
+      window.seekIsolatedRelative = seekIsolatedRelative;
+      window.onVideoSeekInput = onVideoSeekInput;
+      window.onVideoSeekChange = onVideoSeekChange;
+      window.toggleIsolatedMute = toggleIsolatedMute;
+      window.onIsolatedVolumeChange = onIsolatedVolumeChange;
+      window.toggleIsolatedFullscreen = toggleIsolatedFullscreen;
+      window.replayIsolatedVideo = replayIsolatedVideo;
+      window.onVideoEndAction = onVideoEndAction;
+      window.handleVideoShieldClick = handleVideoShieldClick;
+      window.triggerCelebrationScreen = triggerCelebrationScreen;
+      window.formatVideoTime = formatVideoTime;
+      window.isolatedPlayerState = isolatedPlayerState;
+    }
 
   
 
