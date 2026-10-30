@@ -277,8 +277,15 @@
       case 'sci105_pitch_loudness': renderPitchLoudnessLab(container); break;
       case 'math105_divisibility': renderDivisibilityLab(container); break;
       case 'math105_rounding_pv': renderRoundingLab(container); break;
-      default:
-        container.innerHTML = '<div style="color: #64748b; padding: 20px; text-align: center;">المعمل التفاعلي قيد التشغيل.</div>';
+      default: {
+        const u = window.STEM_STUDIO_MAP[unitId] || (window.HUMANITIES_STUDIO_MAP && window.HUMANITIES_STUDIO_MAP[unitId]);
+        if (u && u.labRenderer && typeof window[u.labRenderer] === 'function') {
+          window[u.labRenderer](container);
+        } else {
+          container.innerHTML = '<div style="color: #64748b; padding: 20px; text-align: center;">المعمل التفاعلي قيد التشغيل.</div>';
+        }
+        break;
+      }
     }
   }
 
@@ -1839,7 +1846,8 @@
     if (!container) return;
 
     const cleanCode = (subjectCode || '').toLowerCase();
-    const matches = window.STEM_STUDIO_DATA.filter(function(u) {
+    const allUnits = (window.STEM_STUDIO_DATA || []).concat(window.HUMANITIES_STUDIO_DATA || []);
+    const matches = allUnits.filter(function(u) {
       return u.subjectCode.toLowerCase().includes(cleanCode) || cleanCode.includes(u.subjectCode.toLowerCase());
     });
 

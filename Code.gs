@@ -2861,6 +2861,7 @@ function subjectFamily_(subject) {
   if (s.indexOf('math') !== -1 || s.indexOf('رياض') !== -1 || s.indexOf('حساب') !== -1) return 'math';
   if (s.indexOf('sci') !== -1 || s.indexOf('علوم') !== -1) return 'science';
   if (s.indexOf('ict') !== -1 || s.indexOf('حاسب') !== -1 || s.indexOf('tech') !== -1) return 'ict';
+  if (s.indexOf('social') !== -1 || s.indexOf('دراسات') !== -1 || s.indexOf('soc') !== -1 || s.indexOf('مجتمع') !== -1) return 'social';
   return '';
 }
 
@@ -3382,7 +3383,7 @@ function createWeeklyExam_(payload) {
     }
 
     const fam = subjectFamily_(rawSubject);
-    const subjectPrefix = isAll ? 'ALL' : (fam === 'arabic' ? 'ARB' : (fam === 'math' ? 'MATH' : (fam === 'science' ? 'SCI' : (fam === 'ict' ? 'ICT' : 'ENG'))));
+    const subjectPrefix = isAll ? 'ALL' : (fam === 'arabic' ? 'ARB' : (fam === 'math' ? 'MATH' : (fam === 'science' ? 'SCI' : (fam === 'ict' ? 'ICT' : (fam === 'social' ? 'SOC' : 'ENG')))));
     const targetDiff = String((payload && payload.difficulty) || 'ALL').trim();
     const diffTag = (targetDiff !== 'ALL' && targetDiff) ? '_' + targetDiff.substring(0, 3).toUpperCase() : '';
     const examCode = 'EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_' + weekCode + '_' + subjectPrefix + diffTag;
@@ -3464,7 +3465,7 @@ function createMonthlyExam_(payload) {
 
     const fam = subjectFamily_(requestedSubject);
     const isAll = (requestedSubject === 'ALL' || requestedSubject.toLowerCase().indexOf('all') !== -1 || requestedSubject.toLowerCase().indexOf('cumulative') !== -1);
-    const subjectPrefix = isAll ? '' : (fam === 'arabic' ? '_ARB' : (fam === 'math' ? '_MATH' : (fam === 'science' ? '_SCI' : (fam === 'ict' ? '_ICT' : '_ENG'))));
+    const subjectPrefix = isAll ? '' : (fam === 'arabic' ? '_ARB' : (fam === 'math' ? '_MATH' : (fam === 'science' ? '_SCI' : (fam === 'ict' ? '_ICT' : (fam === 'social' ? '_SOC' : '_ENG')))));
     const targetDiff = String((payload && payload.difficulty) || 'ALL').trim();
     const diffTag = (targetDiff !== 'ALL' && targetDiff) ? '_' + targetDiff.substring(0, 3).toUpperCase() : '';
     const isDefaultMonthly = (!payload || (!payload.subject && (!payload.difficulty || payload.difficulty === 'ALL')));

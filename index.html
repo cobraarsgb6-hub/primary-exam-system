@@ -6202,6 +6202,10 @@ let currentStudentKey = 'ali';
 
   function closeStudioModal() {
     stopAudioTone();
+    if (heartAnimInterval) {
+      clearInterval(heartAnimInterval);
+      heartAnimInterval = null;
+    }
     const modal = document.getElementById('unit-studio-modal');
     if (modal) modal.classList.remove('active');
   }
@@ -6407,8 +6411,15 @@ let currentStudentKey = 'ali';
       case 'sci105_pitch_loudness': renderPitchLoudnessLab(container); break;
       case 'math105_divisibility': renderDivisibilityLab(container); break;
       case 'math105_rounding_pv': renderRoundingLab(container); break;
-      default:
-        container.innerHTML = '<div style="color: #64748b; padding: 20px; text-align: center;">المعمل التفاعلي قيد التشغيل.</div>';
+      default: {
+        const u = window.STEM_STUDIO_MAP[unitId] || (window.HUMANITIES_STUDIO_MAP && window.HUMANITIES_STUDIO_MAP[unitId]);
+        if (u && u.labRenderer && typeof window[u.labRenderer] === 'function') {
+          window[u.labRenderer](container);
+        } else {
+          container.innerHTML = '<div style="color: #64748b; padding: 20px; text-align: center;">المعمل التفاعلي قيد التشغيل.</div>';
+        }
+        break;
+      }
     }
   }
 
@@ -7969,7 +7980,8 @@ let currentStudentKey = 'ali';
     if (!container) return;
 
     const cleanCode = (subjectCode || '').toLowerCase();
-    const matches = window.STEM_STUDIO_DATA.filter(function(u) {
+    const allUnits = (window.STEM_STUDIO_DATA || []).concat(window.HUMANITIES_STUDIO_DATA || []);
+    const matches = allUnits.filter(function(u) {
       return u.subjectCode.toLowerCase().includes(cleanCode) || cleanCode.includes(u.subjectCode.toLowerCase());
     });
 
@@ -8032,6 +8044,2542 @@ let currentStudentKey = 'ali';
   window.nextFlashcard = nextFlashcard;
   window.prevFlashcard = prevFlashcard;
   window.renderSubjectStudioUnits = renderSubjectStudioUnits;
+
+})();
+</script>
+
+  <script>
+/**
+ * HumanitiesStudioLabs.js
+ * Phase P12: English, Arabic, ICT, and Social Studies Studios, Labs & Flashcards
+ * 19 Units, 190 Flashcards, 19 Interactive Pedagogical Labs
+ */
+(function() {
+  'use strict';
+
+  window.HUMANITIES_STUDIO_DATA = [
+  {
+    "id": "eng106_relative_clauses",
+    "subjectCode": "English 106",
+    "subjectName": "اللغة الإنجليزية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "🔗",
+    "title": "Relative Clauses & Embedded Sentences",
+    "titleEn": "Relative Pronouns & Sentence Embedding",
+    "theory": {
+      "title": "Mastering Relative Clauses & Punctuation Boundaries",
+      "concept": "A relative clause is a subordinate clause that modifies or gives more information about a noun. It is introduced by a relative pronoun: WHO (people), WHICH (things/animals), THAT (people or things in defining clauses), WHERE (places), and WHOSE (possession).",
+      "rules": [
+        "<b>Defining Relative Clause:</b> Essential to the sentence meaning; specifies WHICH noun we are talking about. <i>NO COMMAS needed.</i> (e.g., 'The scientist who discovered the vaccine won an award.')",
+        "<b>Non-Defining Relative Clause:</b> Adds extra, non-essential parenthetical information. If removed, the main clause still makes complete sense. <i>REQUIRES COMMAS around it</i> (or at the end). (e.g., 'Alexander Fleming, who discovered penicillin, was Scottish.')",
+        "<b>Embedded Clause:</b> When the relative clause is inserted inside the main clause, separate it with a pair of commas: [Main Subject] , [relative clause] , [Main Verb + Object].",
+        "<b>Traps in Cambridge Exams:</b> Do NOT use 'that' in non-defining relative clauses with commas. Never write: 'My car, that was red, broke down.' Use 'which'."
+      ],
+      "examples": [
+        "Example 1 (Embedded): 'The telescope, which was invented in 1608, revolutionized astronomy.'",
+        "Example 2 (Defining): 'Students who complete their homework on time achieve higher grades.'",
+        "Example 3 (Possession): 'The author whose book topped the bestseller list visited our school.'"
+      ],
+      "traps": "Cambridge checkpoint trap: Missing the second closing comma of an embedded clause before the main predicate (e.g., writing 'The lion, who roared loudly escaped' - must be '..., who roared loudly, escaped')."
+    },
+    "flashcards": [
+      {
+        "q": "Which relative pronoun is used specifically to show possession?",
+        "a": "WHOSE (e.g., 'The boy whose bicycle was repaired.')."
+      },
+      {
+        "q": "Do non-defining relative clauses take commas?",
+        "a": "YES, they MUST be surrounded by commas because they add non-essential extra info."
+      },
+      {
+        "q": "Can you use 'that' in non-defining relative clauses surrounded by commas?",
+        "a": "NO. In formal standard English, use 'which' or 'who', never 'that' inside non-defining commas."
+      },
+      {
+        "q": "Which relative pronoun refers to places?",
+        "a": "WHERE (e.g., 'The laboratory where the experiment took place.')."
+      },
+      {
+        "q": "Identify the relative clause: 'The rover that landed on Mars sent back high-resolution images.'",
+        "a": "'that landed on Mars' (Defining relative clause modifying 'rover')."
+      },
+      {
+        "q": "What happens if you remove a non-defining relative clause from a sentence?",
+        "a": "The sentence still makes complete grammatical and semantic sense without losing core identity."
+      },
+      {
+        "q": "Which pronoun correctly completes: 'The astronomer ...... discovered the new exoplanet'?",
+        "a": "WHO (used for human beings)."
+      },
+      {
+        "q": "Where must commas be placed in: 'Cairo which is the capital of Egypt is populous'?",
+        "a": "After 'Cairo' and after 'Egypt': 'Cairo, which is the capital of Egypt, is populous.'"
+      },
+      {
+        "q": "Which pronoun refers to animals or inanimate objects in defining/non-defining clauses?",
+        "a": "WHICH (and 'THAT' in defining clauses only)."
+      },
+      {
+        "q": "What is an 'embedded' relative clause?",
+        "a": "A relative clause inserted directly between the subject and the main verb of the main clause."
+      }
+    ],
+    "labRenderer": "renderRelativeClausesLab"
+  },
+  {
+    "id": "eng106_connectives",
+    "subjectCode": "English 106",
+    "subjectName": "اللغة الإنجليزية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "⚡",
+    "title": "Advanced Conjunctions & Connectives",
+    "titleEn": "Coordinating & Subordinating Conjunctions",
+    "theory": {
+      "title": "Sentence Synthesis: Coordinating vs Subordinating Conjunctions",
+      "concept": "Conjunctions connect words, phrases, or clauses. Coordinating conjunctions link two independent clauses of equal grammatical rank, while subordinating conjunctions introduce dependent clauses that provide reason, contrast, condition, or concession.",
+      "rules": [
+        "<b>Coordinating Conjunctions (FANBOYS):</b> For, And, Nor, But, Or, Yet, So. When linking two independent clauses, place a comma BEFORE the conjunction.",
+        "<b>Subordinating Conjunctions of Concession/Contrast:</b> Although, Even though, Whereas, While, Despite (+ noun phrase/gerund).",
+        "<b>Sentence Positioning:</b> When a subordinating conjunction begins the sentence, place a comma after the dependent clause: 'Although it rained heavily, the football match continued.'",
+        "<b>No comma when subordinate clause is second:</b> 'The match continued although it rained heavily.'"
+      ],
+      "examples": [
+        "Contrast: 'Whereas reptiles are cold-blooded, birds and mammals are warm-blooded.'",
+        "Concession: 'Despite the harsh desert climate, date palms thrive abundantly.'",
+        "Reason & Result: 'The circuit had a broken filament, so the lamp did not illuminate.'"
+      ],
+      "traps": "Never use 'Although ... but' together in the same sentence. Choose ONE: 'Although it was cold, he went out.' OR 'It was cold, but he went out.' (Dual conjunction error)."
+    },
+    "flashcards": [
+      {
+        "q": "What mnemonic helps you remember all 7 coordinating conjunctions?",
+        "a": "FANBOYS: For, And, Nor, But, Or, Yet, So."
+      },
+      {
+        "q": "What punctuation mark is required when a subordinating conjunction starts a sentence?",
+        "a": "A comma at the end of the subordinate clause, before the main clause."
+      },
+      {
+        "q": "Is 'Although he studied hard, but he failed' grammatically correct?",
+        "a": "NO. It contains a double conjunction error. Remove 'but'."
+      },
+      {
+        "q": "What structure follows 'Despite' in formal English?",
+        "a": "A noun phrase or an '-ing' gerund (e.g., 'Despite the rain' or 'Despite being tired')."
+      },
+      {
+        "q": "Which conjunction expresses direct contrast between two opposite facts?",
+        "a": "WHEREAS or WHILE (e.g., 'Gold is dense, whereas aluminum is lightweight.')."
+      },
+      {
+        "q": "Is a comma required before 'because' in standard sentences like 'We stayed inside because it rained'?",
+        "a": "No, a comma is normally NOT used when the causal dependent clause follows the main clause."
+      },
+      {
+        "q": "Which conjunction indicates a condition that must be met?",
+        "a": "UNLESS or IF (e.g., 'Plants cannot photosynthesise unless sunlight is available.')."
+      },
+      {
+        "q": "What type of clause does 'Although the battery was new' represent?",
+        "a": "A subordinate (dependent) adverbial clause of concession."
+      },
+      {
+        "q": "Which conjunction in FANBOYS expresses consequence or result?",
+        "a": "SO (e.g., 'The switch was open, so current could not flow.')."
+      },
+      {
+        "q": "Which conjunction in FANBOYS introduces a negative alternative?",
+        "a": "NOR (e.g., 'He did not call, nor did he send an email.')."
+      }
+    ],
+    "labRenderer": "renderConnectivesLab"
+  },
+  {
+    "id": "eng106_fiction_nonfiction",
+    "subjectCode": "English 106",
+    "subjectName": "اللغة الإنجليزية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "📚",
+    "title": "Genre Analysis: Fiction vs Non-Fiction",
+    "titleEn": "Text Features, Register & Structural Devices",
+    "theory": {
+      "title": "Dissecting Fiction and Non-Chronological Reports",
+      "concept": "Different text genres use specific language registers, grammatical structures, and organizational devices. Fiction uses figurative language, dialogue, and chronological narrative tension, whereas non-fiction reports use objective tone, factual subheadings, and passive voice.",
+      "rules": [
+        "<b>Non-Chronological Report Features:</b> Formal register, third-person perspective ('it is observed'), present tense for timeless truths, technical vocabulary, bullet points, and subheadings.",
+        "<b>Passive Voice in Informational Reports:</b> Often used to highlight the process rather than the person: 'The sample was heated to 100°C' instead of 'I heated the sample'.",
+        "<b>Fiction Narrative Features:</b> Sensory description (sight, sound, touch), similes, metaphors, expanded noun phrases, time shifts, and character dialogue.",
+        "<b>Formal vs Informal Vocabulary:</b> 'commenced' vs 'started', 'demonstrates' vs 'shows', 'subsequently' vs 'after that'."
+      ],
+      "examples": [
+        "Non-Fiction: 'Blood is transported through a complex network of arteries, veins, and capillaries.'",
+        "Fiction: 'The crimson liquid pulsed with urgent rhythm through the explorer\\'s veins as he stared into the abyss.'"
+      ],
+      "traps": "Avoid emotional adjectives and exclamation marks in non-fiction reports. Never write 'The miraculous heart is so amazing!' in a scientific report."
+    },
+    "flashcards": [
+      {
+        "q": "What tense is primarily used in non-chronological reports about animal species?",
+        "a": "Timeless present tense (e.g., 'Whales belong to the cetacean order.')."
+      },
+      {
+        "q": "What voice is favored in formal scientific and factual reports to maintain objectivity?",
+        "a": "Passive voice (e.g., 'The solution was filtered carefully.')."
+      },
+      {
+        "q": "Name three structural features of a non-fiction informational report.",
+        "a": "Title, introductory classification, topical subheadings, bulleted fact boxes."
+      },
+      {
+        "q": "Which genre relies on sensory imagery, metaphors, and narrative dialogue?",
+        "a": "Fiction / Narrative texts."
+      },
+      {
+        "q": "Replace the informal connective 'Also' with a formal non-fiction equivalent.",
+        "a": "'Furthermore', 'Moreover', or 'In addition'."
+      },
+      {
+        "q": "Why are subheadings used in non-chronological reports?",
+        "a": "To organize information logically so readers can locate specific topics quickly."
+      },
+      {
+        "q": "Is personal pronoun 'I' appropriate in an objective report on deforestation?",
+        "a": "No, formal reports should use third person ('It is reported', 'Scientists believe')."
+      },
+      {
+        "q": "What is an expanded noun phrase in narrative fiction?",
+        "a": "A noun with pre-modifiers (adjectives) and post-modifiers (e.g., 'the ancient, crumbling fortress on the hill')."
+      },
+      {
+        "q": "What is the purpose of a glossary at the end of a non-fiction text?",
+        "a": "To define domain-specific technical vocabulary for the reader."
+      },
+      {
+        "q": "Which register is required in Cambridge Year 6 non-fiction report writing?",
+        "a": "Formal, impersonal, and authoritative register."
+      }
+    ],
+    "labRenderer": "renderGenreLab"
+  },
+  {
+    "id": "eng105_adverbials",
+    "subjectCode": "English 105",
+    "subjectName": "اللغة الإنجليزية",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "⏱️",
+    "title": "Fronted Adverbials of Time, Place & Manner",
+    "titleEn": "Fronted Adverbials & The Mandatory Comma",
+    "theory": {
+      "title": "Fronted Adverbials & Comma Punctuation Rules",
+      "concept": "An adverbial is a word or phrase that gives more information about HOW (Manner), WHEN (Time), or WHERE (Place) an action happens. When the adverbial is moved to the FRONT of the sentence before the subject, it is called a FRONTED ADVERBIAL.",
+      "rules": [
+        "<b>Mandatory Comma Rule:</b> You MUST place a comma immediately after the fronted adverbial: '[Fronted Adverbial] , [Main Clause]'.",
+        "<b>Time Adverbials:</b> 'Before sunrise, the astronaut boarded the shuttle.' / 'In 1969, Apollo 11 landed.'",
+        "<b>Place Adverbials:</b> 'Inside the command bunker, engineers monitored the sensors.'",
+        "<b>Manner Adverbials:</b> 'With great precision, the robotic arm docked the module.' / 'Silently, the owl swooped.'",
+        "<b>End of sentence rule:</b> When the adverbial is at the END, NO comma is required: 'The astronaut boarded the shuttle before sunrise.'"
+      ],
+      "examples": [
+        "Manner: 'Without making a sound, the tiger stalked its prey.'",
+        "Time: 'Every Monday morning, the school assembly convenes.'",
+        "Place: 'Across the dusty valley, a gentle breeze swept.'"
+      ],
+      "traps": "Forgetting the comma after the fronted adverbial is the #1 lost mark in Year 5 English grammar assessments!"
+    },
+    "flashcards": [
+      {
+        "q": "What punctuation mark MUST follow every fronted adverbial?",
+        "a": "A comma (',')."
+      },
+      {
+        "q": "What question does an adverbial of MANNER answer?",
+        "a": "HOW or IN WHAT WAY the action happened (e.g., 'Carefully, ...')."
+      },
+      {
+        "q": "What question does an adverbial of TIME answer?",
+        "a": "WHEN or HOW OFTEN the action occurred (e.g., 'At midnight, ...')."
+      },
+      {
+        "q": "What question does an adverbial of PLACE answer?",
+        "a": "WHERE the action took place (e.g., 'Under the ancient oak tree, ...')."
+      },
+      {
+        "q": "Is a comma needed in 'The children played until sunset'?",
+        "a": "NO, because the adverbial 'until sunset' is at the END of the sentence."
+      },
+      {
+        "q": "Convert to a fronted adverbial sentence: 'Ali scored a goal during the final minute.'",
+        "a": "'During the final minute, Ali scored a goal.'"
+      },
+      {
+        "q": "Identify the type of fronted adverbial: 'Without a moment of hesitation, she jumped.'",
+        "a": "Fronted adverbial of MANNER."
+      },
+      {
+        "q": "Identify the type of fronted adverbial: 'In the middle of the desert, water is scarce.'",
+        "a": "Fronted adverbial of PLACE."
+      },
+      {
+        "q": "Does a fronted adverbial phrase contain a main finite verb?",
+        "a": "No, it is a phrase or dependent clause modifying the verb in the main clause."
+      },
+      {
+        "q": "Correct this sentence: 'Early yesterday morning the train arrived.'",
+        "a": "'Early yesterday morning, the train arrived.' (Add comma after 'morning')."
+      }
+    ],
+    "labRenderer": "renderAdverbialsLab"
+  },
+  {
+    "id": "eng105_direct_speech",
+    "subjectCode": "English 105",
+    "subjectName": "اللغة الإنجليزية",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "💬",
+    "title": "Direct Speech & Dialogue Punctuation",
+    "titleEn": "Inverted Commas, Reporting Clauses & Rules",
+    "theory": {
+      "title": "Punctuation Rules for Spoken Dialogue in Stories",
+      "concept": "Direct speech quotes the exact spoken words of a character. In English, spoken words are placed inside INVERTED COMMAS (speech marks: \"...\"). Specific punctuation rules govern speech marks and reporting clauses.",
+      "rules": [
+        "<b>Rule 1 - Inside the Speech Marks:</b> All punctuation related to the speech (comma, exclamation mark, question mark, full stop) goes INSIDE the closing speech mark.",
+        "<b>Rule 2 - Capital Letter:</b> The first spoken word inside speech marks ALWAYS starts with a capital letter: 'She shouted, \"Look out!\"'",
+        "<b>Rule 3 - Reporting Clause Separation:</b> Use a comma before opening speech marks: 'Ali asked, \"What time is the test?\"'. If speech comes first, use a comma instead of a full stop before the reporting clause: '\"We won the match,\" cheered Mostafa.'",
+        "<b>Rule 4 - New Speaker, New Line:</b> Every time a different person speaks, you MUST start a new paragraph on a new line."
+      ],
+      "examples": [
+        "Reporting verb first: The teacher instructed, \"Open your workbooks to page forty.\"",
+        "Speech first: \"Where did you leave the keys?\" inquired mother.",
+        "Split dialogue: \"Let us hasten,\" whispered the guide, \"before dusk falls.\""
+      ],
+      "traps": "Never put the comma outside speech marks! WRONG: \"Stop\", he yelled. RIGHT: \"Stop,\" he yelled."
+    },
+    "flashcards": [
+      {
+        "q": "Where does punctuation go relative to the closing speech mark?",
+        "a": "INSIDE the closing quotation mark (e.g., \"Hurry!\" not \"Hurry\"!)."
+      },
+      {
+        "q": "Does the first word spoken inside inverted commas need a capital letter?",
+        "a": "YES, always capitalize the first word spoken."
+      },
+      {
+        "q": "What rule applies when a new character begins speaking?",
+        "a": "Start a NEW LINE (new paragraph)."
+      },
+      {
+        "q": "If the speech comes first, do you put a full stop before 'he said'?",
+        "a": "No, use a comma inside the quotes: '\"I am ready,\" he said.'"
+      },
+      {
+        "q": "What punctuation ends a spoken question inside speech marks?",
+        "a": "A question mark ('?'), e.g., '\"Are you coming?\" asked Ali.'"
+      },
+      {
+        "q": "Correct the error: \"Look at the shooting star\"! whispered Tariq.",
+        "a": "'\"Look at the shooting star!\" whispered Tariq.' (Move '!' inside quotes)."
+      },
+      {
+        "q": "What is the phrase 'replied the doctor' called in direct speech?",
+        "a": "The reporting clause."
+      },
+      {
+        "q": "What punctuation separates the reporting verb from opening speech in: He said \"I agree\"?",
+        "a": "A comma: 'He said, \"I agree.\"'"
+      },
+      {
+        "q": "In split speech: '\"Wait here,\" he said, \"until I return.\"', does 'until' get capitalized?",
+        "a": "No, because it continues the same spoken sentence."
+      },
+      {
+        "q": "Why are speech marks also called inverted commas?",
+        "a": "Because single/double quotes look like flipped commas (\", \", ', ')."
+      }
+    ],
+    "labRenderer": "renderDirectSpeechLab"
+  },
+  {
+    "id": "eng105_fables_proverbs",
+    "subjectCode": "English 105",
+    "subjectName": "اللغة الإنجليزية",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "🦊",
+    "title": "Fables, Proverbs & Moral Analysis",
+    "titleEn": "Narrative Elements, Personification & Aesop Morals",
+    "theory": {
+      "title": "Understanding Fables, Personification & Timeless Proverbs",
+      "concept": "A fable is a short fictional narrative, traditionally featuring anthropomorphic animals, legendary creatures, or plants that speak and act like humans (Personification). Fables illustrate a human flaw and conclude with an explicit MORAL or proverb.",
+      "rules": [
+        "<b>Characteristics of Fables:</b> Short, concise plot, animal characters representing distinct human archetypes (Fox = cunning, Tortoise = perseverance, Lion = pride), and a clear lesson at the end.",
+        "<b>Personification:</b> Giving human qualities, thoughts, and emotions to animals or non-living objects (e.g., 'The proud oak boasted to the reed').",
+        "<b>Proverbs:</b> Concise, memorable sayings that express a general truth or piece of practical advice (e.g., 'Look before you leap', 'A stitch in time saves nine').",
+        "<b>Twist in the Tale:</b> An unexpected resolution that subverts character expectations (e.g., the slow Tortoise defeats the boastful Hare)."
+      ],
+      "examples": [
+        "The Tortoise and the Hare: Moral = 'Slow and steady wins the race.'",
+        "The Boy Who Cried Wolf: Moral = 'Nobody believes a liar, even when he tells the truth.'",
+        "The Crow and the Pitcher: Moral = 'Little by little does the trick / Necessity is the mother of invention.'"
+      ],
+      "traps": "Confusing a fable with a fairy tale. Fables always feature animal personification and a didactic moral, whereas fairy tales feature magic and royalty."
+    },
+    "flashcards": [
+      {
+        "q": "What is the defining purpose of a fable?",
+        "a": "To teach an explicit moral or life lesson through a short story."
+      },
+      {
+        "q": "What literary device gives animal characters human speech and emotions?",
+        "a": "Personification."
+      },
+      {
+        "q": "What moral is taught by Aesop's 'The Tortoise and the Hare'?",
+        "a": "'Slow and steady wins the race' (Perseverance overcomes overconfidence)."
+      },
+      {
+        "q": "What is a 'proverb'?",
+        "a": "A short, well-known traditional saying that offers advice about how to live."
+      },
+      {
+        "q": "Explain the proverb: 'Actions speak louder than words.'",
+        "a": "What you do has a stronger impact than what you say you will do."
+      },
+      {
+        "q": "In fables, what personality trait is typically associated with the Fox?",
+        "a": "Cunning, slyness, or deceit."
+      },
+      {
+        "q": "What character archetype does the Lion often represent in fables?",
+        "a": "Pride, bravery, or royalty."
+      },
+      {
+        "q": "Explain the proverb: 'Do not count your chickens before they hatch.'",
+        "a": "Do not assume success or profits before they actually happen."
+      },
+      {
+        "q": "What is a 'twist' in a fable narrative?",
+        "a": "An unexpected turn of events that delivers justice or teaches the moral."
+      },
+      {
+        "q": "Who is the legendary ancient Greek storyteller associated with fables?",
+        "a": "Aesop."
+      }
+    ],
+    "labRenderer": "renderFablesLab"
+  },
+  {
+    "id": "arb106_five_nouns",
+    "subjectCode": "Arabic 106",
+    "subjectName": "اللغة العربية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "👑",
+    "title": "الأسماء الخمسة وعلامات إعرابها الفرعية",
+    "titleEn": "The Five Nouns: Cases & Stringent Conditions",
+    "theory": {
+      "title": "قواعد وإعراب الأسماء الخمسة وشروطها الأربعة",
+      "concept": "الأسماء الخمسة هي: (أب، أخ، حم، فو، ذو بمعنى صاحب). تُعرب هذه الأسماء بعلامات إعراب فرعية نيابة عن الحركات الأصلية: ترفع بالواو، وتنصب بالألف، وتجر بالياء.",
+      "rules": [
+        "<b>علامات الإعراب الفرعية:</b> ترفع بالواو (جاء أبوك)، وتنصب بالألف (رأيت أباك)، وتجر بالياء (مررت بأبيك).",
+        "<b>الشرط الأول:</b> أن تكون مفردة (فإن ثنيت أعربت إعراب المثنى بالألف والياء، وإن جمعت أعربت بالحركات).",
+        "<b>الشرط الثاني:</b> أن تكون مضافة (فإن لم تضف نوّنت وأعربت بالحركات الأصلية: 'هذا أبٌ رحيم').",
+        "<b>الشرط الثالث:</b> أن تكون إضافتها لغير ياء المتكلم (فإذا أضيفت لياء المتكلم أعربت بحركات مقدرة: 'أبي يحبني').",
+        "<b>الشرط الرابع الخاص:</b> كلمة 'فو' يجب أن تحذف منها الميم (فإن ثبتت الميم أعربت بالحركات: 'هذا فمٌ نظيف')، وكلمة 'ذو' تلزم الإضافة لاسم ظاهر فقط."
+      ],
+      "examples": [
+        "رفع بالواو: 'أبوك ذو خلقٍ كريم' (أبوك: مبتدأ مرفوع بالواو، ذو: خبر مرفوع بالواو).",
+        "نصب بالألف: 'إنّ حماك رجلٌ فاضل' (حماك: اسم إن منصوب بالألف لأنه من الأسماء الخمسة).",
+        "جر بالياء: 'استمع إلى نصيحةِ ذي الخبرة' (ذي: مضاف إليه مجرور بالياء)."
+      ],
+      "traps": "فخ الامتحان: 'حضر أخي مسروراً' - كلمة 'أخي' ليست معربة بعلامات فرعية لأنها أضيفت لياء المتكلم، فتعرب فاعلاً مرفوعاً بضمة مقدرة على ما قبل الياء."
+    },
+    "flashcards": [
+      {
+        "q": "ما هي الأسماء الخمسة؟",
+        "a": "أب، أخ، حم، فو، ذو (بمعنى صاحب)."
+      },
+      {
+        "q": "بماذا ترفع الأسماء الخمسة؟",
+        "a": "ترفع بالواو نيابة عن الضمة (مثل: جاء أبوك)."
+      },
+      {
+        "q": "بماذا تنصب الأسماء الخمسة؟",
+        "a": "تنصب بالألف نيابة عن الفتحة (مثل: أطع أباك)."
+      },
+      {
+        "q": "بماذا تجر الأسماء الخمسة؟",
+        "a": "تجر بالياء نيابة عن الكسرة (مثل: اقتدِ بأبيك)."
+      },
+      {
+        "q": "ما حكم إعراب الأسماء الخمسة إذا جاءت مثنى (مثل: جاء أبواك)؟",
+        "a": "تعرب إعراب المثنى (ترفع بالألف وتنصب وتجر بالياء)."
+      },
+      {
+        "q": "ما حكم إعراب كلمة 'أبي' في: 'أبي رجلٌ صالح'؟",
+        "a": "مبتدأ مرفوع بضمة مقدرة، ولا تعرب بالحروف لأنها أضيفت لياء المتكلم."
+      },
+      {
+        "q": "ما الشرط الخاص بكلمة 'فو' لتعرب إعراب الأسماء الخمسة؟",
+        "a": "أن تخلو من حرف الميم (فوك / فاك / فيك)، فإن اقترنت بالميم أعربت بالحركات."
+      },
+      {
+        "q": "ما معنى كلمة 'ذو' وما شرط إضافتها؟",
+        "a": "بمعنى صاحب، وشرطها أن تضاف إلى اسم جنس ظاهر فقط (لا تضاف إلى ضمير)."
+      },
+      {
+        "q": "أعرب كلمة 'أخاك' في جملة: 'إنّ أخاك مهذب'.",
+        "a": "اسم إنّ منصوب وعلامة نصبه الألف لأنه من الأسماء الخمسة، والكاف مضاف إليه."
+      },
+      {
+        "q": "كيف تصوب الخطأ في: 'سلمتُ على أباك'؟",
+        "a": "الصواب: 'سلمتُ على أبيك' (لأنه اسم مجرور بعلى وعلامة جره الياء)."
+      }
+    ],
+    "labRenderer": "renderFiveNounsLab"
+  },
+  {
+    "id": "arb106_types_of_predicate",
+    "subjectCode": "Arabic 106",
+    "subjectName": "اللغة العربية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "⚖️",
+    "title": "أنواع الخبر في الجملة الاسمية",
+    "titleEn": "Types of Predicate: Singular, Sentence & Semi-Sentence",
+    "theory": {
+      "title": "أنواع الخبر: المفرد، الجملة الاسمية والفعلية، وشبه الجملة",
+      "concept": "الخبر هو الجزء المتمم لمعنى الجملة الاسمية مع المبتدأ، وحكمه الإعرابي الرفع أو في محل رفع. ينقسم الخبر إلى ثلاثة أنواع رئيسية: مفرد، وجملة، وشبه جملة.",
+      "rules": [
+        "<b>1. الخبر المفرد:</b> ما ليس جملة ولا شبه جملة (حتى لو كان مثنى أو جمعاً): 'العلمُ نورٌ' / 'الطالبان مجتهدان' / 'المعلمون مخلصون'.",
+        "<b>2. خبر الجملة الاسمية:</b> يتكون من مبتدأ ثانٍ وخبر للمبتدأ الثاني، ويشترط وجود رابط (ضمير) يعود على المبتدأ الأول: 'الحديقةُ أزهارُها متفتحة'.",
+        "<b>3. خبر الجملة الفعلية:</b> يتكون من فعل وفاعل (ظاهر أو مستتر يعود على المبتدأ): 'المعلمُ يشرحُ الدرسَ' (والجملة الفعلية في محل رفع خبر).",
+        "<b>4. خبر شبه الجملة:</b> إما جار ومجرور: 'النظافةُ من الإيمانِ'، أو ظرف (زمان أو مكان): 'العصفورُ فوقَ الشجرةِ' (في محل رفع خبر)."
+      ],
+      "examples": [
+        "مفرد: 'المهندسون بارعون' (بارعون: خبر مرفوع بالواو لأنه جمع مذكر سالم).",
+        "جملة اسمية: 'مصرُ خيراتُها كثيرة' (خيراتها مبتدأ ثان والهاء رابط، وكثيرة خبر المبتدأ الثاني والجملة في محل رفع خبر الأول).",
+        "جملة فعلية: 'التلميذُ يذاكرُ بجد' (يذاكر فعل والفاعل ضمير مستتر تقديره هو، والجملة في محل رفع خبر)."
+      ],
+      "traps": "فخ الامتحان: إذا طُلب تحويل الخبر الجملة الاسمية إلى مفرد في: 'الشجرةُ أغصانُها مورقة' - الصواب: 'الشجرةُ مورقةُ الأغصانِ'."
+    },
+    "flashcards": [
+      {
+        "q": "ما هي الأقسام الثلاثة الرئيسية للخبر في الجملة الاسمية؟",
+        "a": "1. مفرد، 2. جملة (اسمية أو فعلية)، 3. شبه جملة (جار ومجرور أو ظرف)."
+      },
+      {
+        "q": "ما المقصود بالخبر المفرد؟",
+        "a": "ما ليس جملة ولا شبه جملة، ويدل على المفرد أو المثنى أو الجمع بكلمة واحدة."
+      },
+      {
+        "q": "ما الشرط الأساسي في خبر الجملة (الاسمية أو الفعلية)؟",
+        "a": "وجود رابط (ضمير) يعود على المبتدأ ويطابقه في النوع والعدد."
+      },
+      {
+        "q": "ما نوع الخبر في: 'الطالبُ يقرأُ قصةً'؟",
+        "a": "خبر جملة فعلية (يقرأ قصة في محل رفع خبر)."
+      },
+      {
+        "q": "ما نوع الخبر في: 'الطيورُ في أقفاصِها'؟",
+        "a": "خبر شبه جملة (جار ومجرور: في أقفاصها)."
+      },
+      {
+        "q": "حدد الرابط في جملة: 'المدرسةُ فصولُها واسعة'.",
+        "a": "الضمير المتصل (الهاء) في كلمة 'فصولها' يعود على المدرسة."
+      },
+      {
+        "q": "ما نوع الخبر في: 'المعلمون صانعو الأجيال'؟",
+        "a": "خبر مفرد (صانعو: خبر مرفوع بالواو لأنه جمع مذكر سالم وحذفت النون للإضافة)."
+      },
+      {
+        "q": "حوّل خبر الجملة الفعلية إلى مفرد في: 'الولدُ يمارسُ الرياضة'.",
+        "a": "'الولدُ ممارسٌ للرياضةِ'."
+      },
+      {
+        "q": "ما الموقع الإعرابي لشبه الجملة في: 'البركةُ في البكورِ'؟",
+        "a": "شبه الجملة من الجار والمجرور في محل رفع خبر المبتدأ."
+      },
+      {
+        "q": "ما نوع الخبر في: 'السفرُ غداً'؟",
+        "a": "خبر شبه جملة (ظرف زمان: غداً)."
+      }
+    ],
+    "labRenderer": "renderTypesOfPredicateLab"
+  },
+  {
+    "id": "arb106_nakira_marifa",
+    "subjectCode": "Arabic 106",
+    "subjectName": "اللغة العربية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "🔍",
+    "title": "النكرة والمعرفة وأقسام المعارف الستة",
+    "titleEn": "Definite vs Indefinite Nouns & The Six Classes",
+    "theory": {
+      "title": "الفرق بين النكرة والمعرفة وأنواع المعارف الستة",
+      "concept": "الاسم في لغتنا الجميلة ينقسم من حيث الدلالة إلى: نكرة (اسم يدل على شيء غير معين أو محدد)، ومعرفة (اسم يدل على شيء معين ومحدد بذاته). المعارف ستة أقسام رئيسية مقررة.",
+      "rules": [
+        "<b>1. النكرة:</b> اسم يدل على غير معين، ويقبل دخول 'أل' والتنوين (مثل: رجل، كتاب، مدرسة).",
+        "<b>2. المعرّف بأل:</b> كل اسم دخلت عليه أل التعريف فأفادته التعيين (الكتاب، الشارع).",
+        "<b>3. العَلَم:</b> اسم يدل على مسمى بعينه من إنسان أو مكان أو شهر (محمد، مصر، النيل، رمضان).",
+        "<b>4. الضمائر:</b> كلها معارف (منفصلة: أنا، نحن، أنتَ، هو؛ أو متصلة: تاء الفاعل، نا الفاعلين، كاف الخطاب، هاء الغيبة).",
+        "<b>5. أسماء الإشارة والأسماء الموصولة:</b> كلها معارف (هذا، هذه، هذان، هؤلاء / الذي، التي، الذين...).",
+        "<b>6. المعرّف بالإضافة:</b> اسم نكرة اكتسب التعريف بإضافته إلى أحد المعارف السابقة: 'كتابُ الطالبِ' / 'وطنُنا'."
+      ],
+      "examples": [
+        "نكرة: 'قرأتُ كتاباً مفيداً' (كتاباً ومفيداً نكرتان).",
+        "معرف بالإضافة: 'سيارةُ الإسعافِ سريعة' (سيارة معرفة بالإضافة إلى الإسعاف).",
+        "علم وضمر: 'أحمد هو قائدُ الفريقِ' (أحمد علم، هو ضمير، قائد معرف بالإضافة)."
+      ],
+      "traps": "فخ الامتحان: 'كتابي جديد' - كلمة 'كتاب' معرفة وليست نكرة، لأنها اتصلت بياء المتكلم فاكتسبت التعريف بالإضافة إلى الضمير!"
+    },
+    "flashcards": [
+      {
+        "q": "ما الفرق الأساسي بين النكرة والمعرفة؟",
+        "a": "النكرة تدل على شيء غير معين، والمعرفة تدل على شيء معين ومحدد بذاته."
+      },
+      {
+        "q": "اذكر أقسام المعارف الستة المقررة في الصف السادس.",
+        "a": "1. المعرف بأل، 2. العلم، 3. الضمائر، 4. أسماء الإشارة، 5. الأسماء الموصولة، 6. المعرف بالإضافة."
+      },
+      {
+        "q": "هل الضمائر (أنا، هو، أنت) نكرات أم معارف؟",
+        "a": "كل الضمائر معارف باتفاق علماء النحو."
+      },
+      {
+        "q": "بين نوع المعرفة في كلمة 'مكة المكرمة'.",
+        "a": "مكة: عَلَم (اسم مدينة)، والمكرمة: معرّف بأل."
+      },
+      {
+        "q": "كيف تكتسب النكرة التعريف في اللغة العربية؟",
+        "a": "إما بدخول 'أل' التعريف عليها، أو بإضافتها إلى اسم معرفة."
+      },
+      {
+        "q": "هل كلمة 'قلمي' نكرة أم معرفة؟ ولماذا؟",
+        "a": "معرفة، لأنها معرفة بالإضافة إلى الضمير (ياء المتكلم)."
+      },
+      {
+        "q": "عين النكرة والمعرفة في: 'شرب الطفلُ عصيراً'.",
+        "a": "الطفل: معرفة (معرف بأل)، وعصيراً: نكرة."
+      },
+      {
+        "q": "ما نوع المعرفة في: 'هؤلاء أبطال الوطن'؟",
+        "a": "هؤلاء: اسم إشارة، والوطن: معرف بأل، وأبطال: معرف بالإضافة إلى الوطن."
+      },
+      {
+        "q": "هل أسماء الإشارة (هذا، هذه) من المعارف؟",
+        "a": "نعم، أسماء الإشارة كلها من المعارف."
+      },
+      {
+        "q": "اجعل النكرة معرفة في جملة: 'اشتريتُ حاسوباً'.",
+        "a": "'اشتريتُ الحاسوبَ' (بأل) أو 'اشتريتُ حاسوبَ أخي' (بالإضافة)."
+      }
+    ],
+    "labRenderer": "renderNakiraMarifaLab"
+  },
+  {
+    "id": "arb105_nominal_sentence",
+    "subjectCode": "Arabic 105",
+    "subjectName": "اللغة العربية",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "⚖️",
+    "title": "الجملة الاسمية وضبط ركنيها (المبتدأ والخبر)",
+    "titleEn": "Subject & Predicate: Case Endings & Balance",
+    "theory": {
+      "title": "أركان الجملة الاسمية وعلامات الرفع الأصلية والفرعية",
+      "concept": "الجملة الاسمية هي الجملة التي تبدأ باسم، وتتكون من ركنين أساسيين لا غنى لأحدهما عن الآخر: المبتدأ (الاسم المتحدث عنه) والخبر (الجزء الذي يكمل المعنى ويتم الفائدة). حكم المبتدأ والخبر دائماً هو الرفع.",
+      "rules": [
+        "<b>علامات الرفع للمبتدأ والخبر:</b>",
+        "1. <b>الضمة (علامة أصلية):</b> إذا كان مفرداً ('التلميذُ متفوقٌ')، أو جمع تكسير ('العلماءُ أذكياءُ')، أو جمع مؤنث سالماً ('المعلماتُ رحيماتٌ').",
+        "2. <b>الألف (علامة فرعية):</b> إذا كان مثنى مذكر أو مؤنث ('المعلمان بارعان' / 'الطبيبتان مخلصتان').",
+        "3. <b>الواو (علامة فرعية):</b> إذا كان جمع مذكر سالماً ('المسلمون صائمون' / 'المهندسون ماهرون')."
+      ],
+      "examples": [
+        "مفرد: 'الوطنُ عزيزٌ' (الوطن: مبتدأ مرفوع بالضمة، عزيز: خبر مرفوع بالضمة).",
+        "مثنى: 'الشارعان واسعان' (مرفوعان وعلامة الرفع الألف لأنهما مثنى).",
+        "جمع مذكر سالم: 'الفلاحون نشيطون' (مرفوعان وعلامة الرفع الواو لأنهما جمع مذكر سالم)."
+      ],
+      "traps": "فخ الامتحان: نون المثنى دائماً مكسورة (المعلمانِ) ونون جمع المذكر السالم مفتوحة (المعلمونَ)، وهذه الحركات على النون ليست علامات إعراب، بل علامة الإعراب هي الحرف الذي قبل النون (الألف والواو)."
+    },
+    "flashcards": [
+      {
+        "q": "ما هما الركنان الأساسيان للجملة الاسمية؟",
+        "a": "المبتدأ والخبر."
+      },
+      {
+        "q": "ما الحكم الإعرابي الدائم للمبتدأ والخبر؟",
+        "a": "الرفع دائماً (مرفوعان)."
+      },
+      {
+        "q": "ما علامة رفع المبتدأ والخبر في: 'الحديقةُ جميلةٌ'؟",
+        "a": "الضمة الظاهرة (لأنهما مفرد)."
+      },
+      {
+        "q": "ما علامة رفع جمع التكسير في الجملة الاسمية (مثل: 'الجنودُ شجعانٌ')؟",
+        "a": "الضمة الظاهرة."
+      },
+      {
+        "q": "ما علامة رفع جمع المؤنث السالم (مثل: 'الفراشاتُ ملوناتٌ')؟",
+        "a": "الضمة الظاهرة."
+      },
+      {
+        "q": "ما علامة رفع المثنى في: 'الصديقان وفيّان'؟",
+        "a": "الألف نيابة عن الضمة لأنه مثنى."
+      },
+      {
+        "q": "ما علامة رفع جمع المذكر السالم في: 'الصائمون مأجورون'؟",
+        "a": "الواو نيابة عن الضمة لأنه جمع مذكر سالم."
+      },
+      {
+        "q": "هل نون المثنى (المكسورة) هي علامة الإعراب؟",
+        "a": "لا، علامة الإعراب هي الألف، والكسرة على النون حركة بناء لازمة."
+      },
+      {
+        "q": "صوب الخطأ في جملة: 'المهندسين بارعون'.",
+        "a": "الصواب: 'المهندسون بارعون' (لأنه مبتدأ مرفوع وعلامة رفعه الواو)."
+      },
+      {
+        "q": "صوب الخطأ في جملة: 'الكتابين مفيدان'.",
+        "a": "الصواب: 'الكتابان مفيدان' (لأنه مبتدأ مرفوع وعلامة رفعه الألف)."
+      }
+    ],
+    "labRenderer": "renderNominalSentenceLab"
+  },
+  {
+    "id": "arb105_object_mafool",
+    "subjectCode": "Arabic 105",
+    "subjectName": "اللغة العربية",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "🎯",
+    "title": "المفعول به وعلامات نصبه الأصلية والفرعية",
+    "titleEn": "Direct Object: Accusative Markers in Context",
+    "theory": {
+      "title": "المفعول به وعلامات إعرابه ونَصبه الدقيقة",
+      "concept": "المفعول به هو اسم منصوب يدل على من وقع عليه فعل الفاعل في الجملة الفعلية، ونسأل عنه دائماً بـ 'ماذا؟' أو 'مَن؟'. حكم المفعول به دائماً هو النصب.",
+      "rules": [
+        "<b>علامات نصب المفعول به:</b>",
+        "1. <b>الفتحة (علامة أصلية):</b> إذا كان مفرداً ('شربَ الطفلُ الحليبَ')، أو جمع تكسير ('كرّم المعلمُ الطلابَ').",
+        "2. <b>الكسرة (علامة فرعية تنوب عن الفتحة):</b> إذا كان جمع مؤنث سالماً ('شكرَ المديرُ المعلماتِ').",
+        "3. <b>الياء (علامة فرعية):</b> إذا كان مثنى ('قرأ الطالبُ كتابينِ')، أو جمع مذكر سالماً ('شجّع الجمهورُ اللاعبينَ')."
+      ],
+      "examples": [
+        "مفرد: 'كتبَ عليٌّ الدرسَ' (الدرسَ: مفعول به منصوب وعلامة نصبه الفتحة).",
+        "جمع مؤنث: 'رأيتُ الطالباتِ متفوقاتٍ' (الطالباتِ: مفعول به منصوب وعلامة نصبه الكسرة).",
+        "مثنى: 'اشترى أبي قصتينِ' (قصتينِ: مفعول به منصوب وعلامة نصبه الياء)."
+      ],
+      "traps": "فخ الامتحان الشهير: نسيان أن جمع المؤنث السالم ينصب بالكسرة نيابة عن الفتحة، ويمنع كتابة الفتحة عليه نهائياً!"
+    },
+    "flashcards": [
+      {
+        "q": "ما هو المفعول به؟",
+        "a": "اسم منصوب يدل على من وقع عليه فعل الفاعل."
+      },
+      {
+        "q": "ما السؤال الذي يساعدنا في كشف المفعول به في الجملة؟",
+        "a": "ماذا فعل الفاعل؟ أو مَن أصاب الفعل؟"
+      },
+      {
+        "q": "ما علامة نصب المفعول به المفرد وجمع التكسير؟",
+        "a": "الفتحة الظاهرة."
+      },
+      {
+        "q": "ما علامة نصب المفعول به إذا كان جمع مؤنث سالماً؟",
+        "a": "الكسرة نيابة عن الفتحة (مثل: كرمت المديرة المعلماتِ)."
+      },
+      {
+        "q": "ما علامة نصب المفعول به إذا كان مثنى؟",
+        "a": "الياء (مثل: قرأ التلميذ قصتينِ)."
+      },
+      {
+        "q": "ما علامة نصب المفعول به إذا كان جمع مذكر سالماً؟",
+        "a": "الياء (مثل: صافح الرئيس الفائزينَ)."
+      },
+      {
+        "q": "عين المفعول به في: 'بنى العمالُ جسراً عظيماً'.",
+        "a": "جسراً (مفعول به منصوب بالفتحة)."
+      },
+      {
+        "q": "صوب الخطأ في: 'حفظ الطالبُ القصائدُ'.",
+        "a": "الصواب: 'حفظ الطالبُ القصائدَ' (بالفتحة لأنه جمع تكسير مفعول به)."
+      },
+      {
+        "q": "صوب الخطأ في: 'كافأت المدرسةُ المتفوقاتَ'.",
+        "a": "الصواب: 'كافأت المدرسةُ المتفوقاتِ' (بالكسرة لأنه جمع مؤنث سالم)."
+      },
+      {
+        "q": "صوب الخطأ في: 'أكل الذئبُ شاتان'.",
+        "a": "الصواب: 'أكل الذئبُ شاتينِ' (بالياء لأنه مثنى مفعول به)."
+      }
+    ],
+    "labRenderer": "renderObjectMafoolLab"
+  },
+  {
+    "id": "ict106_flowcharts",
+    "subjectCode": "ICT 106",
+    "subjectName": "تكنولوجيا المعلومات والاتصالات",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "📊",
+    "title": "خرائط التدفق والرموز القياسية للخوارزميات",
+    "titleEn": "Flowchart Standard Symbols & Algorithmic Logic",
+    "theory": {
+      "title": "الرموز القياسية وقواعد رسم خرائط التدفق (Flowcharts)",
+      "concept": "خريطة التدفق هي تمثيل رسومي تخطيطي لخطوات حل مسألة معينة خطوة بخطوة من البداية إلى النهاية باستخدام رموز قياسية متفق عليها عالمياً (ISO Standard Symbols).",
+      "rules": [
+        "<b>1. رمز البداية والنهاية (Oval / Terminator):</b> شكل بيضاوي يمثل نقطة انطلاق الخوارزمية (Start) ونقطة توقفها (Stop / End).",
+        "<b>2. رمز الإدخال والإخراج (Parallelogram):</b> متوازي أضلاع يمثل قراءة البيانات من المستخدم (Input / Read) أو إخراج وعرض النتائج على الشاشة (Print / Output / Display).",
+        "<b>3. رمز العملية والمعالجة (Rectangle):</b> مستطيل يمثل العمليات الحسابية وتعيين قيم المتغيرات (مثل: Total = A + B).",
+        "<b>4. رمز القرار واتخاذ القرار (Diamond):</b> معين يمثل سؤالاً منطقياً له مساران أو أكثر من خطوط التدفق (Yes / No أو True / False).",
+        "<b>5. خطوط التدفق (Flowlines):</b> أسهم تحدد اتجاه سير تنفيذ الأوامر من أعلى لأسفل أو من اليسار لليمين."
+      ],
+      "examples": [
+        "خوارزمية جمع رقمين: Start -> Read A, B -> Sum = A + B -> Print Sum -> End.",
+        "خوارزمية كشف النجاح: Start -> Read Score -> Score >= 50? -> Yes: Print 'Pass' / No: Print 'Fail' -> End."
+      ],
+      "traps": "فخ الامتحان: لا يمكن أن يخرج من مستطيل المعالجة أكثر من سهم تدفق واحد، بينما شكل المعين (Decision) يجب أن يخرج منه مساران على الأقل (Yes / No)."
+    },
+    "flashcards": [
+      {
+        "q": "ما الشكل الهندسي القياسي لرمز البداية والنهاية (Start/Stop)؟",
+        "a": "الشكل البيضاوي (Oval / Terminator)."
+      },
+      {
+        "q": "ما الشكل الهندسي القياسي لعمليات الإدخال والإخراج (Input/Output)؟",
+        "a": "متوازي الأضلاع (Parallelogram)."
+      },
+      {
+        "q": "ما الشكل الهندسي المخصص للعمليات الحسابية والمعالجة (Process)؟",
+        "a": "المستطيل (Rectangle)."
+      },
+      {
+        "q": "ما الشكل الهندسي المستخدم لاتخاذ القرار والشروط (Decision)؟",
+        "a": "المَعين (Diamond)."
+      },
+      {
+        "q": "كم خط تدفق (سهم) يخرج عادة من شكل القرار (المعين)؟",
+        "a": "اثنان على الأقل: أحدهما لمسار True/Yes والآخر لمسار False/No."
+      },
+      {
+        "q": "ما فائدة خطوط التدفق (Flowlines)؟",
+        "a": "تحديد الاتجاه التسلسلي المنطقي لتنفيذ خطوات الخوارزمية."
+      },
+      {
+        "q": "هل يمكن وضع معادلة حسابية مثل 'X = Y * 2' داخل متوازي أضلاع؟",
+        "a": "لا، العمليات الحسابية توضع دائماً داخل مستطيل المعالجة."
+      },
+      {
+        "q": "أين توضع عبارة 'اقرأ درجة الطالب' في خريطة التدفق؟",
+        "a": "داخل متوازي أضلاع لأنه أمر إدخال (Input)."
+      },
+      {
+        "q": "أين توضع عبارة 'هل العدد يقبل القسمة على 2؟' في خريطة التدفق؟",
+        "a": "داخل شكل المعين (Decision)."
+      },
+      {
+        "q": "ما القاعدة الذهبية لاتجاه سير خطوط التدفق الطبيعي في الخريطة؟",
+        "a": "من أعلى إلى أسفل، أو من اليسار إلى اليمين."
+      }
+    ],
+    "labRenderer": "renderFlowchartsLab"
+  },
+  {
+    "id": "ict106_loops_variables",
+    "subjectCode": "ICT 106",
+    "subjectName": "تكنولوجيا المعلومات والاتصالات",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "🔄",
+    "title": "حلقات التكرار وجداول تتبع المتغيرات",
+    "titleEn": "Loops & Trace Tables in Computational Thinking",
+    "theory": {
+      "title": "أنواع حلقات التكرار، تتبع المتغيرات، وجداول التتبع",
+      "concept": "حلقات التكرار (Loops) تسمح بإعادة تنفيذ كتلة من الأوامر البرمجية عدة مرات دون إعادة كتابتها. جدول التتبع (Trace Table) هو أداة لاختبار منطق الخوارزمية وتتبع قيم المتغيرات خطوة بخطوة مع كل دورة.",
+      "rules": [
+        "<b>1. التكرار محدد العدد (Count-Controlled / FOR Loop):</b> يتم تكرار الأوامر لعدد محدد ومعلوم مسبقاً من المرات (مثل: تكرار 5 مرات أو من 1 إلى 10).",
+        "<b>2. التكرار المشروط (Condition-Controlled / WHILE Loop):</b> يستمر التكرار طالما أن الشرط صحيح (True)، ويتوقف فور أن يصبح الشرط خاطئاً (False).",
+        "<b>3. المتغير (Variable):</b> مكان محجوز في ذاكرة الحاسوب لتخزين قيمة قابلة للتعديل أثناء عمل البرنامج (مثل: العداد Counter أو المجموع Total).",
+        "<b>4. جدول التتبع (Trace Table):</b> جدول يحتوي على أعمدة لكل متغير، وصف لكل خطوة لمعاينة تغير القيم والتأكد من خلو الكود من الأخطاء المنطقية (Logic Errors).",
+        "<b>5. حلقة التكرار اللانهائية (Infinite Loop):</b> خطأ منطقي يحدث عندما لا يتغير شرط التوقف أبداً فيظل البرنامج يعمل بلا نهاية."
+      ],
+      "examples": [
+        "حساب مجموع الأرقام من 1 إلى 3: Total=0, Counter=1 -> Total=1 -> Total=3 -> Total=6, Counter=4 -> Exit.",
+        "عداد تنازلي للصاروخ: For Count = 10 down to 0: Print Count -> Print 'Blast off!'."
+      ],
+      "traps": "خطأ إزاحة العداد بواحد (Off-by-one Error): كتابة 'Count < 5' بدلاً من 'Count <= 5' مما يجعل الحلقة تتكرر 4 مرات بدلاً من 5!"
+    },
+    "flashcards": [
+      {
+        "q": "ما هي حلقة التكرار محددة العدد (Count-Controlled Loop)؟",
+        "a": "حلقة تتكرر لعدد ثابت محدد مسبقاً من المرات (مثل حلقة FOR)."
+      },
+      {
+        "q": "ما هي حلقة التكرار المشروطة (Condition-Controlled Loop)؟",
+        "a": "حلقة يستمر تنفيذها طالما أن شرطاً معيناً يتحقق (مثل حلقة WHILE)."
+      },
+      {
+        "q": "ما هو جدول التتبع (Trace Table)؟",
+        "a": "جدول لاختبار الخوارزميات ورصد قيم المتغيرات بعد كل خطوة للتأكد من صحتها."
+      },
+      {
+        "q": "ما هو المتغير (Variable) في البرمجة؟",
+        "a": "مساحة تخزين في الذاكرة لها اسم محدد وتحتوي على قيمة تتغير أثناء تنفيذ البرنامج."
+      },
+      {
+        "q": "ماذا يحدث إذا نسيت زيادة العداد (Counter) في حلقة While؟",
+        "a": "يقع البرنامج في حلقة تكرار لانهائية (Infinite Loop) ولا يتوقف أبداً."
+      },
+      {
+        "q": "كم مرة ستنفذ الحلقة: For i = 1 to 5؟",
+        "a": "5 مرات (للقيم: 1، 2، 3، 4، 5)."
+      },
+      {
+        "q": "إذا كانت x=2 وتم تنفيذ: x = x * 3 ثلاث مرات، فما قيمة x النهائية؟",
+        "a": "x = 2 * 3 = 6 -> 6 * 3 = 18 -> 18 * 3 = 54."
+      },
+      {
+        "q": "ما هو خطأ 'Off-by-one error'؟",
+        "a": "خطأ منطقي يجعل التكرار يزيد أو ينقص دورة واحدة بسبب عدم دقة علامة المقارنة (< أو <=)."
+      },
+      {
+        "q": "ما الفرق بين القيمة الأولية (Initial Value) والقيمة الحالية للمتغير؟",
+        "a": "الأولية هي القيمة عند بداية البرنامج، والحالية هي قيمته بعد تنفيذ الأوامر والمعالجة."
+      },
+      {
+        "q": "لماذا نستخدم التكرار بدلاً من نسخ الأكواد المتكررة؟",
+        "a": "لتوفير مساحة الكود، تسهيل التعديل، ومنع الأخطاء وزيادة كفاءة البرنامج."
+      }
+    ],
+    "labRenderer": "renderLoopsLab"
+  },
+  {
+    "id": "ict105_scratch_logic",
+    "subjectCode": "ICT 105",
+    "subjectName": "تكنولوجيا المعلومات والاتصالات",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "🐱",
+    "title": "منطق البرمجة والإحداثيات في سكراتش",
+    "titleEn": "Scratch Coordinates, Motion Blocks & Logic",
+    "theory": {
+      "title": "منصة سكراتش: شبكة الإحداثيات، الحركة، ولبنات التحكم",
+      "concept": "بيئة سكراتش (Scratch) هي لغة برمجة بصرية تعتمد على تركيب اللبنات (Blocks). تتحرك الكائنات (Sprites) على منصة ثنائية الأبعاد تعتمد على نظام إحداثيات ديكارتي X و Y.",
+      "rules": [
+        "<b>1. أبعاد منصة سكراتش:</b> العرض 480 نقطة (من X = -240 في أقصى اليسار إلى X = +240 في أقصى اليمين)، والارتفاع 360 نقطة (من Y = -180 في الأسفل إلى Y = +180 في الأعلى).",
+        "<b>2. نقطة المركز (Center):</b> نقطة الأصل هي المنتصف تماماً (X = 0, Y = 0).",
+        "<b>3. لبنات الحركة (Motion):</b> مثل 'تحرك 10 خطوات' (Move 10 steps)، و'اذهب إلى الموضع X: 0, Y: 0'، و'ارتد إذا كنت عند الحافة'.",
+        "<b>4. لبنات الأحداث (Events):</b> اللبنة الأساسية لبدء تشغيل الكود هي 'عند النقر على العلم الأخضر' (When Green Flag Clicked).",
+        "<b>5. لبنات التحكم (Control):</b> مثل لبنة 'كرر 10 مرات' (Repeat 10) و'كرر باستمرار' (Forever) و'إذا ... فـ' (If ... then)."
+      ],
+      "examples": [
+        "جعل الكائن يتحرك للأعلى: نغير قيمة Y بمقدار موجب (Change Y by 10).",
+        "جعل الكائن يتحرك لليسار: نغير قيمة X بمقدار سالب (Change X by -10)."
+      ],
+      "traps": "فخ الامتحان: الخلط بين محور X ومحور Y. تذكر دائماً: X للأفقي (يمين/يسار) و Y للرأسي (أعلى/أسفل)."
+    },
+    "flashcards": [
+      {
+        "q": "ما هي إحداثيات نقطة منتصف منصة سكراتش تماماً؟",
+        "a": "X = 0, Y = 0."
+      },
+      {
+        "q": "أي محور يتحكم في حركة الكائن يميناً ويساراً (أفقياً)؟",
+        "a": "محور X (المحور الأفقي)."
+      },
+      {
+        "q": "أي محور يتحكم في حركة الكائن صعوداً وهبوطاً (رأسياً)؟",
+        "a": "محور Y (المحور الرأسي)."
+      },
+      {
+        "q": "ماذا يحدث لموقع الكائن إذا قمت بتغيير قيمة Y بمقدار +20؟",
+        "a": "يتحرك الكائن لأعلى بمقدار 20 نقطة."
+      },
+      {
+        "q": "ماذا يحدث لموقع الكائن إذا قمت بتغيير قيمة X بمقدار -30؟",
+        "a": "يتحرك الكائن لليسار بمقدار 30 نقطة."
+      },
+      {
+        "q": "ما هي اللبنة المستخدمة لبدء تنفيذ المشروع عند تشغيله؟",
+        "a": "لبنة 'عند النقر على العلم الأخضر' (When Green Flag Clicked)."
+      },
+      {
+        "q": "ما الفرق بين لبنة 'كرر 10 مرات' ولبنة 'كرر باستمرار (Forever)'؟",
+        "a": "'كرر 10 مرات' تتوقف بعد 10 دورات، بينما 'Forever' تستمر بلا توقف حتى الضغط على زر الإيقاف الأحمر."
+      },
+      {
+        "q": "ما فائدة لبنة 'ارتد إذا كنت عند الحافة' (If on edge, bounce)؟",
+        "a": "تمنع الكائن من الاختفاء خارج حدود شاشة المنصة وتجعله ينعكس للداخل."
+      },
+      {
+        "q": "ما أقصى قيمة موجبة لمحور X في سكراتش؟",
+        "a": "+240 (أقصى اليمين)."
+      },
+      {
+        "q": "ما أدنى قيمة سالبة لمحور Y في سكراتش؟",
+        "a": "-180 (أقصى الأسفل)."
+      }
+    ],
+    "labRenderer": "renderScratchLab"
+  },
+  {
+    "id": "ict105_cyber_safety",
+    "subjectCode": "ICT 105",
+    "subjectName": "تكنولوجيا المعلومات والاتصالات",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "🛡️",
+    "title": "الأمان الرقمي وحماية الهوية وكلمات المرور",
+    "titleEn": "Digital Footprint, Passwords & Cyber Safety",
+    "theory": {
+      "title": "قواعد المواطنة الرقمية، قوة كلمات المرور، ومكافحة التصيد",
+      "concept": "الأمان الرقمي هو حماية معلوماتك وأجهزتك أثناء استخدام شبكة الإنترنت. كل ما تفعله أو تنشره على الإنترنت يترك أثراً دائماً يُعرف بـ 'البصمة الرقمية' (Digital Footprint).",
+      "rules": [
+        "<b>1. البصمة الرقمية (Digital Footprint):</b> سجل دائم لجميع أنشطتك عبر الإنترنت (الرسائل، التعليقات، الصور، المواقع التي تزورها). لا يمكن مسحها بسهولة، لذا يجب أن تفكر قبل أن تنشر.",
+        "<b>2. معايير كلمة المرور القوية (Strong Password):</b>",
+        "   - لا تقل عن 8-12 خانة.",
+        "   - تحتوي على خليط من: حروف كبيرة (A-Z)، حروف صغيرة (a-z)، أرقام (0-9)، ورموز خاصة (!@#$%).",
+        "   - لا تستخدم معلومات شخصية (اسمك، تاريخ ميلادك، رقم هاتفك).",
+        "<b>3. مكافحة التصيد الاحتيالي (Phishing):</b> رسائل وهمية تعد بجوائز خيالية أو تطلب كلمة مرورك. لا تنقر على أي روابط مشبوهة.",
+        "<b>4. قاعدة الخصوصية الذهبية:</b> لا تشارك معلوماتك الشخصية (عنوان بيتك، اسم مدرستك، كلمة مرورك) مع أي غريب على الإنترنت."
+      ],
+      "examples": [
+        "كلمة مرور ضعيفة: 'ali123' أو 'password'.",
+        "كلمة مرور قوية ومثالية: 'Falcon#98!Rocket'."
+      ],
+      "traps": "فخ الامتحان: الاعتقاد بأن مسح الرسالة أو البوست يزيلها من الإنترنت نهائياً. بمجرد النشر، قد يقوم الآخرون بحفظ لقطة شاشة وتبقى ضمن البصمة الرقمية!"
+    },
+    "flashcards": [
+      {
+        "q": "ما هي البصمة الرقمية (Digital Footprint)؟",
+        "a": "السجل والأثر الدائم الذي يتركه المستخدم عند استخدام الإنترنت (المشاركات، البحث، المواقع)."
+      },
+      {
+        "q": "اذكر ثلاثة شروط لكلمة المرور القوية.",
+        "a": "1. طولها >= 8 خانات، 2. تحتوي حروفاً كبيرة وصغيرة وأرقاماً ورموزاً، 3. خالية من البيانات الشخصية."
+      },
+      {
+        "q": "ما هو التصيد الاحتيالي (Phishing)؟",
+        "a": "رسائل أو مواقع مزيفة تحاول خداعك لسرقة كلمات المرور أو البيانات البنكية."
+      },
+      {
+        "q": "هل يجوز مشاركة عنوان منزلك أو اسم مدرستك في ألعاب الأونلاين؟",
+        "a": "كلا، يُمنع مشاركة أي معلومات شخصية مع الغرباء عبر الإنترنت."
+      },
+      {
+        "q": "ماذا تفعل إذا وصلتك رسالة تخبرك بأنك فزت بمليون دولار وعليك إدخال كلمة سر حسابك؟",
+        "a": "أتجاهل الرسالة وأبلغ والدي فوراً لأنها محاولة تصيد احتيالي."
+      },
+      {
+        "q": "هل كلمة '12345678' تعتبر كلمة مرور قوية؟",
+        "a": "لا، كلمة ضعيفة جداً وسهلة التخمين لأنها تتكون من أرقام متتالية فقط."
+      },
+      {
+        "q": "ما فائدة المصادقة الثنائية (Two-Factor Authentication / 2FA)؟",
+        "a": "تضيف طبقة أمان إضافية بإرسال رمز تحقق مؤقت لهاتفك عند تسجيل الدخول."
+      },
+      {
+        "q": "هل تظل الصور التي ترسلها على تطبيقات المحادثات خاصة بنسبة 100%؟",
+        "a": "لا، يمكن للمستقبل أخذ لقطة شاشة ومشاركتها مع آخرين."
+      },
+      {
+        "q": "ماذا يعني الرمز 🔒 (قفل الأمان) بجانب رابط الموقع في المتصفح؟",
+        "a": "يعني أن الاتصال بالموقع مشفر وآمن عبر بروتوكول HTTPS."
+      },
+      {
+        "q": "من هو أول شخص يجب إبلاغه فوراً إذا تعرضت لموقف غير مريح أو تنمر على الإنترنت؟",
+        "a": "ولي الأمر (الأب أو الأم) أو المعلم في المدرسة."
+      }
+    ],
+    "labRenderer": "renderCyberSafetyLab"
+  },
+  {
+    "id": "soc106_arab_geography",
+    "subjectCode": "Social Studies 106",
+    "subjectName": "الدراسات الاجتماعية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "🌍",
+    "title": "الموقع الجغرافي والمضايق وتضاريس الوطن العربي",
+    "titleEn": "Arab World Geography, Straits & Topography",
+    "theory": {
+      "title": "الموقع الاستراتيجي، الممرات المائية، وتضاريس الوطن العربي",
+      "concept": "يمتد الوطن العربي في قارتي آسيا وأفريقيا في موقع جغرافي فريد يشرف على ثلاثة بحار رئيسية ويتحكم في أربعة ممرات ومضايق مائية استراتيجية جعلته جسراً تجارياً عالمياً عبر التاريخ.",
+      "rules": [
+        "<b>1. الممرات والمضايق المائية الأربعة الاستراتيجية:</b>",
+        "   - <b>مضيق هرمز:</b> يصل بين الخليج العربي وخليج عمان (وبالتالي المحيط الهندي)، وتشرف عليه عُمان وإيران.",
+        "   - <b>مضيق باب المندب:</b> يصل بين البحر الأحمر وخليج عدن (مضيق عربي خالص)، وتشرف عليه اليمن وجيبوتي.",
+        "   - <b>قناة السويس:</b> تصل بين البحرين المتوسط والأحمر (ممر مصري 100% يختصر طريق التجارة العالمية).",
+        "   - <b>مضيق جبل طارق:</b> يصل بين البحر المتوسط والمحيط الأطلنطي، وتشرف عليه المغرب وإسبانيا.",
+        "<b>2. تضاريس الوطن العربي:</b>",
+        "   - <b>جبال التوائية:</b> نشأت نتيجة حركات التواء في القشرة الأرضية (جبال أطلس، جبال زاجروس، جبال عُمان).",
+        "   - <b>جبال انكسارية:</b> نشأت نتيجة انكسار في الصخور الصلبة (جبال البحر الأحمر في مصر والسودان والسعودية، وجبال الشام).",
+        "   - <b>الهضاب:</b> هضبة أفريقيا الشمالية (أكبرها)، وهضاب شبه الجزيرة العربية (بادية الشام شمالاً، نجد وسطاً، حضرموت جنوباً).",
+        "   - <b>السهول:</b> سهول فيضية خصبة حول الأنهار (دجلة والفرات والنيل)، وسهول ساحلية على البحار والمحيطات."
+      ],
+      "examples": [
+        "المضيق العربي الخالص: مضيق باب المندب لأن الدولتين المشرفتين عليه عربيتان (اليمن وجيبوتي).",
+        "الجبال الانكسارية: جبال البحر الأحمر تشهد على أثر الانكسارات الأخدودية العظيمة."
+      ],
+      "traps": "فخ الامتحان: الخلط بين جبال أطلس (التوائية في المغرب العربي) وجبال البحر الأحمر (انكسارية على جانبي البحر الأحمر)."
+    },
+    "flashcards": [
+      {
+        "q": "في أي قارتين يمتد الوطن العربي؟",
+        "a": "قارتي آسيا (الجناح الآسيوي 28%) وأفريقيا (الجناح الأفريقي 72%)."
+      },
+      {
+        "q": "ما الممران المائيان اللذان يصل بينهما مضيق هرمز؟",
+        "a": "الخليج العربي وخليج عمان (المحيط الهندي)."
+      },
+      {
+        "q": "لماذا يُعد مضيق باب المندب مضيقاً عربياً خالصاً؟",
+        "a": "لأن الدولتين المشرفتين عليه عربيتان شقيقتان: اليمن وجيبوتي."
+      },
+      {
+        "q": "ما المسطحان المائيان اللذان تربط بينهما قناة السويس المصرية؟",
+        "a": "البحر المتوسط والبحر الأحمر."
+      },
+      {
+        "q": "ما الممر الذي يربط البحر المتوسط بالمحيط الأطلنطي؟",
+        "a": "مضيق جبل طارق (تشرف عليه المغرب وإسبانيا)."
+      },
+      {
+        "q": "اذكر مثالين للجبال الالتوائية في الوطن العربي.",
+        "a": "جبال أطلس، جبال زاجروس، وجبال عُمان."
+      },
+      {
+        "q": "اذكر مثالين للجبال الانكسارية في الوطن العربي.",
+        "a": "جبال البحر الأحمر (في مصر والسودان والسعودية)، وجبال الشام."
+      },
+      {
+        "q": "ما هي أكبر هضاب الوطن العربي مساحة؟",
+        "a": "هضبة أفريقيا الشمالية (تمتد من جبال البحر الأحمر شرقاً للأطلنطي غرباً)."
+      },
+      {
+        "q": "سمِّ هضاب شبه الجزيرة العربية الثلاث من الشمال إلى الجنوب.",
+        "a": "بادية الشام (شمالاً)، نجد (وسطاً)، حضرموت (جنوباً)."
+      },
+      {
+        "q": "ما أهمية السهول الفيضية في مصر والعراق؟",
+        "a": "تربة خصبة صالحة للزراعة قامت عليها أقدم الحضارات على ضفاف النيل ودجلة والفرات."
+      }
+    ],
+    "labRenderer": "renderArabGeographyLab"
+  },
+  {
+    "id": "soc106_arab_environment",
+    "subjectCode": "Social Studies 106",
+    "subjectName": "الدراسات الاجتماعية",
+    "student": "Mostafa",
+    "grade": "Grade 6 (G6)",
+    "icon": "🏜️",
+    "title": "الأقاليم المناخية والتحديات البيئية في الوطن العربي",
+    "titleEn": "Climate Zones & Environmental Challenges",
+    "theory": {
+      "title": "الأقاليم المناخية الثلاثة وأبرز المشكلات البيئية المعاصرة",
+      "concept": "يسود الوطن العربي مناخ يتميز بتنوع أقاليمه المناخية الثلاثة، ويواجه تحديات بيئية خطيرة نتيجة التغير المناخي والأنشطة البشرية غير المستدامة، مما يستدعي حلولاً خضراء مبتكرة.",
+      "rules": [
+        "<b>1. الأقاليم المناخية الثلاثة:</b>",
+        "   - <b>إقليم البحر المتوسط:</b> يسود الأطراف الشمالية (حار جاف صيفاً، دافئ ممطر شتاءً)، وتنمو به غابات الأرز والبلوط والزيتون.",
+        "   - <b>الإقليم الصحراوي الحار:</b> يشغل أكبر مساحة (80% من الوطن العربي)، مناخ قاري شديد الحرارة صيفاً وشديد البرودة شتاءً وندرة الأمطار.",
+        "   - <b>الإقليم المداري:</b> يسود جنوب الوطن العربي (السودان والصومال وجنوب موريتانيا واليمن)، صيف حار ممطر وشتاء دافئ جاف، وتنمو به حشائش السافانا.",
+        "<b>2. التحديات البيئية الثلاثة الكبرى:</b>",
+        "   - <b>الجفاف (Drought):</b> فترات طويلة من انحباس الأمطار تؤدي لهلاك المحاصيل والمراعي.",
+        "   - <b>التصحر (Desertification):</b> تدهور خصوبة الأراضي الزراعية وتحولها إلى أراضٍ صحراوية بسبب الرعي الجائر وإزالة الغابات.",
+        "   - <b>ندرة المياه العذبة:</b> 80% من مساحة الوطن العربي صحراء، والطلب على المياه يتزايد سنوياً.",
+        "<b>3. المبادرات الخضراء:</b> مشروع زراعة 100 مليون شجرة في مصر، ومبادرة السعودية الخضراء لزراعة 10 مليارات شجرة ومكافحة التصحر."
+      ],
+      "examples": [
+        "أشجار الأرز: تتخذها لبنان شعاراً على علمها الوطني وتنمو في إقليم البحر المتوسط.",
+        "حشائش السافانا: حديقة حيوان طبيعية تدرج في الطول وتعيش بها الحيوانات آكلة العشب واللحوم."
+      ],
+      "traps": "فخ الامتحان: أمطار الإقليم المداري تسقط في فصل الصيف (عكس إقليم البحر المتوسط الذي تسقط أمطاره في فصل الشتاء)!"
+    },
+    "flashcards": [
+      {
+        "q": "ما النسبة المئوية التقريبية التي يشغلها الإقليم الصحراوي من الوطن العربي؟",
+        "a": "حوالي 80% من المساحة الإجمالية."
+      },
+      {
+        "q": "ما هي خصائص مناخ إقليم البحر المتوسط؟",
+        "a": "حار جاف صيفاً، دافئ ممطر شتاءً."
+      },
+      {
+        "q": "في أي فصل تسقط الأمطار في الإقليم المداري؟",
+        "a": "تسقط الأمطار في فصل الصيف (صيف ممطر وشتاء جاف)."
+      },
+      {
+        "q": "ما الشجرة الشهيرة في إقليم البحر المتوسط وتعد شعار دولة لبنان؟",
+        "a": "شجرة الأرز."
+      },
+      {
+        "q": "ما هو التصحر (Desertification)؟",
+        "a": "تدهور القدرة الإنتاجية للأرض الزراعية وتحولها لصحراء بسبب الجفاف والرعي الجائر."
+      },
+      {
+        "q": "ما الفرق بين الجفاف والتصحر؟",
+        "a": "الجفاف قلة أو انحباس الأمطار لفترات، بينما التصحر تدهور التربة وفقدانها للغطاء النباتي."
+      },
+      {
+        "q": "لماذا تعتبر حشائش السافانا المدارية بمثابة حديقة حيوان طبيعية؟",
+        "a": "لأنها يعيش بها حيوانات آكلة للعشب (زراف، أفيال) وحيوانات مفترسة (أسود، نمور)."
+      },
+      {
+        "q": "اذكر سببين بشريين لحدوث ظاهرة التصحر.",
+        "a": "الرعي الجائر للحيوانات، وقطع الأشجار وحرق الغابات، والزراعة المجهدة للتربة."
+      },
+      {
+        "q": "ما هي أكبر مبادرة بيئية أطلقتها المملكة العربية السعودية لمواجهة التصحر؟",
+        "a": "مبادرة السعودية الخضراء لزراعة 10 مليارات شجرة."
+      },
+      {
+        "q": "كيف يسهم استخدام الطاقة الشمسية والري بالتنقيط في حماية بيئة الوطن العربي؟",
+        "a": "بترشيد استهلاك المياه العذبة وخفض الانبعاثات الكربونية والاحتباس الحراري."
+      }
+    ],
+    "labRenderer": "renderArabEnvironmentLab"
+  },
+  {
+    "id": "soc105_egypt_geography",
+    "subjectCode": "Social Studies 105",
+    "subjectName": "الدراسات الاجتماعية",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "🇪🇬",
+    "title": "موقع مصر الجغرافي والممرات المائية الاستراتيجية",
+    "titleEn": "Egypt's Strategic Location & Waterways",
+    "theory": {
+      "title": "موقع مصر الفلكي والجغرافي وأهمية قناة السويس",
+      "concept": "تقع مصر في قلب العالم القديم، وتمتلك موقعاً جغرافياً عبقرياً في الركن الشمالي الشرقي لقارة أفريقيا، ملتقى قارات العالم القديم (آسيا وأفريقيا وأوروبا)، وتشرف على أهم بحرين في العالم.",
+      "rules": [
+        "<b>1. الموقع الجغرافي:</b>",
+        "   - تقع مصر في الركن الشمالي الشرقي من قارة أفريقيا.",
+        "   - يحدها شمالاً: البحر المتوسط.",
+        "   - يحدها شرقاً: البحر الأحمر وخليج العقبة وفلسطين.",
+        "   - يحدها جنوباً: جمهورية السودان الشقيقة.",
+        "   - يحدها غرباً: دولة ليبيا الشقيقة.",
+        "<b>2. الموقع الفلكي:</b> تمتد مصر بين خطي طول 24° إلى 37° شرقاً، ودائرتي عرض 22° إلى 31.5° شمالاً، ويمر مدار السرطان في جنوبها.",
+        "<b>3. شريان الحياة:</b> نهر النيل الذي يربط مصر بعمق قارة أفريقيا وكان سبباً في قيام أعظم حضارة زراعية.",
+        "<b>4. قناة السويس:</b> افتتحت للملاحة عام 1869 وازدادت أهميتها بافتتاح قناة السويس الجديدة 2015 لتوفير زمن الرحلة واستيعاب السفن العملاقة."
+      ],
+      "examples": [
+        "قناة السويس: قللت مدة عبور السفن من 20 ساعة إلى 11 ساعة فقط بعد حفر القناة الجديدة.",
+        "شبه جزيرة سيناء: بوابة مصر الشرقية وبوابة الاتصال بالقارة الآسيوية."
+      ],
+      "traps": "فخ الامتحان: الخلط بين مدار الجدي ومدار السرطان. الذي يمر بجنوب مصر هو مدار السرطان (وليس الجدي)."
+    },
+    "flashcards": [
+      {
+        "q": "في أي ركن من قارة أفريقيا تقع جمهورية مصر العربية؟",
+        "a": "في الركن الشمالي الشرقي لقارة أفريقيا."
+      },
+      {
+        "q": "ما هي قارات العالم القديم الثلاث التي تتوسطها مصر؟",
+        "a": "آسيا، أفريقيا، وأوروبا."
+      },
+      {
+        "q": "ما البحر الذي يحد مصر من جهة الشمال؟",
+        "a": "البحر المتوسط."
+      },
+      {
+        "q": "ما البحر الذي يحد مصر من جهة الشرق؟",
+        "a": "البحر الأحمر."
+      },
+      {
+        "q": "ما اسم المدار الرئيسي الذي يمر في أقصى جنوب مصر؟",
+        "a": "مدار السرطان."
+      },
+      {
+        "q": "في أي عام تم افتتاح قناة السويس للملاحة الدولية لأول مرة؟",
+        "a": "عام 1869 م في عهد الخديوي إسماعيل."
+      },
+      {
+        "q": "ما الدولة الشقيقة التي تقع على الحدود الغربية لمصر؟",
+        "a": "دولة ليبيا."
+      },
+      {
+        "q": "ما الدولة الشقيقة التي تقع على الحدود الجنوبية لمصر؟",
+        "a": "جمهورية السودان."
+      },
+      {
+        "q": "ما أثر حفر قناة السويس الجديدة عام 2015 على الملاحة البحرية؟",
+        "a": "تقليل زمن انتظار السفن وتسيير القوافل في الاتجاهين واستيعاب أكبر السفن."
+      },
+      {
+        "q": "ما الدور الحضاري لنهر النيل بالنسبة لمصر عبر التاريخ؟",
+        "a": "شريان الحياة الذي علم المصريين الزراعة والاستقرار وأتاح التواصل مع دول حوض النيل."
+      }
+    ],
+    "labRenderer": "renderEgyptGeographyLab"
+  },
+  {
+    "id": "soc105_ancient_civilization",
+    "subjectCode": "Social Studies 105",
+    "subjectName": "الدراسات الاجتماعية",
+    "student": "Ali",
+    "grade": "Year 5 (G5)",
+    "icon": "🏺",
+    "title": "عوامل قيام الحضارة المصرية القديمة",
+    "titleEn": "Pillars of Ancient Egyptian Civilization",
+    "theory": {
+      "title": "العوامل الطبيعية والبشرية التي صنعت أقدم حضارة في التاريخ",
+      "concept": "قامت الحضارة المصرية القديمة بفضل تضافر عوامل طبيعية وهبها الله لمصر، وعوامل بشرية بذلها أجدادنا الفراعنة من كفاح وتضحية وتنظيم.",
+      "rules": [
+        "<b>1. العوامل الطبيعية (هبة الله):</b>",
+        "   - <b>نهر النيل:</b> مصدر المياه العذبة والطمي الخصب، علّم المصريين الزراعة والاستقرار، وكان المصريون يقدسونه ويعتبرون تلويثه جريمة كبرى.",
+        "   - <b>الموقع الجغرافي المتميز:</b> ساعد على سهولة الاتصال بدول الجوار والتجارة ونقل الثقافة.",
+        "   - <b>المناخ المعتدل الجاف:</b> ساعد على تنوع المحاصيل الزراعية وحماية الآثار والمعابد من التآكل لآلاف السنين.",
+        "   - <b>الثروات المعدنية والصخور:</b> وفرة الذهب والنحاس والجرانيت والحجر الجيري لبناء الأهرامات والمعابد ونحت التماثيل وصناعة الحلي.",
+        "<b>2. العوامل البشرية (كفاح الإنسان المصري):</b>",
+        "   - <b>الوحدة والاتحاد:</b> توحيد البلاد على يد الملك مينا (نعرمر) عام 3200 ق.م وتأسيس أول أسرة حاكمة.",
+        "   - <b>الجيش القوي:</b> جيش موحد يحمي حدود الوطن ويحفظ أمنه واستقراره.",
+        "   - <b>الحكومة المركزية:</b> ترعى مصالح الشعب وتنظم الري والزراعة والقضاء.",
+        "   - <b>كفاح الشعب المصري:</b> الجهد والإخلاص الذي حول هذه الموارد إلى حضارة خالدة."
+      ],
+      "examples": [
+        "الملك مينا: موحد القطرين ولبس التاج المزدوج (الأبيض والأحمر) وأسس عاصمة منف.",
+        "حماية نهر النيل: كان المصري القديم يقسم في محكمته الأخروية: 'لم ألوث ماء نهر النيل أبداً'."
+      ],
+      "traps": "فخ الامتحان: اعتبار 'الجيش' أو 'الوحدة' عاملاً طبيعياً! الجيش والوحدة والحكومة هي عوامل بشرية، بينما النيل والمناخ والمعادن عوامل طبيعية."
+    },
+    "flashcards": [
+      {
+        "q": "ما هما النوعان الرئيسيان لعوامل قيام الحضارة المصرية القديمة؟",
+        "a": "1. عوامل طبيعية (من الله)، 2. عوامل بشرية (كفاح وتنظيم الإنسان)."
+      },
+      {
+        "q": "اذكر العوامل الطبيعية الأربعة لقيام الحضارة المصرية القديمة.",
+        "a": "نهر النيل، الموقع الجغرافي، المناخ المعتدل، الثروات المعدنية والصخور."
+      },
+      {
+        "q": "اذكر العوامل البشرية الأربعة لقيام الحضارة المصرية القديمة.",
+        "a": "الوحدة، الجيش القوي، الحكومة المركزية، كفاح الإنسان المصري."
+      },
+      {
+        "q": "من هو الملك الفرعوني الذي وحّد القطرين وأسس أول أسرة حاكمة عام 3200 ق.م؟",
+        "a": "الملك مينا (نعرمر)."
+      },
+      {
+        "q": "ما اسم أول عاصمة موحدة لمصر أسسها الملك مينا؟",
+        "a": "مدينة منف (الجدار الأبيض)."
+      },
+      {
+        "q": "كيف ساعد مناخ مصر الجاف على بقاء الآثار الفرعونية لآلاف السنين؟",
+        "a": "حمى المعابد والأهرامات والنقوش وأوراق البردي من التلف والتحلل بالرطوبة."
+      },
+      {
+        "q": "فيمَ استخدم المصريون القدماء الجرانيت والحجر الجيري؟",
+        "a": "في تشييد الأهرامات والمعابد الخالدة ونحت التوابيت والتماثيل الضخمة."
+      },
+      {
+        "q": "ماذا كان يقسم المصري القديم في محكمة الموتى بشأن نهر النيل؟",
+        "a": "كان يقسم قائلاً: 'لم أدنس ماء نهر النيل أبداً'."
+      },
+      {
+        "q": "ما الدور الرئيسي للحكومة المركزية في مصر القديمة؟",
+        "a": "تنظيم شؤون الري، توزيع الحصص، رعاية مصالح الشعب، وتطبيق العدالة."
+      },
+      {
+        "q": "هل الجيش القوي عامل طبيعي أم بشري؟",
+        "a": "عامل بشري، دوره الدفاع عن أراضي الوطن وحماية الاستقرار الحضاري."
+      }
+    ],
+    "labRenderer": "renderAncientCivilizationLab"
+  }
+];
+
+  window.HUMANITIES_STUDIO_MAP = {};
+  window.HUMANITIES_STUDIO_DATA.forEach(function(u) {
+    window.HUMANITIES_STUDIO_MAP[u.id] = u;
+    /* Also register into global STEM studio map so openStudioUnit finds all 37 units */
+    if (window.STEM_STUDIO_MAP) {
+      window.STEM_STUDIO_MAP[u.id] = u;
+    }
+  });
+
+  /* Keep STEM_STUDIO_DATA (18) and HUMANITIES_STUDIO_DATA (19) strictly distinct */
+
+  /* =========================================================================
+   * LAB 1: Relative Clauses Sentence Joiner & Inspector
+   * ========================================================================= */
+  function renderRelativeClausesLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🔗 Relative Clause Sentence Joiner</h4>' +
+          '<span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 999px; font-weight: 700;">English 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 14px;">Synthesise complex sentences by selecting the correct relative pronoun and comma configuration.</p>' +
+        '<div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 14px;">' +
+          '<div style="font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 8px;">Step 1: Choose Base Clause Pair</div>' +
+          '<select id="rc-pair-select" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem;">' +
+            '<option value="fleming">Alexander Fleming was Scottish. He discovered penicillin.</option>' +
+            '<option value="telescope">The telescope revolutionized astronomy. It was invented in 1608.</option>' +
+            '<option value="student">Students achieve higher grades. They complete homework on time.</option>' +
+            '<option value="author">The author visited our school. Her book topped the bestseller list.</option>' +
+          '</select>' +
+          '<div style="margin-top: 12px; font-size: 0.85rem; font-weight: 700; color: #334155; margin-bottom: 8px;">Step 2: Select Relative Pronoun</div>' +
+          '<div style="display: flex; gap: 8px; flex-wrap: wrap;">' +
+            '<button type="button" class="portal-btn" id="btn-rc-who" style="padding: 6px 14px; font-size: 0.85rem; background: #3b82f6; color: #fff;">who</button>' +
+            '<button type="button" class="portal-btn" id="btn-rc-which" style="padding: 6px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">which</button>' +
+            '<button type="button" class="portal-btn" id="btn-rc-whose" style="padding: 6px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">whose</button>' +
+            '<button type="button" class="portal-btn" id="btn-rc-that" style="padding: 6px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">that</button>' +
+          '</div>' +
+          '<div style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">' +
+            '<input type="checkbox" id="rc-comma-toggle" checked style="width: 18px; height: 18px;">' +
+            '<label for="rc-comma-toggle" style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">Surround with Commas (Non-defining / Extra Information)</label>' +
+          '</div>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #94a3b8; margin-bottom: 4px;">Synthesized Sentence Result:</div>' +
+          '<div id="rc-result-sentence" style="font-family: monospace; font-size: 1rem; color: #38bdf8; min-height: 24px;">Alexander Fleming, who discovered penicillin, was Scottish.</div>' +
+          '<div id="rc-analysis-badge" style="margin-top: 8px; font-size: 0.8rem; color: #4ade80;">✓ Correct: Non-defining relative clause modifying a specific named person (Fleming) requires commas and "who".</div>' +
+        '</div>' +
+      '</div>';
+
+    var selectedPronoun = 'who';
+    function updateRC() {
+      var pair = document.getElementById('rc-pair-select').value;
+      var commas = document.getElementById('rc-comma-toggle').checked;
+      var out = document.getElementById('rc-result-sentence');
+      var badge = document.getElementById('rc-analysis-badge');
+      var sent = '';
+      var valid = false;
+      var msg = '';
+
+      if (pair === 'fleming') {
+        sent = 'Alexander Fleming' + (commas ? ', ' : ' ') + selectedPronoun + ' discovered penicillin' + (commas ? ', ' : ' ') + 'was Scottish.';
+        if (selectedPronoun === 'who' && commas) {
+          valid = true; msg = '✓ Perfectly Punctuated: Non-defining relative clause modifying a proper noun requires commas and "who".';
+        } else if (selectedPronoun === 'that') {
+          msg = '⚠️ Cambridge Trap: Never use "that" with commas in non-defining clauses! Use "who".';
+        } else if (!commas) {
+          msg = '⚠️ Punctuation Error: Fleming is already uniquely identified, so extra information MUST have commas around it.';
+        } else {
+          msg = '⚠️ Pronoun Error: Use "who" for human persons, not "' + selectedPronoun + '".';
+        }
+      } else if (pair === 'telescope') {
+        sent = 'The telescope' + (commas ? ', ' : ' ') + selectedPronoun + ' was invented in 1608' + (commas ? ', ' : ' ') + 'revolutionized astronomy.';
+        if ((selectedPronoun === 'which' && commas) || (selectedPronoun === 'that' && !commas)) {
+          valid = true; msg = '✓ Valid Structure: Non-defining uses "which" with commas; defining uses "that" without commas.';
+        } else if (selectedPronoun === 'that' && commas) {
+          msg = '⚠️ Cambridge Trap: Do not use "that" inside commas.';
+        } else {
+          msg = '⚠️ Use "which" for inanimate instruments.';
+        }
+      } else if (pair === 'student') {
+        sent = 'Students' + (commas ? ', ' : ' ') + selectedPronoun + ' complete homework on time' + (commas ? ', ' : ' ') + 'achieve higher grades.';
+        if (selectedPronoun === 'who' && !commas) {
+          valid = true; msg = '✓ Correct Defining Clause: Essential information specifying WHICH students; NO commas required.';
+        } else if (commas) {
+          msg = '⚠️ Semantic Error: Adding commas means ALL students automatically do homework, which distorts the defining rule!';
+        } else {
+          msg = '⚠️ Use "who" for students.';
+        }
+      } else if (pair === 'author') {
+        sent = 'The author' + (commas ? ', ' : ' ') + selectedPronoun + ' book topped the bestseller list' + (commas ? ', ' : ' ') + 'visited our school.';
+        if (selectedPronoun === 'whose') {
+          valid = true; msg = '✓ Correct: "whose" shows possession of the book.';
+        } else {
+          msg = '⚠️ Possession required: Choose "whose" to link the author and her book.';
+        }
+      }
+
+      out.textContent = sent;
+      badge.textContent = msg;
+      badge.style.color = valid ? '#4ade80' : '#f87171';
+    }
+
+    ['who', 'which', 'whose', 'that'].forEach(function(p) {
+      var b = document.getElementById('btn-rc-' + p);
+      if (b) {
+        b.onclick = function() {
+          selectedPronoun = p;
+          ['who', 'which', 'whose', 'that'].forEach(function(x) {
+            var btn = document.getElementById('btn-rc-' + x);
+            if (btn) btn.style.background = (x === p) ? '#3b82f6' : '#64748b';
+          });
+          updateRC();
+        };
+      }
+    });
+
+    document.getElementById('rc-pair-select').onchange = updateRC;
+    document.getElementById('rc-comma-toggle').onchange = updateRC;
+  }
+
+  /* =========================================================================
+   * LAB 2: Connectives & Conjunctions Assembler
+   * ========================================================================= */
+  function renderConnectivesLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">⚡ Conjunctions & Clause Synthesizer</h4>' +
+          '<span style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 999px; font-weight: 700;">English 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Test coordinating (FANBOYS) versus subordinating connectives with positional commas.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">' +
+          '<button type="button" class="portal-btn btn-conj" data-c="Although" style="padding: 6px 12px; font-size: 0.82rem; background: #3b82f6; color: #fff;">Although (Sub)</button>' +
+          '<button type="button" class="portal-btn btn-conj" data-c="Whereas" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">Whereas (Sub)</button>' +
+          '<button type="button" class="portal-btn btn-conj" data-c="but" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">but (Coord)</button>' +
+          '<button type="button" class="portal-btn btn-conj" data-c="Despite" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">Despite (Prep)</button>' +
+          '<button type="button" class="portal-btn btn-conj" data-c="so" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">so (Coord)</button>' +
+        '</div>' +
+        '<div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+          '<input type="checkbox" id="conj-front-toggle" checked style="width: 18px; height: 18px;">' +
+          '<label for="conj-front-toggle" style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">Front the Subordinate Clause (Start Sentence)</label>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Assembled Sentence:</div>' +
+          '<div id="conj-output-text" style="font-family: monospace; font-size: 0.95rem; color: #fbbf24;">Although it rained heavily, the football match continued.</div>' +
+          '<div id="conj-rule-note" style="margin-top: 8px; font-size: 0.8rem; color: #4ade80;">✓ Subordinating conjunction at front requires a comma after the dependent clause.</div>' +
+        '</div>' +
+      '</div>';
+
+    var activeConj = 'Although';
+    function updateConj() {
+      var isFront = document.getElementById('conj-front-toggle').checked;
+      var out = document.getElementById('conj-output-text');
+      var note = document.getElementById('conj-rule-note');
+
+      if (activeConj === 'Although') {
+        if (isFront) {
+          out.textContent = 'Although it rained heavily, the football match continued.';
+          note.textContent = '✓ Subordinating conjunction at front: comma separates dependent clause from independent clause.';
+          note.style.color = '#4ade80';
+        } else {
+          out.textContent = 'The football match continued although it rained heavily.';
+          note.textContent = '✓ Subordinating conjunction second: NO comma is normally used before although.';
+          note.style.color = '#4ade80';
+        }
+      } else if (activeConj === 'Whereas') {
+        if (isFront) {
+          out.textContent = 'Whereas reptiles are cold-blooded, birds and mammals are warm-blooded.';
+          note.textContent = '✓ Direct contrast conjunction at front: requires comma between contrast pairs.';
+          note.style.color = '#4ade80';
+        } else {
+          out.textContent = 'Birds and mammals are warm-blooded, whereas reptiles are cold-blooded.';
+          note.textContent = '✓ Whereas in second position still takes a comma in formal Cambridge style to mark direct contrast.';
+          note.style.color = '#4ade80';
+        }
+      } else if (activeConj === 'but') {
+        out.textContent = 'It rained heavily, but the football match continued.';
+        note.textContent = '✓ Coordinating conjunction (FANBOYS): links two independent clauses with a comma before "but".';
+        note.style.color = '#4ade80';
+      } else if (activeConj === 'Despite') {
+        out.textContent = 'Despite the heavy rain, the football match continued.';
+        note.textContent = '✓ Despite is followed by a noun phrase ("the heavy rain"), not a finite verb clause!';
+        note.style.color = '#4ade80';
+      } else if (activeConj === 'so') {
+        out.textContent = 'The battery was flat, so the lamp did not illuminate.';
+        note.textContent = '✓ "So" expresses consequence in FANBOYS: comma precedes "so".';
+        note.style.color = '#4ade80';
+      }
+    }
+
+    container.querySelectorAll('.btn-conj').forEach(function(btn) {
+      btn.onclick = function() {
+        activeConj = btn.getAttribute('data-c');
+        container.querySelectorAll('.btn-conj').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        updateConj();
+      };
+    });
+    document.getElementById('conj-front-toggle').onchange = updateConj;
+  }
+
+  /* =========================================================================
+   * LAB 3: Genre Analysis (Fiction vs Non-Fiction)
+   * ========================================================================= */
+  function renderGenreLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">📚 Genre Text Feature Scanner</h4>' +
+          '<span style="font-size: 0.8rem; background: #f3e8ff; color: #6b21a8; padding: 3px 10px; border-radius: 999px; font-weight: 700;">English 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Scan text passages for linguistic devices: Passive voice, figurative language, technical terms, and dialogue.</p>' +
+        '<div style="display: flex; gap: 8px; margin-bottom: 14px;">' +
+          '<button type="button" class="portal-btn" id="btn-genre-report" style="padding: 6px 14px; font-size: 0.85rem; background: #3b82f6; color: #fff;">Sample A: Scientific Report</button>' +
+          '<button type="button" class="portal-btn" id="btn-genre-fiction" style="padding: 6px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">Sample B: Fantasy Fiction</button>' +
+        '</div>' +
+        '<div id="genre-text-display" style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 14px; font-size: 0.9rem; line-height: 1.6; margin-bottom: 12px; color: #1e293b;">' +
+          'Blood <mark style="background: #fef08a;">is pumped</mark> continuously by the heart through <mark style="background: #bbf7d0;">arteries and capillaries</mark>. <mark style="background: #bae6fd;">Furthermore</mark>, oxygen <mark style="background: #fef08a;">is transported</mark> to active muscle tissues.' +
+        '</div>' +
+        '<div id="genre-feature-breakdown" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px;">' +
+          '<div style="background: #fef9c3; border: 1px solid #fde047; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #713f12;">🟡 Passive Voice (is pumped / is transported)</div>' +
+          '<div style="background: #dcfce7; border: 1px solid #86efac; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #14532d;">🟢 Technical Lexis (arteries / capillaries)</div>' +
+          '<div style="background: #e0f2fe; border: 1px solid #7dd3fc; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #075985;">🔵 Formal Connective (Furthermore)</div>' +
+        '</div>' +
+      '</div>';
+
+    var btnA = document.getElementById('btn-genre-report');
+    var btnB = document.getElementById('btn-genre-fiction');
+    var txt = document.getElementById('genre-text-display');
+    var bkd = document.getElementById('genre-feature-breakdown');
+
+    btnA.onclick = function() {
+      btnA.style.background = '#3b82f6';
+      btnB.style.background = '#64748b';
+      txt.innerHTML = 'Blood <mark style="background: #fef08a;">is pumped</mark> continuously by the heart through <mark style="background: #bbf7d0;">arteries and capillaries</mark>. <mark style="background: #bae6fd;">Furthermore</mark>, oxygen <mark style="background: #fef08a;">is transported</mark> to active muscle tissues.';
+      bkd.innerHTML = 
+        '<div style="background: #fef9c3; border: 1px solid #fde047; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #713f12;">🟡 Passive Voice (is pumped / is transported)</div>' +
+        '<div style="background: #dcfce7; border: 1px solid #86efac; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #14532d;">🟢 Technical Lexis (arteries / capillaries)</div>' +
+        '<div style="background: #e0f2fe; border: 1px solid #7dd3fc; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #075985;">🔵 Formal Connective (Furthermore)</div>';
+    };
+
+    btnB.onclick = function() {
+      btnB.style.background = '#3b82f6';
+      btnA.style.background = '#64748b';
+      txt.innerHTML = '<mark style="background: #fbcfe8;">Like molten gold</mark>, the dragon\'s breath scorched the <mark style="background: #fed7aa;">ancient, crumbling stones</mark>. <mark style="background: #ddd6fe;">"Hold the gate!"</mark> screamed the captain.';
+      bkd.innerHTML = 
+        '<div style="background: #fce7f3; border: 1px solid #f472b6; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #831843;">🌸 Simile (Like molten gold)</div>' +
+        '<div style="background: #ffedd5; border: 1px solid #fb923c; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #7c2d12;">🟠 Expanded Noun Phrase (ancient, crumbling stones)</div>' +
+        '<div style="background: #ede9fe; border: 1px solid #a78bfa; padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #4c1d95;">🟣 Direct Speech with Reporting Verb</div>';
+    };
+  }
+
+  /* =========================================================================
+   * LAB 4: Fronted Adverbials Builder (Ali - English 105)
+   * ========================================================================= */
+  function renderAdverbialsLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">⏱️ Fronted Adverbials & Comma Arranger</h4>' +
+          '<span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 999px; font-weight: 700;">English 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Front adverbials of Time, Place, or Manner and inspect the compulsory comma rule.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">' +
+          '<button type="button" class="portal-btn btn-adv-type" data-type="time" style="padding: 6px 12px; font-size: 0.82rem; background: #3b82f6; color: #fff;">Time: Before dawn</button>' +
+          '<button type="button" class="portal-btn btn-adv-type" data-type="place" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">Place: In the desert</button>' +
+          '<button type="button" class="portal-btn btn-adv-type" data-type="manner" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">Manner: Silently</button>' +
+        '</div>' +
+        '<div style="margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">' +
+          '<input type="checkbox" id="adv-comma-check" checked style="width: 18px; height: 18px;">' +
+          '<label for="adv-comma-check" style="font-size: 0.85rem; font-weight: 700; color: #0f172a;">Include Mandatory Comma (,)</label>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Synthesized Sentence:</div>' +
+          '<div id="adv-output-display" style="font-family: monospace; font-size: 1rem; color: #38bdf8;">Before dawn, the astronaut boarded the shuttle.</div>' +
+          '<div id="adv-validation-text" style="margin-top: 8px; font-size: 0.8rem; color: #4ade80;">✓ Correct: Fronted adverbial of Time followed by a comma.</div>' +
+        '</div>' +
+      '</div>';
+
+    var advType = 'time';
+    function updateAdv() {
+      var hasComma = document.getElementById('adv-comma-check').checked;
+      var out = document.getElementById('adv-output-display');
+      var val = document.getElementById('adv-validation-text');
+
+      var phrase = (advType === 'time') ? 'Before dawn' : ((advType === 'place') ? 'In the desert' : 'Silently');
+      var clause = (advType === 'time') ? 'the astronaut boarded the shuttle.' : ((advType === 'place') ? 'water is a precious treasure.' : 'the owl swooped upon its prey.');
+
+      out.textContent = phrase + (hasComma ? ', ' : ' ') + clause;
+      if (hasComma) {
+        val.textContent = '✓ Correct: Fronted adverbial of ' + advType.toUpperCase() + ' strictly followed by comma.';
+        val.style.color = '#4ade80';
+      } else {
+        val.textContent = '⚠️ Punctuation Trap: Missing comma after fronted adverbial! Year 5 checkpoint exams deduct marks.';
+        val.style.color = '#f87171';
+      }
+    }
+
+    container.querySelectorAll('.btn-adv-type').forEach(function(btn) {
+      btn.onclick = function() {
+        advType = btn.getAttribute('data-type');
+        container.querySelectorAll('.btn-adv-type').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        updateAdv();
+      };
+    });
+    document.getElementById('adv-comma-check').onchange = updateAdv;
+  }
+
+  /* =========================================================================
+   * LAB 5: Direct Speech Dialogue Punctuation Inspector
+   * ========================================================================= */
+  function renderDirectSpeechLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">💬 Direct Speech Punctuation Bench</h4>' +
+          '<span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 999px; font-weight: 700;">English 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Test correct placement of inverted commas and punctuation marks.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">' +
+          '<button type="button" class="portal-btn btn-speech-mode" data-mode="correct" style="padding: 6px 12px; font-size: 0.82rem; background: #10b981; color: #fff;">Correct Pattern</button>' +
+          '<button type="button" class="portal-btn btn-speech-mode" data-mode="outside" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">Trap: Punctuation Outside</button>' +
+          '<button type="button" class="portal-btn btn-speech-mode" data-mode="split" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">Split Dialogue</button>' +
+        '</div>' +
+        '<div id="speech-render-box" style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px; font-family: monospace; font-size: 0.95rem;">' +
+          '<span style="color: #facc15;">"</span><span style="color: #38bdf8;">Hurry up!</span><span style="color: #facc15;">"</span> whispered Ali.' +
+        '</div>' +
+        '<div id="speech-explanation" style="margin-top: 10px; font-size: 0.82rem; color: #4ade80;">✓ Punctuation (!) is safely INSIDE the closing quotation mark.</div>' +
+      '</div>';
+
+    container.querySelectorAll('.btn-speech-mode').forEach(function(btn) {
+      btn.onclick = function() {
+        var mode = btn.getAttribute('data-mode');
+        container.querySelectorAll('.btn-speech-mode').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        var box = document.getElementById('speech-render-box');
+        var exp = document.getElementById('speech-explanation');
+        if (mode === 'correct') {
+          box.innerHTML = '<span style="color: #facc15;">"</span><span style="color: #38bdf8;">Hurry up!</span><span style="color: #facc15;">"</span> whispered Ali.';
+          exp.textContent = '✓ Perfect: Exclamation mark is safely placed inside the closing quotes.';
+          exp.style.color = '#4ade80';
+        } else if (mode === 'outside') {
+          box.innerHTML = '<span style="color: #facc15;">"</span><span style="color: #38bdf8;">Hurry up</span><span style="color: #facc15;">"</span>! whispered Ali.';
+          exp.textContent = '⚠️ Severe Error: Punctuation mark placed outside speech marks! Must be inside.';
+          exp.style.color = '#f87171';
+        } else if (mode === 'split') {
+          box.innerHTML = '<span style="color: #facc15;">"</span><span style="color: #38bdf8;">Wait here,</span><span style="color: #facc15;">"</span> whispered Ali, <span style="color: #facc15;">"</span><span style="color: #38bdf8;">until dawn breaks.</span><span style="color: #facc15;">"</span>';
+          exp.textContent = '✓ Split dialogue: Comma follows first clause inside quotes; second spoken clause continues with lowercase unless a proper noun.';
+          exp.style.color = '#4ade80';
+        }
+      };
+    });
+  }
+
+  /* =========================================================================
+   * LAB 6: Fables & Proverbs Moral Analyzer
+   * ========================================================================= */
+  function renderFablesLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🦊 Fables, Personification & Proverbs Explorer</h4>' +
+          '<span style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 999px; font-weight: 700;">English 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Select a classic fable to examine character archetypes, narrative twist, and moral proverb.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">' +
+          '<button type="button" class="portal-btn btn-fable" data-f="hare" style="padding: 6px 12px; font-size: 0.82rem; background: #3b82f6; color: #fff;">The Tortoise & Hare</button>' +
+          '<button type="button" class="portal-btn btn-fable" data-f="crow" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">The Crow & Pitcher</button>' +
+          '<button type="button" class="portal-btn btn-fable" data-f="lion" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">The Lion & Mouse</button>' +
+        '</div>' +
+        '<div id="fable-card-body" style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; margin-bottom: 6px;" id="fable-title">The Tortoise and the Hare</div>' +
+          '<div style="font-size: 0.85rem; color: #334155; margin-bottom: 8px;" id="fable-archetypes"><b>Personification Archetypes:</b> Hare = Overconfidence & Arrogance | Tortoise = Quiet Perseverance.</div>' +
+          '<div style="font-size: 0.85rem; color: #334155; margin-bottom: 8px;" id="fable-twist"><b>The Narrative Twist:</b> The boastful fast runner falls asleep, while the slow creature crosses the finish line first.</div>' +
+          '<div style="background: #0f172a; color: #fbbf24; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.9rem;" id="fable-moral">Moral / Proverb: "Slow and steady wins the race."</div>' +
+        '</div>' +
+      '</div>';
+
+    container.querySelectorAll('.btn-fable').forEach(function(btn) {
+      btn.onclick = function() {
+        var f = btn.getAttribute('data-f');
+        container.querySelectorAll('.btn-fable').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        if (f === 'hare') {
+          document.getElementById('fable-title').textContent = 'The Tortoise and the Hare';
+          document.getElementById('fable-archetypes').innerHTML = '<b>Personification Archetypes:</b> Hare = Overconfidence & Arrogance | Tortoise = Quiet Perseverance.';
+          document.getElementById('fable-twist').innerHTML = '<b>The Narrative Twist:</b> The fast runner sleeps, while the slow creature crosses the finish line first.';
+          document.getElementById('fable-moral').textContent = 'Moral / Proverb: "Slow and steady wins the race."';
+        } else if (f === 'crow') {
+          document.getElementById('fable-title').textContent = 'The Crow and the Pitcher';
+          document.getElementById('fable-archetypes').innerHTML = '<b>Personification Archetypes:</b> Crow = Clever Problem Solver facing extreme thirst.';
+          document.getElementById('fable-twist').innerHTML = '<b>The Narrative Twist:</b> Drops stones one by one to raise water level instead of giving up.';
+          document.getElementById('fable-moral').textContent = 'Moral / Proverb: "Little by little does the trick / Necessity is the mother of invention."';
+        } else if (f === 'lion') {
+          document.getElementById('fable-title').textContent = 'The Lion and the Mouse';
+          document.getElementById('fable-archetypes').innerHTML = '<b>Personification Archetypes:</b> Lion = Mighty King of Beasts | Mouse = Tiny humble creature.';
+          document.getElementById('fable-twist').innerHTML = '<b>The Narrative Twist:</b> The tiny mouse gnaws through hunter\'s ropes to save the roaring king.';
+          document.getElementById('fable-moral').textContent = 'Moral / Proverb: "No act of kindness, no matter how small, is ever wasted."';
+        }
+      };
+    });
+  }
+
+  /* =========================================================================
+   * LAB 7: معمل فحص شروط وإعراب الأسماء الخمسة (Arabic 106)
+   * ========================================================================= */
+  function renderFiveNounsLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">👑 معمل فحص شروط وإعراب الأسماء الخمسة</h4>' +
+          '<span style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 3px 10px; border-radius: 999px; font-weight: 700;">اللغة العربية 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">اختر الجملة وافحص تحقق الشروط الأربعة لتحديد علامة الإعراب (فرعية بالحروف أم أصلية بالحركات).</p>' +
+        '<select id="fn-sentence-select" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; margin-bottom: 12px;">' +
+          '<option value="1">أبوك رجلٌ فاضل (مفرد + مضاف لكاف الخطاب)</option>' +
+          '<option value="2">رأيتُ أباك في المسجد (مفعول به مضاف لكاف الخطاب)</option>' +
+          '<option value="3">أبي يحبني كثيراً (مضاف لياء المتكلم)</option>' +
+          '<option value="4">هذا أبٌ رحيم (غير مضاف / منون)</option>' +
+          '<option value="5">نظف فمك بالفرشاة (فو اتصلت بها الميم)</option>' +
+          '<option value="6">استمع لنصيحة ذي العلم (ذو مضافة لاسم ظاهر)</option>' +
+        '</select>' +
+        '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">' +
+          '<div id="fn-cond-singular" style="padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; text-align: center;">1. الإفراد</div>' +
+          '<div id="fn-cond-added" style="padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; text-align: center;">2. الإضافة</div>' +
+          '<div id="fn-cond-notya" style="padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; text-align: center;">3. لغير ياء المتكلم</div>' +
+          '<div id="fn-cond-special" style="padding: 8px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; text-align: center;">4. شرط فو / ذو</div>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">النتيجة الإعرابية وحكم الكلمة:</div>' +
+          '<div id="fn-result-text" style="font-size: 1rem; color: #38bdf8; font-weight: 800;">مبتدأ مرفوع وعلامة رفعه الواو لأنه من الأسماء الخمسة.</div>' +
+          '<div id="fn-status-badge" style="margin-top: 6px; font-size: 0.8rem; color: #4ade80;">✓ استوفت جميع الشروط الأربعة: تعرب بعلامة فرعية (الواو).</div>' +
+        '</div>' +
+      '</div>';
+
+    function setPill(id, ok) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = ok ? '#dcfce7' : '#fee2e2';
+      el.style.color = ok ? '#14532d' : '#991b1b';
+      el.textContent = (ok ? '✓ ' : '✗ ') + el.textContent.replace(/^[✓✗] /, '');
+    }
+
+    function updateFN() {
+      var val = document.getElementById('fn-sentence-select').value;
+      var res = document.getElementById('fn-result-text');
+      var badge = document.getElementById('fn-status-badge');
+
+      if (val === '1') {
+        setPill('fn-cond-singular', true); setPill('fn-cond-added', true); setPill('fn-cond-notya', true); setPill('fn-cond-special', true);
+        res.textContent = 'أبوك: مبتدأ مرفوع وعلامة رفعه الواو (علامة فرعية) لأنه من الأسماء الخمسة، والكاف ضمير متصل في محل جر مضاف إليه.';
+        badge.textContent = '✓ استوفت الشروط الأربعة كاملة (مفردة، مضافة، لغير ياء المتكلم).';
+        badge.style.color = '#4ade80';
+      } else if (val === '2') {
+        setPill('fn-cond-singular', true); setPill('fn-cond-added', true); setPill('fn-cond-notya', true); setPill('fn-cond-special', true);
+        res.textContent = 'أباك: مفعول به منصوب وعلامة نصبه الألف (علامة فرعية) لأنه من الأسماء الخمسة.';
+        badge.textContent = '✓ استوفت الشروط الأربعة كاملة: تنصب بالألف نيابة عن الفتحة.';
+        badge.style.color = '#4ade80';
+      } else if (val === '3') {
+        setPill('fn-cond-singular', true); setPill('fn-cond-added', true); setPill('fn-cond-notya', false); setPill('fn-cond-special', true);
+        res.textContent = 'أبي: مبتدأ مرفوع وعلامة رفعه الضمة المقدرة على ما قبل ياء المتكلم.';
+        badge.textContent = '⚠️ فقدت الشرط: أضيفت لياء المتكلم، فتعرب بالحركات الأصلية المقدرة ولا تعرب بالحروف!';
+        badge.style.color = '#f87171';
+      } else if (val === '4') {
+        setPill('fn-cond-singular', true); setPill('fn-cond-added', false); setPill('fn-cond-notya', true); setPill('fn-cond-special', true);
+        res.textContent = 'أبٌ: خبر مرفوع وعلامة رفعه الضمة الظاهرة على آخره (منوّن).';
+        badge.textContent = '⚠️ فقدت الشرط: غير مضافة نهائياً، فتعرب بالحركات الأصلية الظاهرة كأي اسم عادي.';
+        badge.style.color = '#f87171';
+      } else if (val === '5') {
+        setPill('fn-cond-singular', true); setPill('fn-cond-added', true); setPill('fn-cond-notya', true); setPill('fn-cond-special', false);
+        res.textContent = 'فمك: مفعول به منصوب وعلامة نصبه الفتحة الظاهرة على آخره.';
+        badge.textContent = '⚠️ فقدت الشرط: اتصل حرف الميم بكلمة "فم"، فيبطل إعرابها بالحروف وتعرب بالحركات!';
+        badge.style.color = '#f87171';
+      } else if (val === '6') {
+        setPill('fn-cond-singular', true); setPill('fn-cond-added', true); setPill('fn-cond-notya', true); setPill('fn-cond-special', true);
+        res.textContent = 'ذي: مضاف إليه مجرور وعلامة جره الياء لأنه من الأسماء الخمسة.';
+        badge.textContent = '✓ استوفت الشروط: كلمة "ذو" جاءت بمعنى صاحب وأضيفت لاسم جنس ظاهر (العلم).';
+        badge.style.color = '#4ade80';
+      }
+    }
+
+    document.getElementById('fn-sentence-select').onchange = updateFN;
+    updateFN();
+  }
+
+  /* =========================================================================
+   * LAB 8: معمل تفكيك الجملة الاسمية وتحديد نوع الخبر (Arabic 106)
+   * ========================================================================= */
+  function renderTypesOfPredicateLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">⚖️ معمل تفكيك الجملة الاسمية وتحديد نوع الخبر</h4>' +
+          '<span style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 3px 10px; border-radius: 999px; font-weight: 700;">اللغة العربية 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">اختر جملة نموذجية ولاحظ تفكيك المبتدأ، ونوع الخبر، والضمير الرابط، والمحل الإعرابي.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">' +
+          '<button type="button" class="portal-btn btn-top-s" data-s="1" style="padding: 6px 12px; font-size: 0.82rem; background: #3b82f6; color: #fff;">العلمُ نورٌ</button>' +
+          '<button type="button" class="portal-btn btn-top-s" data-s="2" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">الحديقةُ أزهارُها متفتحةٌ</button>' +
+          '<button type="button" class="portal-btn btn-top-s" data-s="3" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">المعلمُ يشرحُ الدرسَ</button>' +
+          '<button type="button" class="portal-btn btn-top-s" data-s="4" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">العصفورُ فوقَ الشجرةِ</button>' +
+        '</div>' +
+        '<div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 14px;">' +
+          '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap;">' +
+            '<div><b>المبتدأ:</b> <span id="top-subject" style="color: #2563eb;">العلمُ</span></div>' +
+            '<div><b>نوع الخبر:</b> <span id="top-type" style="color: #d97706; font-weight: 800;">خبر مفرد</span></div>' +
+          '</div>' +
+          '<div style="margin-bottom: 8px;"><b>الخبر نصاً:</b> <span id="top-predicate" style="color: #0f172a; font-weight: 700;">نورٌ</span></div>' +
+          '<div style="margin-bottom: 8px;"><b>الضمير الرابط:</b> <span id="top-link" style="color: #64748b;">لا يحتاج إلى رابط لأنه مفرد.</span></div>' +
+          '<div style="background: #0f172a; color: #4ade80; padding: 10px; border-radius: 8px; font-size: 0.88rem; font-weight: 700;" id="top-analysis">الإعراب: نورٌ: خبر المبتدأ مرفوع وعلامة رفعه الضمة الظاهرة على آخره.</div>' +
+        '</div>' +
+      '</div>';
+
+    container.querySelectorAll('.btn-top-s').forEach(function(btn) {
+      btn.onclick = function() {
+        var s = btn.getAttribute('data-s');
+        container.querySelectorAll('.btn-top-s').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        if (s === '1') {
+          document.getElementById('top-subject').textContent = 'العلمُ';
+          document.getElementById('top-type').textContent = 'خبر مفرد';
+          document.getElementById('top-predicate').textContent = 'نورٌ';
+          document.getElementById('top-link').textContent = 'لا يحتاج إلى رابط لأنه كلمة واحدة مفردة.';
+          document.getElementById('top-analysis').textContent = 'الإعراب: نورٌ: خبر المبتدأ مرفوع وعلامة رفعه الضمة الظاهرة على آخره.';
+        } else if (s === '2') {
+          document.getElementById('top-subject').textContent = 'الحديقةُ';
+          document.getElementById('top-type').textContent = 'خبر جملة اسمية';
+          document.getElementById('top-predicate').textContent = 'أزهارُها متفتحةٌ';
+          document.getElementById('top-link').textContent = 'الهاء في (أزهارها) تعود على الحديقة وتطابقها.';
+          document.getElementById('top-analysis').textContent = 'أزهار: مبتدأ ثان مرفوع بالضمة والهاء مضاف إليه، ومتفتحة: خبر المبتدأ الثاني، والجملة الاسمية في محل رفع خبر المبتدأ الأول.';
+        } else if (s === '3') {
+          document.getElementById('top-subject').textContent = 'المعلمُ';
+          document.getElementById('top-type').textContent = 'خبر جملة فعلية';
+          document.getElementById('top-predicate').textContent = 'يشرحُ الدرسَ';
+          document.getElementById('top-link').textContent = 'ضمير مستتر تقديره (هو) يعود على المعلم.';
+          document.getElementById('top-analysis').textContent = 'يشرح: فعل مضارع والفاعل ضمير مستتر (هو)، والجملة الفعلية من الفعل والفاعل في محل رفع خبر المبتدأ.';
+        } else if (s === '4') {
+          document.getElementById('top-subject').textContent = 'العصفورُ';
+          document.getElementById('top-type').textContent = 'خبر شبه جملة (ظرف مكان)';
+          document.getElementById('top-predicate').textContent = 'فوقَ الشجرةِ';
+          document.getElementById('top-link').textContent = 'شبه الجملة لا يشترط وجود رابط لفظي.';
+          document.getElementById('top-analysis').textContent = 'فوقَ: ظرف مكان منصوب، والشجرة: مضاف إليه مجرور، وشبه الجملة (فوق الشجرة) في محل رفع خبر المبتدأ.';
+        }
+      };
+    });
+  }
+
+  /* =========================================================================
+   * LAB 9: مصنف النكرة والمعرفة السريع (Arabic 106)
+   * ========================================================================= */
+  function renderNakiraMarifaLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🔍 مصنف النكرة والمعرفة وأقسام المعارف الستة</h4>' +
+          '<span style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 3px 10px; border-radius: 999px; font-weight: 700;">اللغة العربية 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">انقر على أي كلمة لتصنيفها فورياً وبيان نوع التعريف أو التنكير وسبب التصنيف.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">' +
+          '<button type="button" class="portal-btn btn-nm-word" data-w="القاهرة" style="padding: 8px 14px; font-size: 0.85rem; background: #3b82f6; color: #fff;">القاهرة</button>' +
+          '<button type="button" class="portal-btn btn-nm-word" data-w="كتابٌ" style="padding: 8px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">كتابٌ</button>' +
+          '<button type="button" class="portal-btn btn-nm-word" data-w="أنتَ" style="padding: 8px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">أنتَ</button>' +
+          '<button type="button" class="portal-btn btn-nm-word" data-w="هذا" style="padding: 8px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">هذا</button>' +
+          '<button type="button" class="portal-btn btn-nm-word" data-w="قلمي" style="padding: 8px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">قلمي</button>' +
+          '<button type="button" class="portal-btn btn-nm-word" data-w="الذي" style="padding: 8px 14px; font-size: 0.85rem; background: #64748b; color: #fff;">الذي</button>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">التصنيف الإعرابي:</div>' +
+          '<div id="nm-word-result" style="font-size: 1.1rem; color: #38bdf8; font-weight: 800;">القاهرة: معرفة (عَلَم لمدينة + معرّف بأل).</div>' +
+          '<div id="nm-word-reason" style="margin-top: 6px; font-size: 0.82rem; color: #4ade80;">يدل على مسمى بعينه محدد في الجغرافيا وهو عاصمة جمهورية مصر العربية.</div>' +
+        '</div>' +
+      '</div>';
+
+    container.querySelectorAll('.btn-nm-word').forEach(function(btn) {
+      btn.onclick = function() {
+        var w = btn.getAttribute('data-w');
+        container.querySelectorAll('.btn-nm-word').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        var res = document.getElementById('nm-word-result');
+        var rsn = document.getElementById('nm-word-reason');
+
+        if (w === 'القاهرة') {
+          res.textContent = 'القاهرة: معرفة (عَلَم لمدينة شهيرة + معرّف بأل).';
+          rsn.textContent = 'يدل على مكان محدد بعينه ولا يحتمل الشك أو الشيوع.';
+        } else if (w === 'كتابٌ') {
+          res.textContent = 'كتابٌ: نكرة (يقبل دخول أل والتنوين).';
+          rsn.textContent = 'اسم شائع غير معين يصدق على أي كتاب في الدنيا.';
+        } else if (w === 'أنتَ') {
+          res.textContent = 'أنتَ: معرفة (ضمير مخاطب منفصل).';
+          rsn.textContent = 'جميع الضمائر في اللغة العربية معارف باتفاق علماء النحو.';
+        } else if (w === 'هذا') {
+          res.textContent = 'هذا: معرفة (اسم إشارة للمفرد المذكر).';
+          rsn.textContent = 'أسماء الإشارة كلها معارف لأنها تشير إلى معين حاضر ومشار إليه.';
+        } else if (w === 'قلمي') {
+          res.textContent = 'قلمي: معرفة (معرّف بالإضافة إلى الضمير).';
+          rsn.textContent = 'كلمة قلم في الأصل نكرة، لكنها اكتسبت التعريف عند اتصالها بياء المتكلم.';
+        } else if (w === 'الذي') {
+          res.textContent = 'الذي: معرفة (اسم موصول للمفرد المذكر).';
+          rsn.textContent = 'الأسماء الموصولة كلها معارف لأن معناها يتعين بجملة الصلة التي تليها.';
+        }
+      };
+    });
+  }
+
+  /* =========================================================================
+   * LAB 10: ميزان ضبط المبتدأ والخبر بالحركات (Ali - Arabic 105)
+   * ========================================================================= */
+  function renderNominalSentenceLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">⚖️ ميزان ضبط المبتدأ والخبر وعلامات الرفع</h4>' +
+          '<span style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 3px 10px; border-radius: 999px; font-weight: 700;">اللغة العربية 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">اختر عدد الكلمة (مفرد، مثنى، جمع مذكر سالم، جمع مؤنث سالم) وشاهد علامة الرفع الصحيحة.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px;">' +
+          '<button type="button" class="portal-btn btn-ns-num" data-n="singular" style="padding: 6px 12px; font-size: 0.82rem; background: #3b82f6; color: #fff;">المفرد (الضمة)</button>' +
+          '<button type="button" class="portal-btn btn-ns-num" data-n="dual" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">المثنى (الألف)</button>' +
+          '<button type="button" class="portal-btn btn-ns-num" data-n="plural_m" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">جمع مذكر سالم (الواو)</button>' +
+          '<button type="button" class="portal-btn btn-ns-num" data-n="plural_f" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">جمع مؤنث سالم (الضمة)</button>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="display: flex; justify-content: space-around; text-align: center; margin-bottom: 8px;">' +
+            '<div><div style="color: #94a3b8; font-size: 0.75rem;">المبتدأ</div><div id="ns-sub-box" style="font-size: 1.15rem; font-weight: 800; color: #38bdf8;">الطالبُ</div></div>' +
+            '<div style="font-size: 1.5rem; color: #fbbf24;">+</div>' +
+            '<div><div style="color: #94a3b8; font-size: 0.75rem;">الخبر</div><div id="ns-pred-box" style="font-size: 1.15rem; font-weight: 800; color: #4ade80;">مجتهدٌ</div></div>' +
+          '</div>' +
+          '<div id="ns-rule-readout" style="background: #1e293b; padding: 10px; border-radius: 8px; font-size: 0.85rem; color: #f8fafc;">' +
+            'علامة الرفع: <b>الضمة الظاهرة</b> على آخرهما لأنهما مفرد.' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    container.querySelectorAll('.btn-ns-num').forEach(function(btn) {
+      btn.onclick = function() {
+        var n = btn.getAttribute('data-n');
+        container.querySelectorAll('.btn-ns-num').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        var s = document.getElementById('ns-sub-box');
+        var p = document.getElementById('ns-pred-box');
+        var r = document.getElementById('ns-rule-readout');
+
+        if (n === 'singular') {
+          s.textContent = 'الطالبُ'; p.textContent = 'مجتهدٌ';
+          r.innerHTML = 'علامة الرفع: <b>الضمة الظاهرة</b> (علامة أصلية) لأنهما مفرد.';
+        } else if (n === 'dual') {
+          s.textContent = 'الطالبانِ'; p.textContent = 'مجتهدانِ';
+          r.innerHTML = 'علامة الرفع: <b>الألف</b> (علامة فرعية تنوب عن الضمة) لأنهما مثنى، ونون المثنى مكسورة دائماً وليست علامة إعراب.';
+        } else if (n === 'plural_m') {
+          s.textContent = 'المعلمونَ'; p.textContent = 'مخلصونَ';
+          r.innerHTML = 'علامة الرفع: <b>الواو</b> (علامة فرعية تنوب عن الضمة) لأنهما جمع مذكر سالم، ونون الجمع مفتوحة دائماً.';
+        } else if (n === 'plural_f') {
+          s.textContent = 'المعلماتُ'; p.textContent = 'رحيماتٌ';
+          r.innerHTML = 'علامة الرفع: <b>الضمة الظاهرة</b> (علامة أصلية) لجمع المؤنث السالم.';
+        }
+      };
+    });
+  }
+
+  /* =========================================================================
+   * LAB 11: كاشف المفعول به وعلامات نصبه (Ali - Arabic 105)
+   * ========================================================================= */
+  function renderObjectMafoolLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🎯 كاشف المفعول به وعلامات النصب الأصلية والفرعية</h4>' +
+          '<span style="font-size: 0.8rem; background: #ecfdf5; color: #065f46; padding: 3px 10px; border-radius: 999px; font-weight: 700;">اللغة العربية 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">اختر جملة فعلية واستخرج المفعول به مع فحص علامة النصب وحركته الدقيقة.</p>' +
+        '<select id="om-select" style="width: 100%; padding: 8px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.88rem; margin-bottom: 12px;">' +
+          '<option value="1">شربَ الطفلُ الحليبَ (مفرد - الفتحة)</option>' +
+          '<option value="2">قرأ التلميذُ كتابينِ (مثنى - الياء)</option>' +
+          '<option value="3">كرّمت المعلمةُ الطالباتِ (جمع مؤنث سالم - الكسرة)</option>' +
+          '<option value="4">شجّع الجمهورُ اللاعبينَ (جمع مذكر سالم - الياء)</option>' +
+        '</select>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">' +
+            '<div><span style="color: #94a3b8;">المفعول به:</span> <b id="om-word" style="color: #facc15;">الحليبَ</b></div>' +
+            '<div><span style="color: #94a3b8;">نوع الكلمة:</span> <b id="om-kind" style="color: #38bdf8;">مفرد</b></div>' +
+          '</div>' +
+          '<div id="om-result-readout" style="background: #1e293b; padding: 10px; border-radius: 8px; font-size: 0.88rem; color: #4ade80;">' +
+            'الإعراب: الحليبَ: مفعول به منصوب وعلامة نصبه <b>الفتحة الظاهرة</b> على آخره (علامة أصلية).' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+
+    document.getElementById('om-select').onchange = function() {
+      var v = this.value;
+      var w = document.getElementById('om-word');
+      var k = document.getElementById('om-kind');
+      var r = document.getElementById('om-result-readout');
+
+      if (v === '1') {
+        w.textContent = 'الحليبَ'; k.textContent = 'اسم مفرد';
+        r.innerHTML = 'الإعراب: مفعول به منصوب وعلامة نصبه <b>الفتحة الظاهرة</b> (علامة أصلية).';
+      } else if (v === '2') {
+        w.textContent = 'كتابينِ'; k.textContent = 'مثنى مذكر';
+        r.innerHTML = 'الإعراب: مفعول به منصوب وعلامة نصبه <b>الياء</b> (علامة فرعية تنوب عن الفتحة) لأنه مثنى.';
+      } else if (v === '3') {
+        w.textContent = 'الطالباتِ'; k.textContent = 'جمع مؤنث سالم';
+        r.innerHTML = 'الإعراب: مفعول به منصوب وعلامة نصبه <b>الكسرة</b> (علامة فرعية تنوب عن الفتحة) لأنه جمع مؤنث سالم. فخ شهير!';
+      } else if (v === '4') {
+        w.textContent = 'اللاعبينَ'; k.textContent = 'جمع مذكر سالم';
+        r.innerHTML = 'الإعراب: مفعول به منصوب وعلامة نصبه <b>الياء</b> (علامة فرعية تنوب عن الفتحة) لأنه جمع مذكر سالم.';
+      }
+    };
+  }
+
+  /* =========================================================================
+   * LAB 12: محاكي تشغيل وتتبع خريطة التدفق (ICT 106)
+   * ========================================================================= */
+  function renderFlowchartsLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">📊 محاكي تشغيل وتتبع خريطة التدفق القياسية</h4>' +
+          '<span style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 999px; font-weight: 700;">ICT 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">تتبع خطوات خوارزمية فحص النجاح والرسوب رمزاً برمز (Terminal -> Input -> Decision -> Output -> Stop).</p>' +
+        '<div style="display: flex; gap: 8px; align-items: center; margin-bottom: 14px;">' +
+          '<label style="font-size: 0.85rem; font-weight: 700;">درجة الطالب (Score):</label>' +
+          '<input type="number" id="fc-score-input" value="75" min="0" max="100" style="width: 80px; padding: 6px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">' +
+          '<button type="button" class="portal-btn" id="btn-fc-run" style="padding: 6px 16px; font-size: 0.85rem; background: #3b82f6; color: #fff;">▶ تشغيل الخريطة خطوة بخطوة</button>' +
+        '</div>' +
+        '<div style="display: flex; flex-direction: column; gap: 8px; align-items: center; max-width: 380px; margin: 0 auto;">' +
+          '<div id="fc-step-start" style="width: 140px; padding: 8px; border-radius: 999px; background: #10b981; color: #fff; font-weight: 700; text-align: center; font-size: 0.85rem;">Start (شكل بيضاوي)</div>' +
+          '<div style="color: #94a3b8; font-size: 1.2rem;">↓</div>' +
+          '<div id="fc-step-input" style="width: 180px; padding: 8px; transform: skewX(-15deg); background: #e2e8f0; color: #0f172a; font-weight: 700; text-align: center; font-size: 0.82rem;"><span style="display: inline-block; transform: skewX(15deg);">Input Score (متوازي أضلاع)</span></div>' +
+          '<div style="color: #94a3b8; font-size: 1.2rem;">↓</div>' +
+          '<div id="fc-step-decision" style="width: 140px; padding: 12px; background: #e2e8f0; color: #0f172a; font-weight: 700; text-align: center; font-size: 0.82rem; border-radius: 6px;">هل Score &gt;= 50؟ (مَعين)</div>' +
+          '<div style="display: flex; justify-content: space-between; width: 100%; font-size: 0.8rem; font-weight: 800;">' +
+            '<span style="color: #10b981;">↙ Yes</span>' +
+            '<span style="color: #ef4444;">No ↘</span>' +
+          '</div>' +
+          '<div style="display: flex; justify-content: space-between; width: 100%; gap: 12px;">' +
+            '<div id="fc-step-pass" style="flex: 1; padding: 8px; transform: skewX(-15deg); background: #e2e8f0; color: #0f172a; text-align: center; font-size: 0.8rem; font-weight: 700;"><span style="display: inline-block; transform: skewX(15deg);">Print "Pass"</span></div>' +
+            '<div id="fc-step-fail" style="flex: 1; padding: 8px; transform: skewX(-15deg); background: #e2e8f0; color: #0f172a; text-align: center; font-size: 0.8rem; font-weight: 700;"><span style="display: inline-block; transform: skewX(15deg);">Print "Fail"</span></div>' +
+          '</div>' +
+          '<div style="color: #94a3b8; font-size: 1.2rem;">↓</div>' +
+          '<div id="fc-step-stop" style="width: 140px; padding: 8px; border-radius: 999px; background: #ef4444; color: #fff; font-weight: 700; text-align: center; font-size: 0.85rem;">End (شكل بيضاوي)</div>' +
+        '</div>' +
+        '<div id="fc-trace-summary" style="margin-top: 14px; background: #0f172a; color: #38bdf8; padding: 10px; border-radius: 8px; font-size: 0.85rem; text-align: center; font-weight: 700;">أدخل الدرجة واضغط تشغيل لمتابعة سريان خطوط التدفق.</div>' +
+      '</div>';
+
+    document.getElementById('btn-fc-run').onclick = function() {
+      var score = parseInt(document.getElementById('fc-score-input').value, 10);
+      var isPass = score >= 50;
+
+      document.getElementById('fc-step-input').style.background = '#fef08a';
+      document.getElementById('fc-step-decision').style.background = '#fef08a';
+
+      if (isPass) {
+        document.getElementById('fc-step-pass').style.background = '#86efac';
+        document.getElementById('fc-step-fail').style.background = '#e2e8f0';
+        document.getElementById('fc-trace-summary').textContent = 'سريان الخريطة: Score = ' + score + ' >= 50 (Yes) -> تم طباعة "Pass" وانتهت الخوارزمية بنجاح.';
+        document.getElementById('fc-trace-summary').style.color = '#4ade80';
+      } else {
+        document.getElementById('fc-step-pass').style.background = '#e2e8f0';
+        document.getElementById('fc-step-fail').style.background = '#fca5a5';
+        document.getElementById('fc-trace-summary').textContent = 'سريان الخريطة: Score = ' + score + ' < 50 (No) -> تم طباعة "Fail" وانتهت الخوارزمية.';
+        document.getElementById('fc-trace-summary').style.color = '#f87171';
+      }
+    };
+  }
+
+  /* =========================================================================
+   * LAB 13: جدول التتبع التفاعلي وحاسبة مخرجات الحلقات (ICT 106)
+   * ========================================================================= */
+  function renderLoopsLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🔄 جدول التتبع التفاعلي وحاسبة مخرجات الحلقات</h4>' +
+          '<span style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 999px; font-weight: 700;">ICT 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">شاهد تتبع قيم المتغيرات (Total و Count) في جدول التتبع خطوة بخطوة أثناء تكرار الحلقة.</p>' +
+        '<div style="display: flex; gap: 8px; align-items: center; margin-bottom: 12px;">' +
+          '<label style="font-size: 0.85rem; font-weight: 700;">كرر حتى N =</label>' +
+          '<input type="number" id="loop-n-input" value="4" min="1" max="8" style="width: 70px; padding: 6px 10px; border: 1.5px solid #cbd5e1; border-radius: 8px;">' +
+          '<button type="button" class="portal-btn" id="btn-run-loop-trace" style="padding: 6px 16px; font-size: 0.85rem; background: #3b82f6; color: #fff;">توليد جدول التتبع</button>' +
+        '</div>' +
+        '<div style="overflow-x: auto; margin-bottom: 12px;">' +
+          '<table id="loop-trace-table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: center;">' +
+            '<thead>' +
+              '<tr style="background: #0f172a; color: #fff;">' +
+                '<th style="padding: 8px; border: 1px solid #334155;">الخطوة (Step)</th>' +
+                '<th style="padding: 8px; border: 1px solid #334155;">العداد (Count)</th>' +
+                '<th style="padding: 8px; border: 1px solid #334155;">Total = Total + Count</th>' +
+                '<th style="padding: 8px; border: 1px solid #334155;">شرط التكرار (Count &lt;= N)</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody id="loop-trace-tbody"></tbody>' +
+          '</table>' +
+        '</div>' +
+        '<div id="loop-final-val" style="background: #0f172a; color: #4ade80; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; text-align: center;">القيمة النهائية للمجموع: Total = 10 بعد 4 دورات.</div>' +
+      '</div>';
+
+    function buildTrace() {
+      var n = parseInt(document.getElementById('loop-n-input').value, 10) || 4;
+      var tbody = document.getElementById('loop-trace-tbody');
+      tbody.innerHTML = '';
+      var total = 0;
+      var rowsHtml = '<tr style="background: #f1f5f9;"><td style="padding: 6px; border: 1px solid #cbd5e1;">Initial</td><td style="padding: 6px; border: 1px solid #cbd5e1;">1</td><td style="padding: 6px; border: 1px solid #cbd5e1;">0</td><td style="padding: 6px; border: 1px solid #cbd5e1;">True</td></tr>';
+
+      for (var c = 1; c <= n; c++) {
+        total += c;
+        rowsHtml += '<tr><td style="padding: 6px; border: 1px solid #cbd5e1;">دورة ' + c + '</td><td style="padding: 6px; border: 1px solid #cbd5e1; font-weight: 700;">' + c + '</td><td style="padding: 6px; border: 1px solid #cbd5e1; color: #2563eb; font-weight: 800;">' + total + '</td><td style="padding: 6px; border: 1px solid #cbd5e1; color: #16a34a;">True</td></tr>';
+      }
+      rowsHtml += '<tr style="background: #fee2e2;"><td style="padding: 6px; border: 1px solid #cbd5e1;">Exit</td><td style="padding: 6px; border: 1px solid #cbd5e1;">' + (n + 1) + '</td><td style="padding: 6px; border: 1px solid #cbd5e1; font-weight: 800;">' + total + '</td><td style="padding: 6px; border: 1px solid #cbd5e1; color: #dc2626; font-weight: 700;">False (توقف)</td></tr>';
+
+      tbody.innerHTML = rowsHtml;
+      document.getElementById('loop-final-val').textContent = 'القيمة النهائية للمجموع: Total = ' + total + ' بعد ' + n + ' دورات وتوقف العداد عند ' + (n + 1) + '.';
+    }
+
+    document.getElementById('btn-run-loop-trace').onclick = buildTrace;
+    buildTrace();
+  }
+
+  /* =========================================================================
+   * LAB 14: محاكي منصة سكراتش والإحداثيات (Ali - ICT 105)
+   * ========================================================================= */
+  function renderScratchLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🐱 محاكي شبكة إحداثيات منصة سكراتش</h4>' +
+          '<span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 999px; font-weight: 700;">ICT 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">حرك كائن القط وشاهد تغير إحداثيات X (أفقياً من -240 إلى +240) و Y (رأسياً من -180 إلى +180).</p>' +
+        '<div style="display: flex; gap: 8px; justify-content: center; margin-bottom: 12px;">' +
+          '<button type="button" class="portal-btn" id="btn-sc-up" style="padding: 6px 14px; font-size: 0.82rem; background: #3b82f6; color: #fff;">⬆ Change Y by +20</button>' +
+          '<button type="button" class="portal-btn" id="btn-sc-down" style="padding: 6px 14px; font-size: 0.82rem; background: #3b82f6; color: #fff;">⬇ Change Y by -20</button>' +
+          '<button type="button" class="portal-btn" id="btn-sc-left" style="padding: 6px 14px; font-size: 0.82rem; background: #3b82f6; color: #fff;">⬅ Change X by -20</button>' +
+          '<button type="button" class="portal-btn" id="btn-sc-right" style="padding: 6px 14px; font-size: 0.82rem; background: #3b82f6; color: #fff;">➡ Change X by +20</button>' +
+          '<button type="button" class="portal-btn" id="btn-sc-reset" style="padding: 6px 14px; font-size: 0.82rem; background: #64748b; color: #fff;">إعادة للمنتصف (0, 0)</button>' +
+        '</div>' +
+        '<div style="position: relative; width: 100%; max-width: 360px; height: 220px; background: #f8fafc; border: 2px solid #0f172a; border-radius: 10px; margin: 0 auto 12px; overflow: hidden;">' +
+          '<div style="position: absolute; left: 50%; top: 0; bottom: 0; width: 1.5px; background: #cbd5e1;"></div>' +
+          '<div style="position: absolute; top: 50%; left: 0; right: 0; height: 1.5px; background: #cbd5e1;"></div>' +
+          '<div style="position: absolute; right: 6px; top: 52%; font-size: 0.65rem; color: #94a3b8; font-weight: 700;">+240 X</div>' +
+          '<div style="position: absolute; left: 6px; top: 52%; font-size: 0.65rem; color: #94a3b8; font-weight: 700;">-240 X</div>' +
+          '<div style="position: absolute; left: 52%; top: 6px; font-size: 0.65rem; color: #94a3b8; font-weight: 700;">+180 Y</div>' +
+          '<div style="position: absolute; left: 52%; bottom: 6px; font-size: 0.65rem; color: #94a3b8; font-weight: 700;">-180 Y</div>' +
+          '<div id="scratch-cat-sprite" style="position: absolute; left: 165px; top: 95px; font-size: 2rem; transform: translate(-50%, -50%); transition: all 0.15s ease-out;">🐱</div>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 8px; padding: 10px; display: flex; justify-content: space-around; font-size: 0.95rem; font-weight: 800;">' +
+          '<div>X: <span id="sc-x-val" style="color: #38bdf8;">0</span></div>' +
+          '<div>Y: <span id="sc-y-val" style="color: #4ade80;">0</span></div>' +
+        '</div>' +
+      '</div>';
+
+    var curX = 0;
+    var curY = 0;
+    function updateCat() {
+      var sprite = document.getElementById('scratch-cat-sprite');
+      var pxX = 180 + (curX * (180 / 240));
+      var pxY = 110 - (curY * (110 / 180));
+      sprite.style.left = pxX + 'px';
+      sprite.style.top = pxY + 'px';
+      document.getElementById('sc-x-val').textContent = curX;
+      document.getElementById('sc-y-val').textContent = curY;
+    }
+
+    document.getElementById('btn-sc-up').onclick = function() { curY = Math.min(180, curY + 20); updateCat(); };
+    document.getElementById('btn-sc-down').onclick = function() { curY = Math.max(-180, curY - 20); updateCat(); };
+    document.getElementById('btn-sc-left').onclick = function() { curX = Math.max(-240, curX - 20); updateCat(); };
+    document.getElementById('btn-sc-right').onclick = function() { curX = Math.min(240, curX + 20); updateCat(); };
+    document.getElementById('btn-sc-reset').onclick = function() { curX = 0; curY = 0; updateCat(); };
+  }
+
+  /* =========================================================================
+   * LAB 15: فاحص قوة كلمات المرور ومكافح التصيد (Ali - ICT 105)
+   * ========================================================================= */
+  function renderCyberSafetyLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🛡️ فاحص قوة كلمات المرور ومكافح التصيد الاحتيالي</h4>' +
+          '<span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 999px; font-weight: 700;">ICT 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">اختبر قوة كلمة المرور وفق المعايير الأربعة (طول 8+ خانات، أحرف كبيرة وصغيرة، أرقام، ورموز خاصة).</p>' +
+        '<div style="margin-bottom: 12px;">' +
+          '<input type="text" id="pwd-test-input" value="Falcon#98!Rocket" placeholder="اكتب كلمة مرور لتجربتها..." style="width: 100%; padding: 10px 14px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; font-family: monospace;">' +
+        '</div>' +
+        '<div style="height: 8px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 12px;">' +
+          '<div id="pwd-strength-bar" style="height: 100%; width: 100%; background: #10b981; transition: all 0.3s;"></div>' +
+        '</div>' +
+        '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">' +
+          '<div id="pw-c-len" style="padding: 6px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; text-align: center;">8+ خانات</div>' +
+          '<div id="pw-c-upper" style="padding: 6px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; text-align: center;">حروف كبيرة (A-Z)</div>' +
+          '<div id="pw-c-lower" style="padding: 6px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; text-align: center;">حروف صغيرة (a-z)</div>' +
+          '<div id="pw-c-num" style="padding: 6px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; text-align: center;">أرقام (0-9)</div>' +
+          '<div id="pw-c-sym" style="padding: 6px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; text-align: center;">رموز (!@#$)</div>' +
+        '</div>' +
+        '<div id="pwd-rating-verdict" style="background: #0f172a; color: #4ade80; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.88rem; text-align: center;">' +
+          'درجة الأمان: كلمة مرور فولاذية ممتازة (صعبة الكسر والتخمين)!' +
+        '</div>' +
+      '</div>';
+
+    function setP(id, ok) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.style.background = ok ? '#dcfce7' : '#fee2e2';
+      el.style.color = ok ? '#14532d' : '#991b1b';
+      el.textContent = (ok ? '✓ ' : '✗ ') + el.textContent.replace(/^[✓✗] /, '');
+    }
+
+    function testPwd() {
+      var p = document.getElementById('pwd-test-input').value || '';
+      var hasLen = p.length >= 8;
+      var hasUpper = /[A-Z]/.test(p);
+      var hasLower = /[a-z]/.test(p);
+      var hasNum = /[0-9]/.test(p);
+      var hasSym = /[^A-Za-z0-9]/.test(p);
+
+      setP('pw-c-len', hasLen);
+      setP('pw-c-upper', hasUpper);
+      setP('pw-c-lower', hasLower);
+      setP('pw-c-num', hasNum);
+      setP('pw-c-sym', hasSym);
+
+      var score = [hasLen, hasUpper, hasLower, hasNum, hasSym].filter(Boolean).length;
+      var bar = document.getElementById('pwd-strength-bar');
+      var verdict = document.getElementById('pwd-rating-verdict');
+
+      bar.style.width = (score * 20) + '%';
+      if (score >= 4) {
+        bar.style.background = '#10b981';
+        verdict.textContent = 'درجة الأمان: كلمة مرور فولاذية ممتازة (صعبة الكسر والتخمين)!';
+        verdict.style.color = '#4ade80';
+      } else if (score >= 2) {
+        bar.style.background = '#f59e0b';
+        verdict.textContent = 'درجة الأمان: كلمة مرور متوسطة - أضف رموزاً خاصة وأرقاماً لتقويتها.';
+        verdict.style.color = '#facc15';
+      } else {
+        bar.style.background = '#ef4444';
+        verdict.textContent = 'درجة الأمان: كلمة مرور ضعيفة جداً وسهلة الاختراق!';
+        verdict.style.color = '#f87171';
+      }
+    }
+
+    document.getElementById('pwd-test-input').oninput = testPwd;
+    testPwd();
+  }
+
+  /* =========================================================================
+   * LAB 16: مستكشف مضايق وتضاريس الوطن العربي (Social Studies 106)
+   * ========================================================================= */
+  function renderArabGeographyLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🌍 مستكشف مضايق وتضاريس الوطن العربي التفاعلي</h4>' +
+          '<span style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 999px; font-weight: 700;">الدراسات الاجتماعية 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">انقر على أي ممر مائي أو نظام تضاريسي لاستكشاف موقعه وأهميته الاستراتيجية للدول العربية.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">' +
+          '<button type="button" class="portal-btn btn-geo-item" data-item="hormuz" style="padding: 6px 12px; font-size: 0.82rem; background: #3b82f6; color: #fff;">مضيق هرمز</button>' +
+          '<button type="button" class="portal-btn btn-geo-item" data-item="mandab" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">مضيق باب المندب</button>' +
+          '<button type="button" class="portal-btn btn-geo-item" data-item="suez" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">قناة السويس</button>' +
+          '<button type="button" class="portal-btn btn-geo-item" data-item="gibraltar" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">مضيق جبل طارق</button>' +
+          '<button type="button" class="portal-btn btn-geo-item" data-item="atlas" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">جبال أطلس (التوائية)</button>' +
+          '<button type="button" class="portal-btn btn-geo-item" data-item="redsea_mt" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">جبال البحر الأحمر (انكسارية)</button>' +
+        '</div>' +
+        '<div id="geo-details-card" style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">الموقع والأهمية الاستراتيجية:</div>' +
+          '<div id="geo-title" style="font-size: 1.1rem; color: #38bdf8; font-weight: 800; margin-bottom: 6px;">مضيق هرمز (البوابة الشرقية لنفط العالم)</div>' +
+          '<div id="geo-desc" style="font-size: 0.85rem; line-height: 1.5; color: #e2e8f0;">يصل بين الخليج العربي وخليج عمان (المحيط الهندي)، وتشرف عليه سلطنة عمان الشقيقة وإيران. يعبر من خلاله جزء ضخم من صادرات النفط العالمية.</div>' +
+        '</div>' +
+      '</div>';
+
+    container.querySelectorAll('.btn-geo-item').forEach(function(btn) {
+      btn.onclick = function() {
+        var itm = btn.getAttribute('data-item');
+        container.querySelectorAll('.btn-geo-item').forEach(function(b) {
+          b.style.background = (b === btn) ? '#3b82f6' : '#64748b';
+        });
+        var t = document.getElementById('geo-title');
+        var d = document.getElementById('geo-desc');
+
+        if (itm === 'hormuz') {
+          t.textContent = 'مضيق هرمز (بوابة نفط الخليج)';
+          d.textContent = 'يصل بين الخليج العربي وخليج عمان، وتشرف عليه سلطنة عمان وإيران، وهو شريان حيوي لنقل الطاقة العالمية.';
+        } else if (itm === 'mandab') {
+          t.textContent = 'مضيق باب المندب (مضيق عربي خالص 100%)';
+          d.textContent = 'يصل بين البحر الأحمر وخليج عدن، وتشرف عليه دولتان عربيتان هما اليمن وجيبوتي، وله مكانة عسكرية وتجارية استثنائية.';
+        } else if (itm === 'suez') {
+          t.textContent = 'قناة السويس المصرية (شريان التجارة البحرية الأول)';
+          d.textContent = 'تربط البحر المتوسط بالبحر الأحمر، ممر مصري خالص وفر للعالم آلاف الأميال البحرية مقارنة بطريق رأس الرجاء الصالح.';
+        } else if (itm === 'gibraltar') {
+          t.textContent = 'مضيق جبل طارق (المدخل الغربي للمتوسط)';
+          d.textContent = 'يصل البحر المتوسط بالمحيط الأطلنطي، وتشرف عليه المغرب الشقيقة وإسبانيا، وهو البوابة التجارية بين أوروبا وشمال أفريقيا.';
+        } else if (itm === 'atlas') {
+          t.textContent = 'سلسلة جبال أطلس (جبال التوائية كبرى)';
+          d.textContent = 'نشأت نتيجة حركات التواء في القشرة الأرضية، تمتد في بلاد المغرب العربي (المغرب والجزائر وتونس) وتحصر بينها هضبة الشطوط.';
+        } else if (itm === 'redsea_mt') {
+          t.textContent = 'جبال البحر الأحمر (جبال انكسارية)';
+          d.textContent = 'نشأت نتيجة انكسار عظيم في الصخور الصلبة، تمتد على جانبي البحر الأحمر في مصر والسودان غرباً، وفي الحجاز وعسير واليمن شرقاً.';
+        }
+      };
+    });
+  }
+
+  /* =========================================================================
+   * LAB 17: حاسبة التكيف البيئي والمناخي (Social Studies 106)
+   * ========================================================================= */
+  function renderArabEnvironmentLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🏜️ حاسبة مكافحة التصحر والتكيف المناخي في الوطن العربي</h4>' +
+          '<span style="font-size: 0.8rem; background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 999px; font-weight: 700;">الدراسات الاجتماعية 106</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">اختبر أثر تشجير الغابات والري بالتنقيط والطاقة المتجددة على مؤشر صحة البيئة ومواجهة الجفاف والتصحر.</p>' +
+        '<div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 14px; margin-bottom: 12px;">' +
+          '<div style="margin-bottom: 10px;">' +
+            '<label style="font-size: 0.85rem; font-weight: 700;">نسبة التشجير والأحزمة الخضراء (Green Belts): <span id="env-tree-val">40%</span></label>' +
+            '<input type="range" id="env-tree-slider" min="10" max="90" value="40" style="width: 100%;">' +
+          '</div>' +
+          '<div style="margin-bottom: 10px;">' +
+            '<label style="font-size: 0.85rem; font-weight: 700;">نظام الري الزراعي: </label>' +
+            '<select id="env-irrigation-select" style="width: 100%; padding: 6px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px;">' +
+              '<option value="drip">ري حديث بالتنقيط (توفير 70% من المياه)</option>' +
+              '<option value="flood">ري تقليدي بالغمر (فقد وهدر هائل للمياه وتملح التربة)</option>' +
+            '</select>' +
+          '</div>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">' +
+            '<div>مؤشر مقاومة التصحر: <span id="env-index-val" style="font-weight: 800; color: #4ade80;">75 / 100</span></div>' +
+            '<div id="env-verdict-badge" style="background: #065f46; color: #a7f3d0; padding: 3px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 700;">بيئة مستدامة ومقاومة للتصحر</div>' +
+          '</div>' +
+          '<div id="env-advisory-text" style="font-size: 0.85rem; color: #94a3b8;">الري بالتنقيط مع الأحزمة الخضراء يوقف زحف الكثبان الرملية ويحافظ على رطوبة التربة الزراعية.</div>' +
+        '</div>' +
+      '</div>';
+
+    function updateEnv() {
+      var trees = parseInt(document.getElementById('env-tree-slider').value, 10);
+      var irr = document.getElementById('env-irrigation-select').value;
+      document.getElementById('env-tree-val').textContent = trees + '%';
+
+      var score = trees;
+      if (irr === 'drip') score += 30; else score -= 15;
+      score = Math.max(10, Math.min(100, score));
+
+      document.getElementById('env-index-val').textContent = score + ' / 100';
+      var b = document.getElementById('env-verdict-badge');
+      var adv = document.getElementById('env-advisory-text');
+
+      if (score >= 70) {
+        b.style.background = '#065f46'; b.style.color = '#a7f3d0'; b.textContent = 'بيئة مستدامة ومقاومة للتصحر';
+        adv.textContent = '✓ تكامل مثالي: الأحزمة الخضراء تصد الرياح الصحراوية والري بالتنقيط يوفر المخزون الجوفي.';
+      } else if (score >= 45) {
+        b.style.background = '#92400e'; b.style.color = '#fef3c7'; b.textContent = 'بيئة مهددة بجفاف متوسط';
+        adv.textContent = '⚠️ تحذير: زيادة الرعي الجائر أو هدر المياه يهدد بانخفاض إنتاجية المحاصيل.';
+      } else {
+        b.style.background = '#991b1b'; b.style.color = '#fecaca'; b.textContent = 'خطر تصحر وتدهور بيئي حاد';
+        adv.textContent = '🚨 خطر داهم: زحف الكثبان الرملية وتملح التربة بسبب الري بالغمر وانعدام الغطاء النباتي.';
+      }
+    }
+
+    document.getElementById('env-tree-slider').oninput = updateEnv;
+    document.getElementById('env-irrigation-select').onchange = updateEnv;
+    updateEnv();
+  }
+
+  /* =========================================================================
+   * LAB 18: مستكشف موقع مصر الجغرافي والممرات المائية (Ali - Social 105)
+   * ========================================================================= */
+  function renderEgyptGeographyLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🇪🇬 مستكشف موقع مصر الجغرافي والممرات المائية</h4>' +
+          '<span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 999px; font-weight: 700;">الدراسات الاجتماعية 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">انقر على الاتجاهات الجغرافية ومسارات الملاحة البحرية لفحص حدود مصر وموقعها الفريد.</p>' +
+        '<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">' +
+          '<button type="button" class="portal-btn btn-eg-border" data-b="north" style="padding: 6px 12px; font-size: 0.82rem; background: #3b82f6; color: #fff;">شمالاً: البحر المتوسط</button>' +
+          '<button type="button" class="portal-btn btn-eg-border" data-b="east" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">شرقاً: البحر الأحمر وسيناء</button>' +
+          '<button type="button" class="portal-btn btn-eg-border" data-b="south" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">جنوباً: السودان الشقيق</button>' +
+          '<button type="button" class="portal-btn btn-eg-border" data-b="west" style="padding: 6px 12px; font-size: 0.82rem; background: #64748b; color: #fff;">غرباً: ليبيا الشقيقة</button>' +
+          '<button type="button" class="portal-btn btn-eg-border" data-b="suez" style="padding: 6px 12px; font-size: 0.82rem; background: #10b981; color: #fff;">قناة السويس الجديدة</button>' +
+        '</div>' +
+        '<div id="eg-card-output" style="background: #0f172a; color: #f8fafc; border-radius: 10px; padding: 14px;">' +
+          '<div style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">بيانات الحد الجغرافي:</div>' +
+          '<div id="eg-title" style="font-size: 1.1rem; color: #38bdf8; font-weight: 800; margin-bottom: 6px;">الحد الشمالي: البحر المتوسط</div>' +
+          '<div id="eg-desc" style="font-size: 0.85rem; line-height: 1.5; color: #e2e8f0;">حد بحري طبيعي يطل على قارة أوروبا، وتنتشر عليه أهم الموانئ المصرية مثل الإسكندرية ودمياط وبورسعيد.</div>' +
+        '</div>' +
+      '</div>';
+
+    container.querySelectorAll('.btn-eg-border').forEach(function(btn) {
+      btn.onclick = function() {
+        var b = btn.getAttribute('data-b');
+        container.querySelectorAll('.btn-eg-border').forEach(function(x) {
+          x.style.background = (x === btn) ? '#3b82f6' : '#64748b';
+        });
+        var t = document.getElementById('eg-title');
+        var d = document.getElementById('eg-desc');
+
+        if (b === 'north') {
+          t.textContent = 'الحد الشمالي: البحر المتوسط';
+          d.textContent = 'حد طبيعي بحري يربط مصر بالقارة الأوروبية، وتطل عليه أقدم موانئ التجارة.';
+        } else if (b === 'east') {
+          t.textContent = 'الحد الشرقي: البحر الأحمر وشبه جزيرة سيناء';
+          d.textContent = 'حد طبيعي بحري ممتد على البحر الأحمر وخليج العقبة، وحد بري مع فلسطين وبوابة العبور لآسيا.';
+        } else if (b === 'south') {
+          t.textContent = 'الحد الجنوبي: جمهورية السودان ومدار السرطان';
+          d.textContent = 'حد بشري بري يمتد مع خط عرض 22° شمالاً، ويمر به مدار السرطان في جنوب مصر وشريان نهر النيل.';
+        } else if (b === 'west') {
+          t.textContent = 'الحد الغربي: دولة ليبيا الشقيقة';
+          d.textContent = 'حد بشري هندسي بري مستقيم يتطابق مع خط طول 25° شرقاً (باستثناء تعرج واحة سيوة).';
+        } else if (b === 'suez') {
+          t.textContent = 'قناة السويس وقناة السويس الجديدة (2015)';
+          d.textContent = 'أهم ممر ملاحي في العالم، يربط الشرق بالغرب واختصر زمن رحلة عبور السفن من 20 إلى 11 ساعة.';
+        }
+      };
+    });
+  }
+
+  /* =========================================================================
+   * LAB 19: ميزان أركان الحضارة المصرية القديمة (Ali - Social 105)
+   * ========================================================================= */
+  function renderAncientCivilizationLab(container) {
+    container.innerHTML = 
+      '<div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px;">' +
+        '<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">' +
+          '<h4 style="margin: 0; font-size: 1.05rem; color: #0f172a; font-weight: 800;">🏺 ميزان أركان الحضارة المصرية القديمة</h4>' +
+          '<span style="font-size: 0.8rem; background: #e0e7ff; color: #3730a3; padding: 3px 10px; border-radius: 999px; font-weight: 700;">الدراسات الاجتماعية 105</span>' +
+        '</div>' +
+        '<p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">صنّف ركائز الحضارة بين عوامل طبيعية (هبة إلهية) وعوامل بشرية (كفاح وتنظيم الإنسان المصري).</p>' +
+        '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">' +
+          '<div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 12px;">' +
+            '<div style="font-weight: 800; color: #065f46; font-size: 0.9rem; margin-bottom: 6px;">🌿 العوامل الطبيعية (هبة الله):</div>' +
+            '<ul style="margin: 0; padding-right: 18px; font-size: 0.82rem; color: #047857; line-height: 1.6;">' +
+              '<li><b>نهر النيل:</b> مصدر الخصوبة وشريان الزراعة والاستقرار.</li>' +
+              '<li><b>الموقع الجغرافي:</b> ملتقى القارات وسهولة الاتصال.</li>' +
+              '<li><b>المناخ المعتدل الجاف:</b> حمى الآثار من التآكل.</li>' +
+              '<li><b>الثروات المعدنية والصخور:</b> لبناء المعابد والأهرامات.</li>' +
+            '</ul>' +
+          '</div>' +
+          '<div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 12px;">' +
+            '<div style="font-weight: 800; color: #1e40af; font-size: 0.9rem; margin-bottom: 6px;">⚔️ العوامل البشرية (كفاح المصريين):</div>' +
+            '<ul style="margin: 0; padding-right: 18px; font-size: 0.82rem; color: #1d4ed8; line-height: 1.6;">' +
+              '<li><b>الوحدة (3200 ق.م):</b> توحيد القطرين على يد الملك مينا.</li>' +
+              '<li><b>الجيش القوي:</b> حماية حدود وأمن واستقرار الوطن.</li>' +
+              '<li><b>الحكومة المركزية:</b> رعاية شؤون الري والمصالح.</li>' +
+              '<li><b>كفاح الشعب:</b> العمل المخلص والابتكار المستمر.</li>' +
+            '</ul>' +
+          '</div>' +
+        '</div>' +
+        '<div style="background: #0f172a; color: #fbbf24; border-radius: 10px; padding: 12px; text-align: center; font-size: 0.88rem; font-weight: 700;">' +
+          'مقولة المؤرخ هيرودوت الشهيرة: "مصر هبة النيل" - وصوبها المفكرون: "مصر هبة النيل والمصريين".' +
+        '</div>' +
+      '</div>';
+  }
+
+  /* Expose lab renderers to window */
+  window.renderRelativeClausesLab = renderRelativeClausesLab;
+  window.renderConnectivesLab = renderConnectivesLab;
+  window.renderGenreLab = renderGenreLab;
+  window.renderAdverbialsLab = renderAdverbialsLab;
+  window.renderDirectSpeechLab = renderDirectSpeechLab;
+  window.renderFablesLab = renderFablesLab;
+  window.renderFiveNounsLab = renderFiveNounsLab;
+  window.renderTypesOfPredicateLab = renderTypesOfPredicateLab;
+  window.renderNakiraMarifaLab = renderNakiraMarifaLab;
+  window.renderNominalSentenceLab = renderNominalSentenceLab;
+  window.renderObjectMafoolLab = renderObjectMafoolLab;
+  window.renderFlowchartsLab = renderFlowchartsLab;
+  window.renderLoopsLab = renderLoopsLab;
+  window.renderScratchLab = renderScratchLab;
+  window.renderCyberSafetyLab = renderCyberSafetyLab;
+  window.renderArabGeographyLab = renderArabGeographyLab;
+  window.renderArabEnvironmentLab = renderArabEnvironmentLab;
+  window.renderEgyptGeographyLab = renderEgyptGeographyLab;
+  window.renderAncientCivilizationLab = renderAncientCivilizationLab;
 
 })();
 </script>

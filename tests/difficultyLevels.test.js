@@ -118,7 +118,9 @@ function sampleBankWithLevels() {
     ['Q_HAR_1', 'Year 5 (G5)', 'Mathematics', 'Unit 1', 'Math Hard Q1', 'MCQ', 'A|B', 'A', 1, 'Exp', '', 'W1', 'Hard'],
     ['Q_HAR_2', 'Year 5 (G5)', 'Mathematics', 'Unit 1', 'Math Hard Q2', 'MCQ', 'A|B', 'B', 1, 'Exp', '', 'W1', 'Challenging'],
     ['Q_SCI_1', 'Year 5 (G5)', 'Science', 'Unit 1', 'Sci Q1', 'MCQ', 'A|B', 'A', 1, 'Exp', '', 'W1', 'Challenging'],
-    ['Q_ICT_1', 'Year 5 (G5)', 'ICT Computing', 'Unit 1', 'ICT Q1', 'MCQ', 'A|B', 'A', 1, 'Exp', '', 'W1', 'Standard']
+    ['Q_ICT_1', 'Year 5 (G5)', 'ICT Computing', 'Unit 1', 'ICT Q1', 'MCQ', 'A|B', 'A', 1, 'Exp', '', 'W1', 'Standard'],
+    ['Q_SOC_1', 'Year 5 (G5)', 'Social Studies', 'Unit 1', 'Soc Q1', 'MCQ', 'A|B', 'A', 1, 'Exp', '', 'W1', 'Standard'],
+    ['Q_SOC_2', 'Grade 6 (G6)', 'الدراسات الاجتماعية', 'الوحدة 1', 'Soc G6 Q1', 'MCQ', 'A|B', 'A', 1, 'Exp', '', 'W1', 'Challenging']
   ];
 }
 
@@ -237,4 +239,13 @@ test('createWeeklyExam_ supports Science and ICT subjects', () => {
   }, token);
   assert.equal(ictRes.success, true);
   assert.equal(ictRes.examCode, 'EX_Y5_ALI_W1_ICT_STA');
+
+  const socRes = sandbox.createWeeklyExam({
+    studentKey: 'mostafa',
+    weekCode: 'W1',
+    subject: 'الدراسات الاجتماعية',
+    difficulty: 'Challenging'
+  }, token);
+  assert.equal(socRes.success, true);
+  assert.equal(socRes.examCode, 'EX_Y6_MOS_W1_SOC_CHA');
 });
