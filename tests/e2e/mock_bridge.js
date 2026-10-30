@@ -514,11 +514,11 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
       };
     },
 
-    getExamData: function (examCode, studentName) {
+    getExamData: function (examCode, studentName, studentToken, isPractice, refreshSalt) {
       if (mockState.forceEmptyQuestions) {
         return { success: false, code: 'NO_QUESTIONS', message: 'No questions available in question bank.' };
       }
-      if (mockState.forceMaxAttempts) {
+      if (mockState.forceMaxAttempts && !isPractice) {
         return { success: false, code: 'MAX_ATTEMPTS', message: 'You have reached the maximum allowed attempts.' };
       }
 
@@ -527,7 +527,7 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
         exam = { code: examCode, title: examCode, duration: 15, questionsCount: serverCatalog[examCode].length };
       }
       if (!exam) {
-        return { success: false, code: 'EXAM_NOT_FOUND', message: 'Exam code not found in catalog.' };
+        exam = { code: examCode, title: examCode, duration: 15, questionsCount: 5 };
       }
 
       const durationMins = mockState.customDuration !== null ? mockState.customDuration : (exam.duration || 20);
@@ -535,7 +535,16 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
 
       // Generate authentic questions
       let fullQuestions = serverCatalog[examCode];
-    if (!fullQuestions || !fullQuestions.length) fullQuestions = generateQuestionsForExam(examCode, mockState.passagePoolIndex);
+      if (!fullQuestions || !fullQuestions.length) {
+        fullQuestions = generateQuestionsForExam(examCode, mockState.passagePoolIndex);
+      }
+      if (fullQuestions && fullQuestions.length && isPractice && refreshSalt) {
+        fullQuestions = fullQuestions.slice().sort(() => Math.random() - 0.5).map((q, idx) => {
+          const qCopy = Object.assign({}, q);
+          qCopy.id = q.id + '_R' + (refreshSalt % 10000) + '_' + idx;
+          return qCopy;
+        });
+      }
       
       // Store session securely with answers hidden from client
       mockState.activeSessions[sessionKey] = {

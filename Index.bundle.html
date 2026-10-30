@@ -10626,8 +10626,20 @@ let currentStudentKey = 'ali';
     }
 
     /* QUIZ RUNTIME */
-    function loadAndStartQuiz(code) {
+    function refreshQuizQuestions() {
+      if (!confirm('🔄 هل تريد تجديد أسئلة التدريب وسحب أرقام ومسائل جديدة؟')) return;
+      if (currentSessionKey) {
+        try { localStorage.removeItem('quiz_progress_' + currentSessionKey); } catch(e){}
+      }
+      loadAndStartQuiz(activeExamCode, true, Date.now());
+    }
+    window.refreshQuizQuestions = refreshQuizQuestions;
+
+    function loadAndStartQuiz(code, isPractice, refreshSalt) {
       if (code) activeExamCode = code;
+      const isPracticeMode = Boolean(isPractice || (activeExamCode && activeExamCode.indexOf('PRACTICE') !== -1));
+      const salt = isPracticeMode ? (refreshSalt || Date.now()) : null;
+
       const box = document.getElementById('quiz-question-box');
       box.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div>Loading questions...</div>';
 
@@ -10655,13 +10667,13 @@ let currentStudentKey = 'ali';
               message: 'Unable to connect to the server. Please check your network and retry.'
             });
           })
-          .getExamData(code, student.name);
+          .getExamData(code, student.name, null, isPracticeMode, salt);
       } else {
-        // E2E Test or Local Offline Mode
+        /* E2E Test or Local Offline Mode */
         const bridge = (typeof window !== 'undefined' && (window.__mockBridge || window.mockBridge)) || mockBridge;
         const student = STUDENT_DATA[currentStudentKey] || { name: 'Student' };
         if (bridge && bridge.getExamData) {
-          const localRes = bridge.getExamData(code, student.name);
+          const localRes = bridge.getExamData(code, student.name, null, isPracticeMode, salt);
           if (localRes && localRes.success) {
             setTimeout(() => onQuizLoaded(localRes), 100);
           } else {
@@ -10829,9 +10841,14 @@ let currentStudentKey = 'ali';
 
       box.innerHTML = `
         <div class="ai-gen-wrapper t-gen-reveal">
-          <div class="ai-gen-tag">
-            <span class="ai-gen-dot"></span>
-            <span>✨ AI Adaptive Question &bull; Level ${(typeof currentDifficultyLevel !== 'undefined' ? currentDifficultyLevel : 2)}</span>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+            <div class="ai-gen-tag" style="margin-bottom: 0;">
+              <span class="ai-gen-dot"></span>
+              <span>✨ AI Adaptive Question &bull; Level ${(typeof currentDifficultyLevel !== 'undefined' ? currentDifficultyLevel : 2)}</span>
+            </div>
+            <button type="button" id="btn-quiz-refresh-bank" class="quiz-refresh-btn" onclick="window.refreshQuizQuestions()" title="تجديد الأسئلة وتوليد أرقام متغيرة للتدريب" style="display: inline-flex; align-items: center; gap: 6px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 5px 12px; font-size: 0.8rem; font-weight: 700; color: #1e293b; cursor: pointer; transition: all 0.2s;">
+              <span>🔄 أسئلة متغيرة (Refresh Bank)</span>
+            </button>
           </div>
           ${passageHtml}
           <div class="q-meta-tag">${escapeHtml(q.unit || q.lesson || 'Core Curriculum')}</div>
