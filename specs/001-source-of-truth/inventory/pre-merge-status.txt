@@ -1,0 +1,139 @@
+﻿## master...origin/master [ahead 1, behind 3]
+ M .github/workflows/coligo-cloud-sync.yml
+ M CODEX_PROJECT_PLAN_REVIEW_AR.md
+ M CURRENT_STATUS_AR.md
+ M GLM_OPERATIONAL_PLAN.md
+ M SECURITY_SETUP.md
+ M cloud_coligo_sync.py
+ M index.html
+ M resources/coligo/coligo_catalog.json
+ M resources/coligo/coligo_manifest.json
+?? .agents/skills/
+?? .opencode/
+?? .specify/
+?? ROADMAP_SPECKIT_AR.md
+?? apply_gap_fix.py
+?? build_3d_workbench.py
+?? build_3d_workbench_v2.py
+?? build_flawless_workbench.py
+?? build_live_canvas_workbench.py
+?? build_perfect_circuit_lab.py
+?? build_precision_phet_lab.py
+?? build_pro_workbench.py
+?? capture_all_materials.py
+?? capture_verify.py
+?? capture_verify_clips.py
+?? check_builder.py
+?? check_steps.py
+?? do_precision_update.py
+?? find_cards.py
+?? find_online_urls.py
+?? fix_wrapper.py
+?? my-project/
+?? patch_oled_pill.py
+?? refactor_lab_design.py
+?? "resources/coligo/Ali/Arabic 105/\330\247\330\256\330\252\330\250\330\247\330\261\330\247\330\252 \330\247\330\263\330\252\330\261\330\264\330\247\330\257\331\212\330\251/"
+?? "resources/coligo/Ali/Arabic 105/\330\247\331\204\330\250\331\210\331\203\331\204\330\252/"
+?? "resources/coligo/Ali/English 105/(Fable)_ Feedback & Second draft/"
+?? "resources/coligo/Ali/English 105/Elephant Fable/"
+?? "resources/coligo/Ali/English 105/Fact File_ unit 2 - biographies/"
+?? "resources/coligo/Ali/English 105/Part 1 \342\200\242 A fable from Malawi/"
+?? "resources/coligo/Ali/English 105/Unit 1 (part 2) Vocabulary \342\206\222 Evidence \342\206\222 Explanation \342\206\222 Moral/"
+?? "resources/coligo/Ali/English 105/Unit 1 - Create & Plan a fable/"
+?? "resources/coligo/Ali/English 105/Unit 1 - Lesson 1 - Vocab lab/"
+?? "resources/coligo/Ali/English 105/Unit 1 - lesson 1/"
+?? "resources/coligo/Ali/English 105/Unit 1 - lesson 3 - story features - part 1/"
+?? "resources/coligo/Ali/English 105/Unit 1 - lesson 3 - story features - part 2/"
+?? "resources/coligo/Ali/English 105/Unit 1 - lesson 5 - proverbs tell a tale/"
+?? "resources/coligo/Ali/English 105/Unit 1 - lesson 6 - A  TWIST/"
+?? "resources/coligo/Ali/English 105/Unit 1_ From Plan to write (Fable)/"
+?? "resources/coligo/Ali/English 105/Unit 2 - Biographies/"
+?? "resources/coligo/Ali/English 105/Unit 2 - biorgraphy - part 2/"
+?? "resources/coligo/Ali/English 105/Unit 2 - lesson 1/"
+?? "resources/coligo/Ali/English 105/Unit 2 - lesson 2 - grammar_ Simple & Compound sentence/"
+?? "resources/coligo/Ali/English 105/Unit 2 - lesson 3/"
+?? "resources/coligo/Ali/English 105/Writing_ Fable feedback/"
+?? "resources/coligo/Ali/English 105/Writing_ Paragraph 4 (result & moral) & First draft/"
+?? "resources/coligo/Ali/English 105/Writing_ Plan to write paragraph 3 (Fable)/"
+?? "resources/coligo/Ali/French 105/les pronoms personnels sujets/"
+?? "resources/coligo/Ali/ICT 105/10-Minute Quick Check_ Variables & Loops/"
+?? "resources/coligo/Ali/ICT 105/Algorithms Worksheet/"
+?? "resources/coligo/Ali/ICT 105/Assigning Values to Variables & Worksheet practice/"
+?? "resources/coligo/Ali/ICT 105/ICT \342\200\223 Quiz  Students will take the ICT Quiz on the scheduled date.  Please make sure to study the up/"
+?? "resources/coligo/Ali/ICT 105/ICT \342\200\223 Revision  Dear Students, Please study the uploaded revision materials to prepare for the upcom/"
+?? "resources/coligo/Ali/ICT 105/Input & Output Worksheet/"
+?? "resources/coligo/Ali/ICT 105/Introducing variables/"
+?? "resources/coligo/Ali/ICT 105/Operators Worksheet/"
+?? "resources/coligo/Ali/ICT 105/Using operators/"
+?? "resources/coligo/Ali/ICT 105/Variables & Count-Controlled Loops Worksheet/"
+?? "resources/coligo/Ali/ICT 105/Variables practice on Scratch/"
+?? "resources/coligo/Ali/ICT 105/What is an Algorithm & what is a loop/"
+?? "resources/coligo/Ali/Science 105/Power point on plant parts  (20th of september _ 24th of september, 2026)/"
+?? "resources/coligo/Ali/Science 105/Powerpoint on flower parts  (20th of september _ 24th of september, 2026)/"
+?? "resources/coligo/Ali/Science 105/Powerpoint on pollination (20th of september _ 24th of september, 2026)/"
+?? "resources/coligo/Ali/Science 105/powerpoint/"
+?? "resources/coligo/Ali/Science 105/ppt on plant parts  (20th of september _ 24th of september, 2026)/"
+?? "resources/coligo/Ali/Science 105/worksheet/"
+?? "resources/coligo/Ali/Social Studies 105/Weekly plan/"
+?? "resources/coligo/Mostafa/English 106/Common non-fiction features/"
+?? "resources/coligo/Mostafa/English 106/Fact File_ Petronas - Part 2/"
+?? "resources/coligo/Mostafa/English 106/Fact File_ Petronas - part 1/"
+?? "resources/coligo/Mostafa/English 106/Fantasy Reading _ working out unfamiliar words & key points/"
+?? "resources/coligo/Mostafa/English 106/Fantasy reading_ explaining the characters' feelings with evidence/"
+?? "resources/coligo/Mostafa/English 106/Fantasy reading_ making inferences and predictions about the characters' dilemma/"
+?? "resources/coligo/Mostafa/English 106/Fantasy reading_ the effect of the writer's language choices/"
+?? "resources/coligo/Mostafa/English 106/Fiction VS Non Fiction/"
+?? "resources/coligo/Mostafa/English 106/Grammar_ Adjectives, adverbials and prepositional phrases/"
+?? "resources/coligo/Mostafa/English 106/Grammar_ Noun phrases, adverbials and prepositional phrases/"
+?? "resources/coligo/Mostafa/English 106/Grammar_ Relative Clause/"
+?? "resources/coligo/Mostafa/English 106/Navigating a Non-fiction Text/"
+?? "resources/coligo/Mostafa/English 106/Petronas by Tina Shaw Part 2/"
+?? "resources/coligo/Mostafa/English 106/Petronas by Tina Shaw, part 1 - pp. 14-43 Setting, clues and character/"
+?? "resources/coligo/Mostafa/English 106/Petronas_ vocabulary/"
+?? "resources/coligo/Mostafa/English 106/Reading - Skim & Scan/"
+?? "resources/coligo/Mostafa/English 106/Reading - infer & deduce & interpret/"
+?? "resources/coligo/Mostafa/English 106/Reading_ LANGUAGE IN CONTEXT  +  PURPOSE & AUDIENCE/"
+?? "resources/coligo/Mostafa/English 106/Reading_ Writer choices - structure & Organization/"
+?? "resources/coligo/Mostafa/English 106/Report Detectives - Non - Choronological Report - part 1/"
+?? "resources/coligo/Mostafa/English 106/Research Detectives_ Non - chronologial Report (part 2)/"
+?? "resources/coligo/Mostafa/English 106/Writing_ Feedback & Second draft/"
+?? "resources/coligo/Mostafa/English 106/Writing_ Feedback non - choronological Report/"
+?? "resources/coligo/Mostafa/English 106/Writing_ From Notes To Report (Non - Choronological Report)/"
+?? "resources/coligo/Mostafa/English 106/Writing_ Non - choronological Report \342\200\223 Part 2_ First Draft/"
+?? "resources/coligo/Mostafa/English 106/Writing_ Planning the whole report/"
+?? "resources/coligo/Mostafa/English 106/Year_6_Tricky_Words_Adventure_(1).png"
+?? "resources/coligo/Mostafa/French 106/O\303\271 habites-tu _/"
+?? "resources/coligo/Mostafa/French 106/les pi\303\250ces de la maison ppt/"
+?? "resources/coligo/Mostafa/French 106/les pronoms personnels sujets/"
+?? "resources/coligo/Mostafa/ICT 106/Algorithms worksheet/"
+?? "resources/coligo/Mostafa/ICT 106/Flowcharts Worksheet/"
+?? "resources/coligo/Mostafa/ICT 106/ICT \342\200\223 Quiz  Students will take the ICT Quiz on the scheduled date.  Please make sure to study the up/"
+?? "resources/coligo/Mostafa/ICT 106/ICT \342\200\223 Revision  Dear Students, Please study the uploaded revision materials to prepare for the upcom/"
+?? "resources/coligo/Mostafa/ICT 106/Introduction to Flowcharts & Flowchart Symbols \342\200\223 Practice Worksheet/"
+?? "resources/coligo/Mostafa/ICT 106/Introduction to Flowcharts/"
+?? "resources/coligo/Mostafa/ICT 106/Introduction to Programming Constructs Sequence and Selection/"
+?? "resources/coligo/Mostafa/ICT 106/Introduction to Sub-routines/"
+?? "resources/coligo/Mostafa/ICT 106/Programming Constructs Worksheet/"
+?? "resources/coligo/Mostafa/ICT 106/Repetition (Loops) Programming Constructs Practice Worksheet/"
+?? "resources/coligo/Mostafa/ICT 106/What is an Algorithm & Errors_Bugs & Repeating & Loops & Debugging/"
+?? "resources/coligo/Mostafa/Math 106/Division-2-Digit-Numbers/"
+?? "resources/coligo/Mostafa/Math 106/Factors/"
+?? "resources/coligo/Mostafa/Math 106/Multiply 3digit by 1 digit/"
+?? "resources/coligo/Mostafa/Math 106/Multiply 4 digit by 2 digit/"
+?? "resources/coligo/Mostafa/Math 106/Partition number to 10 000 000/"
+?? "resources/coligo/Mostafa/Math 106/Prime factor/"
+?? "resources/coligo/Mostafa/Math 106/division 4 digit by 2 digit/"
+?? "resources/coligo/Mostafa/Science 106/Measurement Part 2/"
+?? "resources/coligo/Mostafa/Science 106/Measurements Part 1/"
+?? "resources/coligo/Mostafa/Social Studies 106/Educational video/"
+?? "resources/coligo/Mostafa/Social Studies 106/Weekly Plan/"
+?? "resources/coligo/Mostafa/Social Studies 106/Weekly plan5/"
+?? resources/coligo/courses_rendered.png
+?? search_transcript.py
+?? setup_precision_update.py
+?? skills-lock.json
+?? specs/
+?? test_clamp_geometry.py
+?? test_clip_def.py
+?? update_precision_clips.py
+?? verify_perfect_gap.py
