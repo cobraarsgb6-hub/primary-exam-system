@@ -145,9 +145,9 @@ function setupDatabase_(targetSs) {
   ensureSheetHeaders_(exSheet, exHeaders[0], '#4338ca');
 
   const sampleExams = [
-    ['EX_Y5_ENG_ADV01', 'Year 5 Grammar: Adverbials of Time, Place & Manner (Unit 2 Lesson 3)', 'Year 5 (G5)', 'English Grammar', 10, 20, 'ACTIVE', '', new Date()],
-    ['EX_Y6_ENG_FANTASY01', 'Grade 6 English: Fantasy Reading "The City That Waited" & Report Writing', 'Grade 6 (G6)', 'English Literacy', 10, 20, 'ACTIVE', '', new Date()],
-    ['EX_Y6_ARB_PRIO01', 'Grade 6 Arabic: Reading Comprehension, Grammar & Spelling (Diagnostic)', 'Grade 6 (G6)', 'Arabic Language', 10, 20, 'ACTIVE', '', new Date()]
+    ['EX_Y5_ENG_ADV01', 'Year 5 Grammar: Adverbials of Time, Place & Manner (Unit 2 Lesson 3)', 'Year 5 (G5)', 'English Grammar', 10, 20, 'ACTIVE', '', new Date(), 'Standard', 'W1', 'Foundational'],
+    ['EX_Y6_ENG_FANTASY01', 'Grade 6 English: Fantasy Reading "The City That Waited" & Report Writing', 'Grade 6 (G6)', 'English Literacy', 10, 20, 'ACTIVE', '', new Date(), 'Standard', 'W1', 'Standard'],
+    ['EX_Y6_ARB_PRIO01', 'Grade 6 Arabic: Reading Comprehension, Grammar & Spelling (Diagnostic)', 'Grade 6 (G6)', 'Arabic Language', 10, 20, 'ACTIVE', '', new Date(), 'Diagnostic', 'W1', 'Standard']
   ];
   if (exSheet.getLastRow() <= 1) {
     exSheet.getRange(2, 1, sampleExams.length, sampleExams[0].length).setValues(sampleExams);
@@ -817,6 +817,36 @@ function loadBankQuestions_(examCode) {
   return questions;
 }
 
+function extractDifficultyFromCode_(code) {
+  const c = String(code || '').toUpperCase();
+  if (c.indexOf('_CHA') !== -1 || c.indexOf('_HAR') !== -1 || c.indexOf('_LV3') !== -1) return 'Challenging';
+  if (c.indexOf('_STA') !== -1 || c.indexOf('_MED') !== -1 || c.indexOf('_LV2') !== -1) return 'Standard';
+  if (c.indexOf('_FOU') !== -1 || c.indexOf('_EAS') !== -1 || c.indexOf('_LV1') !== -1) return 'Foundational';
+  return 'ALL';
+}
+
+function matchDifficultyLevel_(rowDiff, targetDiff) {
+  const req = String(targetDiff || '').trim().toLowerCase();
+  if (!req || req === 'all') return true;
+  const row = String(rowDiff || '').trim().toLowerCase();
+  if (!row) return false;
+
+  const isFoundational = (row.indexOf('easy') !== -1 || row.indexOf('foundational') !== -1 || row.indexOf('level 1') !== -1 || row.indexOf('lv1') !== -1 || row.indexOf('بسيط') !== -1 || row.indexOf('سهل') !== -1);
+  const isStandard = (row.indexOf('medium') !== -1 || row.indexOf('standard') !== -1 || row.indexOf('core') !== -1 || row.indexOf('level 2') !== -1 || row.indexOf('lv2') !== -1 || row.indexOf('متوسط') !== -1);
+  const isChallenging = (row.indexOf('hard') !== -1 || row.indexOf('challenging') !== -1 || row.indexOf('adv') !== -1 || row.indexOf('level 3') !== -1 || row.indexOf('lv3') !== -1 || row.indexOf('صعب') !== -1 || row.indexOf('متقدم') !== -1);
+
+  if (req === 'foundational' || req === 'easy' || req === '1' || req === 'level 1' || req === 'fou') {
+    return isFoundational;
+  }
+  if (req === 'standard' || req === 'medium' || req === 'core' || req === '2' || req === 'level 2' || req === 'sta') {
+    return isStandard;
+  }
+  if (req === 'challenging' || req === 'hard' || req === 'adv' || req === '3' || req === 'level 3' || req === 'cha') {
+    return isChallenging;
+  }
+  return row.indexOf(req) !== -1;
+}
+
 function buildExamQuestions_(examCode) {
   const exam = getExamInfo(examCode);
   if (!exam) throw new Error('EXAM_NOT_FOUND');
@@ -825,7 +855,8 @@ function buildExamQuestions_(examCode) {
   // Weekly/monthly exams registered by the exam factory carry a target period
   // instead of per-exam bank rows. Fall back to the period slice of the bank.
   if (!questions.length && exam.targetPeriod) {
-    questions = loadBankQuestionsByPeriod_(exam.grade, exam.subject, exam.targetPeriod);
+    const targetDiff = (exam.difficulty && exam.difficulty !== 'ALL') ? exam.difficulty : extractDifficultyFromCode_(exam.code);
+    questions = loadBankQuestionsByPeriod_(exam.grade, exam.subject, exam.targetPeriod, targetDiff);
   }
   if (!questions.length) {
     if (exam.code === 'EX_Y5_ENG_ADV01') {
@@ -1639,7 +1670,8 @@ function getExamInfo(examCode) {
           duration: Number(starter[i][5]) || 20,
           status: String(starter[i][6] || 'ACTIVE'),
           examType: String(starter[i][9] || 'Standard'),
-          targetPeriod: String(starter[i][10] || 'W1')
+          targetPeriod: String(starter[i][10] || 'W1'),
+          difficulty: String(starter[i][11] || extractDifficultyFromCode_(code) || 'ALL')
         };
         break;
       }
@@ -1668,7 +1700,8 @@ function getExamInfo(examCode) {
         duration: Number(rowValue_(data[i], map, 'Duration (Mins)', 5)) || 20,
         status: status,
         examType: String(rowValue_(data[i], map, 'Exam Type', 9) || ''),
-        targetPeriod: String(rowValue_(data[i], map, 'Target Period', 10) || '')
+        targetPeriod: String(rowValue_(data[i], map, 'Target Period', 10) || ''),
+        difficulty: String(rowValue_(data[i], map, 'Difficulty', 11) || rowValue_(data[i], map, 'مستوى الصعوبة', 11) || (fallback ? fallback.difficulty : '') || extractDifficultyFromCode_(code) || 'ALL')
       };
     }
   }
@@ -2788,13 +2821,8 @@ function loadBankQuestionsByPeriod_(grade, subject, period, targetDifficulty) {
 
     if (type === 'TRUE_FALSE' && options.length < 2) options = ['True', 'False'];
 
-    let priority = 1;
     if (reqDiff && reqDiff !== 'all') {
-      if (rowDiff.indexOf(reqDiff) !== -1) priority = 3;
-      else if (reqDiff === 'foundational' && (rowDiff.indexOf('easy') !== -1 || rowDiff.indexOf('level 1') !== -1)) priority = 3;
-      else if (reqDiff === 'standard' && (rowDiff.indexOf('medium') !== -1 || rowDiff.indexOf('core') !== -1)) priority = 3;
-      else if (reqDiff === 'challenging' && (rowDiff.indexOf('hard') !== -1 || rowDiff.indexOf('adv') !== -1)) priority = 3;
-      else priority = 0;
+      if (!matchDifficultyLevel_(rowDiff, reqDiff)) continue;
     }
 
     questions.push({
@@ -2807,13 +2835,10 @@ function loadBankQuestionsByPeriod_(grade, subject, period, targetDifficulty) {
       options: options,
       correctAnswer: answer,
       explanation: String(row[headerIndex_(map, 'Explanation', 9)] || ''),
-      difficulty: rowDiff,
-      priority: priority
+      difficulty: rowDiff
     });
   }
 
-  // Sort by priority descending so target difficulty is picked first
-  questions.sort((a, b) => (b.priority || 0) - (a.priority || 0));
   return questions;
 }
 
@@ -2855,7 +2880,8 @@ function getStudentAvailableExams(studentKey, studentToken) {
           count: Number(rowValue_(row, map, 'Questions', 4)) || 10,
           duration: Number(rowValue_(row, map, 'Duration (Mins)', 5)) || 20,
           type: String(rowValue_(row, map, 'Exam Type', 9) || 'Standard'),
-          period: String(rowValue_(row, map, 'Target Period', 10) || 'W1')
+          period: String(rowValue_(row, map, 'Target Period', 10) || 'W1'),
+          difficulty: String(rowValue_(row, map, 'Difficulty', 11) || rowValue_(row, map, 'مستوى الصعوبة', 11) || extractDifficultyFromCode_(rowValue_(row, map, 'Exam Code', 0)) || 'ALL')
         });
       }
       return { success: true, exams: exams, driveVideos: readDriveVideoMap_() };
@@ -2883,7 +2909,8 @@ function getStudentAvailableExams(studentKey, studentToken) {
           count: Number(row[4]) || 10,
           duration: Number(row[5]) || 20,
           type: String(row[9] || 'Standard'),
-          period: String(row[10] || 'W1')
+          period: String(row[10] || 'W1'),
+          difficulty: String(row[11] || extractDifficultyFromCode_(row[0]) || 'ALL')
         });
       }
     }
@@ -2929,8 +2956,8 @@ function createWeeklyExam_(payload) {
     const rawSubject = String((payload && payload.subject) || 'ALL');
     const subject = rawSubject;
     const isAll = (rawSubject === 'ALL' || rawSubject.toLowerCase().indexOf('all') !== -1);
-    const count = Number(payload && payload.count) || (isAll ? 18 : 10);
-    const duration = Number(payload && payload.duration) || (isAll ? 35 : 20);
+    const count = Math.max(3, Math.min(50, Number(payload && payload.count) || (isAll ? 18 : 10)));
+    const duration = Math.max(5, Math.min(180, Number(payload && payload.duration) || (isAll ? 35 : 20)));
 
     if (!/^W[1-9][0-9]?$/.test(weekCode)) {
       return { success: false, message: 'كود الأسبوع غير صالح. استخدم مثالاً مثل W1 أو W2.' };
@@ -2941,16 +2968,17 @@ function createWeeklyExam_(payload) {
     if (!bankQuestions.length) {
       return {
         success: false,
-        message: 'لا توجد أسئلة في بنك الأسئلة لـ ' + grade + ' / ' + rawSubject + ' / ' + weekCode + '. أضف الأسئلة أولاً ثم أعد المحاولة.'
+        message: 'لا توجد أسئلة في بنك الأسئلة لـ ' + grade + ' / ' + rawSubject + ' / ' + weekCode + (targetDifficulty !== 'ALL' ? ' بالمستوى ' + targetDifficulty : '') + '. أضف الأسئلة أولاً ثم أعد المحاولة.'
       };
     }
 
-        const fam = subjectFamily_(rawSubject);
+    const fam = subjectFamily_(rawSubject);
     const subjectPrefix = isAll ? 'ALL' : (fam === 'arabic' ? 'ARB' : (fam === 'math' ? 'MATH' : (fam === 'science' ? 'SCI' : (fam === 'ict' ? 'ICT' : 'ENG'))));
     const targetDiff = String((payload && payload.difficulty) || 'ALL').trim();
     const diffTag = (targetDiff !== 'ALL' && targetDiff) ? '_' + targetDiff.substring(0, 3).toUpperCase() : '';
     const examCode = 'EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_' + weekCode + '_' + subjectPrefix + diffTag;
-    const title = (isAli ? 'Ali' : 'Mostafa') + ' - ' + (isAll ? ('Week ' + weekCode.replace('W','') + ' All-Subjects Weekly Milestone (امتحان نهاية الأسبوع الشامل)') : (rawSubject + ' ' + weekCode + ' Assessment'));
+    const diffLabel = (targetDiff !== 'ALL' && targetDiff) ? ' [' + targetDiff + ']' : '';
+    const title = (isAli ? 'Ali' : 'Mostafa') + ' - ' + (isAll ? ('Week ' + weekCode.replace('W','') + ' All-Subjects Weekly Milestone' + diffLabel) : (rawSubject + ' ' + weekCode + diffLabel + ' Assessment'));
     const available = bankQuestions.length;
 
     const examRow = [
@@ -2964,7 +2992,8 @@ function createWeeklyExam_(payload) {
       '',
       new Date(),
       'Weekly',
-      weekCode
+      weekCode,
+      targetDiff
     ];
 
     upsertExamRow_(exSheet, examCode, examRow);
@@ -2976,6 +3005,7 @@ function createWeeklyExam_(payload) {
       title: title,
       grade: grade,
       subject: subject,
+      difficulty: targetDiff,
       weekCode: weekCode,
       questionsCount: examRow[4],
       studentUrl: computeExamUrl_(studentKey, examCode),
@@ -3007,8 +3037,8 @@ function createMonthlyExam_(payload) {
     const grade = isAli ? 'Year 5 (G5)' : 'Grade 6 (G6)';
     const monthCode = String((payload && payload.monthCode) || 'M1').toUpperCase();
     const requestedSubject = String((payload && payload.subject) || (isAli ? 'English Grammar' : 'Cumulative Assessment'));
-    const count = Number(payload && payload.count) || 15;
-    const duration = Number(payload && payload.duration) || 30;
+    const count = Math.max(3, Math.min(50, Number(payload && payload.count) || 15));
+    const duration = Math.max(5, Math.min(180, Number(payload && payload.duration) || 30));
     const targetDifficulty = String((payload && payload.difficulty) || 'ALL');
 
     if (!/^M[1-9][0-9]?$/.test(monthCode)) {
@@ -3023,8 +3053,17 @@ function createMonthlyExam_(payload) {
       };
     }
 
-    const examCode = 'EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_' + monthCode + '_CUMULATIVE';
-    const title = (isAli ? 'Ali' : 'Mostafa') + ' - Month ' + monthCode.replace('M', '') + ' Comprehensive Cumulative Exam';
+    const fam = subjectFamily_(requestedSubject);
+    const isAll = (requestedSubject === 'ALL' || requestedSubject.toLowerCase().indexOf('all') !== -1 || requestedSubject.toLowerCase().indexOf('cumulative') !== -1);
+    const subjectPrefix = isAll ? '' : (fam === 'arabic' ? '_ARB' : (fam === 'math' ? '_MATH' : (fam === 'science' ? '_SCI' : (fam === 'ict' ? '_ICT' : '_ENG'))));
+    const targetDiff = String((payload && payload.difficulty) || 'ALL').trim();
+    const diffTag = (targetDiff !== 'ALL' && targetDiff) ? '_' + targetDiff.substring(0, 3).toUpperCase() : '';
+    const isDefaultMonthly = (!payload || (!payload.subject && (!payload.difficulty || payload.difficulty === 'ALL')));
+    const examCode = isDefaultMonthly
+      ? ('EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_' + monthCode + '_CUMULATIVE')
+      : ('EX_' + (isAli ? 'Y5_ALI' : 'Y6_MOS') + '_' + monthCode + subjectPrefix + diffTag + '_CUMULATIVE');
+    const diffLabel = (targetDiff !== 'ALL' && targetDiff) ? ' [' + targetDiff + ']' : '';
+    const title = (isAli ? 'Ali' : 'Mostafa') + ' - Month ' + monthCode.replace('M', '') + ' ' + (isAll ? 'Comprehensive Cumulative Exam' : requestedSubject + ' Cumulative Assessment') + diffLabel;
     const available = bankQuestions.length;
 
     const examRow = [
@@ -3038,7 +3077,8 @@ function createMonthlyExam_(payload) {
       '',
       new Date(),
       'Monthly',
-      monthCode
+      monthCode,
+      targetDiff
     ];
 
     upsertExamRow_(exSheet, examCode, examRow);
@@ -3049,6 +3089,10 @@ function createMonthlyExam_(payload) {
       examCode: examCode,
       title: title,
       grade: grade,
+      subject: requestedSubject,
+      difficulty: targetDiff,
+      monthCode: monthCode,
+      questionsCount: examRow[4],
       studentUrl: computeExamUrl_(studentKey, examCode),
       message: 'تم إنشاء الامتحان الشهري التراكمي (' + monthCode + ') بنجاح برمز: ' + examCode + ' — ' + examRow[4] + ' أسئلة متاحة.'
     };

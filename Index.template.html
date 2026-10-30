@@ -953,14 +953,25 @@
                     </select>
                   </div>
 
-                  <div style="margin-bottom: 14px;">
+                  <div style="margin-bottom: 12px;">
                     <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">DIFFICULTY LEVEL</label>
                     <select id="ops-weekly-difficulty" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
                       <option value="ALL" selected>Balanced Core (All Levels)</option>
-                      <option value="Foundational">Level 1: Foundational Focus</option>
-                      <option value="Standard">Level 2: Standard Core</option>
-                      <option value="Challenging">Level 3: Advanced Challenge</option>
+                      <option value="Foundational">Level 1: Foundational Focus (تأسيسي)</option>
+                      <option value="Standard">Level 2: Standard Core (قياسي)</option>
+                      <option value="Challenging">Level 3: Advanced Challenge (تحدي)</option>
                     </select>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">QUESTIONS COUNT</label>
+                      <input type="number" id="ops-weekly-count" value="10" min="5" max="30" style="width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">DURATION (MINS)</label>
+                      <input type="number" id="ops-weekly-duration" value="20" min="10" max="60" style="width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;" />
+                    </div>
                   </div>
                 </div>
 
@@ -996,21 +1007,29 @@
                       <option value="Science">Science Only</option>
                       <option value="English Grammar">English Grammar Only</option>
                       <option value="Arabic Language">Arabic Language Only</option>
+                      <option value="ICT Computing">ICT Computing Only</option>
                     </select>
                   </div>
 
-                  <div style="margin-bottom: 14px;">
+                  <div style="margin-bottom: 12px;">
                     <label style="display: block; font-size: 0.78rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">DIFFICULTY LEVEL</label>
                     <select id="ops-monthly-difficulty" style="width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;">
                       <option value="ALL" selected>Balanced Core (All Levels)</option>
-                      <option value="Foundational">Level 1: Foundational Focus</option>
-                      <option value="Standard">Level 2: Standard Core</option>
-                      <option value="Challenging">Level 3: Advanced Challenge</option>
+                      <option value="Foundational">Level 1: Foundational Focus (تأسيسي)</option>
+                      <option value="Standard">Level 2: Standard Core (قياسي)</option>
+                      <option value="Challenging">Level 3: Advanced Challenge (تحدي)</option>
                     </select>
                   </div>
 
-                  <div style="font-size: 0.8rem; color: #3730a3; background: #eef2ff; border: 1px solid #c7d2fe; padding: 10px; border-radius: 8px; margin-bottom: 14px;">
-                    📊 Evaluates 15 balanced questions across all weekly topics.
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">QUESTIONS COUNT</label>
+                      <input type="number" id="ops-monthly-count" value="15" min="5" max="40" style="width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;" />
+                    </div>
+                    <div>
+                      <label style="display: block; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-bottom: 4px;">DURATION (MINS)</label>
+                      <input type="number" id="ops-monthly-duration" value="30" min="10" max="90" style="width: 100%; padding: 7px 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.85rem;" />
+                    </div>
                   </div>
                 </div>
 

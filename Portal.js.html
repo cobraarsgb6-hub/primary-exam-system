@@ -429,7 +429,22 @@
           else if (cat === 'MONTHLY') matchCat = ex.code.includes('_M') || ex.title.includes('Milestone') || ex.type === 'Cumulative' || ex.type === 'Monthly' || ex.type === 'Capstone';
           else if (cat === 'DIAGNOSTIC') matchCat = ex.code.includes('ADV01') || ex.code.includes('PRIO01') || ex.code.includes('FANTASY01') || ex.code.includes('QUIZ01') || ex.type === 'Diagnostic' || ex.type === 'Foundational';
 
-          return matchSubj && matchCat;
+          // 3. Adaptive Difficulty Filter
+          let matchDiff = true;
+          const targetLvl = window.currentDifficultyLevel;
+          const diffStr = String(ex.difficulty || '').trim().toLowerCase();
+          const codeUpper = String(ex.code || '').toUpperCase();
+          const isL1 = diffStr.includes('easy') || diffStr.includes('foundational') || diffStr.includes('level 1') || codeUpper.includes('_FOU') || codeUpper.includes('_EAS') || codeUpper.includes('_LV1') || ex.type === 'Diagnostic' || ex.type === 'Foundational';
+          const isL3 = diffStr.includes('hard') || diffStr.includes('challenging') || diffStr.includes('level 3') || codeUpper.includes('_CHA') || codeUpper.includes('_HAR') || codeUpper.includes('_LV3') || ex.type === 'Capstone';
+          const isL2 = !isL1 && !isL3;
+
+          if (targetLvl && targetLvl !== 'ALL') {
+            if (targetLvl === 1 || targetLvl === '1') matchDiff = isL1;
+            else if (targetLvl === 2 || targetLvl === '2') matchDiff = isL2;
+            else if (targetLvl === 3 || targetLvl === '3') matchDiff = isL3;
+          }
+
+          return matchSubj && matchCat && matchDiff;
         });
 
         const countBadge = document.getElementById('exam-cards-count-label');
@@ -463,11 +478,17 @@
             </div>
             <div style="display:flex; align-items:center; gap:6px;">
               <span class="exam-item-tag">${escapeHtml(ex.period || ex.type || student.grade)}</span>
-              ${(ex.type === 'Diagnostic' || ex.type === 'Foundational') 
-                ? '<span style="font-size:0.68rem; font-weight:800; background:#e0f2fe; color:#0369a1; padding:2px 7px; border-radius:10px;">L1</span>' 
-                : (ex.type === 'Cumulative' || ex.type === 'Monthly' || ex.type === 'Capstone') 
-                ? '<span style="font-size:0.68rem; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 7px; border-radius:10px;">L3</span>' 
-                : '<span style="font-size:0.68rem; font-weight:800; background:#ecfdf5; color:#047857; padding:2px 7px; border-radius:10px;">L2</span>'}
+              ${(() => {
+                const d = String(ex.difficulty || '').toLowerCase();
+                const c = String(ex.code || '').toUpperCase();
+                if (d.includes('easy') || d.includes('foundational') || d.includes('level 1') || c.includes('_FOU') || c.includes('_EAS') || c.includes('_LV1') || ex.type === 'Diagnostic' || ex.type === 'Foundational') {
+                  return '<span style="font-size:0.68rem; font-weight:800; background:#e0f2fe; color:#0369a1; padding:2px 7px; border-radius:10px;" title="Level 1: Foundational">L1: Foundational</span>';
+                }
+                if (d.includes('hard') || d.includes('challenging') || d.includes('level 3') || c.includes('_CHA') || c.includes('_HAR') || c.includes('_LV3') || ex.type === 'Capstone') {
+                  return '<span style="font-size:0.68rem; font-weight:800; background:#fef3c7; color:#b45309; padding:2px 7px; border-radius:10px;" title="Level 3: Advanced Challenge">L3: Challenge</span>';
+                }
+                return '<span style="font-size:0.68rem; font-weight:800; background:#ecfdf5; color:#047857; padding:2px 7px; border-radius:10px;" title="Level 2: Standard Core">L2: Standard</span>';
+              })()}
             </div>
           `;
           card.addEventListener('click', () => {
@@ -1203,13 +1224,17 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
       const diffEl = document.getElementById('ops-weekly-difficulty');
       const difficulty = diffEl ? diffEl.value : 'ALL';
+      const countEl = document.getElementById('ops-weekly-count');
+      const durEl = document.getElementById('ops-weekly-duration');
+      const count = countEl ? (parseInt(countEl.value, 10) || 10) : 10;
+      const duration = durEl ? (parseInt(durEl.value, 10) || 20) : 20;
       const payload = {
         studentKey: studentKey,
         weekCode: weekCode,
         subject: subject,
         difficulty: difficulty,
-        count: 10,
-        duration: 20
+        count: count,
+        duration: duration
       };
 
       if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -1255,13 +1280,17 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       const diffEl = document.getElementById('ops-monthly-difficulty');
       const subject = subjEl ? subjEl.value : 'ALL';
       const difficulty = diffEl ? diffEl.value : 'ALL';
+      const countEl = document.getElementById('ops-monthly-count');
+      const durEl = document.getElementById('ops-monthly-duration');
+      const count = countEl ? (parseInt(countEl.value, 10) || 15) : 15;
+      const duration = durEl ? (parseInt(durEl.value, 10) || 30) : 30;
       const payload = {
         studentKey: studentKey,
         monthCode: monthCode,
         subject: subject,
         difficulty: difficulty,
-        count: 15,
-        duration: 30
+        count: count,
+        duration: duration
       };
 
       if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -1836,11 +1865,15 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
 
     // Adaptive Difficulty Controller
     function setAdaptiveDifficulty(level) {
-      window.currentDifficultyLevel = level;
-      safeStorage.setItem('coligo_target_difficulty', level);
+      if (window.currentDifficultyLevel === level) {
+        window.currentDifficultyLevel = 'ALL';
+      } else {
+        window.currentDifficultyLevel = level;
+      }
+      safeStorage.setItem('coligo_target_difficulty', window.currentDifficultyLevel);
       [1, 2, 3].forEach(l => {
         const p = document.getElementById('diff-pill-' + l);
-        if (p) p.classList.toggle('active', l === level);
+        if (p) p.classList.toggle('active', l === window.currentDifficultyLevel);
       });
       if (typeof window.renderExamCards === 'function') {
         window.renderExamCards();
