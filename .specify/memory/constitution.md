@@ -1,12 +1,13 @@
 <!-- Sync Impact Report
-- Version change: 1.0.0 -> 1.1.0 (MINOR: new principles added; existing guidance expanded, none removed or redefined)
-- Follow-up: 1.1.0 -> 1.1.1 (PATCH: CodeRabbit review gate added to Development Workflow per owner mandate; no semantic changes)
-- Source of amendment: user mandate ROADMAP_SPECKIT_AR.md §2 (10-point constitution) merged with existing v1.0.0
-- Added principles: VI. Student Isolation & Child Privacy; VII. Secrets Discipline; VIII. Evidence-Based Status
-- Expanded principles: I (append-only sheet discipline), II (server-only grading & answer exposure + token naming reality), III (test counts counted from HEAD)
-- Expanded sections: Additional Constraints & Security (Apps Script `//` escaping rule; whole-file delivery), Governance (phase acceptance gates)
-- Removed sections: none
-- Deferred TODOs: none
+- Version change: 1.1.1 -> 1.2.0 (MINOR: added owner-mandated Invariants 11-16 for Phases P10-P15)
+- Source of amendment: user directive for roadmap expansion (Phases P10 through P15)
+- Added principles / invariants:
+  IX. YouTube Isolation & Zero External Escape (Rule 11)
+  X. Four Pedagogical Pillars of Lesson Completeness (Rule 12)
+  XI. Strict Ban on Placeholders & Duplicate Fillers (Rule 13)
+  XII. Question Bank Density (>=45 items per lesson: 15 L1, 15 L2, 15 L3) (Rule 14)
+  XIII. Dynamic Refresh & Anti-Memorization Regeneration (Rule 15)
+  XIV. Apps Script Escape Invariant & Bundle Automation (Rule 16)
 -->
 
 # Primary Exam System (G5 & G6) Constitution
@@ -126,6 +127,58 @@ Ali (G5) and Mostafa (G6) are two separate children, not one account.
 - The project maintains ONE truthful status file; older documents are archived
   as historical, not authoritative.
 
+### IX. YouTube Isolation & Zero External Escape (Rule 11)
+
+- Any YouTube iframe that permits clicking through to youtube.com, clicking the
+  video title or channel logo, or displaying suggested videos (End Screen) is
+  strictly forbidden.
+- Video playback MUST run exclusively within the platform's custom isolated
+  player (`IsolatedVideoPlayer`) using `youtube-nocookie.com` with controls and
+  branding disabled, an interception pointer-events shield over the video canvas,
+  in-platform custom controls, and early interception via YouTube IFrame API to
+  hide the player 2 seconds before the end to eliminate end-screen recommendations.
+
+### X. Four Pedagogical Pillars of Lesson Completeness (Rule 12)
+
+No lesson is considered complete unless it programmatically implements all 4
+pedagogical pillars:
+1. Structured theoretical explanation (Nagwa Calm / Cambridge Style).
+2. At least 10 interactive review flashcards.
+3. Dedicated interactive lab or SVG/Canvas simulation tailored to the lesson.
+4. Isolated custom video player OR an elegant "الفيديو قيد الإعداد والمراجعة" card.
+
+### XI. Strict Ban on Placeholders & Duplicate Fillers (Rule 13)
+
+- Dummy placeholders (e.g. "سيتم إضافة الشرح", "Coming Soon", empty boxes) are
+  strictly prohibited.
+- Padding question counts by duplicating identical question text with superficial
+  number changes in CSV is forbidden. Every question in the bank must represent an
+  authentic pedagogical exercise.
+
+### XII. Question Bank Density: >=45 Items Per Lesson (Rule 14)
+
+- Every lesson across all subjects for Ali and Mostafa MUST contain at least
+  45 unique questions in `Question_Bank.csv`:
+  - 15 questions in Level 1 (L1: Foundational).
+  - 15 questions in Level 2 (L2: Standard).
+  - 15 questions in Level 3 (L3: Challenge).
+- Question type distribution: at most 65% Multiple Choice (MCQ) and at least 35%
+  Free-Text (`FILL_IN`), all with full explanations.
+
+### XIII. Dynamic Refresh & Anti-Memorization Regeneration (Rule 15)
+
+- In Practice Mode, every page refresh or "New Practice Exam" request MUST draw a
+  fresh set of questions utilizing short-term session exclusion history
+  (`sessionStorage`) and dynamically recompute mathematical and scientific parameters
+  via `generateDynamicQuestion`. Rote memorization of static question options is eliminated.
+
+### XIV. Apps Script Escape Invariant & Bundle Automation (Rule 16)
+
+- Never write `//` literally inside JavaScript code within Apps Script HTML templates;
+  always escape it as `\/\/` to prevent line-truncation bugs.
+- Always execute `python bundle.py` and synchronize `Index.bundle.html` and `index.html`
+  after every phase without exception.
+
 ## Additional Constraints & Security
 
 - **Apps Script `//` rule:** inside Apps Script HTML templates, do not write
@@ -178,6 +231,6 @@ Ali (G5) and Mostafa (G6) are two separate children, not one account.
   - MAJOR: principle removed, redefined, or made incompatible.
   - MINOR: new principle/section or materially expanded guidance.
   - PATCH: clarifications, wording, or typo fixes.
-- Compliance review on every merged change MUST verify Principles I–VIII and
+- Compliance review on every merged change MUST verify Principles I–XIV and
   must justify any complexity beyond the pilot scope in writing.
-- *Version*: 1.1.1 | *Ratified*: 2026-10-30 | *Last Amended*: 2026-10-30
+- *Version*: 1.2.0 | *Ratified*: 2026-10-30 | *Last Amended*: 2026-10-30
