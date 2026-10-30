@@ -52,10 +52,27 @@ function getSpreadsheet_() {
   return ss;
 }
 
+/**
+ * One-Click Setup for System Properties (SYNC_SECRET & PIN Hashes)
+ * Can be run from the Apps Script toolbar or from the Sheet menu.
+ */
+function initializeAllProjectProperties() {
+  const props = PropertiesService.getScriptProperties();
+  props.setProperties({
+    'SYNC_SECRET': 'PRIMARY_SYNC_2026_x89a4df1',
+    'ADMIN_PIN_HASH': '77aab5fd559133be7e989ee0e878da15f9bd1d93f1f1a3d939f4c69f593b48ff',
+    'ALI_PIN_HASH': '15fc7eebd45d4b33fe2680e3c8f7c03ed56308e536165cbf887147569feab8e6',
+    'MOSTAFA_PIN_HASH': 'b77a0882d18ceb8585bed60cac90d832ba84c9b71879a5442f883b6c08a91290'
+  });
+  Logger.log('✅ ALL PROPERTIES CONFIGURED SUCCESSFULLY!');
+  return { success: true, message: 'All system properties initialized successfully.' };
+}
+
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu('🎯 Assessment Management')
     .addItem('⚙️ Full Database Auto-Format & Setup', 'setupDatabaseFromMenu_')
+    .addItem('🔐 Auto-Configure System Keys & PINs', 'initializeAllProjectProperties')
     .addItem('📥 Seed Full 5-Subject Bank (234 Questions & 48 Exams)', 'seedCompleteQuestionBankFromMenu_')
     .addItem('📝 Generate Google Form from Exam', 'generateGoogleFormPrompt_')
     .addItem('⚡ Create Weekly Exam', 'promptCreateWeeklyExam_')
