@@ -1,5 +1,5 @@
 {
-  "synced_at": "2026-10-30 07:52:01",
+  "synced_at": "2026-10-30 18:05:54",
   "semester_id": "6aa6b7d7382ba9a416a84790",
   "students": {
     "Ali": {
@@ -1238,8 +1238,8 @@
             {
               "material_id": "6ad77d46f176cb7465e2557f",
               "title": "Force H.W.",
-              "filename": "Force H.W./FORCE_H.W..pdf",
-              "web_path": "resources/coligo/Mostafa/Science%20106/Force%20H.W./FORCE_H.W..pdf",
+              "filename": "Force H.W/FORCE_H.W..pdf",
+              "web_path": "resources/coligo/Mostafa/Science%20106/Force%20H.W/FORCE_H.W..pdf",
               "source_url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/science-106/materials/2026/oct/week-3/now-1792507205598/FORCE_H.W..pdf.zip",
               "source_updated_at": 1792507206933
             }
@@ -1479,8 +1479,8 @@
             {
               "material_id": "6ab39a914bf4386be0422670",
               "title": "explore 2 cahier d'act.",
-              "filename": "explore 2 cahier d'act./Explore_2_Cahier_d'activites.pdf",
-              "web_path": "resources/coligo/Mostafa/French%20106/explore%202%20cahier%20d%27act./Explore_2_Cahier_d%27activites.pdf",
+              "filename": "explore 2 cahier d'act/Explore_2_Cahier_d'activites.pdf",
+              "web_path": "resources/coligo/Mostafa/French%20106/explore%202%20cahier%20d%27act/Explore_2_Cahier_d%27activites.pdf",
               "source_url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/french-106/materials/2026/sep/week-4/now-1790155403167/Explore_2_Cahier_d'activites.pdf.zip",
               "source_updated_at": 1790155409613
             },
