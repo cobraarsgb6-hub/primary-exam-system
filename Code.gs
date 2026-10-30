@@ -997,6 +997,14 @@ const ARABIC_PASSAGES_POOL = [
   }
 ];
 
+function formatSubjectAfterFronted_(subj) {
+  const str = String(subj || '').trim();
+  if (str.startsWith('The ')) {
+    return 'the ' + str.slice(4);
+  }
+  return str;
+}
+
 function generateAliAdverbialExam_() {
   const subjects = ['The astronaut', 'The Apollo rover', 'Commander Davis', 'The spacecraft', 'The satellite', 'The lunar explorer', 'The flight engineer', 'The pilot'];
   const verbs = ['landed safely', 'launched into orbit', 'reached the space station', 'transmitted clear signals', 'touched down', 'departed the launchpad', 'completed its mission'];
@@ -1067,7 +1075,7 @@ function generateAliAdverbialExam_() {
 
   // Q4: Fronted Adverbial Punctuation (Comma Placement)
   const q4Front = getRandomElement(['After a long journey', 'Before the countdown began', 'With steady hands', 'Behind the launchpad', 'In the year ' + getRandomInt(1960, 2024), 'Without warning']);
-  const q4Body = `${getRandomElement(subjects).toLowerCase()} touched down safely`;
+  const q4Body = `${formatSubjectAfterFronted_(getRandomElement(subjects))} touched down safely`;
 
   const q4Correct = `${q4Front}, ${q4Body}.`;
   const q4Err1 = `${q4Front} ${q4Body}.`;
@@ -1113,12 +1121,13 @@ function generateAliAdverbialExam_() {
   // Q6: Sentence Transformation (Moving Adverbial to the Front)
   const q6Year = getRandomInt(1960, 2025);
   const q6Sub = getRandomElement(subjects);
+  const q6SubFmt = formatSubjectAfterFronted_(q6Sub);
   const q6Verb = getRandomElement(verbs);
   const q6Original = `${q6Sub} ${q6Verb} in ${q6Year}.`;
-  const q6Rewritten = `In ${q6Year}, ${q6Sub.toLowerCase()} ${q6Verb}.`;
-  const q6RewrittenWrong1 = `In ${q6Year} ${q6Sub.toLowerCase()} ${q6Verb}.`;
+  const q6Rewritten = `In ${q6Year}, ${q6SubFmt} ${q6Verb}.`;
+  const q6RewrittenWrong1 = `In ${q6Year} ${q6SubFmt} ${q6Verb}.`;
   const q6RewrittenWrong2 = `${q6Sub} in ${q6Year}, ${q6Verb}.`;
-  const q6RewrittenWrong3 = `In ${q6Year} was ${q6Sub.toLowerCase()} ${q6Verb}.`;
+  const q6RewrittenWrong3 = `In ${q6Year} was ${q6SubFmt} ${q6Verb}.`;
 
   questions.push({
     id: 'DYN_Y5_006_' + Utilities.getUuid().slice(0, 6),
@@ -1190,8 +1199,8 @@ function generateAliAdverbialExam_() {
     explanation: `💡 Adverbial of Manner:\n"${q9MannerGood}" describes HOW the equipment was operated.`
   });
 
-  // Q10: True / False Evaluation
-  const q10Sentence = `In ${getRandomInt(1950, 2020)}, engineers built the first space satellite.`;
+  // Q10: True / False Evaluation (Factually & Historically Authentic: Sputnik 1957)
+  const q10Sentence = 'In 1957, scientists launched the first artificial satellite into orbit.';
   questions.push({
     id: 'DYN_Y5_010_' + Utilities.getUuid().slice(0, 6),
     grade: 'Year 5 (G5)',
@@ -1202,7 +1211,7 @@ function generateAliAdverbialExam_() {
     options: ['False (It answers "When?")', 'True (It answers "Where?")'],
     correctAnswer: 'False (It answers "When?")',
     points: 1,
-    explanation: `💡 Concept Check:\nA year (like 1957 or 1999) indicates TIME, not PLACE.`
+    explanation: '💡 Concept Check:\n"In 1957" is a fronted adverbial of TIME that answers the question "When?", not "Where?".'
   });
 
   return questions;
