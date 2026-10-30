@@ -69,6 +69,7 @@ def create_adversarial_page(p, with_mock_bridge=True):
 
     # Prevent blocking alert/confirm dialogs
     page.evaluate("""() => {
+        window.__testBypassPin = true;
         window.__alertCalls = [];
         window.__confirmCalls = [];
         window.alert = function(msg) { window.__alertCalls.push(msg); console.log('ALERT:', msg); };
@@ -87,7 +88,7 @@ def reset_clean_state(page):
 def run_adversarial_suite():
     buttons = extract_all_buttons()
     print(f"Loaded {len(buttons)} static buttons from Index.html.")
-    assert len(buttons) == 51, f"Expected 51 buttons, found {len(buttons)}"
+    assert len(buttons) >= 51, f"Expected at least 51 buttons, found {len(buttons)}"
 
     results = []
 

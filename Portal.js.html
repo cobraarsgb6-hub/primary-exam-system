@@ -2576,6 +2576,11 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
       document.getElementById('sw-coligo-grade-detail').innerText = s.coligoDetail;
       document.getElementById('sw-practice-grade-num').innerText = (s.coligoGrade === 'Pending' ? '90%' : '96%');
 
+      // 5. Units Studio & Labs Section (Phase P11)
+      if (typeof renderSubjectStudioUnits === 'function') {
+        renderSubjectStudioUnits(s.code, 'sw-studio-units-list');
+      }
+
       // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

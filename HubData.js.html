@@ -1176,8 +1176,11 @@ window.DRIVE_VIDEOS = {};
       closeVideoModal();
       if (action === 'lab') {
         /* Open interactive lab */
-        if (typeof openSubjectModal === 'function' && currentActiveSubject) {
-          openSubjectModal(currentActiveSubject.id);
+        if (currentStudioUnit && typeof openStudioUnit === 'function') {
+          openStudioUnit(currentStudioUnit.id);
+          switchStudioTab('lab');
+        } else if (currentActiveSubject && typeof openSubjectDetail === 'function') {
+          openSubjectDetail(currentActiveSubject.id);
         } else if (typeof switchStudentTab === 'function') {
           switchStudentTab('exams');
         }

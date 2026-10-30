@@ -293,6 +293,24 @@
                   </div>
                 </div>
 
+                
+                <!-- CARD 2B: INTERACTIVE STEM CURRICULUM UNITS & LABS -->
+                <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <span style="font-size: 1.3rem;">🔬</span>
+                      <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a; margin: 0;">وحدات ومعامل الاستديو التفاعلي (Interactive Units & Labs)</h3>
+                    </div>
+                    <span style="font-size: 0.78rem; font-weight: 700; color: #0369a1; background: #e0f2fe; padding: 3px 9px; border-radius: 6px;">شرح + 10 كروت + معمل + فيديو</span>
+                  </div>
+                  <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 14px;">
+                    اختر أي وحدة دراسية لفتح استديو الشرح النظري المنهجي، وتقليب كروت المراجعة التفاعلية، وتشغيل المعمل الافتراضي المباشر.
+                  </p>
+                  <div id="sw-studio-units-list">
+                    <!-- Populated dynamically by renderSubjectStudioUnits -->
+                  </div>
+                </div>
+
                 <!-- CARD 3: PRACTICE QUIZ -->
                 <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
@@ -1327,6 +1345,88 @@
   </div>
 
 
+  
+  <!-- INTERACTIVE STEM STUDIO & LABS MODAL (Phase P11) -->
+  <div class="modal-overlay" id="unit-studio-modal" role="dialog" aria-modal="true" aria-labelledby="studio-modal-title">
+    <div class="modal-card" style="max-width: 860px; width: 95%; max-height: 92vh; overflow-y: auto; padding: 22px; border-radius: 18px; text-align: right;" dir="rtl">
+      <!-- Header -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 12px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span id="studio-modal-icon" style="font-size: 2.2rem; background: #f8fafc; border-radius: 12px; width: 50px; height: 50px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;">🔬</span>
+          <div>
+            <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+              <span class="meta-pill pill-cyan" id="studio-modal-subject" style="font-size: 0.75rem;">Science 106</span>
+              <span class="meta-pill" style="font-size: 0.75rem; background: #fef3c7; color: #92400e;">استديو متكامل</span>
+            </div>
+            <h3 id="studio-modal-title" style="font-size: 1.25rem; font-weight: 900; color: #0f172a; margin: 0;">الجهاز الدوري والدورة الدموية</h3>
+            <div id="studio-modal-sub" style="font-size: 0.8rem; color: #64748b; font-family: sans-serif;">Circulatory System</div>
+          </div>
+        </div>
+        <button type="button" class="portal-btn" onclick="closeStudioModal()" style="padding: 6px 14px; font-weight: 800; font-size: 0.88rem;">✕ إغلاق</button>
+      </div>
+
+      <!-- 4 Tabs Navigation -->
+      <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; flex-wrap: wrap;">
+        <button type="button" class="inspect-chip active" id="studio-tab-btn-theory" onclick="switchStudioTab('theory')">📖 الشرح النظري</button>
+        <button type="button" class="inspect-chip" id="studio-tab-btn-flashcards" onclick="switchStudioTab('flashcards')">🗂️ كروت المراجعة (10)</button>
+        <button type="button" class="inspect-chip" id="studio-tab-btn-lab" onclick="switchStudioTab('lab')">🔬 المعمل التفاعلي</button>
+        <button type="button" class="inspect-chip" id="studio-tab-btn-video" onclick="switchStudioTab('video')">🎬 الفيديو المعزول</button>
+      </div>
+
+      <!-- Tab 1: Theory -->
+      <div id="studio-tab-pane-theory" style="display: block;">
+        <div id="studio-theory-content">
+          <!-- Rendered by renderStudioTheory() -->
+        </div>
+      </div>
+
+      <!-- Tab 2: Flashcards -->
+      <div id="studio-tab-pane-flashcards" style="display: none;">
+        <div style="text-align: center; margin-bottom: 12px;">
+          <span id="studio-flashcard-counter" style="font-size: 0.88rem; font-weight: 800; color: #0284c7; background: #e0f2fe; padding: 4px 14px; border-radius: 20px;">بطاقة 1 من 10</span>
+          <div style="width: 100%; max-width: 400px; height: 6px; background: #e2e8f0; border-radius: 3px; margin: 8px auto 0 auto; overflow: hidden;">
+            <div id="studio-flashcard-progress-bar" style="width: 10%; height: 100%; background: #0284c7; transition: width 0.3s ease;"></div>
+          </div>
+        </div>
+
+        <div class="flashcard-3d-wrap" onclick="flipFlashcard()">
+          <div class="flashcard-3d-box" id="studio-flashcard-box">
+            <div class="flashcard-face flashcard-face-front">
+              <span style="font-size: 0.8rem; font-weight: 800; color: #2563eb; margin-bottom: 8px;">❓ السؤال (وجه البطاقة):</span>
+              <div id="studio-card-front" style="font-size: 1.15rem; font-weight: 800; line-height: 1.5; color: #1e3a8a;"></div>
+              <span style="font-size: 0.76rem; color: #64748b; margin-top: 14px;">👆 انقر على البطاقة لقلبها ومعرفة الإجابة النموذجية</span>
+            </div>
+            <div class="flashcard-face flashcard-face-back">
+              <span style="font-size: 0.8rem; font-weight: 800; color: #166534; margin-bottom: 8px;">💡 الإجابة النموذجية والتحليل:</span>
+              <div id="studio-card-back" style="font-size: 1.05rem; font-weight: 700; line-height: 1.6; color: #14532d;"></div>
+              <div id="studio-card-tip" style="font-size: 0.78rem; color: #047857; margin-top: 10px; background: #dcfce7; padding: 4px 10px; border-radius: 6px;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 18px;">
+          <button type="button" class="portal-btn" style="padding: 8px 18px; font-weight: 800;" onclick="prevFlashcard()">السابق ➔</button>
+          <button type="button" class="portal-btn" style="padding: 8px 22px; font-weight: 800; background: #0284c7; color: #fff;" onclick="flipFlashcard()">🔄 قلب البطاقة</button>
+          <button type="button" class="portal-btn" style="padding: 8px 18px; font-weight: 800;" onclick="nextFlashcard()">⬅ التالي</button>
+        </div>
+      </div>
+
+      <!-- Tab 3: Interactive Lab -->
+      <div id="studio-tab-pane-lab" style="display: none;">
+        <div id="studio-lab-container">
+          <!-- Rendered by renderStudioLab() -->
+        </div>
+      </div>
+
+      <!-- Tab 4: Isolated Video -->
+      <div id="studio-tab-pane-video" style="display: none;">
+        <div id="studio-video-container">
+          <!-- Rendered by renderStudioVideo() -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- PEDAGOGICAL LESSON SUMMARY MODAL -->
   <div class="modal-overlay" id="lesson-summary-modal" role="dialog" aria-modal="true" aria-labelledby="summary-modal-title">
     <div class="modal-card" style="max-width: 760px; width: 95%; max-height: 90vh; overflow-y: auto; padding: 22px; border-radius: 16px;">
@@ -1423,6 +1523,7 @@
 
 
   <?!= include('HubData.js'); ?>
+  <?!= include('StemStudioLabs.js'); ?>
   <?!= include('QuizApp.js'); ?>
   <?!= include('Portal.js'); ?>
 </body>

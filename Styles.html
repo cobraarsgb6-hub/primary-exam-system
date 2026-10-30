@@ -2312,4 +2312,50 @@
       cursor: pointer;
     }
 
+  
+    /* Interactive Studio Flashcard Styles (Phase P11) */
+    .flashcard-3d-wrap {
+      perspective: 1000px;
+      width: 100%;
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .flashcard-3d-box {
+      width: 100%;
+      min-height: 220px;
+      position: relative;
+      transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+    .flashcard-3d-box.flipped {
+      transform: rotateY(180deg);
+    }
+    .flashcard-face {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100%;
+      min-height: 220px;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+    .flashcard-face-front {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 2px solid #93c5fd;
+      color: #1e3a8a;
+    }
+    .flashcard-face-back {
+      background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+      border: 2px solid #86efac;
+      color: #14532d;
+      transform: rotateY(180deg);
+    }
+
   </style>
