@@ -372,10 +372,29 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
     }
   ];
 
+  const STARTER_EXAM_SCHEDULE = [
+    { scheduleId: 'SCHED_Y5_01', date: '2026-10-25', student: 'Ali Ahmed', grade: 'Year 5 (G5)', subject: 'English Grammar', examCode: 'DAILY_Y5_ENG_W1D1', examTitle: 'Ali - Day 1: Adverbs of Manner', type: 'Daily', period: 'W1', questions: 5, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y5_02', date: '2026-10-26', student: 'Ali Ahmed', grade: 'Year 5 (G5)', subject: 'Mathematics', examCode: 'DAILY_Y5_MATH_W1D1', examTitle: 'Ali - Day 2: Divisibility by 2, 5, 10', type: 'Daily', period: 'W1', questions: 5, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y5_03', date: '2026-10-27', student: 'Ali Ahmed', grade: 'Year 5 (G5)', subject: 'Science', examCode: 'DAILY_Y5_SCI_W1D1', examTitle: 'Ali - Day 3: How Sound is Made', type: 'Daily', period: 'W1', questions: 5, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y5_04', date: '2026-10-28', student: 'Ali Ahmed', grade: 'Year 5 (G5)', subject: 'اللغة العربية', examCode: 'DAILY_Y5_ARB_W1D1', examTitle: 'علي - اليوم 4: الجملة الاسمية', type: 'Daily', period: 'W1', questions: 5, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y5_05', date: '2026-10-29', student: 'Ali Ahmed', grade: 'Year 5 (G5)', subject: 'Mathematics', examCode: 'DAILY_Y5_MATH_W1D2', examTitle: 'Ali - Day 5: Divisibility by 3, 4, 9', type: 'Daily', period: 'W1', questions: 5, duration: 10, difficulty: 'Medium', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y5_06', date: '2026-10-30', student: 'Ali Ahmed', grade: 'Year 5 (G5)', subject: 'Science', examCode: 'DAILY_Y5_SCI_W1D2', examTitle: 'Ali - Day 6: Pitch & Sound Travel', type: 'Daily', period: 'W1', questions: 5, duration: 10, difficulty: 'Medium', status: 'Active', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y5_07', date: '2026-10-31', student: 'Ali Ahmed', grade: 'Year 5 (G5)', subject: 'All Subjects', examCode: 'EX_Y5_ALI_W1_ALL_WEEKLY', examTitle: 'Ali - Week 1 All-Subjects Milestone', type: 'Weekly', period: 'W1', questions: 18, duration: 35, difficulty: 'Standard', status: 'Scheduled', dailyPairCode: 'DAILY_Y5_ENG_W1D1' },
+
+    { scheduleId: 'SCHED_Y6_01', date: '2026-10-25', student: 'Mostafa Ahmed', grade: 'Grade 6 (G6)', subject: 'Mathematics', examCode: 'DAILY_Y6_MATH_W1D1', examTitle: 'Mostafa - Day 1: Prime Factors', type: 'Daily', period: 'W1', questions: 9, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y6_02', date: '2026-10-26', student: 'Mostafa Ahmed', grade: 'Grade 6 (G6)', subject: 'English Literacy', examCode: 'DAILY_Y6_ENG_W1D1', examTitle: 'Mostafa - Day 2: Fantasy Reading', type: 'Daily', period: 'W1', questions: 9, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y6_03', date: '2026-10-27', student: 'Mostafa Ahmed', grade: 'Grade 6 (G6)', subject: 'Science', examCode: 'DAILY_Y6_SCI_W1D1', examTitle: 'Mostafa - Day 3: Circulatory System', type: 'Daily', period: 'W1', questions: 9, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y6_04', date: '2026-10-28', student: 'Mostafa Ahmed', grade: 'Grade 6 (G6)', subject: 'اللغة العربية', examCode: 'DAILY_Y6_ARB_W1D4', examTitle: 'Mostafa - Day 4: إدارة الوقت', type: 'Daily', period: 'W1', questions: 9, duration: 10, difficulty: 'Easy', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y6_05', date: '2026-10-29', student: 'Mostafa Ahmed', grade: 'Grade 6 (G6)', subject: 'Mathematics', examCode: 'DAILY_Y6_MATH_W1D2', examTitle: 'Mostafa - Day 5: Fractions & Decimals', type: 'Daily', period: 'W1', questions: 9, duration: 10, difficulty: 'Medium', status: 'Completed', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y6_06', date: '2026-10-30', student: 'Mostafa Ahmed', grade: 'Grade 6 (G6)', subject: 'Science', examCode: 'DAILY_Y6_SCI_W1D2', examTitle: 'Mostafa - Day 6: Circuits & Conductors', type: 'Daily', period: 'W1', questions: 9, duration: 10, difficulty: 'Medium', status: 'Active', dailyPairCode: '' },
+    { scheduleId: 'SCHED_Y6_07', date: '2026-10-31', student: 'Mostafa Ahmed', grade: 'Grade 6 (G6)', subject: 'All Subjects', examCode: 'EX_Y6_MOS_W1_ALL_WEEKLY', examTitle: 'Mostafa - Week 1 All-Subjects Milestone', type: 'Weekly', period: 'W1', questions: 18, duration: 35, difficulty: 'Standard', status: 'Scheduled', dailyPairCode: 'DAILY_Y6_MATH_W1D1' }
+  ];
+
   const mockState = {
     submissions: JSON.parse(JSON.stringify(initialSubmissions)),
     retakeRequests: JSON.parse(JSON.stringify(initialRetakes)),
     studyPlan: JSON.parse(JSON.stringify(STARTER_STUDY_PLAN)),
+    examSchedule: JSON.parse(JSON.stringify(STARTER_EXAM_SCHEDULE)),
     activeSessions: {},
     allowedAttempts: {
       'Ali Ahmed:EX_Y5_ENG_W1': 1,
@@ -779,6 +798,15 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
 
     getColigoHubData: function () {
       return { items: mockState.coligoItems, count: mockState.coligoItems.length };
+    },
+
+    getExamSchedule: function (studentKey, studentToken) {
+      const isAli = String(studentKey || 'ali').toLowerCase() === 'ali';
+      const targetStudent = isAli ? 'Ali Ahmed' : 'Mostafa Ahmed';
+      const rawSchedule = mockState.examSchedule || STARTER_EXAM_SCHEDULE;
+      const schedule = rawSchedule.filter(s => s.student === targetStudent);
+      const todayExam = schedule.find(s => s.status === 'Active') || schedule[0] || null;
+      return { success: true, student: targetStudent, schedule: schedule, todayExam: todayExam };
     }
   };
 
@@ -844,6 +872,7 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
       mockState.submissions = JSON.parse(JSON.stringify(initialSubmissions));
       mockState.retakeRequests = JSON.parse(JSON.stringify(initialRetakes));
       mockState.studyPlan = JSON.parse(JSON.stringify(STARTER_STUDY_PLAN));
+      mockState.examSchedule = JSON.parse(JSON.stringify(STARTER_EXAM_SCHEDULE));
       mockState.activeSessions = {};
       mockState.allowedAttempts = {
         'Ali Ahmed:EX_Y5_ENG_W1': 1,

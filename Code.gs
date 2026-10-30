@@ -199,6 +199,23 @@ function setupDatabase_(targetSs) {
   if (!hwSheet) hwSheet = ss.insertSheet('Homework_Status');
   ensureSheetHeaders_(hwSheet, ['Updated At', 'Student', 'Subject', 'Done'], '#be185d');
 
+  // 9. TAB: Exam_Schedule (30-day cumulative roadmap & milestones)
+  let schedSheet = ss.getSheetByName('Exam_Schedule');
+  if (!schedSheet) schedSheet = ss.insertSheet('Exam_Schedule');
+  const schedHeaders = [
+    'Schedule ID', 'Date', 'Student', 'Grade Level', 'Subject', 'Exam Code',
+    'Exam Title', 'Exam Type', 'Period', 'Questions', 'Duration (Mins)',
+    'Difficulty', 'Status', 'Daily Pair Code'
+  ];
+  ensureSheetHeaders_(schedSheet, schedHeaders, '#4f46e5');
+  if (schedSheet.getLastRow() <= 1) {
+    const starterSchedule = getStarterExamSchedule_();
+    if (starterSchedule.length) {
+      schedSheet.getRange(2, 1, starterSchedule.length, starterSchedule[0].length).setValues(starterSchedule);
+    }
+  }
+  styleExamScheduleSheet(schedSheet);
+
   try {
     SpreadsheetApp.getUi().alert('✅ Google Sheet formatted professionally with executive styling!');
   } catch(e) {
@@ -2594,8 +2611,52 @@ function openLinkedSheetUrl_() {
 }
 
 // ============================================================
-// STUDY PLAN (28-DAY CURRICULUM ROADMAP)
+// EXAM SCHEDULE & STUDY PLAN (30-DAY CUMULATIVE ROADMAP)
 // ============================================================
+
+function styleExamScheduleSheet(sheet) {
+  try {
+    const widths = [100, 100, 110, 100, 120, 160, 240, 90, 70, 90, 100, 100, 90, 160];
+    widths.forEach((width, index) => {
+      if (sheet.setColumnWidth) sheet.setColumnWidth(index + 1, width);
+    });
+    const lastCol = Math.max(sheet.getLastColumn ? sheet.getLastColumn() : 14, 14);
+    const lastRow = Math.max(sheet.getLastRow ? sheet.getLastRow() - 1 : 1, 1);
+    const range = sheet.getRange(2, 1, lastRow, lastCol);
+    if (range.setVerticalAlignment) range.setVerticalAlignment('middle');
+    if (range.setFontSize) range.setFontSize(10);
+  } catch (e) {}
+}
+
+function getStarterExamSchedule_() {
+  return [
+    // Ali Ahmed - Year 5 Roadmap
+    ['SCHED_Y5_01', '2026-10-25', 'Ali Ahmed', 'Year 5 (G5)', 'English Grammar', 'DAILY_Y5_ENG_W1D1', 'Ali - Day 1: Adverbs of Manner', 'Daily', 'W1', 5, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y5_02', '2026-10-26', 'Ali Ahmed', 'Year 5 (G5)', 'Mathematics', 'DAILY_Y5_MATH_W1D1', 'Ali - Day 2: Divisibility by 2, 5, 10', 'Daily', 'W1', 5, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y5_03', '2026-10-27', 'Ali Ahmed', 'Year 5 (G5)', 'Science', 'DAILY_Y5_SCI_W1D1', 'Ali - Day 3: How Sound is Made', 'Daily', 'W1', 5, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y5_04', '2026-10-28', 'Ali Ahmed', 'Year 5 (G5)', 'اللغة العربية', 'DAILY_Y5_ARB_W1D1', 'علي - اليوم 4: الجملة الاسمية', 'Daily', 'W1', 5, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y5_05', '2026-10-29', 'Ali Ahmed', 'Year 5 (G5)', 'Mathematics', 'DAILY_Y5_MATH_W1D2', 'Ali - Day 5: Divisibility by 3, 4, 9', 'Daily', 'W1', 5, 10, 'Medium', 'Completed', ''],
+    ['SCHED_Y5_06', '2026-10-30', 'Ali Ahmed', 'Year 5 (G5)', 'Science', 'DAILY_Y5_SCI_W1D2', 'Ali - Day 6: Pitch & Sound Travel', 'Daily', 'W1', 5, 10, 'Medium', 'Active', ''],
+    ['SCHED_Y5_07', '2026-10-31', 'Ali Ahmed', 'Year 5 (G5)', 'All Subjects', 'EX_Y5_ALI_W1_ALL_WEEKLY', 'Ali - Week 1 All-Subjects Milestone', 'Weekly', 'W1', 18, 35, 'Standard', 'Scheduled', 'DAILY_Y5_ENG_W1D1'],
+    ['SCHED_Y5_14', '2026-11-07', 'Ali Ahmed', 'Year 5 (G5)', 'All Subjects', 'EX_Y5_ALI_W2_CUMULATIVE', 'Ali - Week 2 Cumulative Exam (W1+W2)', 'Weekly', 'W2', 15, 25, 'Standard', 'Scheduled', 'DAILY_Y5_MATH_W2D1'],
+    ['SCHED_Y5_21', '2026-11-14', 'Ali Ahmed', 'Year 5 (G5)', 'All Subjects', 'EX_Y5_ALI_W3_CUMULATIVE', 'Ali - Week 3 Cumulative Exam (W1-W3)', 'Weekly', 'W3', 18, 30, 'Standard', 'Scheduled', 'DAILY_Y5_SCI_W3D1'],
+    ['SCHED_Y5_28', '2026-11-21', 'Ali Ahmed', 'Year 5 (G5)', 'All Subjects', 'EX_Y5_ALI_W4_CUMULATIVE', 'Ali - Week 4 Comprehensive Cumulative Exam', 'Weekly', 'W4', 20, 35, 'Standard', 'Scheduled', 'DAILY_Y5_ARB_W4D1'],
+    ['SCHED_Y5_30', '2026-11-23', 'Ali Ahmed', 'Year 5 (G5)', 'All Subjects', 'EX_Y5_MATH_M1_CAPSTONE', 'Ali - Month 1 Capstone Exam', 'Monthly', 'M1', 22, 40, 'Challenge', 'Scheduled', 'DAILY_Y5_MATH_M1_REV'],
+
+    // Mostafa Ahmed - Grade 6 Roadmap
+    ['SCHED_Y6_01', '2026-10-25', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mathematics', 'DAILY_Y6_MATH_W1D1', 'Mostafa - Day 1: Prime Factors', 'Daily', 'W1', 9, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y6_02', '2026-10-26', 'Mostafa Ahmed', 'Grade 6 (G6)', 'English Literacy', 'DAILY_Y6_ENG_W1D1', 'Mostafa - Day 2: Fantasy Reading', 'Daily', 'W1', 9, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y6_03', '2026-10-27', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Science', 'DAILY_Y6_SCI_W1D1', 'Mostafa - Day 3: Circulatory System', 'Daily', 'W1', 9, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y6_04', '2026-10-28', 'Mostafa Ahmed', 'Grade 6 (G6)', 'اللغة العربية', 'DAILY_Y6_ARB_W1D4', 'Mostafa - Day 4: إدارة الوقت', 'Daily', 'W1', 9, 10, 'Easy', 'Completed', ''],
+    ['SCHED_Y6_05', '2026-10-29', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mathematics', 'DAILY_Y6_MATH_W1D2', 'Mostafa - Day 5: Fractions & Decimals', 'Daily', 'W1', 9, 10, 'Medium', 'Completed', ''],
+    ['SCHED_Y6_06', '2026-10-30', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Science', 'DAILY_Y6_SCI_W1D2', 'Mostafa - Day 6: Circuits & Conductors', 'Daily', 'W1', 9, 10, 'Medium', 'Active', ''],
+    ['SCHED_Y6_07', '2026-10-31', 'Mostafa Ahmed', 'Grade 6 (G6)', 'All Subjects', 'EX_Y6_MOS_W1_ALL_WEEKLY', 'Mostafa - Week 1 All-Subjects Milestone', 'Weekly', 'W1', 18, 35, 'Standard', 'Scheduled', 'DAILY_Y6_MATH_W1D1'],
+    ['SCHED_Y6_14', '2026-11-07', 'Mostafa Ahmed', 'Grade 6 (G6)', 'All Subjects', 'EX_Y6_MOS_W2_CUMULATIVE', 'Mostafa - Week 2 Cumulative Exam (W1+W2)', 'Weekly', 'W2', 15, 25, 'Standard', 'Scheduled', 'DAILY_Y6_ENG_W2D1'],
+    ['SCHED_Y6_21', '2026-11-14', 'Mostafa Ahmed', 'Grade 6 (G6)', 'All Subjects', 'EX_Y6_MOS_W3_CUMULATIVE', 'Mostafa - Week 3 Cumulative Exam (W1-W3)', 'Weekly', 'W3', 18, 30, 'Standard', 'Scheduled', 'DAILY_Y6_SCI_W3D1'],
+    ['SCHED_Y6_28', '2026-11-21', 'Mostafa Ahmed', 'Grade 6 (G6)', 'All Subjects', 'EX_Y6_MOS_W4_CUMULATIVE', 'Mostafa - Week 4 Comprehensive Cumulative Exam', 'Weekly', 'W4', 20, 35, 'Standard', 'Scheduled', 'DAILY_Y6_ARB_W4D1'],
+    ['SCHED_Y6_30', '2026-11-23', 'Mostafa Ahmed', 'Grade 6 (G6)', 'All Subjects', 'EX_Y6_MATH_M1_CAPSTONE', 'Mostafa - Month 1 Capstone Exam', 'Monthly', 'M1', 22, 40, 'Challenge', 'Scheduled', 'DAILY_Y6_MATH_M1_REV']
+  ];
+}
 
 function styleStudyPlanSheet(sheet) {
   const widths = [100, 70, 60, 110, 120, 110, 130, 180, 200, 260, 100, 90, 140];
@@ -2637,7 +2698,33 @@ function getStarterStudyPlan_() {
     ['PLAN_Y6_D14', 'W2', '14', 'Day 14', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mixed Assessment', 'W2 Cumulative Exam (W1 + W2 50/50)', 'Literacy + Arabic Language balanced synthesis', 14, 'Planned', 'EX_Y6_MOS_W2_ARB'],
     ['PLAN_Y6_D21', 'W3', '21', 'Day 21', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mixed Assessment', 'W3 Cumulative Exam (W1-W3 40/30/30)', 'Grammar + Spelling + Reading retention', 16, 'Planned', 'EX_Y6_MOS_W3_ARB'],
     ['PLAN_Y6_D28', 'W4', '28', 'Day 28', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mixed Assessment', 'W4 Cumulative Exam (W1-W4)', 'Comprehensive curriculum mastery test', 20, 'Planned', 'EX_Y6_MOS_W4_ARB'],
-    ['PLAN_Y6_D30', 'M1', '30', 'Day 30', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Capstone Assessment', 'Month 1 Comprehensive Assessment', 'Grade 6 Full Month Capstone Exam with Challenge tier', 22, 'Planned', 'EX_Y6_MOS_M1_CUMULATIVE']
+    ['PLAN_Y6_D30', 'M1', '30', 'Day 30', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Capstone Assessment', 'Month 1 Comprehensive Assessment', 'Grade 6 Full Month Capstone Exam with Challenge tier', 22, 'Planned', 'EX_Y6_MOS_M1_CUMULATIVE'],
+
+    // Ali Ahmed - Additional Subjects (Mathematics, Science, Arabic, ICT)
+    ['PLAN_Y5_MATH_01', 'W1', '1', 'Day 1', 'Ali Ahmed', 'Year 5 (G5)', 'Mathematics', 'Unit 1: Number Properties', 'Divisibility Rules for 2, 5, 10', 'Recognizing even numbers and multiples of 5 and 10', 5, 'Completed', 'DAILY_Y5_MATH_W1D1'],
+    ['PLAN_Y5_MATH_02', 'W1', '2', 'Day 2', 'Ali Ahmed', 'Year 5 (G5)', 'Mathematics', 'Unit 1: Number Properties', 'Divisibility by 3, 4, 9', 'Digit sum rule for 3 and 9; last 2 digits for 4', 5, 'Completed', 'DAILY_Y5_MATH_W1D2'],
+    ['PLAN_Y5_MATH_07', 'W1', '7', 'Day 7', 'Ali Ahmed', 'Year 5 (G5)', 'Mathematics', 'Milestone Assessment', 'Ali Math Week 1 Milestone: Number Properties & Divisibility', 'Comprehensive divisibility and factors check', 19, 'Completed', 'EX_Y5_MATH_W1'],
+    ['PLAN_Y5_SCI_01', 'W1', '1', 'Day 1', 'Ali Ahmed', 'Year 5 (G5)', 'Science', 'Unit 1: Sound Vibrations', 'How Sound is Made & Vibrations', 'Investigating sound sources and vibrations', 5, 'Completed', 'DAILY_Y5_SCI_W1D1'],
+    ['PLAN_Y5_SCI_02', 'W1', '2', 'Day 2', 'Ali Ahmed', 'Year 5 (G5)', 'Science', 'Unit 1: Sound Vibrations', 'Pitch, Volume & Sound Travel', 'Differentiating high/low pitch and loud/soft volume', 5, 'Completed', 'DAILY_Y5_SCI_W1D2'],
+    ['PLAN_Y5_SCI_07', 'W1', '7', 'Day 7', 'Ali Ahmed', 'Year 5 (G5)', 'Science', 'Milestone Assessment', 'Ali Science Week 1 Milestone: Sound Vibrations & Hearing', 'Full unit assessment of vibrations, pitch and ear protection', 19, 'Completed', 'EX_Y5_SCI_W1'],
+    ['PLAN_Y5_ARB_01', 'W1', '1', 'Day 1', 'Ali Ahmed', 'Year 5 (G5)', 'اللغة العربية', 'المحور الأول: الجملة الاسمية', 'الجملة الاسمية وركناها (المبتدأ والخبر)', 'تحديد المبتدأ والخبر وتمييز الجملة الاسمية', 5, 'Completed', 'DAILY_Y5_ARB_W1D1'],
+    ['PLAN_Y5_ARB_07', 'W1', '7', 'Day 7', 'Ali Ahmed', 'Year 5 (G5)', 'اللغة العربية', 'Milestone Assessment', 'علي - اختبار الأسبوع 1: الجملة الاسمية وضبط المبتدأ والخبر', 'تقييم شامل لأركان الجملة الاسمية وعلامات الرفع', 19, 'Completed', 'EX_Y5_ARB_W1'],
+    ['PLAN_Y5_ICT_07', 'W1', '7', 'Day 7', 'Ali Ahmed', 'Year 5 (G5)', 'ICT Computing', 'Milestone Assessment', 'Ali - ICT Assessment: Variables, Loops & Operators', 'Programming fundamentals and flowcharts', 15, 'Completed', 'EX_Y5_ICT_QUIZ01'],
+    ['PLAN_Y5_MATH_14', 'W2', '14', 'Day 14', 'Ali Ahmed', 'Year 5 (G5)', 'Mathematics', 'Milestone Assessment', 'W2 Cumulative Math Exam (W1+W2)', 'Divisibility + Fractions synthesis', 15, 'Planned', 'EX_Y5_ALI_W2_MATH'],
+    ['PLAN_Y5_SCI_14', 'W2', '14', 'Day 14', 'Ali Ahmed', 'Year 5 (G5)', 'Science', 'Milestone Assessment', 'W2 Cumulative Science Exam', 'Sound vibrations + Hearing in materials', 15, 'Planned', 'EX_Y5_ALI_W2_SCI'],
+    ['PLAN_Y5_ARB_14', 'W2', '14', 'Day 14', 'Ali Ahmed', 'Year 5 (G5)', 'اللغة العربية', 'Milestone Assessment', 'اختبار الأسبوع 2 التراكمي في اللغة العربية', 'أركان الجملة الاسمية والضمائر', 15, 'Planned', 'EX_Y5_ALI_W2_ARB'],
+
+    // Mostafa Ahmed - Additional Subjects (Mathematics, Science, ICT)
+    ['PLAN_Y6_MATH_01', 'W1', '1', 'Day 1', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mathematics', 'Unit 1: Number & Operations', 'Prime Factors & Index Notation', 'Prime factorization and index form exponents', 9, 'Completed', 'DAILY_Y6_MATH_W1D1'],
+    ['PLAN_Y6_MATH_02', 'W1', '2', 'Day 2', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mathematics', 'Unit 1: Number & Operations', 'Fractions, Decimals & Percentages', 'Conversions and arithmetic operations', 9, 'Completed', 'DAILY_Y6_MATH_W1D2'],
+    ['PLAN_Y6_MATH_03', 'W1', '3', 'Day 3', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mathematics', 'Unit 1: Number & Operations', 'Long Division & Word Problems', 'Multi-digit division and word application', 9, 'Completed', 'DAILY_Y6_MATH_W1D3'],
+    ['PLAN_Y6_MATH_07', 'W1', '7', 'Day 7', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mathematics', 'Milestone Assessment', 'Mostafa - Math Week 1 Milestone: Number & Operations', 'Comprehensive prime factors, fractions, division check', 19, 'Completed', 'EX_Y6_MATH_W1'],
+    ['PLAN_Y6_SCI_01', 'W1', '1', 'Day 1', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Science', 'Unit 1: Circulatory System', 'Circulatory System & Blood Components', 'Heart function, blood vessels, and oxygen transport', 9, 'Completed', 'DAILY_Y6_SCI_W1D1'],
+    ['PLAN_Y6_SCI_02', 'W1', '2', 'Day 2', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Science', 'Unit 1: Circuits', 'Electrical Circuits & Conductors', 'Series circuits, switches, conductors and insulators', 9, 'Completed', 'DAILY_Y6_SCI_W1D2'],
+    ['PLAN_Y6_SCI_07', 'W1', '7', 'Day 7', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Science', 'Milestone Assessment', 'Mostafa - Science Week 1 Milestone: Circulatory System & Electricity', 'Full unit assessment', 19, 'Completed', 'EX_Y6_SCI_W1'],
+    ['PLAN_Y6_ICT_07', 'W1', '7', 'Day 7', 'Mostafa Ahmed', 'Grade 6 (G6)', 'ICT Computing', 'Milestone Assessment', 'Mostafa - ICT Assessment: Constructs & Flowcharts', 'Algorithms, iterations and flowcharts', 15, 'Completed', 'EX_Y6_ICT_QUIZ01'],
+    ['PLAN_Y6_MATH_14', 'W2', '14', 'Day 14', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Mathematics', 'Milestone Assessment', 'W2 Cumulative Math Exam (W1+W2)', 'Number operations + Fractions synthesis', 15, 'Planned', 'EX_Y6_MOS_W2_MATH'],
+    ['PLAN_Y6_SCI_14', 'W2', '14', 'Day 14', 'Mostafa Ahmed', 'Grade 6 (G6)', 'Science', 'Milestone Assessment', 'W2 Cumulative Science Exam', 'Circulatory system + Advanced circuits', 15, 'Planned', 'EX_Y6_MOS_W2_SCI']
   ];
 }
 
@@ -2840,6 +2927,236 @@ function loadBankQuestionsByPeriod_(grade, subject, period, targetDifficulty) {
   }
 
   return questions;
+}
+
+/**
+ * Loads cumulative bank questions with Coverage-First guarantee,
+ * multi-week synthesis, non-duplication exclusion, and difficulty ordering.
+ */
+function loadCumulativeBankQuestionsByPeriod_(grade, subject, period, targetDifficulty, excludeQuestionIds) {
+  const ss = getSpreadsheet_();
+  const sheet = ss.getSheetByName('Question_Bank');
+  if (!sheet || sheet.getLastRow() <= 1) return { questions: [], warnings: [], coveredWeeks: [] };
+
+  const map = getSheetHeaderMap_(sheet);
+  const data = sheet.getDataRange().getValues();
+  const targetPeriod = String(period || 'W1').trim().toUpperCase();
+  const isMonthly = targetPeriod.startsWith('M');
+
+  let coveredWeeks = ['W1'];
+  if (targetPeriod === 'W2') coveredWeeks = ['W1', 'W2'];
+  else if (targetPeriod === 'W3') coveredWeeks = ['W1', 'W2', 'W3'];
+  else if (targetPeriod === 'W4' || isMonthly) coveredWeeks = ['W1', 'W2', 'W3', 'W4'];
+  else if (targetPeriod.startsWith('W')) coveredWeeks = [targetPeriod];
+
+  const excluded = Array.isArray(excludeQuestionIds) ? excludeQuestionIds.map(String) : [];
+  const reqDiff = String(targetDifficulty || '').trim().toLowerCase();
+  const family = subjectFamily_(subject);
+
+  const pool = [];
+  const lessonsFound = {};
+
+  for (let i = 1; i < data.length; i++) {
+    const row = data[i];
+    const rowId = String(row[headerIndex_(map, 'Question ID', 0)] || ('Q_' + i));
+    if (excluded.indexOf(rowId) !== -1) continue;
+
+    const rowGrade = String(row[headerIndex_(map, 'Grade Level', 1)] || '');
+    const gradeMatches = (normalizeName_(rowGrade).indexOf('5') !== -1 && normalizeName_(grade).indexOf('5') !== -1) ||
+                         (normalizeName_(rowGrade).indexOf('6') !== -1 && normalizeName_(grade).indexOf('6') !== -1);
+    if (!gradeMatches) continue;
+
+    const rowSubject = String(row[headerIndex_(map, 'Subject', 2)] || '');
+    const rowFamily = subjectFamily_(rowSubject);
+    if (family && rowFamily && family !== rowFamily) continue;
+
+    const rowWeek = String(rowValue_(row, map, 'Week', 11) || 'W1').trim().toUpperCase();
+    if (coveredWeeks.indexOf(rowWeek) === -1) continue;
+
+    const rowDiff = String(rowValue_(row, map, 'Difficulty', 12) || rowValue_(row, map, 'مستوى الصعوبة', 12) || 'standard').trim().toLowerCase();
+    if (reqDiff && reqDiff !== 'all' && !matchDifficultyLevel_(rowDiff, reqDiff)) continue;
+
+    const text = String(row[headerIndex_(map, 'Question Text', 4)] || '').trim();
+    const answer = String(row[headerIndex_(map, 'Correct Answer', 7)] || '').trim();
+    if (!text || !answer) continue;
+
+    const unit = String(row[headerIndex_(map, 'Unit / Topic', 3)] || 'General').trim();
+    const lesson = unit;
+    lessonsFound[lesson] = true;
+
+    const type = String(row[headerIndex_(map, 'Type', 5)] || 'MCQ').trim().toUpperCase();
+    let options = String(row[headerIndex_(map, 'Options (delimited by |)', 6)] || '')
+      .split('|')
+      .map(o => String(o || '').trim())
+      .filter(o => o.length > 0);
+    if (type === 'TRUE_FALSE' && options.length < 2) options = ['True', 'False'];
+
+    pool.push({
+      id: rowId,
+      grade: rowGrade,
+      subject: rowSubject,
+      week: rowWeek,
+      unit: unit,
+      lesson: lesson,
+      text: text,
+      type: type,
+      options: options,
+      correctAnswer: answer,
+      explanation: String(row[headerIndex_(map, 'Explanation', 9)] || ''),
+      difficulty: rowDiff
+    });
+  }
+
+  const warnings = [];
+  if (pool.length === 0) {
+    warnings.push('لا توجد أسئلة كافية في بنك الأسئلة للفترة ' + targetPeriod);
+    return { questions: [], warnings: warnings, coveredWeeks: coveredWeeks };
+  }
+
+  // Coverage First: Group by lesson and guarantee at least 1 question per lesson
+  const byLesson = {};
+  pool.forEach(q => {
+    if (!byLesson[q.lesson]) byLesson[q.lesson] = [];
+    byLesson[q.lesson].push(q);
+  });
+
+  const selected = [];
+  const selectedIds = {};
+
+  Object.keys(byLesson).forEach(lessonKey => {
+    const list = byLesson[lessonKey];
+    if (list && list.length > 0) {
+      const q = list[0];
+      selected.push(q);
+      selectedIds[q.id] = true;
+    }
+  });
+
+  // Fill remaining questions from pool
+  pool.forEach(q => {
+    if (!selectedIds[q.id]) {
+      selected.push(q);
+      selectedIds[q.id] = true;
+    }
+  });
+
+  // Sort by difficulty: Easy -> Medium -> Challenge
+  const diffOrder = { 'foundational': 1, 'easy': 1, 'standard': 2, 'medium': 2, 'challenge': 3, 'hard': 3, 'advanced': 3 };
+  selected.sort((a, b) => {
+    const da = diffOrder[a.difficulty.toLowerCase()] || 2;
+    const db = diffOrder[b.difficulty.toLowerCase()] || 2;
+    return da - db;
+  });
+
+  return {
+    questions: selected,
+    warnings: warnings,
+    coveredWeeks: coveredWeeks,
+    coveredLessonsCount: Object.keys(byLesson).length
+  };
+}
+
+/**
+ * Recommends adaptive questions based on student recent performance.
+ * < 70% in skill: triggers 2 reinforcement questions.
+ * >= 85%: triggers 1 challenge-tier question bonus.
+ */
+function getAdaptiveQuestionRecommendations_(studentName, subject) {
+  try {
+    const ss = getSpreadsheet_();
+    const sheet = ss.getSheetByName('Submissions');
+    if (!sheet || sheet.getLastRow() <= 1) {
+      return { adaptiveMode: 'STANDARD', reason: 'No prior submissions', challengeBonus: false, reinforcementCount: 0 };
+    }
+    const map = getSheetHeaderMap_(sheet);
+    const data = sheet.getDataRange().getValues();
+    const normTarget = normalizeName_(studentName);
+
+    const studentSubs = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const sName = normalizeName_(row[headerIndex_(map, 'Student Name', 1)]);
+      if (sName !== normTarget) continue;
+      const code = String(row[headerIndex_(map, 'Exam Code', 3)] || '');
+      const pct = parseFloat(String(row[headerIndex_(map, 'Percentage', 6)] || '0').replace('%', '')) || 0;
+      studentSubs.push({ code: code, scorePct: pct });
+    }
+
+    if (studentSubs.length === 0) {
+      return { adaptiveMode: 'STANDARD', reason: 'Fresh baseline', challengeBonus: false, reinforcementCount: 0 };
+    }
+
+    const latest = studentSubs[studentSubs.length - 1];
+    if (latest.scorePct < 70) {
+      return {
+        adaptiveMode: 'REINFORCEMENT',
+        reason: 'Latest score (' + latest.scorePct + '%) < 70%. Reinforcement skills triggered.',
+        reinforcementCount: 2,
+        challengeBonus: false
+      };
+    } else if (latest.scorePct >= 85) {
+      return {
+        adaptiveMode: 'CHALLENGE',
+        reason: 'Latest score (' + latest.scorePct + '%) >= 85%. Challenge tier bonus unlocked.',
+        challengeBonus: true,
+        reinforcementCount: 0
+      };
+    }
+    return { adaptiveMode: 'STANDARD', reason: 'Optimal progress (70-84%)', challengeBonus: false, reinforcementCount: 0 };
+  } catch (e) {
+    return { adaptiveMode: 'STANDARD', reason: 'Fallback: ' + e.message, challengeBonus: false, reinforcementCount: 0 };
+  }
+}
+
+/**
+ * RPC endpoint returning the scheduled 30-day exam roadmap for a student.
+ */
+function getExamSchedule(studentKey, studentToken) {
+  try {
+    if (!isStudentTokenValid_(studentToken, studentKey)) return studentAccessError_();
+    const ss = getSpreadsheet_();
+    let sheet = ss ? ss.getSheetByName('Exam_Schedule') : null;
+    if (!sheet) {
+      setupDatabase(ss);
+      sheet = ss.getSheetByName('Exam_Schedule');
+    }
+    if (!sheet || sheet.getLastRow() <= 1) {
+      return { success: true, schedule: [], todayExam: null };
+    }
+    const map = getSheetHeaderMap_(sheet);
+    const data = sheet.getDataRange().getValues();
+    const isAli = (String(studentKey).toLowerCase() === 'ali');
+    const targetStudent = isAli ? 'Ali Ahmed' : 'Mostafa Ahmed';
+    const schedule = [];
+
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const sName = String(row[headerIndex_(map, 'Student', 2)] || '');
+      if (normalizeName_(sName) !== normalizeName_(targetStudent)) continue;
+
+      schedule.push({
+        scheduleId: String(row[headerIndex_(map, 'Schedule ID', 0)] || ''),
+        date: String(row[headerIndex_(map, 'Date', 1)] || ''),
+        student: sName,
+        grade: String(row[headerIndex_(map, 'Grade Level', 3)] || ''),
+        subject: String(row[headerIndex_(map, 'Subject', 4)] || ''),
+        examCode: String(row[headerIndex_(map, 'Exam Code', 5)] || ''),
+        examTitle: String(row[headerIndex_(map, 'Exam Title', 6)] || ''),
+        type: String(row[headerIndex_(map, 'Exam Type', 7)] || 'Daily'),
+        period: String(row[headerIndex_(map, 'Period', 8)] || 'W1'),
+        questions: Number(row[headerIndex_(map, 'Questions', 9)]) || 10,
+        duration: Number(row[headerIndex_(map, 'Duration (Mins)', 10)]) || 20,
+        difficulty: String(row[headerIndex_(map, 'Difficulty', 11)] || 'Standard'),
+        status: String(row[headerIndex_(map, 'Status', 12)] || 'Scheduled'),
+        dailyPairCode: String(row[headerIndex_(map, 'Daily Pair Code', 13)] || '')
+      });
+    }
+
+    const todayExam = schedule.find(s => s.status === 'Active') || schedule[0] || null;
+    return { success: true, student: targetStudent, schedule: schedule, todayExam: todayExam };
+  } catch (err) {
+    return { success: false, message: 'Failed to retrieve exam schedule: ' + err.message };
+  }
 }
 
 /**
