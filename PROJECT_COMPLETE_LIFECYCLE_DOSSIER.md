@@ -1,3 +1,11 @@
+# ⚠️ مستند أرشيف تاريخي (HISTORICAL ARCHIVE)
+> [!CAUTION]
+> **تنبيه:** هذا المستند يمثل تقريرًا أو خطة مرحلية من فترات التطوير السابقة وهو غير نشط حالياً.
+> المرجع المعتمد الوحيد للحالة الراهنة الحية هو: [CURRENT_STATUS_AR.md](CURRENT_STATUS_AR.md)
+> خارطة الطريق المعتمدة المكتملة: [ROADMAP_SPECKIT_AR.md](ROADMAP_SPECKIT_AR.md)
+
+---
+
 # 📘 الدليل الشامل والمكتمل لمشروع منظومة التقييم والتعلم الابتدائي (Primary Exam System)
 ## Master Comprehensive Project Dossier: From Genesis to Production (P0 -> P7)
 

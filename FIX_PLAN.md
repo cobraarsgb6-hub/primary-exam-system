@@ -1,3 +1,11 @@
+# ⚠️ مستند أرشيف تاريخي (HISTORICAL ARCHIVE)
+> [!CAUTION]
+> **تنبيه:** هذا المستند يمثل تقريرًا أو خطة مرحلية من فترات التطوير السابقة وهو غير نشط حالياً.
+> المرجع المعتمد الوحيد للحالة الراهنة الحية هو: [CURRENT_STATUS_AR.md](CURRENT_STATUS_AR.md)
+> خارطة الطريق المعتمدة المكتملة: [ROADMAP_SPECKIT_AR.md](ROADMAP_SPECKIT_AR.md)
+
+---
+
 ﻿# 🛠️ خطة الإصلاح — Manaret El-Eman Assessment Portal
 
 > **الملفات المعنية:** `Code.gs` (3,138 سطر / 185 KB) • `Index.html` (9,227 سطر / 581 KB)

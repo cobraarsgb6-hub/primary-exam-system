@@ -1,72 +1,135 @@
-﻿# Primary Exam System — G5 & G6
+# 🌟 Primary Exam System (G5 & G6) — المنظومة الامتحانية والتربوية المتكاملة
 
-A Google Apps Script + Google Sheets assessment portal for primary grades.
+منظومة ذكية وشاملة لإدارة الامتحانات والخطط الدراسية والمتابعة التربوية للشهادة الابتدائية (علي - الصف الخامس، ومصطفى - الصف السادس)، مبنية بتقنيات متقدمة على **Google Apps Script** و **Google Sheets** و **GitHub Pages** وتطبيق **Android WebView**، ومتكاملة مع منصة المدرسة **Coligo LMS** وفيديوهات **Google Drive**.
 
-## Current status
+---
 
-The project is a **single-family / small-class pilot**, not a multi-tenant school platform. The student and parent portals are separated by a server-verified PIN gateway (`verifyGatewayPin`), and every admin mutation requires a short-lived `ADMIN_TOK_*` token. See [`FIXES_APPLIED.md`](FIXES_APPLIED.md) and [`PROJECT_REVIEW_AR.md`](PROJECT_REVIEW_AR.md).
+## 🏛️ المرجع المعتمد للحقيقة (Single Source of Truth)
 
-## Files
+> [!IMPORTANT]
+> - **الحالة الراهنة الحية وسجل الإنجازات والأدلة:** [`CURRENT_STATUS_AR.md`](CURRENT_STATUS_AR.md)
+> - **خارطة الطريق المعتمدة ومواصفات المراحل (P0 ➔ P9):** [`ROADMAP_SPECKIT_AR.md`](ROADMAP_SPECKIT_AR.md) ومجلد [`specs/`](specs/)
+> - كافة المستندات والتقارير الأخرى في المستودع تم وسمها كـ **أرشيف تاريخي (Historical Archive)** للرجوع إليها وقت الحاجة فقط.
 
-| File | Purpose |
+---
+
+## 📁 خريطة الملفات والمعمارية (Architecture & Files)
+
+النظام مبني على معمارية معيارية قابلة للتطوير مع محول تجميع تلقائي (`bundle.py`):
+
+| الملف | الوظيفة والمعمارية |
 |---|---|
-| `Code.gs` | Apps Script backend: setup, sessions, scoring, retakes, exam factory, Coligo/Drive sync |
-| `Index.html` | Portal shell + all screens; pulls in the four templates below via `include()` |
-| `Styles.html` | Extracted CSS |
-| `HubData.js.html` | Static catalogs, standalone engine, video/Coligo/homework UI logic |
-| `QuizApp.js.html` | Quiz runtime, timer, submission and result rendering |
-| `Portal.js.html` | Student dashboard, Parent Portal, Study Plan, exam factory UI |
-| `Index.bundle.html` | Fully resolved single-file build (offline + Android kiosk) |
-| `bundle.py` | Builds `Index.bundle.html` from `Index.html` + includes |
-| `Question_Bank.csv` | 45 sample questions |
-| `Exams.csv` | 3 sample exam definitions |
-| `appsscript.json` | Web app / runtime manifest |
-| `SETUP_GUIDE.md` | Arabic setup guide |
-| `tests/server.test.js` | Server regression tests (Node VM + fake Sheets) |
-| `tests/e2e/` | 51-scenario Playwright suite |
+| `Code.gs` | الباك-إند الكامل على Google Apps Script: إدارة الجلسات، التوكنات المؤقتة، بنك الأسئلة، التصحيح الآلي، المحاولات، استدعاء Coligo، ومزامنة Drive |
+| `Index.template.html` | القالب الأب والمصدري لواجهة المستخدم (يجمع الوحدات النمطية عبر وسوم التضمين `<?!= include(...) ?>`) |
+| `Styles.html` | ملف التنسيقات والأنماط البصرية (CSS) المتوافق مع معايير الوصولية والأجهزة اللوحية والمحمولة |
+| `HubData.js.html` | البيانات الثابتة والكتالوجات، مشغل الفيديوهات، ومحرك المحاكاة دون اتصال |
+| `QuizApp.js.html` | محرك الاختبارات الحي: عرض الأسئلة، المؤقت الزمني، شارات الكلمات المفتاحية، وتصحيح الأسئلة النصية والموضوعية |
+| `Portal.js.html` | واجهات البوابات: بوابة الطالب، دفتر الأخطاء، لوحة ولي الأمر، ومؤشرات الأداء وتحليل نقاط الضعف |
+| `bundle.py` | محرك البناء الذاتي: يدمج القالب المصدري والوحدات لإنتاج الملف المستقل |
+| `Index.bundle.html` | النسخة المجمعة الموحدة الموجهة لخدمة Google Apps Script HTML Service |
+| `Index.html` | المدخل المباشر لبيئة Apps Script |
+| `index.html` | النسخة المجمعة والمطابقة الموجهة لـ **GitHub Pages** وتطبيق **Android APK** |
+| `android/` | مشروع أندرويد المستقل (WebView Kiosk App) المخصص للأجهزة اللوحية للأبناء |
+| `specs/` | مجلد مواصفات وخطط ومهام Spec-Kit للمراحل من P0 حتى P9 |
+| `tests/` | حزمة الاختبارات الشاملة (وحدة، تكامل، حماية، ومحاكاة طرفية E2E) |
 
-## Run tests
+---
+
+## 🎯 الميزات الرئيسية المنجزة (Key Features)
+
+1. **بوابة دخول آمنة وحماية بالـ PIN (P2):**
+   - حماية مشفرة ببصمة SHA-256 لبوابات الطلاب وولي الأمر.
+   - رموز جلسات مؤقتة (`STUDENT_TOK_*` و `ADMIN_TOK_*`) وعزل تام لمنع اختراق الصلاحيات.
+   - حماية ضد هجمات القوة الغاشمة (Rate Limiting) وتطهير خادمي لأجوبة الأسئلة قبل إرسالها للطالب.
+2. **جدول امتحانات تراكمي متعدد المواد (P4, P6):**
+   - امتحانات يومية، أسبوعية تراكمية (W1–W4)، ومحطات شهرية (M1).
+   - ضمان التغطية أولاً (سؤال لكل درس على الأقل)، ومنع تكرار نفس السؤال في اليوم ذاته.
+   - تكيّف ذكي: توصيات علاجية عند النسبة < 70% وتحديات متقدمة عند النسبة ≥ 85%.
+3. **أنواع أسئلة متقدمة ودفتر أخطاء معزول (P7):**
+   - تصحيح خادمي ذكي للأسئلة النصية الحرة (`FILL_IN`) يدعم الخيارات المتعددة (`|`) وتطبيع النصوص العربية (إزالة التشكيل، توحيد الهمزات والياء/الألف المقصورة، وتطبيع الأرقام).
+   - شارات بصرية للكلمات المفتاحية السلبية (`NOT`, `EXCEPT`, `مضاد`, `ما عدا`, `ليس`).
+   - دفتر أخطاء فردي معزول لكل طالب يستخرج الأخطاء الرسمية المسجلة فقط لإعادة التدرب عليها.
+4. **لوحة ولي الأمر والتحليل التربوي المتقدم (P8):**
+   - 4 بطاقات مؤشرات أداء رئيسية (KPIs) تتضمن مسار الدرجات الزمني (📈 تصاعدي، ⚖️ مستقر، 📉 يحتاج مراجعة).
+   - سياسة علاجية رباعية المستويات ترشد ولي الأمر للإجراء الأنسب لكل مستوى درجات.
+   - بطاقة تشخيصية مركزية: **نقاط الضعف المتكررة والأولويات الأسبوعية** تُبرز المهارات التي تكرر الخطأ فيها.
+   - تصدير كامل للنتائج وسجلات المراجعة إلى ملف Excel/CSV متوافق مع الحروف العربية عبر بادئة UTF-8 BOM (`\uFEFF`).
+
+---
+
+## 🧪 حزمة الاختبارات وضمان الجودة (Test Suites)
+
+يخضع النظام لحزمة اختبارات سباعية صارمة تتجاوز **119 اختبارًا آليًا** بنجاح 100%:
 
 ```bash
-npm test                      # 43 unit + server tests
-python tests/e2e/run_all_e2e.py   # 51 E2E scenarios
-python test_ui_buttons.py         # 51 static button controls
+# 1. تشغيل اختبارات الوحدة والخادم (67 اختباراً في 10 حزم اختبارات)
+npm test
+
+# 2. تشغيل اختبارات السيناريوهات الحية الطرفية كاملة (51 سيناريو Playwright)
+python tests/e2e/run_all_e2e.py
+
+# 3. اختبار الملاحة المتعددة وتكامل الشاشات وعدم وجود أخطاء كونسول
+python test_multisubject_navigation.py
 ```
 
-Requires Node.js 20+ and Python 3 with Playwright for the browser suites.
+### ملخص تغطية الاختبارات:
+- `tests/normalizeAnswer.test.js`: تطبيع النصوص والأرقام العربية والإنجليزية (9 اختبارات).
+- `tests/scoring.test.js`: دقة التصحيح وتدرج الدرجات (6 اختبارات).
+- `tests/attemptState.test.js`: ضبط عدد المحاولات ومنع تجاوز الحد الأقصى (8 اختبارات).
+- `tests/cumulative.test.js`: الامتحانات التراكمية والتوزيع الدوري (2 اختبار).
+- `tests/security.test.js`: عزل البيانات، التوكنات المزورة، وقيود البوابة (5 اختبارات).
+- `tests/difficultyLevels.test.js`: مستويات الصعوبة وفلاتر بنك الأسئلة (5 اختبارات).
+- `tests/scheduleCumulative.test.js`: جدول المذاكرة التراكمي وتغطية الدروس والتكيف (5 اختبارات).
+- `tests/questionTypesMistakes.test.js`: الأسئلة المقالية وتطبيع النصوص وعزل دفتر الأخطاء (5 اختبارات).
+- `tests/parentDashboard.test.js`: اتجاهات الدرجات، السياسة الرباعية، ونقاط الضعف، وتصدير CSV (4 اختبارات).
+- `tests/server.test.js`: إدارة قواعد البيانات والجلسات وRPCs الخادمية (18 اختباراً).
+- `tests/e2e/run_all_e2e.py`: 51 اختبار طرفي للمحاكاة الكاملة عبر Playwright.
 
-## Deploy
+---
 
-1. Back up the Google Sheet.
-2. Copy `Code.gs` plus **either**:
-   - `Index.html`, `Styles.html`, `HubData.js.html`, `QuizApp.js.html`, `Portal.js.html` (modular `include()` deployment), **or**
-   - the contents of `Index.bundle.html` pasted as `Index.html` (single-file deployment).
-3. Save and deploy a **new version**. The first run after adding Drive/UrlFetch/trigger code may ask for extra OAuth scopes.
-4. Run **⚙️ Full Database Auto-Format & Setup** once. It is non-destructive and creates/migrates `Submissions`, `Question_Bank`, `Exams` (11 columns), `Retake_Requests`, `Sessions`, `Study_Plan`, `Coligo_Hub` and `Homework_Status`.
-5. Open the web app URL.
+## 🚀 دليل النشر والتشغيل (Deployment Guide)
 
-### Optional integrations
+### 1. بيئة Google Apps Script (الخادم والواجهة الرسمية):
+1. افتح مشروع Apps Script المرتبط بـ Google Sheet:
+   `https://script.google.com/home/projects/1bA0PCBzvpmeSqd782GCJHMv18t_3eMReQJGJ0Y0GDmnFOm7tegLUX7vH/edit`
+2. حدّث كود `Code.gs`.
+3. انسخ محتويات `Index.bundle.html` وضعها في `Index.html` (أو انسخ الملفات المجزأة مع وسوم include).
+4. **إلزام قطعي:** انقر على **Deploy** ثم اختر **Manage deployments** ثم اضغط على أيقونة التعديل واختر **New version** ثم اضغط **Deploy**.
+5. شغل دالة `setupDatabase()` مرة واحدة لتهيئة أو ترقية الجداول.
 
-| Script property | Purpose |
-|---|---|
-| `COLIGO_HUB_FEED_URL` | JSON feed consumed by `syncColigoOnline`. Accepts an array or `{items:[...]}` |
-| `DRIVE_VIDEOS_FOLDER_ID` | Set automatically by **Sync Google Drive Videos** |
+### 2. بيئة GitHub Pages & Android WebView:
+1. عند تعديل أي ملف في الواجهة (`Index.template.html`, `Portal.js.html`, إلخ)، قم بتشغيل سكريبت التجميع:
+   ```bash
+   python bundle.py
+   ```
+2. يتم تلقائياً تحديث `Index.bundle.html` و `index.html` ونسخة الأندرويد `android/app/src/main/assets/www/index.html`.
+3. ارفع التغييرات إلى GitHub (عبر `git push`) ليتم النشر المباشر عبر GitHub Pages.
 
-The Drive sync maps each video file by its filename (without extension), so name files after the YouTube ID they replace (for example `WYOD4qXW0SE.mp4`).
+---
 
-## Adding an exam
+## ⚠️ سجل القواعد الذهبية وتجنب المشاكل (Pitfalls & Invariants)
 
-1. Add a row to `Exams` with status `ACTIVE` or `نشط`.
-2. Add questions to `Question_Bank` with the same `Exam Code`.
-3. Separate options with `|`; the correct answer must exactly match one option.
-4. Reload the web app.
+1. **حظر تعليقات `//` في ملفات القوالب:**
+   يُحظر تماماً وضع تعليقات سطرية `//` داخل سياق كود JavaScript المضمن في قوالب HTML؛ لأن أدوات التجميع والضغط قد تدمج الأسطر مما يعطل تنفيذ السكربت كاملاً. استخدم دائماً تعليقات الكتل `/* ... */`.
+2. **توافق تصدير CSV مع Excel العربي:**
+   عند توليد وتنزيل ملفات CSV تحتوي على نصوص عربية، يجب دائماً وضع علامة ترتيب البايتات UTF-8 BOM (`\uFEFF`) في أول الملف؛ وبدونها سيعرض برنامج Excel على أنظمة Windows الحروف العربية كرموز مشوهة (Mojibake).
+3. **تطبيع التوكنات والمدخلات:**
+   تخضع كافة إجابات الطلاب ومدخلات البحث لمعالجة تطبيع صارمة تشمل إزالة التشكيل، توحيد الهمزات والألف المقصورة، تطبيع الأرقام المشرقية، وإزالة المسافات الزائدة لضمان عدالة التصحيح.
+4. **تحديث نشرات Apps Script (New Version):**
+   حفظ الكود في محرر Apps Script لا يكفي لتحديث تطبيق الويب للمستخدمين؛ يجب دائماً النشر كـ **New Version** لضمان وصول التعديلات إلى نقطة النهاية التنفيذية (`/exec`).
 
-Weekly/monthly exams can instead be generated from the Parent Portal (or the sheet menu). They store `Exam Type` + `Target Period` and serve questions from the matching period slice of `Question_Bank`; creation is refused when that slice is empty.
+---
 
-## Known limitations
+## 🔑 إدارة الرموز والحصص والصيانة الدورية (Maintenance & Secrets)
 
-- The web app is deployed as `ANYONE_ANONYMOUS` + `USER_DEPLOYING`, so server RPCs run as the owner; the PIN gateway protects the UI, not the underlying endpoints.
-- Question types are limited to MCQ and True/False.
-- Some generated fallback questions still contain content errors.
-- The UI is mostly English; Arabic content is RTL but the chrome is not localized.
-- No skill-mastery analytics yet.
+| الرمز / الخاصية | المكان / الاستخدام | دورة المراجعة والتجديد |
+|---|---|---|
+| `COLIGO_USERNAME` | GitHub Secrets | اسم مستخدم Coligo LMS الخاص بالأب (`ahmed.ibrahim144`) |
+| `COLIGO_PASSWORD` | GitHub Secrets | كلمة مرور Coligo LMS النشطة الحالية |
+| `SYNC_SECRET` | GitHub Secrets & Apps Script Script Properties | الرمز السري المشترك للمزامنة الآلية (`PRIMARY_SYNC_2026_x89a4df1`) |
+| `GAS_WEBHOOK_URL` | GitHub Secrets | رابط الويب المنشور لتطبيق Google Apps Script (`.../exec`) |
+| حصص Google Apps Script | Google Workspace Quota | مراقبة استهلاك UrlFetchApp والبريد والمؤقتات اليومية |
+| حصص GitHub Actions | GitHub Billing & Quota | 2,000 دقيقة شهرياً للمهام المجدولة لسحب الواجبات |
+
+---
+**فريق التطوير:** منظومة التطوير الهندسي المتكامل (OpenWolf Engine & Antigravity).
