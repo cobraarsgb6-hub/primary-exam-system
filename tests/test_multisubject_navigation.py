@@ -23,6 +23,10 @@ def test_multisubject_and_filtering():
         print("=== Test 1: Enter Mostafa Portal & Test Subject Filtering ===")
         page.click("#btn-gateway-mostafa")
         page.wait_for_timeout(200)
+        if page.query_selector("#portal-access-pin"):
+            page.fill("#portal-access-pin", "2014")
+            page.click("#portal-access-submit")
+            page.wait_for_timeout(300)
 
         # In Coligo view, Today's Hub is default. Click Exam Center tab!
         print("Switching to Coligo Exam Center Tab...")
@@ -100,6 +104,10 @@ def test_multisubject_and_filtering():
         print("\n=== Test 2: Enter Ali Portal & Test Multi-Subject ===")
         page.click("#btn-gateway-ali")
         page.wait_for_timeout(200)
+        if page.query_selector("#portal-access-pin"):
+            page.fill("#portal-access-pin", "2016")
+            page.click("#portal-access-submit")
+            page.wait_for_timeout(300)
 
         # Switch to Exam Center tab
         page.click("#tab-nav-exams")

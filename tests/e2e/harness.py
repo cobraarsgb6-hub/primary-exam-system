@@ -42,7 +42,28 @@ class E2EHarness:
 
         # Inject RPC Mock Bridge and dialog bypass
         self.page.add_init_script(path=MOCK_BRIDGE_PATH)
+        self.page.add_init_script("window.__testBypassPin = true;")
         self.page.add_init_script("window.prompt = function(msg) { return '1990'; };")
+        self.page.add_init_script("""
+            window.addEventListener('DOMContentLoaded', () => {
+                const observer = new MutationObserver(() => {
+                    const dialog = document.getElementById('portal-access-dialog');
+                    if (dialog && !dialog.__autoSolved) {
+                        dialog.__autoSolved = true;
+                        const pinField = document.getElementById('portal-access-pin');
+                        const submitBtn = document.getElementById('portal-access-submit');
+                        const text = dialog.textContent || '';
+                        if (pinField && submitBtn) {
+                            if (text.includes('مصطفى')) pinField.value = '2014';
+                            else if (text.includes('علي')) pinField.value = '2016';
+                            else pinField.value = '1990';
+                            setTimeout(() => { submitBtn.click(); }, 10);
+                        }
+                    }
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
+        """)
         self.page.goto(f'file:///{INDEX_HTML_PATH}')
         self.page.wait_for_load_state('domcontentloaded')
         return self

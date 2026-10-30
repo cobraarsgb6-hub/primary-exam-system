@@ -41,6 +41,7 @@
 
     /* QUIZ RUNTIME */
     function loadAndStartQuiz(code) {
+      if (code) activeExamCode = code;
       const box = document.getElementById('quiz-question-box');
       box.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div>Loading questions...</div>';
 

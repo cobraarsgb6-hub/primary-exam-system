@@ -672,10 +672,10 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
         return { success: true, role: 'parent', token: 'ADMIN_TOK_MOCK_VALID', message: '✓ Welcome Parent! Opening Dashboard...' };
       }
       if (norm === '2014') {
-        return { success: true, role: 'student', studentKey: 'mostafa', message: '✓ Welcome Mostafa! Opening Grade 6...' };
+        return { success: true, role: 'student', studentKey: 'mostafa', token: 'STUDENT_TOK_MOS_VALID', message: '✓ Welcome Mostafa! Opening Grade 6...' };
       }
       if (norm === '2016') {
-        return { success: true, role: 'student', studentKey: 'ali', message: '✓ Welcome Ali! Opening Grade 5...' };
+        return { success: true, role: 'student', studentKey: 'ali', token: 'STUDENT_TOK_ALI_VALID', message: '✓ Welcome Ali! Opening Grade 5...' };
       }
       return { success: false, code: 'INVALID_PIN', message: '❌ Incorrect PIN code. Please try again.' };
     },

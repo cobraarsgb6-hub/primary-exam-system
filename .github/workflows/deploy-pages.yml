@@ -16,7 +16,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  test:
+    name: Run Automated Tests & Quality Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Server & Security Unit Tests (53 Tests)
+        run: npm test
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Verify Bundle Integrity
+        run: python bundle.py
+
   deploy:
+    name: Deploy to GitHub Pages
+    needs: test
     if: ${{ true }} # Re-enabled; the portal (index.html) is the 24/7 student hub.
     environment:
       name: github-pages
