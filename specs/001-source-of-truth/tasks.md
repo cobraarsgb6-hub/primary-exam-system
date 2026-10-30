@@ -29,9 +29,9 @@
 
 **Purpose**: Freeze the pre-merge world so nothing can be lost silently.
 
-- [ ] T001 Create `specs/001-source-of-truth/inventory/` and save the pre-merge state: `git status --porcelain=v1 -b`, `--untracked-files=all -z` decoded listing, and `git -c core.quotepath=false ls-tree -r --name-only <origin head>` → `inventory/pre-merge-status.txt`, `inventory/untracked-all.txt`, `inventory/ls-tree-origin.txt`
-- [ ] T002 Record heads evidence (local-only commit `6ef8be3`, remote heads incl. `7271ba6` and any newer like `9d4ed4a`) → `inventory/heads-evidence.md` with exact `git log --oneline` output
-- [ ] T003 [P] Re-fetch and record any further bot advancement into `heads-evidence.md` (pre-flight observation, no mutation)
+- [x] T001 Create `specs/001-source-of-truth/inventory/` and save the pre-merge state: `git status --porcelain=v1 -b`, `--untracked-files=all -z` decoded listing, and `git -c core.quotepath=false ls-tree -r --name-only <origin head>` → `inventory/pre-merge-status.txt`, `inventory/untracked-all.txt`, `inventory/ls-tree-origin.txt`
+- [x] T002 Record heads evidence (local-only commit `6ef8be3`, remote heads incl. `7271ba6` and any newer like `9d4ed4a`) → `inventory/heads-evidence.md` with exact `git log --oneline` output
+- [x] T003 [P] Re-fetch and record any further bot advancement into `heads-evidence.md` (pre-flight observation, no mutation)
 
 **Checkpoint**: The pre-merge world is immutable-on-record. Merge work may not start before this signature exists.
 
@@ -43,11 +43,11 @@
 
 **⚠️ CRITICAL**: No rebase begins until T008 passes.
 
-- [ ] T004 Compute the overlap set = untracked-local files ∩ tracked-in-origin files → `inventory/overlap-analysis.md` (path × present-on-origin × notes)
-- [ ] T005 [P] SHA-256 both sides for every overlap file (local working-tree bytes vs `<origin head>` blob bytes) → `inventory/overlap-hashes.csv` with equality flag
-- [ ] T006 Stage move-aside: for each overlap file, move the local untracked copy to `C:\Users\co0ob\Projects\p0_merge_stage\<hash8>\<relpath>` and write `inventory/stage-receipt.md` (from-path, to-path, sha256-before; NEVER delete bytes)
-- [ ] T007 Commit a WIP snapshot of ONLY tracked modifications (`git add -u` → commit `chore(p0): snapshot local tracked modifications pre-rebase`) — guarantees every losing variant survives in history
-- [ ] T008 Pre-rebase gate: re-fetch; recompute overlap (must be ZERO remaining collision with the new head); record divergence counts and new origin head into `heads-evidence.md`; proceed only if gate = PASS
+- [x] T004 Compute the overlap set = untracked-local files ∩ tracked-in-origin files → `inventory/overlap-analysis.md` (path × present-on-origin × notes)
+- [x] T005 [P] SHA-256 both sides for every overlap file (local working-tree bytes vs `<origin head>` blob bytes) → `inventory/overlap-hashes.csv` with equality flag
+- [x] T006 Stage move-aside: for each overlap file, move the local untracked copy to `C:\Users\co0ob\Projects\p0_merge_stage\<hash8>\<relpath>` and write `inventory/stage-receipt.md` (from-path, to-path, sha256-before; NEVER delete bytes)
+- [x] T007 Commit a WIP snapshot of ONLY tracked modifications (`git add -u` → commit `chore(p0): snapshot local tracked modifications pre-rebase`) — guarantees every losing variant survives in history
+- [x] T008 Pre-rebase gate: re-fetch; recompute overlap (must be ZERO remaining collision with the new head); record divergence counts and new origin head into `heads-evidence.md`; proceed only if gate = PASS
 
 **Checkpoint**: Merge can no longer lose a tracked or untracked byte.
 
@@ -61,12 +61,12 @@
 
 ### Implementation for User Story 2
 
-- [ ] T009 [US2] `git rebase <origin-head>` replaying the WIP commit onto the bot head; resolve conflicts ONLY in the conflicted files using the D2 rules of research.md — bot artifacts (`resources/coligo/coligo_catalog.json`, `coligo_manifest.json`): incoming unless local strictly-newer evidence; docs (`CURRENT_STATUS_AR.md`, `SECURITY_SETUP.md`, `GLM_OPERATIONAL_PLAN.md`, `CODEX_PROJECT_PLAN_REVIEW_AR.md`): keep local, add/remove as reconciled truth; code (`cloud_coligo_sync.py`, workflows, `index.html`): evidence-diff decides; every resolution choice logged with reason
-- [ ] T010 [US2] Confirm rebase completion; final shape `behind 0` (re-fetch may reveal new bot head → repeat T008→T009 shim once; log the bind)
-- [ ] T011 [US2] Zero-loss survival audit comparing Phase-1 inventory to post-merge reality → `inventory/survival-audit.py` + `inventory/survival-audit.md` (classifications per path; ZERO `vanished` outcomes enforced — any vanished path = phase fails)
-- [ ] T012 [US2] Post-merge logical commits: (a) material preservation commit for non-overlap untracked `resources/coligo/**`, (b) helper .py scripts archive commit, (c) speckit harness adoption commit (`.specify/`, `.agents/`, `.opencode/`, `ROADMAP_SPECKIT_AR.md`, `specs/`) — `my-project/` stays untracked + documented (data-model: owner decides)
-- [ ] T013 [US2] Validate automation integrity: `.github/workflows/coligo-cloud-sync.yml` + `deploy-pages.yml` parse-light check + referenced files exist (incl. tracked `resources/coligo/coligo_catalog.json`) → note in `merge-log.md`
-- [ ] T014 [US2] Write `specs/001-source-of-truth/merge-log.md`: divergence shape before/after, both-hash identical-replacement list, move-aside variants, exceptions with reasons
+- [x] T009 [US2] `git rebase <origin-head>` replaying the WIP commit onto the bot head; resolve conflicts ONLY in the conflicted files using the D2 rules of research.md — bot artifacts (`resources/coligo/coligo_catalog.json`, `coligo_manifest.json`): incoming unless local strictly-newer evidence; docs (`CURRENT_STATUS_AR.md`, `SECURITY_SETUP.md`, `GLM_OPERATIONAL_PLAN.md`, `CODEX_PROJECT_PLAN_REVIEW_AR.md`): keep local, add/remove as reconciled truth; code (`cloud_coligo_sync.py`, workflows, `index.html`): evidence-diff decides; every resolution choice logged with reason
+- [x] T010 [US2] Confirm rebase completion; final shape `behind 0` (re-fetch may reveal new bot head → repeat T008→T009 shim once; log the bind)
+- [x] T011 [US2] Zero-loss survival audit comparing Phase-1 inventory to post-merge reality → `inventory/survival-audit.py` + `inventory/survival-audit.md` (classifications per path; ZERO `vanished` outcomes enforced — any vanished path = phase fails)
+- [x] T012 [US2] Post-merge logical commits: (a) material preservation commit for non-overlap untracked `resources/coligo/**`, (b) helper .py scripts archive commit, (c) speckit harness adoption commit (`.specify/`, `.agents/`, `.opencode/`, `ROADMAP_SPECKIT_AR.md`, `specs/`) — `my-project/` stays untracked + documented (data-model: owner decides)
+- [x] T013 [US2] Validate automation integrity: `.github/workflows/coligo-cloud-sync.yml` + `deploy-pages.yml` parse-light check + referenced files exist (incl. tracked `resources/coligo/coligo_catalog.json`) → note in `merge-log.md`
+- [x] T014 [US2] Write `specs/001-source-of-truth/merge-log.md`: divergence shape before/after, both-hash identical-replacement list, move-aside variants, exceptions with reasons
 
 **Checkpoint**: US2 independently verifiable via `survival-audit.md` + `git status` + `merge-log.md`.
 
@@ -80,8 +80,8 @@
 
 ### Implementation for User Story 1
 
-- [ ] T015 [P] [US1] Probe live surfaces NOW: GitHub Pages URL (HTTP status + spot content) and Web App `/exec` URL attempt (if owner-supplied it goes in the row; absence stays `غير معروف` with reason "not stored in-repo; owner input pending") → evidence recorded in `CURRENT_STATUS_AR.md`
-- [ ] T016 [US1] Build جدول الحقيقة rows in `CURRENT_STATUS_AR.md` strictly per `contracts/truth-ledger-format.md`: `Code.gs`, Apps Script HTML templates (`Index`/`HubData.js.html`/`Portal.js.html`/`QuizApp.js.html`/`Styles.html`), `Index.bundle.html`, `index.html` (Pages entry), `bundle.py`, `.github/workflows/*.yml`, `cloud_coligo_sync.py` — every row: repoState + publishedState + evidence + date; Apps Script rows start `غير معروف` until the owner's dated export (research D3)
+- [x] T015 [P] [US1] Probe live surfaces NOW: GitHub Pages URL (HTTP status + spot content) and Web App `/exec` URL attempt (if owner-supplied it goes in the row; absence stays `غير معروف` with reason "not stored in-repo; owner input pending") → evidence recorded in `CURRENT_STATUS_AR.md`
+- [x] T016 [US1] Build جدول الحقيقة rows in `CURRENT_STATUS_AR.md` strictly per `contracts/truth-ledger-format.md`: `Code.gs`, Apps Script HTML templates (`Index`/`HubData.js.html`/`Portal.js.html`/`QuizApp.js.html`/`Styles.html`), `Index.bundle.html`, `index.html` (Pages entry), `bundle.py`, `.github/workflows/*.yml`, `cloud_coligo_sync.py` — every row: repoState + publishedState + evidence + date; Apps Script rows start `غير معروف` until the owner's dated export (research D3)
 
 **Checkpoint**: SC-001 satisfiable: 100% rows evidenced or honest-unknown.
 
@@ -95,7 +95,7 @@
 
 ### Implementation for User Story 3
 
-- [ ] T017 [P] [US3] Fill دفتر الإصلاحات in `CURRENT_STATUS_AR.md` from research D5 prefill, adding exact file:line evidence: typed tokens (`Code.gs` `storeAccessToken_`) + `getAccessTokenClaims_` + `verifyGatewayPin`; PIN-free live code + quarantine list (`legacy_index.html`, `Code.gs.bak`, `android\app\src\main\assets\www\index.html`); `//`→`\/\/` rule (`bundle.py` with line refs); optional error bar → `غير مطلوب` (doc-only mention, zero runtime code)
+- [x] T017 [P] [US3] Fill دفتر الإصلاحات in `CURRENT_STATUS_AR.md` from research D5 prefill, adding exact file:line evidence: typed tokens (`Code.gs` `storeAccessToken_`) + `getAccessTokenClaims_` + `verifyGatewayPin`; PIN-free live code + quarantine list (`legacy_index.html`, `Code.gs.bak`, `android\app\src\main\assets\www\index.html`); `//`→`\/\/` rule (`bundle.py` with line refs); optional error bar → `غير مطلوب` (doc-only mention, zero runtime code)
 
 **Checkpoint**: SC-005: zero `unknown` endpoints.
 
@@ -109,11 +109,11 @@
 
 ### Implementation for User Story 4
 
-- [ ] T018 [P] [US4] Insert the standard historical banner at the top of every legacy root document from the claim map (research F10) — excludes the active triple: `README.md`, `ROADMAP_SPECKIT_AR.md`, `CURRENT_STATUS_AR.md` (and `specs/**`, `.specify/**`)
-- [ ] T019 [P] [US4] Correct `README.md`: stale `ADMIN_TOK_*`-style wording → typed `ACCESS_TOK_*` server-minted reality; file roles (Pages vs Apps Script entries); remove/qualify any unproven claim with dated evidence or removal
-- [ ] T020 [US4] Record the honest baseline: run `npm test` at final HEAD → full output saved to `specs/001-source-of-truth/baseline-tests-2026-10-30.txt`; summary row (command/date/counts/verdict — RED allowed, hiding NOT) appended into `CURRENT_STATUS_AR.md`
-- [ ] T021 [US4] Scrub the three ACTIVE docs for "100% / بلا عيوب / Zero-Defect" style claims without dated evidence links (keep+link if evidenced, remove if not) — claim map cited
-- [ ] T022 [US4] Add مدخلات المالك section into `CURRENT_STATUS_AR.md`: Pages URL recorded; Web App `/exec` = `غير معروف` pending owner; Apps Script dated export = pending owner; P1 reminder (Coligo credentials, token expiry 2026-11-04) — NO secrets stored (constitution VII)
+- [x] T018 [P] [US4] Insert the standard historical banner at the top of every legacy root document from the claim map (research F10) — excludes the active triple: `README.md`, `ROADMAP_SPECKIT_AR.md`, `CURRENT_STATUS_AR.md` (and `specs/**`, `.specify/**`)
+- [x] T019 [P] [US4] Correct `README.md`: stale `ADMIN_TOK_*`-style wording → typed `ACCESS_TOK_*` server-minted reality; file roles (Pages vs Apps Script entries); remove/qualify any unproven claim with dated evidence or removal
+- [x] T020 [US4] Record the honest baseline: run `npm test` at final HEAD → full output saved to `specs/001-source-of-truth/baseline-tests-2026-10-30.txt`; summary row (command/date/counts/verdict — RED allowed, hiding NOT) appended into `CURRENT_STATUS_AR.md`
+- [x] T021 [US4] Scrub the three ACTIVE docs for "100% / بلا عيوب / Zero-Defect" style claims without dated evidence links (keep+link if evidenced, remove if not) — claim map cited
+- [x] T022 [US4] Add مدخلات المالك section into `CURRENT_STATUS_AR.md`: Pages URL recorded; Web App `/exec` = `غير معروف` pending owner; Apps Script dated export = pending owner; P1 reminder (Coligo credentials, token expiry 2026-11-04) — NO secrets stored (constitution VII)
 
 **Checkpoint**: SC-003 + SC-004 satisfiable.
 

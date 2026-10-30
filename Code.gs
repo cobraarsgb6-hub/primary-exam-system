@@ -1748,6 +1748,10 @@ function validateSession_(data, now) {
     return { error: { success: false, code: 'SESSION_NOT_FOUND', message: 'جلسة الامتحان غير موجودة أو انتهت. أعد تحميل الامتحان.' } };
   }
 
+  if (normalizeName_(data.studentName) !== normalizeName_(session.studentName)) {
+    return { error: { success: false, code: 'STUDENT_MISMATCH', message: 'اسم الطالب لا يطابق جلسة الامتحان.' } };
+  }
+
   if (!isStudentTokenValid_(data.studentToken, session.studentName)) {
     return { error: studentAccessError_() };
   }
@@ -1760,10 +1764,6 @@ function validateSession_(data, now) {
 
   if (session.status !== 'ACTIVE') {
     return { error: { success: false, code: 'SESSION_CLOSED', message: 'هذه الجلسة لم تعد صالحة. ابدأ محاولة جديدة.' } };
-  }
-
-  if (normalizeName_(data.studentName) !== normalizeName_(session.studentName)) {
-    return { error: { success: false, code: 'STUDENT_MISMATCH', message: 'اسم الطالب لا يطابق جلسة الامتحان.' } };
   }
   if (normalizeExam_(data.examCode) !== normalizeExam_(session.examCode)) {
     return { error: { success: false, code: 'EXAM_MISMATCH', message: 'كود الامتحان لا يطابق جلسة الامتحان.' } };

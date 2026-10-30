@@ -120,7 +120,11 @@ function createApp(options = {}) {
     getUrl() { return 'https://example.test/sheet'; }
   };
 
-  const props = {};
+  const props = {
+    ADMIN_PIN_HASH: 'FALLBACK_HASH_1450536879',
+    ALI_PIN_HASH: 'FALLBACK_HASH_1450515979',
+    MOSTAFA_PIN_HASH: 'FALLBACK_HASH_1450515981'
+  };
   let uuid = 0;
   const sandbox = {
     console,
@@ -154,8 +158,14 @@ function createApp(options = {}) {
   return { sandbox, sheets, ss, props };
 }
 
+function tokenFor(app, name = 'Ali Ahmed') {
+  const norm = String(name || '').toLowerCase();
+  const pin = (norm.indexOf('mostafa') !== -1) ? '2014' : '2016';
+  return app.sandbox.verifyGatewayPin(pin).token;
+}
+
 function start(app, name = 'Ali Ahmed', code = 'EX_Y5_ENG_ADV01') {
-  return app.sandbox.getExamData(code, name);
+  return app.sandbox.getExamData(code, name, tokenFor(app, name));
 }
 
 function sessionFor(app, sessionKey) {
@@ -182,6 +192,7 @@ test('one correct answer out of the full paper is 1/3, not 100%', () => {
     studentName: 'Ali Ahmed',
     examCode: 'EX_Y5_ENG_ADV01',
     sessionKey: data.sessionKey,
+    studentToken: tokenFor(app, 'Ali Ahmed'),
     answers: { [first.id]: first.correctAnswer }
   });
 
@@ -198,6 +209,7 @@ test('fabricated empty answers cannot score and unknown ids are ignored', () => 
     studentName: 'Ali Ahmed',
     examCode: 'EX_Y5_ENG_ADV01',
     sessionKey: data.sessionKey,
+    studentToken: tokenFor(app, 'Ali Ahmed'),
     answers: { fake1: '', fake2: '' }
   });
 
@@ -214,6 +226,7 @@ test('duplicate submission returns the saved result and writes one row', () => {
     studentName: 'Ali Ahmed',
     examCode: 'EX_Y5_ENG_ADV01',
     sessionKey: data.sessionKey,
+    studentToken: tokenFor(app, 'Ali Ahmed'),
     answers: {}
   };
 
@@ -234,6 +247,7 @@ test('attempt limit is enforced, then an approved retake unlocks one more attemp
       studentName: 'Ali Ahmed',
       examCode: 'EX_Y5_ENG_ADV01',
       sessionKey: data.sessionKey,
+      studentToken: tokenFor(app, 'Ali Ahmed'),
       answers: {}
     });
   }
@@ -245,6 +259,7 @@ test('attempt limit is enforced, then an approved retake unlocks one more attemp
   const request = app.sandbox.requestExamRetake({
     studentName: 'Ali Ahmed',
     examCode: 'EX_Y5_ENG_ADV01',
+    studentToken: tokenFor(app, 'Ali Ahmed'),
     reason: 'Please allow one more try.'
   });
   assert.equal(request.success, true);
@@ -277,6 +292,7 @@ test('expired sessions are rejected by the server', () => {
     studentName: 'Ali Ahmed',
     examCode: 'EX_Y5_ENG_ADV01',
     sessionKey: data.sessionKey,
+    studentToken: tokenFor(app, 'Ali Ahmed'),
     answers: {}
   });
 
@@ -291,6 +307,7 @@ test('a student cannot submit another student session', () => {
     studentName: 'Mostafa Ahmed',
     examCode: 'EX_Y5_ENG_ADV01',
     sessionKey: data.sessionKey,
+    studentToken: tokenFor(app, 'Mostafa Ahmed'),
     answers: {}
   });
 
@@ -337,7 +354,7 @@ test('a custom exam added to the sheet is served from the bank', () => {
     ])
   });
 
-  const result = app.sandbox.getExamData('EX_CUSTOM_01', 'Ali Ahmed');
+  const result = app.sandbox.getExamData('EX_CUSTOM_01', 'Ali Ahmed', tokenFor(app, 'Ali Ahmed'));
   assert.equal(result.success, true);
   assert.equal(result.questions.length, 1);
   assert.equal(result.questions[0].text, 'Custom question?');
@@ -372,7 +389,7 @@ test('admin dashboard requires valid admin token and shows the real bank', () =>
   // Calling with valid PIN succeeds and returns token
   const auth = app.sandbox.verifyAdminPin('1990');
   assert.equal(auth.success, true);
-  assert.ok(auth.token.startsWith('ADMIN_TOK_'));
+  assert.ok(auth.token.startsWith('ACCESS_TOK_'));
 
   const result = app.sandbox.getAdminDashboardData(auth.token);
   assert.equal(result.success, true);
@@ -382,7 +399,8 @@ test('admin dashboard requires valid admin token and shows the real bank', () =>
 
 test('setupDatabase seeds the study plan and the weekly/monthly exam factory uses the bank', () => {
   const app = createApp();
-  app.sandbox.setupDatabase();
+  const token = app.sandbox.verifyAdminPin('1990').token;
+  app.sandbox.setupDatabase(null, token);
 
   assert.ok(app.sheets.Study_Plan, 'Study_Plan tab is created');
   assert.ok(app.sheets.Study_Plan.rows.length > 20, 'roadmap rows are seeded');
@@ -391,8 +409,6 @@ test('setupDatabase seeds the study plan and the weekly/monthly exam factory use
     ['Exam Type', 'Target Period'],
     'Exams sheet is migrated to 11 columns'
   );
-
-  const token = app.sandbox.verifyAdminPin('1990').token;
 
   const weekly = app.sandbox.createWeeklyExam({ studentKey: 'ali', weekCode: 'W1', subject: 'English Grammar' }, token);
   assert.equal(weekly.success, true, weekly.message);
@@ -404,7 +420,7 @@ test('setupDatabase seeds the study plan and the weekly/monthly exam factory use
   assert.equal(app.sheets.Exams.rows.length, before, 're-creating the same week updates instead of duplicating');
 
   // The generated exam must open from the period slice of the bank.
-  const exam = app.sandbox.getExamData('EX_Y5_ALI_W1_ENG', 'Ali Ahmed');
+  const exam = app.sandbox.getExamData('EX_Y5_ALI_W1_ENG', 'Ali Ahmed', tokenFor(app, 'Ali Ahmed'));
   assert.equal(exam.success, true, exam.message);
   assert.equal(exam.questions.length, 3);
   assert.equal(Object.prototype.hasOwnProperty.call(exam.questions[0], 'correctAnswer'), false);
@@ -452,7 +468,7 @@ test('mistakes review exam is built from graded submission errors', () => {
   assert.equal(result.success, true, result.message);
   assert.equal(result.questionsCount, 1);
 
-  const exam = app.sandbox.getExamData('EX_Y5_ALI_MISTAKES_REV', 'Ali Ahmed');
+  const exam = app.sandbox.getExamData('EX_Y5_ALI_MISTAKES_REV', 'Ali Ahmed', tokenFor(app, 'Ali Ahmed'));
   assert.equal(exam.success, true, exam.message);
   assert.equal(exam.questions.length, 1);
   assert.equal(exam.questions[0].text, 'Question one?');
@@ -465,34 +481,34 @@ test('mistakes review exam is built from graded submission errors', () => {
 
 test('today mission, student exam list, homework status and drive/coligo guards', () => {
   const app = createApp();
-  app.sandbox.setupDatabase();
   const token = app.sandbox.verifyAdminPin('1990').token;
+  app.sandbox.setupDatabase(null, token);
 
-  const mission = app.sandbox.getTodayMission('ali');
+  const mission = app.sandbox.getTodayMission('ali', tokenFor(app, 'Ali Ahmed'));
   assert.equal(mission.success, true);
   assert.match(mission.mission.examCode, /^EX_Y5_(ENG_ADV01|ALI_W2_ENG)$/);
   assert.ok(mission.mission.lesson);
   assert.equal(mission.mission.week, 'W2', 'completed W1 rows are skipped');
 
-  const available = app.sandbox.getStudentAvailableExams('ali');
+  const available = app.sandbox.getStudentAvailableExams('ali', tokenFor(app, 'Ali Ahmed'));
   assert.equal(available.success, true);
   assert.equal(available.exams.length, 1);
   assert.equal(available.exams[0].code, 'EX_Y5_ENG_ADV01');
 
-  const mostafaExams = app.sandbox.getStudentAvailableExams('mostafa');
+  const mostafaExams = app.sandbox.getStudentAvailableExams('mostafa', tokenFor(app, 'Mostafa Ahmed'));
   assert.equal(mostafaExams.exams.length, 0, 'grade isolation hides Year 5 exams');
 
-  const hw = app.sandbox.recordHomeworkStatus('ali', 'English Grammar', true);
+  const hw = app.sandbox.recordHomeworkStatus('ali', 'English Grammar', true, tokenFor(app, 'Ali Ahmed'));
   assert.equal(hw.success, true);
   assert.equal(hw.student, 'Ali Ahmed', 'portal keys are stored as full names');
   const hwRows = app.sheets.Homework_Status.rows.length;
-  const unset = app.sandbox.recordHomeworkStatus('ali', 'English Grammar', false);
+  const unset = app.sandbox.recordHomeworkStatus('ali', 'English Grammar', false, tokenFor(app, 'Ali Ahmed'));
   assert.equal(unset.success, true);
   assert.equal(unset.done, false);
   assert.equal(app.sheets.Homework_Status.rows.length, hwRows, 'homework status upserts');
   assert.equal(app.sheets.Homework_Status.rows[1][3], 'FALSE');
 
-  const coligo = app.sandbox.getColigoHubData();
+  const coligo = app.sandbox.getColigoHubData(tokenFor(app, 'Ali Ahmed'));
   assert.equal(coligo.success, true);
   assert.equal(coligo.items.length, 0);
 
@@ -542,7 +558,7 @@ test('Arabic headers resolve to canonical columns and are not duplicated', () =>
   assert.equal(examMap['target period'], 10);
   assert.equal(app.sandbox.headerIndex_(examMap, 'Duration', 99), 5, 'base header match');
 
-  const data = app.sandbox.getExamData('EX_Y5_ENG_ADV01', 'Ali Ahmed');
+  const data = app.sandbox.getExamData('EX_Y5_ENG_ADV01', 'Ali Ahmed', tokenFor(app, 'Ali Ahmed'));
   assert.equal(data.success, true, data.message);
   assert.equal(data.exam.grade, 'Year 5 (G5)');
   assert.equal(data.exam.subject, 'English Grammar');
@@ -553,6 +569,7 @@ test('Arabic headers resolve to canonical columns and are not duplicated', () =>
     studentName: 'Ali Ahmed',
     examCode: 'EX_Y5_ENG_ADV01',
     sessionKey: data.sessionKey,
+    studentToken: tokenFor(app, 'Ali Ahmed'),
     answers: { [session[0].id]: session[0].correctAnswer }
   });
   assert.equal(submitted.success, true, submitted.message);
@@ -568,7 +585,8 @@ test('Arabic headers resolve to canonical columns and are not duplicated', () =>
   const examsWidth = app.sheets.Exams.rows[0].length;
   const bankWidth = app.sheets.Question_Bank.rows[0].length;
   const subWidth = app.sheets.Submissions.rows[0].length;
-  app.sandbox.setupDatabase();
+  const token = app.sandbox.verifyAdminPin('1990').token;
+  app.sandbox.setupDatabase(null, token);
   assert.equal(app.sheets.Exams.rows[0].length, examsWidth);
   assert.equal(app.sheets.Question_Bank.rows[0].length, bankWidth);
   assert.equal(app.sheets.Submissions.rows[0].length, subWidth);

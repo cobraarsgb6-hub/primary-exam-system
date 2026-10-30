@@ -1,11 +1,12 @@
 {
  "classes": {
-  "kept-untracked": 138,
+  "now-tracked(see-log)": 99,
+  "kept-untracked": 39,
   "moved-aside(staged)": 2
  },
  "vanished": [],
  "lost_tracked": [],
- "untracked_now": 143,
+ "untracked_now": 44,
  "modified_now": [],
- "head": "42d8d59528d39586dbf24d26c2c1126204394663"
+ "head": "65e1f078bdf7110be0f079b33afee6b608823e43"
 }
