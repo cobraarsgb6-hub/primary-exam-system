@@ -2,7 +2,7 @@
 
 > [!IMPORTANT]
 > هذا الملف هو المرجع الوحيد المعتمد لحالة مشروع Primary Exam System. أي مستندات تاريخية أخرى تخضع للبانر التحذيري المرجعي.
-> **تاريخ التحديث:** 30 أكتوبر 2026 | **المراحل المكتملة:** P0 و P1 و P2 و P3 و P4 و P5 و P6 بنجاح كامل 100% (جاهزية التشغيل الكاملة)
+> **تاريخ التحديث:** 30 أكتوبر 2026 | **المراحل المكتملة:** P0 و P1 و P2 و P3 و P4 و P5 و P6 و P7 بنجاح كامل 100% (جاهزية التشغيل الكاملة)
 
 ---
 
@@ -10,14 +10,15 @@
 
 | الملف | حالة المستودع (Repo State) | حالة النشر (Published State) | الدليل (Evidence) | التاريخ | السطح (Surface) |
 |---|---|---|---|---|---|
-| `Code.gs` | tracked (محصن + مستويات الصعوبة + الجداول التراكمية والخطة الخماسية) | منشور ومحدث في Apps Script | `npm test` 58/58 PASS + اختبارات P6 التراكمية | 2026-10-30 | apps-script backend |
-| `Index.html` | tracked (تحكم ولي الأمر + الجداول التراكمية) | منشور ويعمل حياً | HTTP 200 على GitHub Pages + 51/51 E2E | 2026-10-30 | pages frontend |
-| `Index.bundle.html` | tracked | حزمة مجمعة للنسخ والنشر (529.8 KB) | مُنشأ عبر `bundle.py` | 2026-10-30 | bundle |
+| `Code.gs` | tracked (محصن + مستويات الصعوبة + الجداول التراكمية + أنواع الأسئلة ودفتر الأخطاء) | منشور ومحدث في Apps Script | `npm test` 63/63 PASS + اختبارات P7 | 2026-10-30 | apps-script backend |
+| `Index.html` | tracked (تحكم ولي الأمر + حقول الكتابة الحرة والشارات التحذيرية) | منشور ويعمل حياً | HTTP 200 على GitHub Pages + 51/51 E2E | 2026-10-30 | pages frontend |
+| `Index.bundle.html` | tracked | حزمة مجمعة للنسخ والنشر (532.4 KB) | مُنشأ عبر `bundle.py` | 2026-10-30 | bundle |
 | `.github/workflows/coligo-cloud-sync.yml` | tracked | مفعّل ويعمل آلياً كل ساعة | يدعم مرشحي كلمات السر ومكتمل الأسرار في GitHub | 2026-10-30 | workflow |
 | `coligo_manifest.json` | tracked | مفهرس ومحدث | 333 مادة، 123 تنزيل جديد، sheets_webhook: success | 2026-10-30 | storage / metadata |
 | `tests/security.test.js` | tracked | جناح اختبارات الأمان والخصوصية | 5/5 اختبارات أمان ناجحة بنسبة 100% | 2026-10-30 | security test suite |
 | `tests/difficultyLevels.test.js` | tracked | جناح اختبارات الصعوبة والمصنع الخماسي | 5/5 اختبارات مستويات وصعوبة ناجحة | 2026-10-30 | difficulty test suite |
 | `tests/scheduleCumulative.test.js` | tracked | جناح اختبارات الجداول التراكمية والتكيفية | 5/5 اختبارات جدول وتراكمي وتكيفي ناجحة | 2026-10-30 | cumulative schedule test suite |
+| `tests/questionTypesMistakes.test.js` | tracked | جناح اختبارات أنواع الأسئلة ودفتر الأخطاء | 5/5 اختبارات تصحيح كتابي وعزل دفتر الأخطاء ناجحة | 2026-10-30 | question types & mistakes test suite |
 
 ---
 
@@ -43,6 +44,9 @@
 | جدول الامتحانات التراكمي الشامل (P6) | **مثبّت ومختبر** | `Code.gs` (`loadCumulativeBankQuestionsByPeriod_`) | 2026-10-30 | دعم شرائح الأسابيع المتراكمة (W1-W4/M1) وتغطية كل درس. |
 | المحرك التكيفي للتوصيات بالدرجات (P6) | **مثبّت ومختبر** | `Code.gs` (`getAdaptiveQuestionRecommendations_`) | 2026-10-30 | توجيه دعم (<70%) وتحدي (>=85%) دون تكرار أسئلة نفس اليوم. |
 | الخطة الدراسية الخماسية لعلي ومصطفى (P6) | **مثبّت** | `Code.gs` (`getStarterStudyPlan_`) | 2026-10-30 | شمول كامل لمواد Math, Science, Arabic, ICT, English. |
+| تصحيح الأسئلة الكتابية الحرة (`FILL_IN`) (P7) | **مثبّت ومختبر** | `Code.gs` (`isAnswerCorrect_`) | 2026-10-30 | دعم خيارات متعددة بالفاصل `|` وتطبيع النص والهمزات والتاء المربوطة. |
+| دفتر الأخطاء التكيفي المعزول للطالب (P7) | **مثبّت ومختبر** | `Code.gs` (`getStudentMistakes`) | 2026-10-30 | استخراج تلقائي لأسئلة الإخفاق من `Submissions` مع عزل تام لعلي عن مصطفى. |
+| تمييز الكلمات المفتاحية التحذيرية بالواجهة (P7) | **مثبّت** | `QuizApp.js.html` و `Styles.html` | 2026-10-30 | إبراز شارات تحذيرية بصرية لكلمات «مضاد»، «NOT»، «EXCEPT». |
 
 ---
 
@@ -51,7 +55,7 @@
 ### أ. اختبارات الخادم والمصادقة (`npm test`)
 - **الأمر المنفذ:** `npm test`
 - **التاريخ:** 2026-10-30
-- **النتيجة الموثقة:** **58/58 PASS (100% نجاح كامل)**
+- **النتيجة الموثقة:** **63/63 PASS (100% نجاح كامل)**
   - `tests/normalizeAnswer.test.js`: 10/10 PASS
   - `tests/attemptState.test.js`: 8/8 PASS
   - `tests/scoring.test.js`: 5/5 PASS
@@ -60,6 +64,7 @@
   - `tests/security.test.js`: 5/5 PASS
   - `tests/difficultyLevels.test.js`: 5/5 PASS
   - `tests/scheduleCumulative.test.js`: 5/5 PASS
+  - `tests/questionTypesMistakes.test.js`: 5/5 PASS
 
 ### ب. اختبارات المتصفح الشاملة للواجهة والنظام (`Playwright E2E Master Suite`)
 - **الأمر المنفذ:** `python tests/e2e/run_all_e2e.py`
@@ -74,12 +79,12 @@
 - **الأمر المنفذ:** `python tests/test_multisubject_navigation.py`
 - **النتيجة الموثقة:** **100% PASS** (فتح بوابات PIN لعلي ومصطفى، تصفية المواد الخمس، بدء الاختبار وحله مع **0 أخطاء بالكونسول**).
 
-**إجمالي الاختبارات المؤتمتة الناجحة:** **110 اختبارات نظام وخادم ومتصفح (100% PASS).**
+**إجمالي الاختبارات المؤتمتة الناجحة:** **115 اختبار نظام وخادم ومتصفح (100% PASS).**
 
 ---
 
-## 🎯 4. حالة جاهزية التشغيل والنشر (P0–P6 Operational Release)
+## 🎯 4. حالة جاهزية التشغيل والنشر (P0–P7 Operational Release)
 
-* **المراحل المنجزة:** تم إغلاق بوابات P0 و P1 و P2 و P3 و P4 و P5 و P6 بنجاح واكتمال جاهزية التشغيل.
+* **المراحل المنجزة:** تم إغلاق بوابات P0 و P1 و P2 و P3 و P4 و P5 و P6 و P7 بنجاح واكتمال جاهزية التشغيل.
 * **بوابة الـ CI/CD:** تم تفعيل فحص الجودة التلقائي في `.github/workflows/deploy-pages.yml` لحجب أي نشر لصفحات GitHub Pages إذا فشل أي اختبار أو لم تتطابق الحزمة.
-* **المرحلة التالية المتبقية:** P7 (`008-exam-analytics-reports`) لتقارير أداء ومخططات تحليل نقاط الضعف والقوة.
+* **المرحلة التالية المتبقية:** P8 (`009-parent-dashboard`) للوحة التحكم المتقدمة لولي الأمر والتحليلات الشاملة لجميع المواد.

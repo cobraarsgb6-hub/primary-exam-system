@@ -165,6 +165,13 @@
       display.style.background = secondsRemaining <= 60 ? 'var(--danger-bg)' : 'var(--primary-light)';
     }
 
+    function highlightNegativeKeywords(text) {
+      if (!text) return '';
+      return text
+        .replace(/\b(NOT|EXCEPT|NEVER|LEAST)\b/g, '<span class="badge-negative">$1</span>')
+        .replace(/(^|\s)(مضاد|ليس|ما عدا|غير)(\s|$)/g, '$1<span class="badge-negative">$2</span>$3');
+    }
+
     function renderQuizQuestion() {
       const q = questions[currentIdx];
       const total = questions.length;
@@ -196,6 +203,31 @@
         `;
       });
 
+      const isFillIn = (q.type === 'FILL_IN' || q.type === 'TEXT');
+      let interactionHtml = '';
+
+      if (isFillIn) {
+        const currentVal = studentAnswers[q.id] || '';
+        interactionHtml = `
+          <div class="fill-in-container" style="margin-top: 20px;">
+            <label for="fill-in-${escapeHtml(q.id)}" style="display: block; font-weight: 600; margin-bottom: 8px; color: var(--text-main);">
+              ✍️ ${isArabic ? 'اكتب إجابتك هنا:' : 'Type your answer below:'}
+            </label>
+            <input type="text"
+                   id="fill-in-${escapeHtml(q.id)}"
+                   class="fill-in-input ${isArabic ? 'rtl-content' : ''}"
+                   placeholder="${isArabic ? 'اكتب الإجابة...' : 'Enter your answer here...'}"
+                   value="${escapeHtml(currentVal)}"
+                   ${isArabic ? 'lang="ar" dir="rtl"' : ''}
+                   autocomplete="off"
+                   style="width: 100%; max-width: 480px; padding: 13px 16px; font-size: 16px; border: 2px solid var(--border); border-radius: 8px; outline: none; background: var(--bg-card); color: var(--text-main);"
+                   oninput="onFillInAnswerInput('${escapeHtml(q.id)}', this.value)" />
+          </div>
+        `;
+      } else {
+        interactionHtml = `<div class="options-grid">${optsHtml}</div>`;
+      }
+
       let passageHtml = '';
       if (q.passage) {
         passageHtml = `
@@ -217,8 +249,8 @@
           </div>
           ${passageHtml}
           <div class="q-meta-tag">${escapeHtml(q.unit || q.lesson || 'Core Curriculum')}</div>
-          <div class="q-text ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>${sanitizeRichText(q.text)}</div>
-          <div class="options-grid">${optsHtml}</div>
+          <div class="q-text ${isArabic ? 'rtl-content' : ''}" ${isArabic ? 'lang="ar" dir="rtl"' : ''}>${highlightNegativeKeywords(sanitizeRichText(q.text))}</div>
+          ${interactionHtml}
         </div>
         <div class="nav-btn-row">
           <button type="button" class="btn-secondary" onclick="prevQuestion()" ${currentIdx === 0 ? 'disabled' : ''}>
@@ -234,6 +266,14 @@
       box.querySelectorAll('.option-item').forEach(button => {
         button.addEventListener('click', () => selectAnswer(button.dataset.qid, button.dataset.val));
       });
+    }
+
+    function onFillInAnswerInput(qId, val) {
+      studentAnswers[qId] = val;
+      saveProgress();
+      const answered = Object.keys(studentAnswers).filter(k => String(studentAnswers[k] || '').trim().length > 0).length;
+      document.getElementById('quiz-progress-indicator').innerText =
+        `Question ${currentIdx + 1} of ${questions.length} • Answered ${answered}`;
     }
 
     function selectAnswer(qId, val) {

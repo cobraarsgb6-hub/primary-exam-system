@@ -807,6 +807,45 @@ const serverCatalog = {"DAILY_Y6_MATH_W1D1": [{"id": "Q_Y6_M1_1", "unit": "Prime
       const schedule = rawSchedule.filter(s => s.student === targetStudent);
       const todayExam = schedule.find(s => s.status === 'Active') || schedule[0] || null;
       return { success: true, student: targetStudent, schedule: schedule, todayExam: todayExam };
+    },
+
+    getStudentMistakes: function (studentKey, studentToken) {
+      const isAli = String(studentKey || 'ali').toLowerCase() === 'ali';
+      const targetStudent = isAli ? 'Ali Ahmed' : 'Mostafa Ahmed';
+      const submissions = mockState.submissions.filter(s => s.studentName === targetStudent);
+      const mistakes = [];
+      const seen = {};
+
+      submissions.forEach(sub => {
+        let review = [];
+        if (Array.isArray(sub.review)) review = sub.review;
+        else if (typeof sub.detailedReview === 'string') {
+          try { review = JSON.parse(sub.detailedReview); } catch (e) { review = []; }
+        }
+        review.forEach(item => {
+          if (item.isCorrect === false) {
+            const qKey = item.text || item.questionText || item.id || '';
+            if (qKey && !seen[qKey]) {
+              seen[qKey] = true;
+              mistakes.push({
+                questionId: item.id || '',
+                questionText: qKey,
+                studentAnswer: item.studentAnswer || '',
+                correctAnswer: item.correctAnswer || '',
+                explanation: item.explanation || '',
+                examCode: sub.examCode || ''
+              });
+            }
+          }
+        });
+      });
+
+      return {
+        success: true,
+        student: targetStudent,
+        count: mistakes.length,
+        mistakes: mistakes
+      };
     }
   };
 

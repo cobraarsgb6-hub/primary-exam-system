@@ -362,6 +362,31 @@ function normalizeAnswer_(value) {
     .toLowerCase();
 }
 
+/**
+ * Phase 7: Robust equality comparison for multiple candidate answers and question types.
+ * Supports pipe delimiter '|', Arabic folding, and free-text/fill-in inputs.
+ */
+function isAnswerCorrect_(studentAnswer, correctAnswer) {
+  if (studentAnswer == null || correctAnswer == null) return false;
+  const student = String(studentAnswer).trim();
+  if (student === '') return false;
+  const normStudent = normalizeAnswer_(student);
+  if (!normStudent) return false;
+
+  const rawCandidates = String(correctAnswer).split('|').map(c => c.trim()).filter(Boolean);
+  if (rawCandidates.length === 0) return false;
+
+  for (let i = 0; i < rawCandidates.length; i++) {
+    const normCandidate = normalizeAnswer_(rawCandidates[i]);
+    if (normStudent === normCandidate) return true;
+    // Secondary match: fold Arabic teh marbuta and heh
+    const sTeh = normStudent.replace(/\u0629/g, '\u0647');
+    const cTeh = normCandidate.replace(/\u0629/g, '\u0647');
+    if (sTeh === cTeh) return true;
+  }
+  return false;
+}
+
 function nowIso_() {
   return new Date().toISOString();
 }
@@ -1872,8 +1897,7 @@ function gradeAnswers_(questions, answers) {
 
     const hasAnswer = Object.prototype.hasOwnProperty.call(answers, question.id);
     const studentAnswer = hasAnswer ? String(answers[question.id] == null ? '' : answers[question.id]).trim() : '';
-    const isCorrect = studentAnswer !== '' &&
-      normalizeAnswer_(studentAnswer) === normalizeAnswer_(question.correctAnswer);
+    const isCorrect = isAnswerCorrect_(studentAnswer, question.correctAnswer);
 
     if (isCorrect) earnedScore += points;
 
@@ -3156,6 +3180,74 @@ function getExamSchedule(studentKey, studentToken) {
     return { success: true, student: targetStudent, schedule: schedule, todayExam: todayExam };
   } catch (err) {
     return { success: false, message: 'Failed to retrieve exam schedule: ' + err.message };
+  }
+}
+
+/**
+ * Phase 7: Retrieves the isolated Mistakes Notebook for an authenticated student.
+ * Scans previous official submissions and returns failed questions (isCorrect === false).
+ * Enforces strict isolation: Ali only receives Ali's mistakes; Mostafa only receives Mostafa's.
+ */
+function getStudentMistakes(studentKey, studentToken) {
+  try {
+    if (!isStudentTokenValid_(studentToken, studentKey)) return studentAccessError_();
+    const isAli = (String(studentKey || 'ali').toLowerCase() === 'ali');
+    const targetStudent = isAli ? 'Ali Ahmed' : 'Mostafa Ahmed';
+    const ss = getSpreadsheet_();
+    const subSheet = ss ? ss.getSheetByName('Submissions') : null;
+
+    if (!subSheet || subSheet.getLastRow() <= 1) {
+      return { success: true, student: targetStudent, count: 0, mistakes: [] };
+    }
+
+    const sMap = getSheetHeaderMap_(subSheet);
+    const sData = subSheet.getDataRange().getValues();
+    const mistakes = [];
+    const seen = {};
+
+    for (let i = 1; i < sData.length; i++) {
+      const row = sData[i];
+      const sName = normalizeName_(rowValue_(row, sMap, 'Student Name', 1));
+      if (sName !== normalizeName_(targetStudent)) continue;
+
+      const rawJson = rowValue_(row, sMap, 'Detailed Review JSON', 10);
+      if (!rawJson) continue;
+
+      let review = [];
+      try {
+        const parsed = JSON.parse(rawJson);
+        review = Array.isArray(parsed) ? parsed : (parsed.review || parsed.mistakes || []);
+      } catch (e) {
+        continue;
+      }
+
+      review.forEach(item => {
+        if (item.isCorrect === false || (Number(item.pointsAwarded) < Number(item.maxPoints))) {
+          const qText = String(item.questionText || item.question || '').trim();
+          const qKey = qText || String(item.questionId || '');
+          if (qKey && !seen[qKey]) {
+            seen[qKey] = true;
+            mistakes.push({
+              questionId: item.questionId || '',
+              questionText: qText,
+              studentAnswer: item.studentAnswer || '',
+              correctAnswer: item.correctAnswer || '',
+              explanation: item.explanation || '',
+              examCode: String(rowValue_(row, sMap, 'Exam Code', 3) || '')
+            });
+          }
+        }
+      });
+    }
+
+    return {
+      success: true,
+      student: targetStudent,
+      count: mistakes.length,
+      mistakes: mistakes
+    };
+  } catch (err) {
+    return { success: false, message: 'Failed to retrieve student mistakes notebook: ' + err.message };
   }
 }
 
