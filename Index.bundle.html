@@ -3306,7 +3306,12 @@
                   Academic strengths, cognitive bottlenecks, and evidence-based remediation plan.
                 </p>
               </div>
-              <span id="ana-student-badge" class="meta-pill pill-indigo" style="font-size: 0.82rem; padding: 6px 14px;">Year 5 (G5)</span>
+              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                <button type="button" class="btn-secondary" id="btn-export-csv" style="padding: 6px 14px; font-size: 0.82rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" onclick="exportSubmissionsCSV()">
+                  <span>📥</span><span>تصدير النتائج (CSV)</span>
+                </button>
+                <span id="ana-student-badge" class="meta-pill pill-indigo" style="font-size: 0.82rem; padding: 6px 14px;">Year 5 (G5)</span>
+              </div>
             </div>
 
             <!-- Dynamic Evaluation Body Container -->
@@ -7778,9 +7783,91 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
         deficienciesHtml = '<div style="color: #15803d; font-weight: 700; padding: 14px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; text-align: center;">🌟 Outstanding performance! Zero recurrent errors detected in completed assessments.</div>';
       }
 
+      // Calculate Performance Trajectory Trend
+      let trendLabel = '⚖️ مستقر / Stable';
+      let trendBg = '#f0f9ff';
+      let trendBorder = '#93c5fd';
+      let trendColor = '#0369a1';
+
+      if (subs.length >= 2) {
+        const chronSubs = subs.slice().reverse();
+        const firstScore = Number(String(chronSubs[0].percentage || '').replace('%', '')) || 0;
+        const lastScore = Number(String(chronSubs[chronSubs.length - 1].percentage || '').replace('%', '')) || 0;
+        const diff = lastScore - firstScore;
+        if (diff >= 5) {
+          trendLabel = `📈 تصاعدي (+${diff}%) / Improving`;
+          trendBg = '#f0fdf4';
+          trendBorder = '#86efac';
+          trendColor = '#15803d';
+        } else if (diff <= -5) {
+          trendLabel = `📉 تراجع (${diff}%) / Needs Attention`;
+          trendBg = '#fef2f2';
+          trendBorder = '#fecdd3';
+          trendColor = '#b91c1c';
+        }
+      }
+
+      // 4-Tier Pedagogical Policy Recommendation
+      let policyHtml = '';
+      if (avgPercentage >= 85) {
+        policyHtml = `
+          <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+            <div style="font-weight: 800; color: #166534; font-size: 0.98rem; margin-bottom: 4px;">🌟 سياسة العلاج الموصى بها: خطة الإثراء والتحدي (Level 3 Challenge)</div>
+            <div style="font-size: 0.86rem; color: #15803d; line-height: 1.6;">إتقان متقدم (≥85%). التوجيه: إتاحة أسئلة التحدي المتقدمة والاختبارات التراكمية الشهرية الشاملة لتعزيز الشغف الأكاديمي.</div>
+          </div>
+        `;
+      } else if (avgPercentage >= 70) {
+        policyHtml = `
+          <div style="background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+            <div style="font-weight: 800; color: #1e40af; font-size: 0.98rem; margin-bottom: 4px;">📘 سياسة العلاج الموصى بها: خطة التثبيت والممارسة (Standard Practice)</div>
+            <div style="font-size: 0.86rem; color: #1d4ed8; line-height: 1.6;">إتقان جيد جداً (70-84%). التوجيه: متابعة الكويزات اليومية للتركيز على دقة الصياغة وإدارة وقت الاختبار.</div>
+          </div>
+        `;
+      } else if (avgPercentage >= 50) {
+        policyHtml = `
+          <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+            <div style="font-weight: 800; color: #92400e; font-size: 0.98rem; margin-bottom: 4px;">💡 سياسة العلاج الموصى بها: خطة إعادة شرح المفهوم (Concept Re-teaching)</div>
+            <div style="font-size: 0.86rem; color: #b45309; line-height: 1.6;">إتقان متوسط (50-69%). التوجيه: مراجعة فيديوهات الشرح التعليمية الخاصة بالدروس التي تكررت فيها الأخطاء قبل خوض الامتحان الأسبوعي.</div>
+          </div>
+        `;
+      } else {
+        policyHtml = `
+          <div style="background: #fef2f2; border: 1.5px solid #fecdd3; border-radius: 12px; padding: 14px 18px; margin-bottom: 16px;">
+            <div style="font-weight: 800; color: #991b1b; font-size: 0.98rem; margin-bottom: 4px;">🚨 سياسة العلاج الموصى بها: مراجعة شخصية وتدخل مع ولي الأمر (Parent Guided Intervention)</div>
+            <div style="font-size: 0.86rem; color: #b91c1c; line-height: 1.6;">النسبة أقل من 50%. التوجيه: مراجعة أسئلة «دفتر أخطائي» مع الطالب خطوة بخطوة وتوضيح المفاهيم الأساسية قبل التقدم للمهمة التالية.</div>
+          </div>
+        `;
+      }
+
+      // Priority Review Skills (Answering: "ما المهارات التي تحتاج مراجعة هذا الأسبوع؟")
+      let recurrentHtml = '';
+      if (deficiencies.length > 0) {
+        recurrentHtml = `
+          <div style="margin-bottom: 16px; background: #fff1f2; border: 1.5px solid #fda4af; border-radius: 12px; padding: 14px 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div style="font-weight: 800; color: #9f1239; font-size: 0.95rem;">
+                🎯 المهارات والمفاهيم الواجب مراجعتها هذا الأسبوع (${deficiencies.length} نقاط تركيز)
+              </div>
+              <span style="font-size: 0.78rem; background: #ffe4e6; color: #be123c; padding: 2px 8px; border-radius: 12px; font-weight: 700;">أولوية هذا الأسبوع</span>
+            </div>
+            <div style="font-size: 0.85rem; color: #475569; line-height: 1.6; margin-bottom: 10px;">
+              تحددت هذه المهارات بناءً على أخطاء الطالب في التسليمات السابقة، وتوصي المنظومة بالتركيز عليها قبل الامتحان التراكمي:
+            </div>
+            <ul style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 8px;">
+              ${deficiencies.slice(0, 4).map(d => `
+                <li style="background: #ffffff; border: 1px solid #fecdd3; border-radius: 8px; padding: 8px 12px; font-size: 0.84rem; color: #881337; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                  <span>⚠️</span>
+                  <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><bdi>${cleanArabicPunctuation(plainText(d.text))}</bdi></span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      }
+
       contentEl.innerHTML = `
-        <!-- Summary Real KPI Cards -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 18px;">
+        <!-- Summary Real KPI Cards (4 Cards with Trajectory Trend) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 18px;">
           <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
             <div style="font-size: 1.55rem; font-weight: 800; color: #15803d;">${avgPercentage}%</div>
             <div style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-top: 2px;">Overall Score Average</div>
@@ -7793,7 +7880,17 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
             <div style="font-size: 1.55rem; font-weight: 800; color: #b45309;">${latestSub.percentage}</div>
             <div style="font-size: 0.78rem; font-weight: 700; color: #92400e; margin-top: 2px;">Latest Result (${latestSub.earnedScore}/${latestSub.totalScore})</div>
           </div>
+          <div style="background: ${trendBg}; border: 1.5px solid ${trendBorder}; border-radius: 12px; padding: 14px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+            <div style="font-size: 1.1rem; font-weight: 800; color: ${trendColor}; margin-top: 4px;">${trendLabel}</div>
+            <div style="font-size: 0.78rem; font-weight: 700; color: ${trendColor}; margin-top: 6px;">Performance Trend</div>
+          </div>
         </div>
+
+        <!-- Section: 4-Tier Policy Guidance -->
+        ${policyHtml}
+
+        <!-- Section: Weekly Review Priorities -->
+        ${recurrentHtml}
 
         <!-- Section 1: Demonstrated Strengths (Collapsible Coligo Accordion) -->
         <details style="margin-bottom: 14px; background: #ffffff; border: 1.5px solid #dcfce7; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.03);" open>
@@ -7825,6 +7922,46 @@ ${            (detailsHtml ? ('<details style="margin-top: 8px; font-size: 0.86r
           </div>
         </details>
       `;
+    }
+
+    function exportSubmissionsCSV() {
+      const isAli = (activeAdminStudent === 'Ali');
+      const targetName = isAli ? 'ali ahmed' : 'mostafa ahmed';
+      const subs = (cachedAdminData && cachedAdminData.submissions)
+        ? cachedAdminData.submissions.filter(s => String(s.studentName || '').trim().toLowerCase() === targetName)
+        : [];
+
+      if (subs.length === 0) {
+        alert('لا توجد تسليمات سابقة متاحة للتصدير لهذا الطالب.');
+        return;
+      }
+
+      let csvContent = '\uFEFF'; // UTF-8 BOM for Arabic Excel
+      csvContent += 'Timestamp,Student,Grade,Exam Code,Earned,Total,Percentage,Rating,Duration\n';
+
+      subs.forEach(s => {
+        const clean = (val) => '"' + String(val || '').replace(/"/g, '""') + '"';
+        csvContent += [
+          clean(s.timestamp),
+          clean(s.studentName),
+          clean(s.schoolGroup),
+          clean(s.examCode),
+          clean(s.earnedScore),
+          clean(s.totalScore),
+          clean(s.percentage),
+          clean(s.rating),
+          clean(s.durationSpent)
+        ].join(',') + '\n';
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `assessment_results_${isAli ? 'ali' : 'mostafa'}_${new Date().toISOString().substring(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
   

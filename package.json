@@ -4,6 +4,6 @@
   "private": true,
   "description": "Google Apps Script assessment portal for primary grades",
   "scripts": {
-    "test": "node --test tests/normalizeAnswer.test.js tests/attemptState.test.js tests/scoring.test.js tests/cumulative.test.js tests/server.test.js tests/security.test.js tests/difficultyLevels.test.js tests/scheduleCumulative.test.js tests/questionTypesMistakes.test.js"
+    "test": "node --test tests/normalizeAnswer.test.js tests/attemptState.test.js tests/scoring.test.js tests/cumulative.test.js tests/server.test.js tests/security.test.js tests/difficultyLevels.test.js tests/scheduleCumulative.test.js tests/questionTypesMistakes.test.js tests/parentDashboard.test.js"
   }
 }
