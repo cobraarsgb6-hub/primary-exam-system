@@ -1,5 +1,5 @@
 {
-  "synced_at": "2026-10-30 07:52:01",
+  "synced_at": "2026-10-30 14:40:41",
   "semester_id": "6aa6b7d7382ba9a416a84790",
   "students": {
     "Ali": {
@@ -1034,7 +1034,7 @@
       "courses": [
         {
           "title": "Social Studies 106",
-          "total_items": 23,
+          "total_items": 27,
           "downloaded_files": [
             {
               "material_id": "6ab41c632d3a70ca7cc294aa",
@@ -1171,6 +1171,30 @@
               "web_path": "resources/coligo/Mostafa/Social%20Studies%20106/Revision%20lesson%3DQ%2BA/c15fbb44-e210-4b52-9f34-2ea5ab062d86_converted.pdf",
               "source_url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/social-studies-106/materials/2026/oct/week-4/now-1793118718687/c15fbb44-e210-4b52-9f34-2ea5ab062d86_converted.pdf.zip",
               "source_updated_at": 1793118721791
+            },
+            {
+              "material_id": "6ae490482c1bec65bc48bf16",
+              "title": "Power point 8",
+              "filename": "Power point 8/‎⁨الهجره_وعالمية_الدعوه_٦ب⁩.pdf",
+              "web_path": "resources/coligo/Mostafa/Social%20Studies%20106/Power%20point%208/%E2%80%8E%E2%81%A8%D8%A7%D9%84%D9%87%D8%AC%D8%B1%D9%87_%D9%88%D8%B9%D8%A7%D9%84%D9%85%D9%8A%D8%A9_%D8%A7%D9%84%D8%AF%D8%B9%D9%88%D9%87_%D9%A6%D8%A8%E2%81%A9.pdf",
+              "source_url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/social-studies-106/materials/2026/oct/week-5/now-1793364038299/%E2%80%8E%E2%81%A8%D8%A7%D9%84%D9%87%D8%AC%D8%B1%D9%87_%D9%88%D8%B9%D8%A7%D9%84%D9%85%D9%8A%D8%A9_%D8%A7%D9%84%D8%AF%D8%B9%D9%88%D9%87_%D9%A6%D8%A8%E2%81%A9.pdf.zip",
+              "source_updated_at": 1793370556335
+            },
+            {
+              "material_id": "6ae494732c1bec65bc49cc6b",
+              "title": "Educational video",
+              "filename": "Educational video/VID-20261030-WA0051.mp4",
+              "web_path": "resources/coligo/Mostafa/Social%20Studies%20106/Educational%20video/VID-20261030-WA0051.mp4",
+              "source_url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/social-studies-106/materials/2026/oct/week-5/now-1793365097319/VID-20261030-WA0051.mp4.zip",
+              "source_updated_at": 1793365107213
+            },
+            {
+              "material_id": "6ae4951f2c1bec65bc4a01cc",
+              "title": "Revision=Q+A",
+              "filename": "Revision=Q+A/Photo-1793364407-0.pdf",
+              "web_path": "resources/coligo/Mostafa/Social%20Studies%20106/Revision%3DQ%2BA/Photo-1793364407-0.pdf",
+              "source_url": "https://coligo.b-cdn.net/schools/manaret-el-eman-british-international-school/courses/social-studies-106/materials/2026/oct/week-5/now-1793365274889/Photo-1793364407-0.pdf.zip",
+              "source_updated_at": 1793365279776
             }
           ],
           "links": []
