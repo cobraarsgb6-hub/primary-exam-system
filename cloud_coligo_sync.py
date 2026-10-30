@@ -566,14 +566,17 @@ def run_sync():
     # Small machine summary for the workflow to diff quickly on runs
     manifest_path = os.path.join(OUTPUT_DIR, "coligo_manifest.json")
     manifest_tmp = manifest_path + ".tmp"
+    manifest_data = {
+        "synced_at": master_catalog["synced_at"],
+        "student_count": len(STUDENTS),
+        "indexed_materials": total_materials_indexed,
+        "new_downloads": total_new_downloads,
+        "homework_signals": len(homework_items),
+        "auth_mode": auth_mode,
+        "sheets_webhook_status": "pending",
+    }
     with open(manifest_tmp, "w", encoding="utf-8") as f:
-        json.dump({
-            "synced_at": master_catalog["synced_at"],
-            "student_count": len(STUDENTS),
-            "indexed_materials": total_materials_indexed,
-            "new_downloads": total_new_downloads,
-            "homework_signals": len(homework_items),
-        }, f, ensure_ascii=False, indent=2)
+        json.dump(manifest_data, f, ensure_ascii=False, indent=2)
     os.replace(manifest_tmp, manifest_path)
 
     print(f"\n[Summary] Indexed: {total_materials_indexed} items | Newly saved: {total_new_downloads} files.")
@@ -595,11 +598,13 @@ def run_sync():
             ],
     }).encode("utf-8")
     req_w = urllib.request.Request(WEBHOOK_URL, data=payload, headers={"Content-Type": "application/json"})
+    webhook_ok = False
     try:
         with urllib.request.urlopen(req_w, timeout=25) as resp_w:
             response = json.loads(resp_w.read().decode("utf-8") or "{}")
             if resp_w.status >= 300 or not response.get("success"):
                 raise RuntimeError("Apps Script rejected the Coligo sync summary.")
+            webhook_ok = True
             print("✅ Sync summary recorded in Google Sheets.")
     except Exception as e:
         # The materials catalog is the primary deliverable and is already
@@ -610,6 +615,15 @@ def run_sync():
         if "404" in str(getattr(e, "code", "")) or (isinstance(e, urllib.error.HTTPError) and e.code == 404):
             print("   HTTP 404 = wrong macro id or the Web App is not deployed as 'Anyone'.")
         print("   Continuing: catalog & manifest committed regardless.")
+
+    manifest_data["sheets_webhook_status"] = "success" if webhook_ok else "failed"
+    with open(manifest_tmp, "w", encoding="utf-8") as f:
+        json.dump(manifest_data, f, ensure_ascii=False, indent=2)
+    os.replace(manifest_tmp, manifest_path)
+    github_output = os.environ.get("GITHUB_OUTPUT", "").strip()
+    if github_output:
+        with open(github_output, "a", encoding="utf-8") as f:
+            f.write("sheets_webhook_ok=" + ("true" if webhook_ok else "false") + "\n")
 
     elapsed = time.time() - t0
     print(f"\n🎉 100% Autonomous Cloud Sync v2 Completed in {elapsed:.2f}s! (auth={auth_mode})")

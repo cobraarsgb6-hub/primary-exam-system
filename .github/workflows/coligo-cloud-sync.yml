@@ -28,6 +28,7 @@ jobs:
         python-version: '3.11'
 
     - name: Run Full Cloud Coligo Ingestion
+      id: sync
       env:
         COLIGO_TOKEN: ${{ secrets.COLIGO_TOKEN }}
         COLIGO_USERNAME: ${{ secrets.COLIGO_USERNAME }}
@@ -67,3 +68,9 @@ jobs:
         else
           echo "No catalog or material changes to publish."
         fi
+
+    - name: Fail the run when Google Sheets did not confirm the sync
+      if: steps.sync.outputs.sheets_webhook_ok != 'true'
+      run: |
+        echo "Coligo files were preserved, but Google Sheets did not confirm the sync webhook."
+        exit 1
