@@ -1,7 +1,9 @@
 {
-  "synced_at": "2026-10-30 14:40:41",
+  "synced_at": "2026-10-30 19:46:04",
   "student_count": 2,
   "indexed_materials": 337,
   "new_downloads": 126,
-  "homework_signals": 25
+  "homework_signals": 25,
+  "auth_mode": "credentials",
+  "sheets_webhook_status": "failed"
 }
