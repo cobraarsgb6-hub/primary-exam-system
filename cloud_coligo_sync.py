@@ -137,31 +137,36 @@ def authenticate_coligo():
     exp_txt = lambda token: (time.strftime("%Y-%m-%d %H:%M", time.gmtime(jwt_expiry(token)))
                              if jwt_expiry(token) else "unknown")
     user = os.environ.get("COLIGO_USERNAME", "").strip()
-    pwd = os.environ.get("COLIGO_PASSWORD", "").strip()
+    password_candidates = []
+    for key in ["COLIGO_PASSWORD", "COLIGO_MOSTAFA_PASSWORD", "COLIGO_ALI_PASSWORD"]:
+        val = os.environ.get(key, "").strip()
+        if val and val not in password_candidates:
+            password_candidates.append(val)
 
-    if user and pwd:
-        try:
-            resp = http_json(
-                f"{API_V3}/authenticate",
-                payload={"username": user, "password": pwd},
-                timeout=30)
-            data = resp.get("data", resp) if isinstance(resp, dict) else {}
-            if not isinstance(data, dict):
-                data = {}
-            token = (data.get("token") or data.get("jwt")
-                     or (data.get("auth") or {}).get("token")
-                     or (resp.get("token") if isinstance(resp, dict) else None))
-            if token:
-                exp = jwt_expiry(token)
-                if exp and exp <= time.time():
-                    raise RuntimeError("Coligo authentication returned an expired JWT.")
-                print(f"[AUTH] Fresh Coligo JWT acquired; expiry {time.strftime('%Y-%m-%d %H:%M', time.gmtime(exp)) if exp else 'unknown'} UTC.")
-                return token, "credentials"
-            print(f"[AUTH] /v3/authenticate answered but no JWT. Keys: {list(data.keys())[:8]}")
-        except urllib.error.HTTPError as exc:
-            print(f"[AUTH] Login rejected (HTTP {exc.code}); falling back to refresh/static paths.")
-        except Exception:
-            print("[AUTH] Login attempt failed; falling back to refresh/static paths.")
+    if user and password_candidates:
+        for candidate_pwd in password_candidates:
+            try:
+                resp = http_json(
+                    f"{API_V3}/authenticate",
+                    payload={"username": user, "password": candidate_pwd},
+                    timeout=30)
+                data = resp.get("data", resp) if isinstance(resp, dict) else {}
+                if not isinstance(data, dict):
+                    data = {}
+                token = (data.get("token") or data.get("jwt")
+                         or (data.get("auth") or {}).get("token")
+                         or (resp.get("token") if isinstance(resp, dict) else None))
+                if token:
+                    exp = jwt_expiry(token)
+                    if exp and exp <= time.time():
+                        continue
+                    print(f"[AUTH] Fresh Coligo JWT acquired; expiry {time.strftime('%Y-%m-%d %H:%M', time.gmtime(exp)) if exp else 'unknown'} UTC.")
+                    return token, "credentials"
+                print(f"[AUTH] /v3/authenticate answered but no JWT. Keys: {list(data.keys())[:8]}")
+            except urllib.error.HTTPError as exc:
+                print(f"[AUTH] Login candidate rejected (HTTP {exc.code}); checking next candidate.")
+            except Exception:
+                print("[AUTH] Login candidate attempt failed; checking next candidate.")
 
     token, mode = _try_refresh_token_auth(exp_txt)
     if token:

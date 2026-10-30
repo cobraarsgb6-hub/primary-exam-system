@@ -33,6 +33,8 @@ jobs:
         COLIGO_TOKEN: ${{ secrets.COLIGO_TOKEN }}
         COLIGO_USERNAME: ${{ secrets.COLIGO_USERNAME }}
         COLIGO_PASSWORD: ${{ secrets.COLIGO_PASSWORD }}
+        COLIGO_MOSTAFA_PASSWORD: ${{ secrets.COLIGO_MOSTAFA_PASSWORD }}
+        COLIGO_ALI_PASSWORD: ${{ secrets.COLIGO_ALI_PASSWORD }}
         COLIGO_REFRESH_TOKEN: ${{ secrets.COLIGO_REFRESH_TOKEN }}
         COLIGO_REFRESH_TOKEN_ID: ${{ secrets.COLIGO_REFRESH_TOKEN_ID }}
         GAS_WEBHOOK_URL: ${{ secrets.GAS_WEBHOOK_URL }}
