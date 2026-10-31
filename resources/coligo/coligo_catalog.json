@@ -1,5 +1,5 @@
 {
-  "synced_at": "2026-10-31 10:00:28",
+  "synced_at": "2026-10-31 15:54:39",
   "semester_id": "6aa6b7d7382ba9a416a84790",
   "students": {
     "Ali": {
@@ -997,7 +997,7 @@
         },
         {
           "title": "Arabic 105",
-          "total_items": 7,
+          "total_items": 9,
           "downloaded_files": [
             {
               "material_id": "6acf1c6c1fa5038b16e92465",
@@ -1024,6 +1024,14 @@
             {
               "title": "الاسبوع الثالث:  درس لغة النصر",
               "youtube_id": "TVPsuhlOsEI"
+            },
+            {
+              "title": "الاسبوع الرابع : المهزة المتطرفة",
+              "youtube_id": "24H90EBjQEc"
+            },
+            {
+              "title": "الاسبوع الخامس: كتابة تعبير تطبيقي عن رسالة رسمية",
+              "youtube_id": "oxGSRlgDCvI"
             }
           ]
         }
@@ -2122,6 +2130,16 @@
       {
         "title": "الاسبوع الثالث:  درس لغة النصر",
         "youtube_id": "TVPsuhlOsEI",
+        "course": "Arabic 105"
+      },
+      {
+        "title": "الاسبوع الرابع : المهزة المتطرفة",
+        "youtube_id": "24H90EBjQEc",
+        "course": "Arabic 105"
+      },
+      {
+        "title": "الاسبوع الخامس: كتابة تعبير تطبيقي عن رسالة رسمية",
+        "youtube_id": "oxGSRlgDCvI",
         "course": "Arabic 105"
       }
     ],
